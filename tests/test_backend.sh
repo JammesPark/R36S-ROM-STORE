@@ -20,7 +20,7 @@ cp "$TEST_SOURCE" "$out"
 SH
 cat > "$TMP/fakebin/findmnt" <<'SH'
 #!/usr/bin/env bash
-if [[ "$*" == *'/sd2'* ]]; then echo '/dev/mmcblk1p1';else echo '/dev/mmcblk0p2';fi
+if [[ "$*" == *'/roms2'* || "$*" == *'/sd2'* ]]; then echo '/dev/mmcblk1p1';else echo '/dev/mmcblk0p2';fi
 SH
 chmod +x "$TMP/fakebin/"*
 python3 - "$TMP/worker.sh" "$TMP/sd1" "$TMP/sd2" <<'PY'
