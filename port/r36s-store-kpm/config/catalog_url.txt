@@ -1,0 +1,1 @@
+# Coloque nesta linha uma URL HTTPS publica para catalogo JSON.

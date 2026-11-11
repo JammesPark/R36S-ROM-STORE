@@ -1,0 +1,41 @@
+name: Validar e empacotar R36S KPM
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Instalar dependencias de testes
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.4 zip unzip python3
+      - name: Verificar sintaxe Lua e Bash
+        run: |
+          find src -type f -name '*.lua' -print0 | xargs -0 -r -n1 luac5.4 -p
+          find port tools tests -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
+          python3 -m py_compile port/r36s-store-kpm/bin/archive_safe.py
+      - name: Testes
+        run: |
+          lua5.4 tests/test_json.lua
+          python3 tests/test_archives.py
+          bash tests/test_backend.sh
+      - name: Criar ZIPs instalavel e fonte
+        run: bash tools/build.sh
+      - name: Verificar conteudo do instalador
+        run: |
+          unzip -t build/R36S_PORTS_BR_STORE_KPM_INSTALAR.zip
+          unzip -Z1 build/R36S_PORTS_BR_STORE_KPM_INSTALAR.zip | grep -F 'r36s-store-kpm/game.love'
+      - name: Publicar artefatos para download
+        uses: actions/upload-artifact@v4
+        with:
+          name: R36S-PORTS-BR-STORE-KPM
+          path: build/*.zip
+          if-no-files-found: error
