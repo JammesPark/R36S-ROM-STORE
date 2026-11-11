@@ -26,7 +26,7 @@ jobs:
         run: |
           lua5.4 tests/test_json.lua
           python3 tests/test_archives.py
-          bash tests/test_backend.sh
+          bash -x tests/test_backend.sh
       - name: Criar ZIPs instalavel e fonte
         run: bash tools/build.sh
       - name: Verificar conteudo do instalador
