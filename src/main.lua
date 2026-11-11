@@ -310,7 +310,7 @@ local function action(key)
   end
 end
 function love.keypressed(k)
-  local keys={return='a',kpenter='a',escape='b',backspace='b',
+  local keys={['return']='a',kpenter='a',escape='b',backspace='b',
     up='up',down='down',left='l',right='r',q='l',e='r',
     f5='y',r='y',delete='x',x='x'}
   action(keys[k] or k)
