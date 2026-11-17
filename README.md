@@ -47,3 +47,11 @@ bash tools/build.sh
 ```
 
 O backend histórico `worker.sh` conserva as funções de remoção/registro de ports gerenciados, para compatibilidade. Não existe mais ação de catálogo KPM nem URL manual para a fonte anterior.
+
+## Correção para fechamento sem imagem — v0.1.1 (teste)
+
+O launcher usa agora o `control.txt` e o runtime `runtimes/love_11.5/love.txt` do PortMaster. Como alternativa, usa `love` instalado no sistema. O pacote ZIP preserva os bits de execução dos scripts `.sh`.
+
+**Log após falha de boot:** `/roms/ports/r36s-store-kpm/log.txt` e `/roms/ports/r36s-store-kpm/state/logs/startup.log`. O log registra o runtime selecionado e o motivo do encerramento do LÖVE.
+
+Copie o novo ZIP instalável para `/roms/ports/`, substituindo os arquivos antigos. Não é necessário remover os jogos. A inicialização foi simulada no GitHub Actions, mas o funcionamento gráfico ainda depende de teste no dispositivo.

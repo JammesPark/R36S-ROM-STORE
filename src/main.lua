@@ -115,7 +115,7 @@ local function drawFooter()
   col(palette.panel);love.graphics.rectangle('fill',0,449,W,31)
   col(palette.line);love.graphics.rectangle('fill',0,449,W,1)
   printx(t('A OK  B VOLTAR  L/R ABAS  Y SINCRONIZAR','A SELECT  B BACK  L/R TABS  Y SYNC'),22,459,11,palette.muted)
-  printx('v0.1.0',568,459,11,palette.blue)
+  printx('v0.1.1',568,459,11,palette.blue)
 end
 local function drawHome()
   panel(24,130,592,128)

@@ -2,7 +2,8 @@
 set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p build
-rm -f build/*.zip
+rm -f build/*.zip port/r36s-store-kpm/game.love
+find port -type d -name __pycache__ -prune -exec rm -rf -- {} +
 (cd src && zip -q -X -r ../port/r36s-store-kpm/game.love .)
 (cd port && zip -q -r ../build/R36S_PORTS_BR_STORE_KPM_INSTALAR.zip \
   "R36S PORTS BR STORE KPM.sh" r36s-store-kpm \
