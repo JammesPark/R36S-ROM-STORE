@@ -1,4 +1,4 @@
-# R36S ROMS STORE — v0.2.3 (teste)
+# R36S ROMS STORE — v0.2.4 (teste)
 
 Loja de ROMs para consoles R36S, com interface Lua + LÖVE 11.5 na resolução **640×480**, catálogo único GameStoreBR (`r36swiki.com/getgames.php`) e arquivos baixados diretamente para SD1/SD2. **Nenhuma ROM, BIOS ou conteúdo comercial é distribuído com o aplicativo.**
 
@@ -53,7 +53,7 @@ bash tools/build.sh
 
 A API GameStoreBR é de terceiros e sua disponibilidade depende do provedor. Os arquivos que ela disponibiliza estão sujeitos aos direitos dos respectivos titulares. A interface deste projeto é independente.
 
-## v0.2.3 — Melhorias de interface solicitadas
+## v0.2.4 — Melhorias de interface solicitadas
 
 - Tela de entrada redesenhada com **logo vetorial R36S ROMS STORE** integrada ao LÖVE e barra de progresso. O ZIP não inclui um logotipo PNG externo; caso exista uma arte oficial diferente, ela poderá substituir a marca vetorial.
 - Total de ROMs na Home agora é a soma dos contadores de todas as plataformas, excluindo a categoria ALL para evitar duplicidade. Antes da sincronização, exibe um traço.
@@ -65,3 +65,14 @@ A API GameStoreBR é de terceiros e sua disponibilidade depende do provedor. Os 
 - Rede e catálogo: mostra somente luz de status e ação Atualizar catálogo, sem informar o provedor. Verde = resposta online confirmada, vermelho = erro de conexão, amarelo = verificando ou manutenção sinalizada pela API. O cache offline não é tratado como prova de conexão. Sobre não mostra mais o provedor.
 
 **Observação:** esta versão depende de testes reais no R36S para confirmar desempenho da renderização, as capas e medição do espaço dos cartões.
+
+
+## Atualização v0.2.4 — UI, downloads e controles
+
+- **Downloads:** transferência ativa no painel superior e histórico de ROMs concluídas abaixo, com até 4 registros por página e rolagem pelo D-pad. A lista é lida do `state/roms_downloads.json`, não contém dados demonstrativos.
+- **Status:** Wi-Fi (interface detectada), hora local e bateria (%) consultados no Linux. Sensores ausentes mostram `--%`; Wi-Fi detectado não garante acesso à internet.
+- **Início:** 4 destaques em grade 2×2 e visão geral em coluna; o título da ROM aparece uma vez, abaixo da capa.
+- **Fonte:** três tamanhos Pequena, Média e Grande em Configurações, gravados em `state/roms_settings.json` e aplicados na inicialização.
+- **Controles:** o PortMaster continua fornecendo SDL_GAMECONTROLLERCONFIG; **GPTOKEYB foi desativado** para impedir eventos duplicados. D-pad navega, A confirma, B volta, X pesquisa no catálogo, Y atualiza, START pesquisa. L1/R1 paginam apenas dentro do catálogo. Não trocam telas na Home. Teclado PC usa Enter/Escape/setas/X/Y; apelidos antigos Z/Q/E/Space foram removidos.
+
+O uso do Wi-Fi, da bateria e a aceitação do controle dependem do dispositivo e firmware, ainda sujeitos a teste no console físico.

@@ -99,10 +99,7 @@ export XDG_DATA_HOME="$APP/conf"
 export SDL_GAMECONTROLLERCONFIG="${sdl_controllerconfig:-${SDL_GAMECONTROLLERCONFIG:-}}"
 cd "$APP" || fail "Nao foi possivel entrar na pasta do aplicativo"
 if [[ "$runtime" == portmaster ]]; then
-  if [[ -n "${GPTOKEYB:-}" && -n "${LOVE_GPTK:-}" ]]; then
-    $GPTOKEYB "$LOVE_GPTK" &
-    echo "Controle de teclado configurado"
-  fi
+  # Entrada exclusiva via SDL2/LÖVE: sem GPTOKEYB e sem teclas duplicadas.
   if declare -F pm_platform_helper >/dev/null 2>&1 && [[ -n "${LOVE_BINARY:-}" ]]; then
     pm_platform_helper "$LOVE_BINARY" || echo "AVISO: pm_platform_helper retornou erro"
   fi

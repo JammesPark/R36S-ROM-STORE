@@ -4,6 +4,11 @@ local U={}
 local fonts={}
 local fallbackFont=nil
 local fontData=nil
+local fontScale=1
+local sizeOptions={small=0.91,medium=1.0,large=1.18}
+function U.setFontSize(key)
+  fontScale=sizeOptions[key] or 1
+end
 local function loadSystemFont()
   for _,path in ipairs({
     '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
@@ -33,7 +38,16 @@ function U.init()
   end
   fallbackFont=fonts[12]
 end
-function U.font(size) return fonts[size] or fallbackFont end
+function U.font(size)
+  local value=math.max(8,math.min(32,math.floor((size or 12)*fontScale+0.5)))
+  if not fonts[value] then
+    local ok,resource=pcall(function()
+      return fontData and love.graphics.newFont(fontData,value) or love.graphics.newFont(value)
+    end)
+    fonts[value]=(ok and resource) or fallbackFont
+  end
+  return fonts[value] or fallbackFont
+end
 function U.color(c,alpha)
   love.graphics.setColor(c[1],c[2],c[3],alpha or c[4] or 1)
 end
@@ -53,6 +67,15 @@ function U.text(s,x,y,size,color,maxwidth,center)
   if color then U.color(color) else U.color(theme.text) end
   local f=U.font(size or 12);love.graphics.setFont(f)
   if maxwidth then
+    -- Evita que fonte Grande quebre titulos/cartoes em uma segunda linha.
+    if type(f.getWidth)=='function' and f:getWidth(s)>maxwidth then
+      local original=s
+      local n=#original
+      repeat
+        n=n-1
+        s=U.ellipsize(original,n)
+      until n<=1 or f:getWidth(s)<=maxwidth
+    end
     love.graphics.printf(s,x,y,maxwidth,center and 'center' or 'left')
   else
     love.graphics.print(s,x,y)
@@ -130,7 +153,7 @@ local coverPalettes={
   {{.06,.19,.22},{.16,.42,.48},{.60,.98,.79}},
   {{.29,.13,.20},{.65,.31,.22},{1,.86,.60}}
 }
-function U.poster(x,y,w,h,name,index)
+function U.poster(x,y,w,h,name,index,showName)
   local p=coverPalettes[(index-1)%#coverPalettes+1]
   U.rect(x,y,w,h,p[1],7)
   U.color(p[2],.93)
@@ -140,10 +163,12 @@ function U.poster(x,y,w,h,name,index)
   U.color({.01,.04,.13},.58)
   love.graphics.polygon('fill',x,y+h*.95,x+w*.25,y+h*.46,x+w*.46,y+h*.82,x+w*.78,y+h*.26,x+w,y+h)
   U.rect(x+8,y+8,27,3,p[3],1)
-  local name1=tostring(name or '?'):upper()
-  local n=U.ellipsize(name1,16)
-  U.rect(x,y+h-31,w,31,{.015,.030,.075},0,nil,.75)
-  U.text(n,x+8,y+h-26,12,theme.text,w-16)
+  if showName then
+    local name1=tostring(name or '?'):upper()
+    local n=U.ellipsize(name1,16)
+    U.rect(x,y+h-31,w,31,{.015,.030,.075},0,nil,.75)
+    U.text(n,x+8,y+h-26,12,theme.text,w-16)
+  end
 end
 -- Mantém a capa inteira dentro do espaço, sem recortar as extremidades.
 function U.imageContain(image,x,y,w,h)
@@ -156,6 +181,30 @@ function U.imageContain(image,x,y,w,h)
 end
 
 -- Logo vetorial integrada ao app, sem depender de PNG ou internet.
+-- Indicadores visuais; dados são consultados localmente em sysfs/proc.
+function U.statusBar(data)
+  data=data or {}
+  local y=5
+  U.rect(449,y,179,23,theme.sidebar,7,theme.border,.94)
+  -- Wi-Fi em ondas (cinza quando interface desconectada).
+  local wifi=data.wifi and theme.green or theme.low
+  U.color(wifi)
+  love.graphics.setLineWidth(1.7)
+  love.graphics.line(461,13,466,10,471,13)
+  love.graphics.line(463,16,466,14,469,16)
+  love.graphics.circle('fill',466,19,1.4)
+  love.graphics.setLineWidth(1)
+  U.text(data.time or '--:--',480,10,11,theme.text,47)
+  -- Bateria e percentual do dispositivo (ou -- caso indisponível).
+  local p=tonumber(data.battery)
+  local c=(p and p<=15) and theme.error or theme.green
+  U.rect(542,12,24,12,theme.panel,2,theme.muted)
+  U.rect(566,16,2,4,theme.muted,1)
+  if p then
+    U.rect(545,15,math.max(0,18*math.min(100,math.max(0,p))/100),6,c,1)
+  end
+  U.text(p and (tostring(math.floor(p+.5))..'%') or '--%',574,10,10,theme.text,45)
+end
 function U.brandLogo(x,y,scale)
   scale=scale or 1
   local function p(v) return v*scale end

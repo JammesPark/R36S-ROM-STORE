@@ -1,7 +1,7 @@
 -- GameStoreBR: somente adaptador de dados. O layout pertence a main.lua.
 local json=require('json')
 local M={categories={{category='ALL',count=0}},games={},category='ALL',page=1,totalPages=1,total=0,
-         pending=nil,phase='idle',message='',downloaded=0,expected=0,error=false,connected=nil,maintenance=false}
+         pending=nil,phase='idle',message='',downloaded=0,expected=0,error=false,connected=nil,maintenance=false,activeDownload=nil}
 local home,state,lastStatus='',nil
 local function read(path)
   local f=io.open(path,'rb');if not f then return nil end
@@ -74,7 +74,12 @@ function M.pageChange(delta)
 end
 function M.download(g,card)
   if not g or not g.game_path or not g.category then return false end
-  return M.request('download',{g.game_path,g.category,card==2 and 'sd2' or 'sd1',g.name or 'ROM',g.sha256 or ''})
+  local ok=M.request('download',{g.game_path,g.category,card==2 and 'sd2' or 'sd1',g.name or 'ROM',g.sha256 or ''})
+  if ok then
+    M.activeDownload={name=g.name or 'ROM',card=card}
+    M.downloaded=0;M.expected=0
+  end
+  return ok
 end
 function M.update()
   local raw=read(state..'/gamestore_status.json')

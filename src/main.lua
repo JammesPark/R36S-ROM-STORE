@@ -5,24 +5,26 @@ local external=require('external')
 local ui=require('ui')
 local theme=require('theme')
 local i18n=require('i18n')
+local device=require('device_status')
 local HOME=os.getenv('R36S_STORE_HOME') or '/roms/ports/r36s-roms-store'
 local STATE=HOME..'/state'
 local mainPages={'home','catalog','downloads','installed','favorites','settings','about'}
 local menuPages={'home','catalog','downloads','installed','favorites','settings','about','exit'}
 local screen='startup'
 local stack={}
-local settings={language='pt',theme='ocean'}
+local settings={language='pt',theme='ocean',font_size='medium'}
 local favorites={}
 local downloads={}
 local focus='grid'; local menuIndex=1;local categoryIndex=1;local gameIndex=1
-local favIndex=1;local installIndex=1;local historyIndex=1;local settingsIndex=1
-local languageIndex=1;local themeIndex=1;local searchIndex=1;local query=''
+local favIndex=1;local installIndex=1;local historyIndex=1;local settingsIndex=1;local downloadScroll=0
+local languageIndex=1;local themeIndex=1;local fontSizeIndex=2;local searchIndex=1;local query=''
 local selectedGame=nil
 local lastStatus='';local lastManifest='';local coverImages={};local coverSeen={}
 local clock=0;local startupTime=0;local notice='';local noticeTime=0
 local selectedCard=1;local transferHandled=false
 local storageInfo={};local storageLast=-999
-local suboptions={'languages','themes','storage','network','help'}
+local suboptions={'languages','themes','font_size','storage','network','help'}
+local fontSizes={'small','medium','large'}
 local keyboard={'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','SPACE','DEL','CLEAR','OK'}
 local function tr(key) return i18n.get(settings.language,key) end
 local function txt(s,x,y,sz,c,w,center) ui.text(s,x,y,sz,c,w,center) end
@@ -41,8 +43,8 @@ local function encodeString(s)
   return '"'..tostring(s or ''):gsub('[\\"\n\r\t]',replacements)..'"'
 end
 local function saveSettings()
-  write(STATE..'/roms_settings.json',string.format('{"language":%s,"theme":%s}',
-    encodeString(settings.language),encodeString(settings.theme)))
+  write(STATE..'/roms_settings.json',string.format('{"language":%s,"theme":%s,"font_size":%s}',
+    encodeString(settings.language),encodeString(settings.theme),encodeString(settings.font_size)))
 end
 local function saveFavorites()
   local items={}
@@ -60,6 +62,9 @@ local function loadData()
   if type(c)=='table' then
     for _,l in ipairs(i18n.languages) do if l.code==c.language then settings.language=l.code end end
     for _,t in ipairs(theme.options) do if t.key==c.theme then settings.theme=t.key end end
+    for idx,v in ipairs(fontSizes) do
+      if v==c.font_size then settings.font_size=v;fontSizeIndex=idx end
+    end
   end
   local f=json.decode(read(STATE..'/roms_favorites.json') or '')
   if type(f)=='table' then
@@ -70,6 +75,7 @@ local function loadData()
     end
   end
   theme.set(settings.theme)
+  ui.setFontSize(settings.font_size)
 end
 local function reloadDownloads()
   local s=read(STATE..'/roms_downloads.json')
@@ -165,6 +171,9 @@ local function navigate(route)
   if screen~=route then stack[#stack+1]=screen end
   screen=route
   if route=='storage' then refreshStorage() end
+  if route=='font_size' then
+    for idx,v in ipairs(fontSizes) do if v==settings.font_size then fontSizeIndex=idx end end
+  end
 end
 local function mainRoute(route)
   screen=route;stack={};focus=route=='home' and 'sidebar' or 'grid'
@@ -190,11 +199,6 @@ local function chooseCategory()
     external.categoryChange(cat.category)
     gameIndex=1;focus='grid'
   end
-end
-local function mainNext(dx)
-  local i=1;for k,v in ipairs(mainPages) do if v==screen then i=k end end
-  i=(i-1+dx+#mainPages)%#mainPages+1
-  mainRoute(mainPages[i])
 end
 local function cachedImage(game)
   if not game or not game.cover_id or game.cover_id=='' then return nil end
@@ -272,8 +276,8 @@ local function header(eyebrow,title,right)
   if right then ui.pill(right,548,15,78,false) end
 end
 local function footer(phrase)
-  ui.footer(tr('select'),tr('back'),phrase or tr('tabs'))
-  txt('v0.2.3',579,452,10,theme.accent)
+  ui.footer(tr('select'),tr('back'),screen=='catalog' and tr('page') or nil)
+  txt('v0.2.4',579,452,10,theme.accent)
 end
 local function card(game,x,y,w,h,idx,active,badge)
   panel(x,y,w,h,active)
@@ -297,39 +301,39 @@ local function totalRoms()
 end
 
 local function homePage()
-  header(tr('welcome'),tr('title_home'),'R36S 640×480')
-  -- Cartão superior reposicionado para dar mais espaço às capas de destaque.
-  panel(179,90,441,116,true)
-  ui.kicker('R36S ROMS STORE',200,101)
-  txt(tr('subtitle'),200,121,19,theme.text,393)
-  txt(tr('intro'),200,149,11,theme.muted,392)
-  R(458,172,144,26,theme.accent,7)
-  txt(tr('explore'),465,179,11,theme.bg,130,true)
-  txt(tr('overview'),180,217,13,theme.text)
+  header(tr('welcome'),tr('title_home'))
+  -- Banner superior compacto e informacoes em coluna, destaques 2x2.
+  panel(179,84,441,90,true)
+  ui.kicker('R36S ROMS STORE',192,92)
+  txt(tr('subtitle'),192,111,17,theme.text,407)
+  txt(tr('intro'),192,136,10,theme.muted,406)
+  R(468,147,138,22,theme.accent,6)
+  txt(tr('explore'),474,151,10,theme.bg,126,true)
+  txt(tr('overview'),181,187,12,theme.text,119)
+  txt(tr('featured'),307,187,12,theme.text,300)
   local count=totalRoms()
-  local stats={
-    {tr('catalog_games'),count and tostring(count) or '—'},
+  local stats={{tr('catalog_games'),count and tostring(count) or '—'},
     {tr('installed_games'),tostring(#downloads)},
     {tr('favorites'),tostring(#favorites)}}
-  for i,value in ipairs(stats) do
-    local x=180+(i-1)*149
-    panel(x,235,140,64)
-    txt(value[1],x+10,244,10,theme.muted,122)
-    txt(value[2],x+10,264,20,theme.accent)
+  for i,item in ipairs(stats) do
+    local y=211+(i-1)*72
+    panel(180,y,115,65)
+    txt(ui.ellipsize(item[1],17),189,y+7,9,theme.muted,99)
+    txt(item[2],189,y+30,19,theme.accent,93)
   end
-  txt(tr('featured'),180,306,13,theme.text)
-  txt(tr('see_all')..' ›',548,307,10,theme.accent)
   if #external.games==0 then
-    panel(180,332,439,95)
-    txt(tr('loading'),197,368,12,theme.muted,390)
+    panel(307,211,312,210)
+    txt(tr('loading'),316,300,12,theme.muted,291,true)
   else
-    for i=1,math.min(3,#external.games) do
+    for i=1,math.min(4,#external.games) do
       local game=external.games[i]
-      local x=180+(i-1)*149
-      panel(x,330,140,97)
-      cover(game,x+3,333,134,67,i)
-      R(x+3,400,134,24,theme.panel,0,nil,.96)
-      txt(ui.ellipsize(game.name,18),x+7,407,10,theme.text,128)
+      local col=(i-1)%2;local row=math.floor((i-1)/2)
+      local x=307+col*160;local y=211+row*107
+      panel(x,y,152,100)
+      -- Capa sem titulo sobreposto: somente uma legenda abaixo da imagem.
+      cover(game,x+3,y+3,146,71,i)
+      R(x+3,y+75,146,22,theme.panel,0,nil,.97)
+      txt(ui.ellipsize(game.name,21),x+8,y+79,10,theme.text,136)
     end
   end
   footer()
@@ -407,24 +411,54 @@ local function confirmPage()
   footer()
 end
 local function transfersPage(route)
-  local isDone=external.phase=='done' and not external.busy()
-  header(tr('downloads'),route=='success' and tr('success') or tr('title_downloads'))
-  panel(180,110,440,287)
-  local phase=external.phase or 'idle'
-  local caption=tr('download_ready')
-  if external.busy() or route=='transferring' then caption=external.message or tr('download_progress')
-  elseif external.error then caption=external.message or tr('download_failed')
-  elseif isDone then caption=external.message or tr('download_completed') end
-  txt(external.error and tr('download_failed') or (isDone and tr('done') or tr('progress')),200,134,20,external.error and theme.error or theme.accent,405)
-  txt(ui.ellipsize(caption,83),200,184,13,theme.muted,405)
-  R(200,245,400,13,theme.border,7)
-  local progress=0
-  if (external.expected or 0)>0 then progress=math.min(1,(external.downloaded or 0)/external.expected)
-  elseif isDone then progress=1 end
-  if progress>0 then R(200,245,400*progress,13,theme.accent,7) end
-  txt((external.expected or 0)>0 and (math.floor(progress*100)..'%') or tr('status')..': '..phase,200,273,13,theme.accent)
-  txt(tr('history')..': '..#downloads,200,329,12,theme.muted)
-  txt(tr('see_all')..'  ›',520,362,12,theme.accent)
+  header(tr('downloads'),tr('title_downloads'))
+  -- Download em andamento no topo; downloads concluídos listados abaixo.
+  panel(180,89,440,130)
+  txt(tr('current_download'),195,98,12,theme.accent,408)
+  local active=external.activeDownload
+  local isCurrent=active and (external.pending=='download' or
+    (screen=='transferring' and external.phase~='done' and not external.error))
+  local finished=active and external.phase=='done' and not external.busy()
+  if isCurrent or finished then
+    txt(ui.ellipsize(active.name or '?',46),196,122,13,theme.text,390)
+    txt('SD'..tostring(active.card or 1)..'  ·  '..(
+      finished and tr('done') or external.error and tr('download_failed') or tr('progress')),
+      196,145,11,theme.muted,390)
+    local p=0
+    if finished then p=1
+    elseif (external.expected or 0)>0 then
+      p=math.max(0,math.min(1,(external.downloaded or 0)/external.expected)) end
+    R(196,169,402,12,theme.border,6)
+    if p>0 then R(196,169,402*p,12,theme.accent,6) end
+    txt((((external.expected or 0)>0 or finished) and
+      string.format('%d%%',math.floor(p*100+0.5))) or tr('download_progress'),
+      196,189,10,theme.muted,398)
+  else
+    txt(tr('no_current_download'),196,143,12,theme.muted,399)
+  end
+  txt(tr('completed_downloads')..'  ('..tostring(#downloads)..')',181,232,13,theme.text,421)
+  if #downloads==0 then
+    panel(180,252,440,168)
+    txt(tr('history_empty'),196,321,12,theme.muted,403,true)
+  else
+    local total=#downloads
+    local maxScroll=math.max(0,total-4)
+    downloadScroll=math.max(0,math.min(downloadScroll,maxScroll))
+    for slot=1,math.min(4,total-downloadScroll) do
+      local item=downloads[total-downloadScroll-slot+1]
+      local y=252+(slot-1)*43
+      panel(180,y,440,39)
+      R(190,y+11,6,16,theme.green,3)
+      txt(ui.ellipsize(item.name or '?',42),204,y+5,11,theme.text,298)
+      txt((item.card or '?'):upper(),530,y+5,10,theme.accent,78)
+      txt(os.date('%d/%m',tonumber(item.time) or os.time()),204,y+23,9,theme.muted,162)
+      txt(tr('done'),519,y+23,9,theme.green,92)
+    end
+    if total>4 then
+      txt('▲▼ '..tostring(downloadScroll+1)..'-'..tostring(math.min(total,downloadScroll+4))..'/'..total,
+        477,425,9,theme.muted,134)
+    end
+  end
   footer()
 end
 local function historyPage()
@@ -468,16 +502,29 @@ local function favoritesPage()
 end
 local function settingsPage()
   header(tr('personalize'),tr('title_settings'))
-  local values={tr('language'),tr('theme'),tr('storage'),tr('network'),tr('help')}
-  local shown={i18n.languages[1].name, tr('theme_blue'),tr('free_space')..' / '..tr('total_space'),tr('status'), 'A / B / L / R'}
+  local values={tr('language'),tr('theme'),tr('font_size'),tr('storage'),tr('network'),tr('help')}
+  local shown={i18n.languages[1].name,tr('theme_blue'),tr('font_'..settings.font_size),
+    tr('free_space')..' / '..tr('total_space'),tr('status'),'A / B / X / Y'}
   for _,o in ipairs(i18n.languages) do if o.code==settings.language then shown[1]=o.name end end
   for _,o in ipairs(theme.options) do if o.key==settings.theme then shown[2]=tr(o.name) end end
   for i,label in ipairs(values) do
-    local y=119+(i-1)*59
-    panel(180,y,440,53,i==settingsIndex)
-    txt(label,195,y+8,14,theme.text,310)
-    txt(shown[i],195,y+29,10,theme.muted,385)
-    txt('›',589,y+12,18,theme.accent)
+    local y=108+(i-1)*53
+    panel(180,y,440,47,i==settingsIndex)
+    txt(label,195,y+4,13,theme.text,310)
+    txt(shown[i],195,y+25,10,theme.muted,385)
+    txt('›',589,y+10,18,theme.accent)
+  end
+  footer()
+end
+local function fontSizePage()
+  header(tr('personalize'),tr('font_size'))
+  txt(tr('font_size_note'),183,104,11,theme.muted,428)
+  for i,key in ipairs(fontSizes) do
+    local y=146+(i-1)*78
+    panel(180,y,440,68,fontSizeIndex==i)
+    txt(tr('font_'..key),200,y+12,16,theme.text,309)
+    txt('Aa 123',200,y+38,12,theme.muted,272)
+    if settings.font_size==key then txt('✓',581,y+22,19,theme.accent) end
   end
   footer()
 end
@@ -550,7 +597,7 @@ local function aboutPage()
   txt('R36S ROMS',201,184,25,theme.text)
   txt('S T O R E',201,222,20,theme.accent)
   txt(tr('about_note'),201,279,12,theme.muted,389)
-  txt('v0.2.3  •  640×480',201,311,12,theme.accent,389)
+  txt('v0.2.4  •  640×480',201,311,12,theme.accent,389)
   txt(tr('about_runtime'),201,344,11,theme.low,390)
   footer()
 end
@@ -611,11 +658,13 @@ function love.load()
   ui.init();loadData()
   external.init(HOME,STATE)
   reloadDownloads()
+  device.update(0,true)
   screen='startup'
   if os.getenv('R36S_STORE_OFFLINE_TEST')~='1' then external.enter() end
 end
 function love.update(dt)
   clock=clock+dt
+  device.update(dt)
   if screen=='storage' and clock-storageLast>30 then refreshStorage() end
   external.update(dt)
   if screen=='startup' then
@@ -633,7 +682,7 @@ function love.update(dt)
   lastStatus=external.phase
 end
 function love.draw()
-  if screen=='startup' then splashPage();return end
+  if screen=='startup' then splashPage();ui.statusBar(device.get());return end
   sidebar()
   if screen=='home' or screen=='exit_confirm' then homePage()
   elseif screen=='catalog' then catalogPage()
@@ -646,6 +695,7 @@ function love.draw()
   elseif screen=='favorites' then favoritesPage()
   elseif screen=='settings' then settingsPage()
   elseif screen=='languages' then languagesPage()
+  elseif screen=='font_size' then fontSizePage()
   elseif screen=='themes' then themesPage()
   elseif screen=='storage' then storagePage()
   elseif screen=='network' then networkPage()
@@ -657,12 +707,23 @@ function love.draw()
     R(180,401,440,30,theme.panel2,7,theme.accent)
     txt(ui.ellipsize(notice,60),190,409,11,theme.text,420)
   end
+  ui.statusBar(device.get())
   if screen=='exit_confirm' then exitDialog() end
 end
 local function changeTheme()
   local o=theme.options[themeIndex];if not o then return end
   settings.theme=o.key;theme.set(o.key);saveSettings()
   notice=tr('theme')..': '..tr(o.name);noticeTime=2.0
+end
+local function changeFontSize()
+  local size=fontSizes[fontSizeIndex]
+  if size then
+    settings.font_size=size
+    ui.setFontSize(size)
+    saveSettings()
+    notice=tr('font_size')..': '..tr('font_'..size)
+    noticeTime=2
+  end
 end
 local function changeLanguage()
   local o=i18n.languages[languageIndex];if not o then return end
@@ -683,8 +744,12 @@ local function handleKey(key)
     elseif key=='b' or key=='x' then back() end
     return
   end
-  if key=='l' then mainNext(-1);return end
-  if key=='r' then mainNext(1);return end
+  -- Não troca abas com L1/R1: o menu lateral centraliza a navegação.
+  -- L1/R1 servem apenas à paginação quando o catálogo está em foco.
+  if screen=='catalog' and (key=='l' or key=='r') then
+    if external.pageChange(key=='r' and 1 or -1) then gameIndex=1 end
+    return
+  end
   if screen=='catalog' then
     if key=='start' or key=='x' then navigate('search');searchIndex=1;return end
     if key=='y' then external.refresh();return end
@@ -745,7 +810,9 @@ local function handleKey(key)
     elseif key=='b' then back() end
     return
   elseif screen=='downloads' or screen=='transferring' or screen=='success' then
-    if key=='a' then navigate('history')
+    if key=='up' then downloadScroll=math.max(0,downloadScroll-1)
+    elseif key=='down' then downloadScroll=math.min(math.max(0,#downloads-4),downloadScroll+1)
+    elseif key=='a' then navigate('history')
     elseif key=='b' then if screen=='downloads' then mainRoute('home') else mainRoute('downloads') end end
     return
   elseif screen=='history' then
@@ -777,6 +844,12 @@ local function handleKey(key)
     if key=='up' then languageIndex=math.max(1,languageIndex-1)
     elseif key=='down' then languageIndex=math.min(#i18n.languages,languageIndex+1)
     elseif key=='a' then changeLanguage()
+    elseif key=='b' then back() end
+    return
+  elseif screen=='font_size' then
+    if key=='up' then fontSizeIndex=math.max(1,fontSizeIndex-1)
+    elseif key=='down' then fontSizeIndex=math.min(3,fontSizeIndex+1)
+    elseif key=='a' then changeFontSize()
     elseif key=='b' then back() end
     return
   elseif screen=='themes' then
@@ -827,16 +900,18 @@ local function handleKey(key)
   end
   if key=='b' then back() end
 end
-function love.keypressed(key)
-  local keys={['return']='a',kpenter='a',escape='b',backspace='b',z='a',
+function love.keypressed(key,scancode,isrepeat)
+  if isrepeat then return end
+  -- Teclado para testes no PC. No console, SDL2 envia gamepadpressed.
+  local keys={['return']='a',kpenter='a',escape='b',backspace='b',
     up='up',down='down',left='left',right='right',
-    q='l',e='r',pageup='pageup',pagedown='pagedown',
-    f5='y',y='y',x='x',tab='start',space='a'}
+    pageup='l',pagedown='r',f5='y',y='y',x='x',tab='start'}
   handleKey(keys[key] or key)
 end
 function love.gamepadpressed(_,button)
+  -- Mapeamento SDL2 unico: direcional, face buttons, L1/R1 e START.
   local keys={a='a',b='b',x='x',y='y',dpup='up',dpdown='down',dpleft='left',dpright='right',
-    leftshoulder='l',rightshoulder='r',start='start',lefttrigger='pageup',righttrigger='pagedown'}
+    leftshoulder='l',rightshoulder='r',start='start'}
   if keys[button] then handleKey(keys[button]) end
 end
 function love.textinput(t)
@@ -875,8 +950,11 @@ function love.mousepressed(x,y,button)
         gameIndex=idx;focus='grid';enterGame(external.games[idx]) end
     elseif y<90 and x>=540 then navigate('search') end
   elseif screen=='settings' then
-    local idx=math.floor((y-119)/59)+1
-    if suboptions[idx] then settingsIndex=idx;navigate(suboptions[idx]) end
+    local idx=math.floor((y-108)/53)+1
+    if y>=108 and suboptions[idx] then settingsIndex=idx;navigate(suboptions[idx]) end
+  elseif screen=='font_size' then
+    local idx=math.floor((y-146)/78)+1
+    if y>=146 and fontSizes[idx] then fontSizeIndex=idx;changeFontSize() end
   elseif screen=='themes' then
     local col=math.floor((x-180)/149)
     local row=math.floor((y-126)/94)
