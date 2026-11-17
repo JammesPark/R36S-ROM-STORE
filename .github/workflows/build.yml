@@ -30,6 +30,7 @@ jobs:
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v024.lua
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v025.lua
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v026.lua
+          bash tests/test_v027_onboarding.sh
           python3 tests/test_gamestore.py
           python3 tests/test_single_catalog.py
           python3 tests/test_brand_cleanup.py
@@ -39,12 +40,15 @@ jobs:
       - name: Verificar conteudo do instalador
         run: |
           test -x 'port/R36S ROMS STORE.sh'
-          unzip -t build/R36S_ROMS_STORE_v0.2.6_TESTE.zip
-          unzip -Z1 build/R36S_ROMS_STORE_v0.2.6_TESTE.zip | grep -F 'r36s-roms-store/game.love'
+          unzip -t build/R36S_ROMS_STORE_v0.2.7_TESTE.zip
+          unzip -Z1 build/R36S_ROMS_STORE_v0.2.7_TESTE.zip | grep -F 'r36s-roms-store/game.love'
           tmp=$(mktemp -d)
-          unzip -p build/R36S_ROMS_STORE_v0.2.6_TESTE.zip 'r36s-roms-store/game.love' > "$tmp/game.love"
+          unzip -p build/R36S_ROMS_STORE_v0.2.7_TESTE.zip 'r36s-roms-store/game.love' > "$tmp/game.love"
           unzip -l "$tmp/game.love" | grep -F 'assets/logo.png'
-          unzip -q build/R36S_ROMS_STORE_v0.2.6_TESTE.zip -d "$tmp"
+          unzip -l "$tmp/game.love" | grep -F 'legal_text.lua'
+          unzip -Z1 build/R36S_ROMS_STORE_v0.2.7_TESTE.zip | grep -F 'r36s-roms-store/LICENSE'
+          unzip -Z1 build/R36S_ROMS_STORE_v0.2.7_TESTE.zip | grep -F 'r36s-roms-store/THIRD_PARTY_NOTICES.txt'
+          unzip -q build/R36S_ROMS_STORE_v0.2.7_TESTE.zip -d "$tmp"
           test -x "$tmp/R36S ROMS STORE.sh"
           test ! -d "$tmp/r36s-roms-store/bin/__pycache__"
           rm -rf "$tmp"

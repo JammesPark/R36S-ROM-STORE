@@ -5,6 +5,7 @@ local external=require('external')
 local ui=require('ui')
 local theme=require('theme')
 local i18n=require('i18n')
+local legal=require('legal_text')
 local device=require('device_status')
 local HOME=os.getenv('R36S_STORE_HOME') or '/roms/ports/r36s-roms-store'
 local STATE=HOME..'/state'
@@ -13,9 +14,12 @@ local menuPages={'home','catalog','downloads','installed','favorites','settings'
 local screen='startup'
 local stack={}
 local settings={language='pt',theme='ocean',font_size='medium'}
+local languageChosen=false -- salvo apenas depois da escolha inicial do usuario
+local aboutScroll=0
+local aboutMaxScroll=0
 local favorites={}
 local downloads={}
-local focus='grid'; local menuIndex=1;local categoryIndex=1;local gameIndex=1
+local focus='sidebar'; local menuIndex=1;local categoryIndex=1;local gameIndex=1
 local favIndex=1;local installIndex=1;local historyIndex=1;local settingsIndex=1;local downloadScroll=0
 local languageIndex=1;local themeIndex=1;local fontSizeIndex=2;local searchIndex=1;local query='';local searchResultIndex=1
 local selectedGame=nil
@@ -44,8 +48,8 @@ local function encodeString(s)
   return '"'..tostring(s or ''):gsub('[\\"\n\r\t]',replacements)..'"'
 end
 local function saveSettings()
-  write(STATE..'/roms_settings.json',string.format('{"language":%s,"theme":%s,"font_size":%s}',
-    encodeString(settings.language),encodeString(settings.theme),encodeString(settings.font_size)))
+  return write(STATE..'/roms_settings.json',string.format('{"language":%s,"theme":%s,"font_size":%s,"language_chosen":%s}',
+    encodeString(settings.language),encodeString(settings.theme),encodeString(settings.font_size),tostring(languageChosen)))
 end
 local function saveFavorites()
   local items={}
@@ -61,7 +65,8 @@ end
 local function loadData()
   local c=json.decode(read(STATE..'/roms_settings.json') or '')
   if type(c)=='table' then
-    for _,l in ipairs(i18n.languages) do if l.code==c.language then settings.language=l.code end end
+    languageChosen=(c.language_chosen==true)
+    for i,l in ipairs(i18n.languages) do if l.code==c.language then settings.language=l.code;languageIndex=i end end
     for _,t in ipairs(theme.options) do if t.key==c.theme then settings.theme=t.key end end
     for idx,v in ipairs(fontSizes) do
       if v==c.font_size then settings.font_size=v;fontSizeIndex=idx end
@@ -170,6 +175,7 @@ local function navigate(route)
   end
 end
 local function mainRoute(route)
+  if route=='about' then aboutScroll=0 end
   screen=route;stack={};focus=route=='home' and 'sidebar' or 'grid'
   if route=='home' then homeFocus='explore';homeOverviewIndex=1 end
   for i,k in ipairs(mainPages) do if k==route then menuIndex=i end end
@@ -291,7 +297,7 @@ local function footer(phrase)
   else
     ui.footer(tr('select'),tr('back'))
   end
-  txt('v0.2.6',579,452,10,theme.accent)
+  txt('v0.2.7',579,452,10,theme.accent)
 end
 local function card(game,x,y,w,h,idx,active,badge)
   panel(x,y,w,h,active)
@@ -641,31 +647,95 @@ local function networkPage()
   txt(tr('refresh'),213,332,14,theme.bg,370,true)
   footer()
 end
+-- Renderizador de parágrafos: não usa ui.text, que trunca textos longos.
+local function legalParagraph(content,x,y,width,size,color,lineHeight)
+  local f=ui.font(size)
+  ui.color(color)
+  love.graphics.setFont(f)
+  love.graphics.printf(content,x,y,width,'left')
+  local lines=1
+  if type(f.getWrap)=='function' then
+    local _,result=f:getWrap(content,width)
+    if type(result)=='table' then lines=math.max(1,#result) end
+  else
+    -- Fallback apenas para os testes que usam fontes simuladas.
+    lines=math.max(1,math.ceil(#tostring(content)*size*.54/width))
+  end
+  local h=(type(f.getHeight)=='function' and f:getHeight() or size*1.3)
+  return y+math.max(h*lines,lineHeight or 0)
+end
+local function fullScreenBackground()
+  R(0,0,640,480,theme.bg)
+  ui.color(theme.accent,.055);love.graphics.circle('fill',555,75,120)
+  ui.color(theme.accent,.045);love.graphics.circle('fill',85,450,185)
+end
+local function firstLanguagePage()
+  fullScreenBackground()
+  panel(65,48,510,386,true)
+  ui.drawLogo(238,53,164,85)
+  local wording=legal.get(settings.language)
+  txt(wording.languageTitle,103,143,21,theme.text,434,true)
+  txt(wording.languageHint,108,172,11,theme.muted,424,true)
+  for i,lang in ipairs(i18n.languages) do
+    local y=207+(i-1)*45
+    R(109,y,421,39,i==languageIndex and theme.panel2 or theme.panel,7,i==languageIndex and theme.accent or theme.border)
+    ui.flag(lang.code,124,y+9,31,21)
+    txt(lang.name,171,y+10,14,i==languageIndex and theme.accent or theme.text,288)
+    if i==languageIndex then txt('✓',493,y+9,15,theme.accent) end
+  end
+  R(0,442,640,38,theme.sidebar)
+  txt('↑ ↓',140,454,12,theme.accent)
+  txt(wording.choose,198,454,12,theme.text,340)
+  txt('A',106,452,14,theme.accent)
+end
+local function disclaimerPage()
+  local wording=legal.get(settings.language)
+  fullScreenBackground()
+  ui.drawLogo(20,11,110,63)
+  txt(wording.welcome,136,30,21,theme.text,486)
+  R(27,84,586,1,theme.border)
+  local y=106
+  for _,p in ipairs(wording.notice) do
+    y=legalParagraph(p,39,y,562,12,theme.text,17)+12
+  end
+  txt(wording.community,38,380,15,theme.accent,563,true)
+  R(150,412,340,42,theme.accent,9)
+  txt('A  —  '..wording.continue,161,424,13,theme.bg,319,true)
+end
 local function aboutPage()
   header(tr('info'),tr('title_about'))
-  -- Referencia: cartao de autoria e mensagem do projeto da imagem enviada.
-  -- Mantem visual proprio sem reproduzir logo/marca de terceiros.
-  panel(180,92,440,109)
-  R(188,100,423,4,theme.accent,2)
-  ui.drawLogo(191,110,163,80)
-  txt('v0.2.6  •  TESTE',359,169,10,theme.muted,105)
-  R(473,119,136,60,theme.panel2,8,theme.border)
-  txt(tr('about_author'),482,129,9,theme.muted,114,true)
-  txt('JAMES PARK',481,148,14,theme.accent,116,true)
-
-  panel(180,209,440,142)
-  ui.kicker(tr('about_project'),195,217)
-  txt(tr('about_line1'),196,241,12,theme.text,400)
-  txt(tr('about_line2'),196,261,12,theme.text,400)
-  R(195,288,408,1,theme.border,1)
-  txt('640×480  •  LUA + LÖVE 11.5  •  SD1 / SD2',196,301,11,theme.accent,406)
-  txt(tr('about_community'),196,326,10,theme.muted,407)
-
-  panel(180,360,440,69)
-  txt(tr('about_warning'),195,368,11,theme.accent,402)
-  txt(tr('about_warning1'),195,387,10,theme.muted,408)
-  txt(tr('about_warning2'),195,404,10,theme.muted,408)
-  footer()
+  panel(180,95,440,338)
+  local copy=legal.get(settings.language)
+  local top=111-aboutScroll
+  love.graphics.setScissor(187,101,426,327)
+  ui.drawLogo(198,top,182,87)
+  txt('R36S ROMS STORE',390,top+22,13,theme.text,209)
+  txt('v0.2.7 • JAMES PARK',390,top+45,11,theme.accent,203)
+  local y=top+103
+  R(196,y,406,1,theme.border)
+  y=y+17
+  txt(copy.aboutHeading,197,y,13,theme.accent,402)
+  y=y+26
+  for _,p in ipairs(copy.aboutIntro) do
+    y=legalParagraph(p,198,y,403,12,theme.text,17)+11
+  end
+  txt(copy.aboutSlogan,198,y,11,theme.accent,407)
+  y=y+33
+  R(196,y,406,1,theme.border)
+  y=y+14
+  txt(copy.warningTitle,198,y,14,theme.accent,399)
+  y=y+25
+  for _,p in ipairs(copy.aboutWarnings) do
+    y=legalParagraph(p,198,y,403,12,theme.muted,17)+12
+  end
+  aboutMaxScroll=math.max(0,math.ceil((y+aboutScroll)-423))
+  love.graphics.setScissor()
+  if aboutMaxScroll>0 then
+    R(610,110,4,312,theme.border,2)
+    local bar=math.max(35,312*(312/(312+aboutMaxScroll)))
+    R(610,110+(312-bar)*aboutScroll/aboutMaxScroll,4,bar,theme.accent,2)
+  end
+  txt('↑ ↓  '..copy.scroll..'    •    B  '..tr('back'),184,441,10,theme.muted,426)
 end
 local function helpPage()
   header(tr('info'),tr('help'))
@@ -742,7 +812,7 @@ function love.update(dt)
   end
   if screen=='startup' then
     startupTime=startupTime+dt
-    if startupTime>1.2 then mainRoute('home') end
+    if startupTime>1.2 then screen=languageChosen and 'disclaimer' or 'first_language' end
   end
   noticeTime=math.max(0,noticeTime-dt)
   if math.floor(clock*2)~=math.floor((clock-dt)*2) then
@@ -756,6 +826,8 @@ function love.update(dt)
 end
 function love.draw()
   if screen=='startup' then splashPage();ui.statusBar(device.get());return end
+  if screen=='first_language' then firstLanguagePage();return end
+  if screen=='disclaimer' then disclaimerPage();return end
   sidebar()
   if screen=='home' or screen=='exit_confirm' then homePage()
   elseif screen=='catalog' then catalogPage()
@@ -824,7 +896,24 @@ local function refreshCatalog()
   return false
 end
 local function handleKey(key)
-  if screen=='startup' then if key=='a' or key=='b' then mainRoute('home') end;return end
+  if screen=='startup' then return end
+  if screen=='first_language' then
+    if key=='up' then languageIndex=math.max(1,languageIndex-1)
+    elseif key=='down' then languageIndex=math.min(#i18n.languages,languageIndex+1)
+    elseif key=='a' then
+      local lang=i18n.languages[languageIndex]
+      if lang then
+        settings.language=lang.code
+        languageChosen=true
+        if saveSettings() then screen='disclaimer' end
+      end
+    end
+    return
+  end
+  if screen=='disclaimer' then
+    if key=='a' then mainRoute('home') end
+    return
+  end
   if screen=='exit_confirm' then
     if key=='a' then love.event.quit()
     elseif key=='b' or key=='x' then back() end
@@ -964,8 +1053,11 @@ local function handleKey(key)
     elseif key=='b' then back() end
     return
   elseif screen=='about' or screen=='help' then
-    -- A nunca abre Ajuda automaticamente ao visitar Sobre.
-    if key=='b' then back() end
+    if screen=='about' then
+      if key=='up' then aboutScroll=math.max(0,aboutScroll-47)
+      elseif key=='down' then aboutScroll=math.min(aboutMaxScroll,aboutScroll+47)
+      elseif key=='b' then back() end
+    elseif key=='b' then back() end
     return
   elseif screen=='home' then
     -- D-pad escolhe item e regiao; somente A entra no item em foco.
@@ -1031,6 +1123,18 @@ function love.textinput(t)
 end
 function love.mousepressed(x,y,button)
   if button~=1 then return end
+  if screen=='startup' then return end
+  if screen=='first_language' then
+    if x>=109 and x<=530 and y>=207 and y<388 then
+      local i=math.floor((y-207)/45)+1
+      if i18n.languages[i] then languageIndex=i;handleKey('a') end
+    end
+    return
+  end
+  if screen=='disclaimer' then
+    if x>=150 and x<=490 and y>=412 and y<=456 then handleKey('a') end
+    return
+  end
   if screen=='exit_confirm' then
     if y>=275 and y<=320 then
       if x>=166 and x<310 then handleKey('a')
@@ -1102,5 +1206,11 @@ function love.mousepressed(x,y,button)
   elseif screen=='confirm' then
     if y>228 and y<332 then selectedCard=x<406 and 1 or 2
     elseif y>350 then handleKey('a') end
+  end
+end
+
+function love.wheelmoved(x,y)
+  if screen=='about' then
+    aboutScroll=math.max(0,math.min(aboutMaxScroll,aboutScroll-y*36))
   end
 end

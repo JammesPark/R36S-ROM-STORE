@@ -92,7 +92,7 @@ O uso do Wi-Fi, da bateria e a aceitação do controle dependem do dispositivo e
 A integracao grafica ainda depende de validacao no console real.
 
 
-## v0.2.6 — logo oficial, catálogo em lista e busca real
+## v0.2.7 — logo oficial, catálogo em lista e busca real
 
 - `src/assets/logo.png`: logo enviada e revisada pelo usuário, com fundo transparente. Incluída no `game.love`; aplicada na entrada, cabeçalho lateral e Sobre, com fallback se a imagem estiver danificada.
 - Menu de plataformas com marcadores distintos (NES, SNES, PSX, GBA, N64, etc.).
@@ -100,3 +100,12 @@ A integracao grafica ainda depende de validacao no console real.
 - Catálogo em lista de seis ROMs por bloco, com capa grande selecionada à direita, sem cortar imagem. **D-pad cima/baixo** seleciona, **A** abre detalhes e **L1/R1** troca páginas.
 - **Busca remota completa:** usa a ação `search` da API, com paginação e cache separado; não limita resultados às ROMs da página atual. **X** abre teclado, **START** consulta, **B** volta para editar.
 - Os dados reais e a disponibilidade dependem do servidor do catálogo e do dispositivo físico.
+
+
+## v0.2.7 — idioma inicial, aviso obrigatório e Sobre
+
+Ao iniciar pela primeira vez, após o carregamento, o usuário escolhe um dos quatro idiomas disponíveis: português do Brasil, inglês, espanhol ou russo. A escolha é persistida em `state/roms_settings.json` por `language_chosen: true`; nas aberturas seguintes, a seleção de idioma não será exibida novamente, mas poderá ser alterada em Configurações → Idioma. Uma atualização sobre uma versão antiga que não contém a chave `language_chosen` mostra a seleção inicial apenas uma vez.
+
+**O aviso de responsabilidade aparece em toda inicialização**, após o carregamento e, quando necessário, após a escolha de idioma. O botão A confirma a leitura e permite entrar na loja. O botão B não ignora o aviso. Os textos do aviso e da tela Sobre foram revisados e traduzidos para quatro idiomas em `src/legal_text.lua`. O texto da tela Sobre dispõe de rolagem pelo direcional cima/baixo e inclui a indicação da licença e os avisos autorais.
+
+**Licenciamento:** o código original do aplicativo é distribuído sob GNU GPL-3.0 (`LICENSE`). Também incluímos `THIRD_PARTY_NOTICES.txt`. A licença do código não se estende automaticamente a ROMs, jogos, capas, marcas nem runtimes de terceiros. As licenças e os créditos dos componentes de terceiros devem ser respeitados e preservados. O aplicativo não é afiliado oficialmente a fabricantes ou desenvolvedores de jogos.

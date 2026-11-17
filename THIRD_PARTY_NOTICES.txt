@@ -1,0 +1,15 @@
+R36S ROMS STORE — AVISOS DE AUTORIA E COMPONENTES DE TERCEIROS
+
+1. A interface e os scripts próprios desta loja são distribuídos sob GNU GPL-3.0; veja LICENSE.
+2. O aplicativo utiliza LÖVE 11.5 como runtime externo (não incluído no pacote).
+   Os direitos e as licenças dos componentes LÖVE/SDL2 e suas dependências
+   permanecem com seus respectivos titulares.
+3. O catálogo, as capas e as ROMs são disponibilizados por terceiros e NÃO estão
+   incluídos na licença GPL-3.0 do código do aplicativo. Os direitos sobre jogos,
+   ROMs, marcas e imagens permanecem com seus respectivos titulares.
+4. A autoria de qualquer código-base efetivamente incorporado deve ser identificada
+   e creditada, e os avisos originais de licença devem permanecer intactos.
+5. Esta loja não é vinculada oficialmente a fabricantes de hardware nem a
+   desenvolvedores de jogos.
+
+Este documento não substitui os avisos de licenciamento de terceiros, quando aplicáveis.
