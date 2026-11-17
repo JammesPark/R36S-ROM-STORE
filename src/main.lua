@@ -1,4 +1,5 @@
 local json=require('json')
+local external=require('external')
 local W,H=640,480
 local HOME=os.getenv('R36S_STORE_HOME') or '/roms/ports/r36s-store-kpm'
 local STATE=HOME..'/state'
@@ -173,7 +174,7 @@ local function drawHome()
 end
 local function drawList()
   local list=currentList()
-  printx(tab==2 and t('CATALOGO DE PORTS','PORT CATALOG') or t('PORTS INSTALADOS','INSTALLED PORTS'),26,119,16)
+  printx(tab==2 and t('CATALOGO KPM  •  X: GAMESTORE BR','KPM CATALOG  •  X: GAMESTORE BR') or t('PORTS INSTALADOS','INSTALLED PORTS'),26,119,15)
   if #list==0 then
     panel(24,148,592,197)
     printx(tab==2 and t('Catalogo vazio. Configure URL em AJUSTES.','Empty catalog. Configure the URL in SETTINGS.')
@@ -249,9 +250,11 @@ function love.load()
   fonts[21]=love.graphics.newFont(21)
   fonts[22]=love.graphics.newFont(22)
   fonts[28]=love.graphics.newFont(28)
+  external.init(HOME,STATE)
   loadCatalog();loadInstalled();parseStatus()
 end
 function love.update(dt)
+  external.update(dt)
   poll=poll+dt
   noticeTime=math.max(0,noticeTime-dt)
   if poll>=0.55 then
@@ -271,7 +274,8 @@ function love.update(dt)
 end
 function love.draw()
   drawHeader()
-  if tab==1 then drawHome() elseif tab==2 or tab==3 then drawList()
+  if tab==1 then drawHome() elseif tab==2 and external.active then external.draw()
+  elseif tab==2 or tab==3 then drawList()
   elseif tab==4 then drawDownload() else drawSettings() end
   if noticeTime>0 then
     panel(24,404,592,35,true)
@@ -280,6 +284,8 @@ function love.draw()
   drawFooter();drawModal()
 end
 local function action(key)
+  if tab==2 and external.active and external.handle(key) then return end
+  if tab==2 and key=='x' then external.toggle(); return end
   if modal then
     if key=='b' then modal=nil
     elseif key=='a' then
@@ -288,8 +294,8 @@ local function action(key)
     end
     return
   end
-  if key=='l' then tab=tab==1 and 5 or tab-1;chosen=1
-  elseif key=='r' then tab=tab==5 and 1 or tab+1;chosen=1
+  if key=='l' or key=='left' then tab=tab==1 and 5 or tab-1;chosen=1
+  elseif key=='r' or key=='right' then tab=tab==5 and 1 or tab+1;chosen=1
   elseif key=='up' then chosen=math.max(1,chosen-1)
   elseif key=='down' then chosen=math.min(math.max(#currentList(),1),chosen+1)
   elseif key=='y' then refresh()
@@ -311,12 +317,12 @@ local function action(key)
 end
 function love.keypressed(k)
   local keys={['return']='a',kpenter='a',escape='b',backspace='b',
-    up='up',down='down',left='l',right='r',q='l',e='r',
-    f5='y',r='y',delete='x',x='x'}
+    up='up',down='down',left='left',right='right',q='l',e='r',
+    f5='y',r='y',delete='x',x='x',start='start'}
   action(keys[k] or k)
 end
 function love.gamepadpressed(_,button)
   local keys={a='a',b='b',x='x',y='y',dpup='up',dpdown='down',
-    dpleft='l',dpright='r',leftshoulder='l',rightshoulder='r'}
+    dpleft='left',dpright='right',leftshoulder='l',rightshoulder='r',start='start'}
   if keys[button] then action(keys[button]) end
 end

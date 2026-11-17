@@ -62,3 +62,14 @@ bash tools/build.sh
 
 ## Estado atual
 **Primeira base de teste.** Ainda falta validar o runtime LÖVE no R36S/dArkOSen ou ArkOS, controlar downloads pausados/retomados e integrar um catalogo publico de verdade. O codigo de terceiros nao foi reutilizado.
+
+
+## Catálogo adicional GameStoreBR (integração independente)
+
+A aba **CATÁLOGO** possui duas fontes separadas: **KPM** (ports próprios, com SHA-256 obrigatório) e **GAMESTORE BR** (jogos de múltiplos sistemas). Pressione **X** dentro do catálogo para alternar as fontes; **START** abre a seleção de plataformas, direcional esquerda/direita muda as páginas; **A** confirma download, **X** no diálogo alterna SD1/SD2.
+
+O arquivo `GameStoreBR(1).zip` fornecido não contém a listagem de jogos: seu aplicativo consulta `r36swiki.com/getgames.php` usando as ações `categories` e `games`. O projeto implementa um adaptador **próprio**, `bin/gamestore_source.py`, que consulta essa API em tempo de execução, tenta HTTPS e, por compatibilidade com a origem, permite fallback HTTP **somente para a API desse provedor**. Isso não comprova que a API ainda esteja ativa; testes automatizados simulam respostas sem depender da conexão externa.
+
+Jogos externos são salvos como **arquivos ROM/ZIP sem extração ou execução**, dentro de `/roms/<plataforma>/` (SD1) ou `/roms2/<plataforma>/` (SD2). Não são instalados como ports pela loja KPM. A extensão e o formato são mantidos conforme o download. Os arquivos não são sobrescritos automaticamente; o SD2 é checado antes da gravação. Quando a fonte não fornece um SHA-256, o arquivo fica **sem verificação criptográfica de origem**, ainda que tenha checksum local calculado; prefira fontes autorizadas e confiáveis.
+
+O catálogo GameStoreBR e o catálogo KPM **não são mesclados**. Nenhum jogo/ROM é incluído nos ZIPs gerados. Links e capas são propriedade dos respectivos provedores; verifique permissões de uso e distribuição. A API original usa HTTP, o que implica risco de adulteração dos metadados e downloads se não houver HTTPS. Nenhum download é executado automaticamente.

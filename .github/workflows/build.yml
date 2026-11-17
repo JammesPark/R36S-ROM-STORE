@@ -21,11 +21,12 @@ jobs:
         run: |
           find src -type f -name '*.lua' -print0 | xargs -0 -r -n1 luac5.4 -p
           find port tools tests -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
-          python3 -m py_compile port/r36s-store-kpm/bin/archive_safe.py
+          python3 -m py_compile port/r36s-store-kpm/bin/archive_safe.py port/r36s-store-kpm/bin/gamestore_source.py
       - name: Testes
         run: |
           lua5.4 tests/test_json.lua
           python3 tests/test_archives.py
+          python3 tests/test_gamestore.py
           bash -x tests/test_backend.sh
       - name: Criar ZIPs instalavel e fonte
         run: bash tools/build.sh
