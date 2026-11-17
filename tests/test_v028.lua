@@ -26,13 +26,32 @@ end
 love={graphics=gfx,audio=audio,filesystem={newFileData=function(v,n)return v end},event={quit=function()end}}
 require('main')
 love.load()
+local function findRef(name)
+  local functions={love.draw,love.gamepadpressed}
+  for _,fn in ipairs(functions) do
+    for i=1,180 do
+      local n,v=debug.getupvalue(fn,i)
+      if not n then break end
+      if n==name then return fn,i end
+      if n=='handleKey' and type(v)=='function' then
+        for j=1,180 do
+          local nested=debug.getupvalue(v,j)
+          if nested==name then return v,j end
+          if not nested then break end
+        end
+      end
+    end
+  end
+  error('upvalue ausente: '..name)
+end
 local function getup(name)
- for i=1,180 do local n,v=debug.getupvalue(love.draw,i);if n==name then return v end end
- error('upvalue ausente: '..name)
+  local fn,index=findRef(name)
+  local _,value=debug.getupvalue(fn,index)
+  return value
 end
 local function setup(name,value)
- for i=1,180 do local n=debug.getupvalue(love.draw,i);if n==name then debug.setupvalue(love.draw,i,value);return end end
- error('upvalue ausente: '..name)
+  local fn,index=findRef(name)
+  debug.setupvalue(fn,index,value)
 end
 assert(#loaded==3,'Três temas OGG devem ser carregados')
 local legal=require('legal_text')
