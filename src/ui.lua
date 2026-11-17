@@ -42,7 +42,8 @@ function U.init()
     if valid and resource then assets[k]=resource end
   end
   local glyphs={'house','library-big','download','hard-drive','heart','settings','info','log-out',
-    'gamepad-2','joystick','disc-3','monitor','tablet','cpu','disc','circuit-board','gamepad','search'}
+    'gamepad-2','joystick','disc-3','monitor','tablet','cpu','disc','circuit-board','gamepad','search',
+    'languages','palette','type','wifi','circle-help'}
   for _,k in ipairs(glyphs) do
     local valid,resource=pcall(love.graphics.newImage,'assets/icons/'..k..'.png')
     if valid and resource then assets['ico_'..k]=resource end
@@ -100,6 +101,25 @@ function U.text(s,x,y,size,color,maxwidth,center)
     love.graphics.print(s,x,y)
   end
 end
+-- Textos longos sem ellipsis: usam a quebra real do LÖVE e alinham a esquerda.
+-- Retorna o proximo y para distribuir textos sem sobreposicao.
+function U.paragraph(s,x,y,width,size,color,extraSpacing)
+  local f=U.font(size or 12)
+  U.color(color or theme.text)
+  love.graphics.setFont(f)
+  local lines
+  if type(f.getWrap)=='function' then
+    local ok,_,wrapped=pcall(function() return f:getWrap(tostring(s or ''),width) end)
+    if ok and type(wrapped)=='table' and #wrapped>0 then lines=wrapped end
+  end
+  if not lines then lines={tostring(s or '')} end
+  local increment=(type(f.getHeight)=='function' and f:getHeight() or (size or 12)*1.15)+(extraSpacing or 2)
+  for i,line in ipairs(lines) do
+    love.graphics.printf(line,x,y+(i-1)*increment,width,'left')
+  end
+  return y+#lines*increment
+end
+
 function U.ellipsize(s,n)
   s=tostring(s or '')
   if #s<=n then return s end
@@ -143,17 +163,25 @@ function U.kicker(text,x,y)
   U.color(theme.accent);love.graphics.circle('fill',x+3,y+7,2.6)
   U.text(string.upper(text),x+13,y,11,theme.accent,400)
 end
-function U.footer(a,b,c)
-  local x=177
-  local function key(t,description)
-    local wid=math.max(20,#t*7+8)
-    U.rect(x,449,wid,18,theme.panel2,5,theme.border)
-    U.text(t,x+4,452,10,theme.accent)
-    U.text(description,x+wid+5,453,10,theme.muted)
-    x=x+wid+10+math.min(110,(#description*6.6)+5)
+-- Botões do controle (cores dos botões reais do console).
+function U.buttonHint(x,y,key,label,maxwidth)
+  local colors={A={.95,.30,.50},B={.98,.77,.23},X={.30,.66,.97},Y={.37,.80,.55},START=theme.accent}
+  local c=colors[key] or theme.accent
+  if key=='A' or key=='B' or key=='X' or key=='Y' then
+    U.color(c)
+    love.graphics.circle('fill',x+9,y+9,9)
+    U.text(key,x+3,y+2,11,theme.bg,13,true)
+  else
+    U.rect(x,y,42,18,theme.panel2,7,c)
+    U.text(key,x+3,y+3,9,c,36,true)
   end
-  key('A',a or 'OK');key('B',b or 'VOLTAR');
-  if c then key('L/R',c) end
+  local offset=(key=='START' and 46 or 23)
+  U.text(label or '',x+offset,y+3,10,theme.muted,maxwidth or 76)
+end
+function U.footer(a,b,c)
+  U.buttonHint(177,449,'A',a or 'OK',100)
+  U.buttonHint(296,449,'B',b or 'VOLTAR',104)
+  if c then U.buttonHint(424,449,'START',c,140) end
 end
 local coverPalettes={
   {{.08,.10,.35},{.42,.17,.55},{1,.68,.48}},
@@ -268,25 +296,15 @@ function U.platformIcon(category,x,y,c)
   local used=U.icon(kind,x,y,19,19,c)
   -- Pequenissimo identificador para diferenciar plataformas da mesma familia.
   if not used then U.rect(x+3,y+3,13,13,c,2) end
-  local tag=platformShort[id]
-  if tag then
-    U.rect(x+11,y+12,13,9,theme.sidebar,2)
-    U.text(tag,x+11,y+12,8,theme.accent,13,true)
-  end
+  -- Ícone sem siglas sobrepostas, como pedido para plataformas.
 end
-function U.catalogFooter(selectText,backText,searchText,pageText)
+function U.catalogFooter(selectText,backText,searchText,scrollText)
   U.rect(158,436,482,44,{.035,.080,.13})
   U.rect(158,435,482,1,theme.border)
-  local function key(x,keyName,label)
-    local w=keyName=='L/R' and 34 or 20
-    U.rect(x,449,w,18,theme.panel2,5,theme.border)
-    U.text(keyName,x+3,452,10,theme.accent,w-6,true)
-    U.text(label,x+w+4,453,10,theme.muted,76)
-  end
-  key(177,'A',selectText)
-  key(270,'B',backText)
-  key(351,'X',searchText)
-  key(469,'L/R',pageText)
+  U.buttonHint(172,449,'A',selectText,55)
+  U.buttonHint(258,449,'B',backText,57)
+  U.buttonHint(340,449,'X',searchText,62)
+  U.buttonHint(441,449,'START',scrollText,112)
 end
 function U.drawLogo(x,y,w,h)
   if brandImage then

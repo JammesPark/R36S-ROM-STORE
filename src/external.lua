@@ -1,7 +1,7 @@
 -- GameStoreBR: somente adaptador de dados. O layout pertence a main.lua.
 local json=require('json')
 local M={categories={{category='ALL',count=0}},games={},category='ALL',page=1,totalPages=1,total=0,
-         pending=nil,phase='idle',message='',downloaded=0,expected=0,error=false,connected=nil,maintenance=false,activeDownload=nil,searchResults={},searchQuery="",searchPage=1,searchTotalPages=1,searchTotal=0}
+         inspectResult=nil,removed=false,appendGames=false,appendSearch=false,pending=nil,phase='idle',message='',downloaded=0,expected=0,error=false,connected=nil,maintenance=false,activeDownload=nil,searchResults={},searchQuery="",searchPage=1,searchTotalPages=1,searchTotal=0}
 local home,state,lastStatus='',nil
 local function read(path)
   local f=io.open(path,'rb');if not f then return nil end
@@ -28,36 +28,63 @@ end
 function M.loadGames()
   local data=cached(state..'/gamestore_games.json')
   if data and type(data.games)=='table' then
-    M.games=data.games;M.category=data.category or M.category
-    M.page=tonumber(data.page) or 1
+    local page=tonumber(data.page) or 1
+    if M.appendGames and page==M.page+1 and data.category==M.category then
+      local seen={}
+      for _,g in ipairs(M.games) do seen[g.game_path]=true end
+      for _,g in ipairs(data.games) do
+        if not seen[g.game_path] then M.games[#M.games+1]=g;seen[g.game_path]=true end
+      end
+    else
+      M.games=data.games
+    end
+    M.category=data.category or M.category
+    M.page=page
     M.totalPages=math.max(1,tonumber(data.total_pages) or 1)
     M.total=math.max(0,tonumber(data.total) or #M.games)
+    if M.appendGames and #data.games==0 then M.totalPages=M.page end
+    M.appendGames=false
     return true
   end
+  M.appendGames=false
   return false
 end
 function M.loadSearch()
   local data=cached(state..'/gamestore_search.json')
   if data and type(data.games)=='table' then
-    M.searchResults=data.games
+    local page=tonumber(data.page) or 1
+    if M.appendSearch and page==M.searchPage+1 and tostring(data.query or '')==M.searchQuery then
+      local seen={}
+      for _,g in ipairs(M.searchResults) do seen[g.game_path]=true end
+      for _,g in ipairs(data.games) do
+        if not seen[g.game_path] then M.searchResults[#M.searchResults+1]=g;seen[g.game_path]=true end
+      end
+    else M.searchResults=data.games end
     M.searchQuery=tostring(data.query or M.searchQuery)
-    M.searchPage=tonumber(data.page) or 1
+    M.searchPage=page
     M.searchTotalPages=math.max(1,tonumber(data.total_pages) or 1)
     M.searchTotal=math.max(0,tonumber(data.total) or #M.searchResults)
+    if M.appendSearch and #data.games==0 then M.searchTotalPages=M.searchPage end
+    M.appendSearch=false
     return true
   end
+  M.appendSearch=false
   return false
 end
 function M.search(term,page)
   term=tostring(term or ''):gsub('^%s+',''):gsub('%s+$','')
   if #term<2 or #term>80 or M.pending then return false end
   M.searchQuery=term
+  M.appendSearch=false
+  if (page or 1)==1 then M.searchResults={};M.searchPage=0 end
   return M.request('search',{term,tostring(page or 1)})
 end
 function M.searchPageChange(delta)
-  local dest=M.searchPage+delta
-  if dest<1 or dest>M.searchTotalPages or M.pending then return false end
-  return M.search(M.searchQuery,dest)
+  if delta~=1 or M.pending or M.searchPage>=M.searchTotalPages then return false end
+  M.appendSearch=true
+  if M.request('search',{M.searchQuery,tostring(M.searchPage+1)}) then return true end
+  M.appendSearch=false
+  return false
 end
 function M.init(appPath, statePath)
   home,state=appPath,statePath
@@ -85,19 +112,33 @@ end
 function M.categoryChange(category)
   if M.pending then return false end
   local old=M.category
-  M.category=category;M.page=1
+  M.category=category;M.page=0;M.games={};M.appendGames=false
   local ok=M.request('games',{category,'1'})
   if not ok then M.category=old end
   return ok
 end
 function M.pageChange(delta)
-  local target=M.page+delta
-  if M.pending or target<1 or target>M.totalPages then return false end
-  return M.request('games',{M.category,tostring(target)})
+  -- A paginação é interna: resultados são acrescentados à lista rolável.
+  if delta~=1 or M.pending or M.page>=M.totalPages then return false end
+  M.appendGames=true
+  if M.request('games',{M.category,tostring(M.page+1)}) then return true end
+  M.appendGames=false
+  return false
 end
-function M.download(g,card)
+function M.loadNext() return M.pageChange(1) end
+function M.inspect(g,card)
   if not g or not g.game_path or not g.category then return false end
-  local ok=M.request('download',{g.game_path,g.category,card==2 and 'sd2' or 'sd1',g.name or 'ROM',g.sha256 or ''})
+  M.inspectResult=nil
+  return M.request('inspect',{g.game_path,g.category,card==2 and 'sd2' or 'sd1'})
+end
+function M.remove(d)
+  if not d or type(d.game_path)~='string' or type(d.filename)~='string' then return false end
+  M.removed=false
+  return M.request('remove',{d.game_path,d.category,d.card,d.filename})
+end
+function M.download(g,card,overwrite)
+  if not g or not g.game_path or not g.category then return false end
+  local ok=M.request('download',{g.game_path,g.category,card==2 and 'sd2' or 'sd1',g.name or 'ROM',g.sha256 or '',overwrite and '1' or '0'})
   if ok then
     M.activeDownload={name=g.name or 'ROM',card=card}
     M.downloaded=0;M.expected=0
@@ -131,6 +172,10 @@ function M.update()
       M.loadGames()
       -- As capas sao opcionais: baixadas em paralelo, sem bloquear o menu.
       command({'covers'})
+    elseif task=='inspect' then
+      M.inspectResult={exists=s.exists==true,managed=s.managed==true,filename=s.filename,card=s.card}
+    elseif task=='remove' then
+      M.removed=true
     end
   end
 end

@@ -199,23 +199,101 @@ def target_root(sd):
             raise ValueError("SD2 não está montado separadamente")
     return base
 
-def download(url, category, sd, name, checksum=""):
+def rom_filename(url):
+    """Nome seguro, igual para inspeção, download e exclusão."""
     url = safe_url(url, allow_http=True)
+    basename = urllib.parse.unquote(urllib.parse.urlsplit(url).path.rsplit("/", 1)[-1])
+    basename = re.sub(r"[^a-zA-Z0-9_. ()-]", "_", basename).strip(" .")[:160]
+    if basename in ("", ".", ".."):
+        raise ValueError("Nome de ROM inválido")
+    return basename
+
+
+def rom_destination(url, category, sd):
     folder = category_name(category)
     if folder == "ALL":
         raise ValueError("Categoria inválida")
     base = target_root(sd)
     dest = os.path.join(base, folder)
     if os.path.islink(dest):
-        raise ValueError("Destino é um link")
-    os.makedirs(dest, exist_ok=True)
-    basename = urllib.parse.unquote(urllib.parse.urlsplit(url).path.rsplit("/", 1)[-1])
-    basename = re.sub(r"[^a-zA-Z0-9_. ()-]", "_", basename).strip(" .")[:160]
-    if basename in ("", ".", ".."):
-        raise ValueError("Nome de arquivo não identificado no link")
+        raise ValueError("Pasta de ROM é um link simbólico")
+    basename = rom_filename(url)
     final = os.path.join(dest, basename)
+    if os.path.commonpath([os.path.abspath(final), os.path.abspath(base)]) != os.path.abspath(base):
+        raise ValueError("Destino fora do cartão")
+    return folder, dest, basename, final
+
+
+def load_manifests():
+    path = os.path.join(STATE, "roms_downloads.json")
+    try:
+        with open(path, encoding="utf-8") as file:
+            records = json.load(file)
+            return records if isinstance(records, list) else []
+    except (OSError, ValueError):
+        return []
+
+
+def inspect_rom(url, category, sd):
+    url = safe_url(url, allow_http=True)
+    folder, dest, basename, final = rom_destination(url, category, sd)
+    if os.path.lexists(final) and (os.path.islink(final) or not os.path.isfile(final)):
+        raise ValueError("Destino ocupado por um item incompatível")
+    found = os.path.isfile(final)
+    managed = any(isinstance(d, dict) and d.get("game_path")==url and
+                  d.get("card")==sd and d.get("category")==folder and
+                  d.get("filename")==basename for d in load_manifests())
+    status("done", "ROM já existe" if found else "Local livre", task="inspect",
+           exists=found, managed=managed, filename=basename, card=sd)
+
+
+def remove_rom(url, category, sd, filename):
+    """Exclusão só de ROM registrada no histórico; jamais apaga saves/pastas."""
+    url=safe_url(url, allow_http=True)
+    folder, dest, basename, final=rom_destination(url, category, sd)
+    if filename != basename:
+        raise ValueError("Nome da ROM não corresponde ao registro")
+    records=load_manifests()
+    matches=[d for d in records if isinstance(d,dict) and
+             d.get("game_path")==url and d.get("card")==sd and
+             d.get("category")==folder and d.get("filename")==basename]
+    if len(matches)!=1:
+        raise ValueError("Exclusão permitida apenas para ROM gerenciada")
+    record=matches[0]
+    if os.path.islink(dest) or os.path.islink(final):
+        raise ValueError("Links não são removidos")
     if os.path.lexists(final):
-        raise ValueError("Arquivo já existe no destino: " + basename)
+        if not os.path.isfile(final):
+            raise ValueError("O destino não é um arquivo regular")
+        expected_size=record.get("size")
+        if isinstance(expected_size,int) and os.path.getsize(final)!=expected_size:
+            raise ValueError("Arquivo alterado desde o download; exclusão bloqueada")
+        digest=record.get("sha256")
+        if isinstance(digest,str) and re.fullmatch(r"[a-fA-F0-9]{64}",digest):
+            sha=hashlib.sha256()
+            with open(final,"rb") as stream:
+                for block in iter(lambda:stream.read(1024*1024),b""):
+                    sha.update(block)
+            if sha.hexdigest().lower()!=digest.lower():
+                raise ValueError("Conteúdo alterado; exclusão bloqueada")
+        os.unlink(final)
+    kept=[d for d in records if d is not record]
+    save_json(os.path.join(STATE,"roms_downloads.json"),kept)
+    status("done", "ROM removida do cartão e do histórico", task="remove", card=sd)
+
+
+def download(url, category, sd, name, checksum="", overwrite="0"):
+    url = safe_url(url, allow_http=True)
+    folder, dest, basename, final = rom_destination(url, category, sd)
+    replace = overwrite == "1"
+    if overwrite not in ("0", "1"):
+        raise ValueError("Permissão de sobrescrita inválida")
+    if os.path.lexists(final):
+        if os.path.islink(final) or not os.path.isfile(final):
+            raise ValueError("O destino não é um arquivo regular")
+        if not replace:
+            raise ValueError("Arquivo já existe: confirme a sobrescrita no aplicativo")
+    os.makedirs(dest, exist_ok=True)
     if checksum and not re.fullmatch(r"[a-fA-F0-9]{64}", checksum):
         raise ValueError("SHA-256 inválido")
     temp = os.path.join(dest, f".roms-{os.getpid()}-{basename}.part")
@@ -250,21 +328,17 @@ def download(url, category, sd, name, checksum=""):
         actual = digest.hexdigest()
         if checksum and actual.lower() != checksum.lower():
             raise ValueError("SHA-256 não confere")
-        # Não descompacta ROMs nem executa os arquivos. Evita sobrescrever saves.
+        # Substituição somente após confirmação explícita no aplicativo.
+        # A transferência ocorre em arquivo temporário e é validada antes da troca.
         if os.path.lexists(final):
-            raise ValueError("Destino ocupado")
-        os.rename(temp, final)
+            if os.path.islink(final) or not os.path.isfile(final) or not replace:
+                raise ValueError("Destino ocupado ou sobrescrita não autorizada")
+        os.replace(temp, final)
         # Manifesto propio da ROM para identificar SD1/SD2 em Favoritos.
         manifest = os.path.join(STATE, "roms_downloads.json")
-        try:
-            with open(manifest, encoding="utf-8") as f:
-                records = json.load(f)
-                if not isinstance(records, list):
-                    records = []
-        except (OSError, ValueError):
-            records = []
+        records = load_manifests()
         records = [item for item in records if not
-                   (item.get("game_path") == url and item.get("card") == sd)]
+                   (isinstance(item,dict) and item.get("game_path") == url and item.get("card") == sd)]
         records.append({"name": name[:160], "category": folder,
                         "game_path": url, "card": sd, "filename": basename,
                         "sha256": actual, "size": count, "time": int(time.time())})
@@ -337,6 +411,10 @@ def run(args):
             search_games(args[1], args[2])
         elif args[0] == "download":
             download(*args[1:])
+        elif args[0] == "inspect":
+            inspect_rom(*args[1:])
+        elif args[0] == "remove":
+            remove_rom(*args[1:])
         else:
             raise ValueError("Comando não identificado")
     finally:

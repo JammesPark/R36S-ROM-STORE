@@ -1,4 +1,4 @@
-# R36S ROMS STORE — v0.2.5 (teste)
+# R36S ROMS STORE — v0.2.9 (teste)
 
 Loja de ROMs para consoles R36S, com interface Lua + LÖVE 11.5 na resolução **640×480**, catálogo único GameStoreBR (`r36swiki.com/getgames.php`) e arquivos baixados diretamente para SD1/SD2. **Nenhuma ROM, BIOS ou conteúdo comercial é distribuído com o aplicativo.**
 
@@ -125,3 +125,33 @@ Ao iniciar pela primeira vez, após o carregamento, o usuário escolhe um dos qu
 ### Licenças e permissões
 
 O código da loja está sob GPL-3.0. Os ícones Lucide seguem licença ISC e as bandeiras usam imagem de emoji colorido. Os três áudios e os QR codes foram enviados para integração pelo usuário, mas a distribuição pública das faixas depende de seus respectivos direitos; os arquivos não são licenciados automaticamente pela GPL. Para distribuir os arquivos, confirme que há autorização dos titulares.
+
+
+## Atualização v0.2.9: catálogo em rolagem e gestão de ROMs
+
+- Tela Sobre alinhada à esquerda, marcas laterais ajustadas e modal de Telegram/LivePix conforme as fotografias de referência. **A** abre QR de Telegram, **START** abre QR do LivePix, **A** amplia, **B** fecha ou retorna ao modal.
+- Ícones distintos por seção, ícones de plataformas sem letras sobrepostas e legendas dos botões na tela Sobre.
+- Catálogo em **lista contínua**: a navegação pelas setas carrega e acrescenta automaticamente as páginas seguintes em memória. A busca também carrega mais resultados ao avançar. Não há alternância manual de páginas.
+- **Instalados → X** permite solicitar exclusão, mas somente dos arquivos de ROM salvos e registrados pela loja; arquivos alterados, links simbólicos, saves e pastas não são removidos. Confirmação A/B obrigatória.
+- **Baixar:** antes de iniciar, verifica se o arquivo já existe no SD escolhido. Se existir, pergunta se deseja sobrescrever. O novo arquivo é baixado e validado antes de substituir o antigo; o processo não extrai pacotes.
+- A confirmação de sobrescrita, a exclusão e os avisos estão traduzidos em português, inglês, espanhol e russo.
+
+Atenção: a loja só reconhece como excluíveis ROMs presentes no seu próprio histórico; isso não autoriza apagar jogos que foram copiados manualmente. A sobrescrita de um arquivo existente requer confirmação, mesmo que não conste no histórico.
+
+
+## v0.2.10 — checklist de correções da interface (640×480)
+
+- [x] **Etapa 1 — Sobre:** ícones visuais dos botões A e START no cartão da comunidade.
+- [x] **Etapa 1 — QR codes:** textos Telegram e LivePix quebrados em linhas, dentro do modal; A amplia, B fecha, com retorno ao modal ao reduzir a ampliação.
+- [x] **Etapa 1 — Sobre:** texto alinhado à esquerda; aviso inicial continua justificado.
+- [x] **Etapa 1 — Logo do desenvolvedor:** removidas margens transparentes do PNG e ampliada a área visível.
+- [x] **Etapa 2 — Configurações:** ícones distintos para Idiomas, Temas, Fonte, Armazenamento, Rede e Ajuda.
+- [x] **Etapa 3 — Destaques:** nome da ROM em uma faixa opaca por cima da capa e sem contador cobrindo o texto.
+- [x] **Validação local:** regressão de interface em Lua, testes Python do backend, QR codes, onboarding e montagem dos arquivos ZIP.
+- [ ] **Teste no R36S físico:** verificar leitura real em tela 640×480 com fontes pequena, média e grande e confirmar legibilidade no console.
+
+### Instalação
+
+Extraia `R36S_ROMS_STORE_v0.2.10_TESTE.zip` em `/roms/ports/`, substituindo os arquivos do aplicativo. **Não apague** `r36s-roms-store/state/` nem suas ROMs em SD1/SD2.
+
+Observação: os três áudios `.ogg` e os QR codes continuam idênticos aos da v0.2.9. O instalador inclui a versão recortada da logo `logo_dev.png`, além dos novos ícones, dentro de `game.love`.

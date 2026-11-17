@@ -19,6 +19,13 @@ local languageChosen=false -- salvo apenas depois da escolha inicial do usuario
 local aboutScroll=0
 local aboutMaxScroll=0
 local qrModal=nil -- 'telegram' ou 'livepix'
+local qrExpanded=false
+local pendingDelete=nil
+local duplicateModal=false
+local awaitInspect=false
+local awaitDelete=false
+local autoListNext=false
+local autoSearchNext=false
 local favorites={}
 local downloads={}
 local focus='sidebar'; local menuIndex=1;local categoryIndex=1;local gameIndex=1
@@ -306,11 +313,11 @@ local function header(eyebrow,title,right)
 end
 local function footer(phrase)
   if screen=='catalog' or screen=='search_results' then
-    ui.catalogFooter(tr('select'),tr('back'),tr('search'),tr('page'))
+    ui.catalogFooter(tr('select'),tr('back'),tr('search_short'),'↑↓ '..tr('games'))
   else
     ui.footer(tr('select'),tr('back'))
   end
-  txt('v0.2.8',579,452,10,theme.accent)
+  txt('v0.2.10',571,452,10,theme.accent)
 end
 local function card(game,x,y,w,h,idx,active,badge)
   panel(x,y,w,h,active)
@@ -364,17 +371,19 @@ local function homePage()
     homeSlideIndex=math.max(1,math.min(total,homeSlideIndex))
     local game=external.games[homeSlideIndex]
     coverStretch(game,425,217,171,201,homeSlideIndex)
-    -- Faixa opaca acima da capa: nome sempre a frente, nunca atras.
-    R(424,378,173,43,theme.sidebar,4,nil,1)
-    txt(ui.ellipsize(game.name or '?',21),430,382,11,theme.text,159)
-    txt(homeSlideIndex..'/'..total,557,407,9,theme.accent,36,true)
+    -- A faixa do titulo fica acima da capa, em uma area exclusiva (sem o
+    -- contador antigo por cima do texto e sem titulos desenhados na arte).
+    R(422,368,177,56,theme.sidebar,6,nil,1)
+    R(422,368,177,2,theme.accent,0)
+    local label=ui.ellipsize(game.name or '?',28)
+    ui.paragraph(label,431,376,159,11,theme.text,2)
     if total>1 then
       local shown=math.min(5,total)
       local first=math.max(1,math.min(homeSlideIndex-math.floor(shown/2),total-shown+1))
       for n=0,shown-1 do
         local dotIndex=first+n
         ui.color(dotIndex==homeSlideIndex and theme.accent or theme.low)
-        love.graphics.circle('fill',476+(n-(shown-1)/2)*10,412,dotIndex==homeSlideIndex and 3 or 2)
+        love.graphics.circle('fill',473+(n-(shown-1)/2)*11,415,dotIndex==homeSlideIndex and 2.9 or 1.9)
       end
     end
   end
@@ -387,7 +396,8 @@ local function gameList(items,chosen)
     centerEmpty(external.error and tr('network_error') or tr('loading'),tr('press_sync'))
     return
   end
-  local first=math.floor((chosen-1)/6)*6+1
+  -- Rolagem contínua: viewport de 6 itens acompanha a seleção na lista inteira.
+  local first=math.max(1,math.min(chosen-2,math.max(1,total-5)))
   local last=math.min(total,first+5)
   for i=first,last do
     local row=i-first;local y=128+row*47
@@ -412,7 +422,7 @@ local function catalogPage()
   txt(ui.ellipsize(platformTitle(external.category),18),180,102,12,theme.muted,220)
   txt('• '..(external.total>0 and external.total or #external.games)..' '..tr('games'),352,103,11,theme.accent,119)
   gameList(external.games,gameIndex)
-  txt(tr('page')..' '..external.page..'/'..external.totalPages,495,420,10,theme.muted,116)
+  txt(tostring(#external.games)..' / '..tostring(external.total or #external.games),478,420,10,theme.muted,135)
   footer()
 end
 local function searchResultsPage()
@@ -429,7 +439,7 @@ local function searchResultsPage()
   else
     gameList(external.searchResults,searchResultIndex)
   end
-  txt(tr('page')..' '..external.searchPage..'/'..external.searchTotalPages,495,420,10,theme.muted,120)
+  txt(tostring(#external.searchResults)..' / '..tostring(external.searchTotal or 0),475,420,10,theme.muted,138)
   footer()
 end
 local function detailsPage()
@@ -557,6 +567,7 @@ local function installedPage()
     txt(ui.ellipsize(d.name,39),190,y+6,12,theme.text,415)
     txt(d.subtitle,190,y+23,10,theme.muted,415)
   end
+  txt(tr('delete_rom_hint'),183,414,10,theme.accent,422)
   footer()
 end
 local function favoritesPage()
@@ -580,8 +591,11 @@ local function settingsPage()
   for i,label in ipairs(values) do
     local y=108+(i-1)*53
     panel(180,y,440,47,i==settingsIndex)
-    txt(label,195,y+4,13,theme.text,310)
-    txt(shown[i],195,y+25,10,theme.muted,385)
+    local symbols={'languages','palette','type','hard-drive','wifi','circle-help'}
+    R(191,y+10,27,27,theme.sidebar,7,theme.border)
+    ui.icon(symbols[i],196,y+15,17,17,i==settingsIndex and theme.accent or theme.muted)
+    txt(label,228,y+4,13,theme.text,345)
+    txt(shown[i],228,y+25,10,theme.muted,347)
     txt('›',589,y+10,18,theme.accent)
   end
   footer()
@@ -662,11 +676,11 @@ local function networkPage()
   footer()
 end
 -- Renderizador de parágrafos: não usa ui.text, que trunca textos longos.
-local function legalParagraph(content,x,y,width,size,color,lineHeight)
+local function legalParagraph(content,x,y,width,size,color,lineHeight,alignment)
   local f=ui.font(size)
   ui.color(color)
   love.graphics.setFont(f)
-  love.graphics.printf(content,x,y,width,'justify')
+  love.graphics.printf(content,x,y,width,alignment or 'left')
   local lines=1
   if type(f.getWrap)=='function' then
     local _,result=f:getWrap(content,width)
@@ -710,7 +724,7 @@ local function disclaimerPage()
   R(27,84,586,1,theme.border)
   local y=106
   for _,p in ipairs(wording.notice) do
-    y=legalParagraph(p,39,y,562,12,theme.text,17)+12
+    y=legalParagraph(p,39,y,562,12,theme.text,17,'justify')+12
   end
   txt(wording.community,38,380,15,theme.accent,563,true)
   R(150,412,340,42,theme.accent,9)
@@ -722,15 +736,19 @@ local function aboutPage()
   local copy=legal.get(settings.language)
   -- Cabecalho com duas marcas laterais e cartao central inspirado na referencia.
   R(188,103,424,86,theme.panel2,9,theme.border)
-  ui.drawLogo(192,111,86,69)
-  R(282,108,238,74,theme.panel,8,theme.accent)
-  ui.drawAsset('telegram_icon',289,119,51,51)
-  txt(settings.language=='pt' and 'CANAL DA COMUNIDADE' or 'COMMUNITY CHANNEL',345,116,11,theme.text,173)
-  txt('@r36sportsbr',346,135,10,theme.accent,174)
-  txt('A  CANAL    START  LIVEPIX',344,155,9,theme.muted,179)
-  ui.drawAsset('logo_dev',528,110,78,61)
-  txt('JAMES PARK',528,176,8,theme.accent,78,true)
-  txt('R36S ROMS STORE',198,192,10,theme.accent,208)
+  ui.drawLogo(190,110,86,70)
+  R(278,107,232,76,theme.panel,8,theme.accent)
+  ui.drawAsset('telegram_icon',286,117,43,43)
+  txt(settings.language=='pt' and 'CANAL DA COMUNIDADE' or 'COMMUNITY CHANNEL',333,115,11,theme.text,175)
+  txt('@r36sportsbr',333,134,10,theme.accent,175)
+  -- Os dois atalhos usam o desenho de botoes do console, nao letras soltas.
+  ui.buttonHint(332,157,'A','',0)
+  txt(settings.language=='pt' and 'Canal' or 'Channel',354,159,9,theme.muted,52)
+  ui.buttonHint(405,157,'START','',0)
+  txt('LivePix',451,159,9,theme.muted,57)
+  -- Imagem com margens transparentes removidas para crescer de verdade.
+  ui.drawAsset('logo_dev',511,102,105,83)
+  txt('R36S ROMS STORE',197,192,10,theme.accent,403)
   local y=208-aboutScroll
   love.graphics.setScissor(191,201,418,226)
   txt(copy.aboutHeading,197,y,13,theme.accent,407)
@@ -754,23 +772,49 @@ local function aboutPage()
     local bar=math.max(34,213*(213/(213+aboutMaxScroll)))
     R(610,205+(213-bar)*aboutScroll/aboutMaxScroll,4,bar,theme.accent,2)
   end
-  txt('A CANAL   START LIVEPIX   B '..tr('back')..'   ↑↓ '..copy.scroll,185,445,10,theme.muted,426)
+  ui.buttonHint(185,445,'A','Canal',58)
+  ui.buttonHint(282,445,'START','LivePix',75)
+  ui.buttonHint(436,445,'B',tr('back'),74)
+  txt('↑↓',569,449,10,theme.accent,44)
 end
 local function qrPage()
   local telegram=qrModal=='telegram'
-  R(0,0,640,480,theme.bg)
-  R(40,35,560,414,theme.panel,16,theme.accent)
+  local asset=telegram and 'qr_telegram' or 'qr_livepix'
+  local link=telegram and 't.me/R36SPORTSBR' or 'livepix.gg/jammespark'
+  if qrExpanded then
+    -- Tela em fundo claro e QR centralizado, conforme fotos do console.
+    R(0,0,640,480,{.97,.96,1})
+    ui.drawAsset(asset,147,45,346,346)
+    txt('James Park  ·  '..link,90,403,13,{.19,.18,.26},460,true)
+    ui.paragraph(telegram and
+      'Aponte a câmera do celular para o QR Code. A/B: voltar' or
+      'QR do site LivePix (não é código Pix bancário). A/B: voltar',
+      65,430,510,10,{.38,.37,.46},2)
+    return
+  end
+  -- Modal legível na resolução física 640x480. Fundo do Sobre fica visível.
+  R(0,0,640,480,{0,0,0},0,nil,.70)
+  local border=telegram and {.98,.35,.76} or {1,.82,.22}
+  R(61,60,518,366,theme.panel,12,border)
+  R(66,65,508,356,theme.panel2,10)
+  if telegram then ui.drawAsset('telegram_icon',85,83,31,31) end
+  local title=telegram and 'SIGA NOSSO CANAL NO TELEGRAM' or 'APOIE O PROJETO'
+  txt(title,telegram and 124 or 87,88,telegram and 13 or 16,border,430)
+  R(83,143,204,204,{1,1,1},4)
+  ui.drawAsset(asset,88,148,194,194)
+  local x,w=307,248
+  txt('James Park',x,144,14,theme.text,w)
+  txt(link,x,167,11,theme.accent,w)
   if telegram then
-    ui.drawAsset('telegram_icon',190,48,56,56)
+    ui.paragraph('Escaneie para seguir nosso canal no Telegram.',x,211,w,11,theme.text,3)
+  else
+    local y=199
+    y=ui.paragraph('Esta loja é gratuita. Se ela ajudou você, considere apoiar o desenvolvimento da R36S ROMS STORE.',x,y,w,10,theme.text,2)+10
+    y=ui.paragraph('Leia o QR Code com a câmera do celular para abrir livepix.gg/jammespark. Escolha o valor e conclua o apoio no site. Este não é um código Pix de pagamento direto.',x,y,w,9,theme.muted,2)+9
+    txt('Obrigado pelo apoio!',x,math.min(354,y),11,border,w)
   end
-  txt(telegram and 'TELEGRAM  @r36sportsbr' or 'LIVEPIX  •  JAMES PARK',
-    telegram and 255 or 120,65,17,theme.text,telegram and 310 or 400)
-  R(189,117,262,262,{1,1,1},10)
-  if not ui.drawAsset(telegram and 'qr_telegram' or 'qr_livepix',194,122,252,252) then
-    txt('QR Code',215,230,19,theme.bg,200,true)
-  end
-  txt(telegram and '@r36sportsbr' or 'LivePix — James Park',164,386,14,theme.accent,312,true)
-  txt('B  •  '..tr('back'),218,422,12,theme.muted,208,true)
+  ui.buttonHint(85,388,'A','Ampliar QR Code',125)
+  ui.buttonHint(446,388,'B','Fechar',72)
 end
 local function helpPage()
   header(tr('info'),tr('help'))
@@ -824,6 +868,25 @@ local function exitDialog()
   R(334,276,142,43,theme.panel2,8,theme.border)
   txt('B  '..tr('cancel'),339,290,12,theme.text,132,true)
 end
+local function overwriteDialog()
+  R(0,0,640,480,{0,0,0},0,nil,.76)
+  panel(150,139,350,206,true)
+  txt(tr('rom_exists')..' SD'..tostring(selectedCard),167,159,16,theme.text,320,true)
+  txt(tr('replace_note'),173,203,12,theme.muted,308,true)
+  txt(tr('replace_warn'),172,228,11,theme.error,307,true)
+  ui.buttonHint(172,282,'A',tr('overwrite'),131)
+  ui.buttonHint(360,282,'B',tr('cancel'),120)
+end
+local function deleteDialog()
+  if not pendingDelete then return end
+  R(0,0,640,480,{0,0,0},0,nil,.76)
+  panel(145,136,355,212,true)
+  txt(tr('delete_rom_question'),157,156,16,theme.text,335,true)
+  txt(ui.ellipsize(pendingDelete.name or '?',42),167,202,12,theme.accent,320,true)
+  txt((pendingDelete.card or ''):upper()..'  ·  '..tostring(pendingDelete.category or ''),169,227,11,theme.muted,312,true)
+  ui.buttonHint(171,284,'A',tr('remove_rom'),110)
+  ui.buttonHint(361,284,'B',tr('cancel'),106)
+end
 function love.load()
   love.graphics.setDefaultFilter('linear','linear')
   ui.init();loadData()
@@ -839,6 +902,31 @@ function love.update(dt)
   device.update(dt)
   if screen=='storage' and clock-storageLast>30 then refreshStorage() end
   external.update(dt)
+  if awaitInspect and not external.busy() then
+    awaitInspect=false
+    if external.inspectResult then
+      if external.inspectResult.exists then duplicateModal=true
+      elseif external.download(selectedGame,selectedCard,false) then navigate('transferring') end
+    else
+      notice=external.message or tr('network_error');noticeTime=3
+    end
+  end
+  if awaitDelete and not external.busy() then
+    awaitDelete=false
+    if external.removed then
+      reloadDownloads()
+      installIndex=math.min(installIndex,math.max(1,#downloads))
+      notice=tr('rom_removed');noticeTime=2.5
+    else notice=external.message or tr('rom_remove_fail');noticeTime=3 end
+  end
+  if autoListNext and not external.busy() then
+    autoListNext=false
+    gameIndex=math.min(#external.games,gameIndex+1)
+  end
+  if autoSearchNext and not external.busy() then
+    autoSearchNext=false
+    searchResultIndex=math.min(#external.searchResults,searchResultIndex+1)
+  end
   if screen=='home' and not (focus=='content' and homeFocus=='featured') and #external.games>1 then
     homeSlideClock=homeSlideClock+dt
     if homeSlideClock>5 then
@@ -893,6 +981,8 @@ function love.draw()
   ui.statusBar(device.get())
   if screen=='exit_confirm' then exitDialog() end
   if qrModal then qrPage() end
+  if duplicateModal then overwriteDialog() end
+  if pendingDelete then deleteDialog() end
 end
 local function changeTheme()
   local o=theme.options[themeIndex];if not o then return end
@@ -935,7 +1025,26 @@ local function refreshCatalog()
 end
 local function handleKey(key)
   if qrModal then
-    if key=='b' or key=='start' then qrModal=nil end
+    if qrExpanded then
+      if key=='a' or key=='b' or key=='start' then qrExpanded=false end
+    elseif key=='a' then qrExpanded=true
+    elseif key=='b' or key=='start' then qrModal=nil end
+    return
+  end
+  if duplicateModal then
+    if key=='a' then
+      duplicateModal=false
+      if external.download(selectedGame,selectedCard,true) then navigate('transferring')
+      else notice='Falha na sobrescrita';noticeTime=3 end
+    elseif key=='b' then duplicateModal=false end
+    return
+  end
+  if pendingDelete then
+    if key=='a' then
+      local d=pendingDelete;pendingDelete=nil
+      if external.remove(d) then awaitDelete=true
+      else notice=tr('rom_remove_fail');noticeTime=3 end
+    elseif key=='b' then pendingDelete=nil end
     return
   end
   if screen=='startup' then return end
@@ -961,12 +1070,27 @@ local function handleKey(key)
     elseif key=='b' or key=='x' then back() end
     return
   end
-  -- Não troca abas com L1/R1: o menu lateral centraliza a navegação.
-  -- L1/R1 servem apenas à paginação quando o catálogo está em foco.
+  -- R1/L1 movimentam a seleção na lista contínua, sem trocar páginas.
   if (screen=='catalog' or screen=='search_results') and (key=='l' or key=='r') then
-    if screen=='search_results' then
-      if external.searchPageChange(key=='r' and 1 or -1) then searchResultIndex=1 end
-    elseif external.pageChange(key=='r' and 1 or -1) then gameIndex=1 end
+    local isSearch=screen=='search_results'
+    local list=isSearch and external.searchResults or external.games
+    local current=isSearch and searchResultIndex or gameIndex
+    if key=='l' then
+      current=math.max(1,current-5)
+    elseif #list>0 then
+      current=math.min(#list,current+5)
+    end
+    if isSearch then
+      searchResultIndex=current
+      if current>=#list and external.searchPage<external.searchTotalPages then
+        autoSearchNext=external.searchPageChange(1)
+      end
+    else
+      gameIndex=current
+      if current>=#list and external.page<external.totalPages then
+        autoListNext=external.loadNext()
+      end
+    end
     return
   end
   if screen=='catalog' then
@@ -986,20 +1110,22 @@ local function handleKey(key)
     if key=='left' then focus='sidebar';return end
     if key=='right' then return end
     if key=='up' then gameIndex=math.max(1,gameIndex-1);return end
-    if key=='down' then gameIndex=math.min(#external.games,gameIndex+1);return end
-    if key=='a' then enterGame(selectedFromGames());return end
-    if key=='b' then focus='sidebar';return end
-    if key=='pageup' or key=='pagedown' then
-      if external.pageChange(key=='pagedown' and 1 or -1) then gameIndex=1 end
+    if key=='down' then
+      if gameIndex<#external.games then gameIndex=gameIndex+1
+      elseif external.page<external.totalPages then autoListNext=external.loadNext() end
       return
     end
+    if key=='a' then enterGame(selectedFromGames());return end
+    if key=='b' then focus='sidebar';return end
   elseif screen=='search_results' then
     if key=='b' or key=='x' then back();return end
     if key=='up' then searchResultIndex=math.max(1,searchResultIndex-1)
-    elseif key=='down' then searchResultIndex=math.min(#external.searchResults,searchResultIndex+1)
+    elseif key=='down' then
+      if searchResultIndex<#external.searchResults then searchResultIndex=searchResultIndex+1
+      elseif external.searchPage<external.searchTotalPages then
+        autoSearchNext=external.searchPageChange(1)
+      end
     elseif key=='a' then enterGame(selectedFromGames())
-    elseif key=='pageup' or key=='pagedown' then
-      if external.searchPageChange(key=='pagedown' and 1 or -1) then searchResultIndex=1 end
     end
     return
   elseif screen=='search' then
@@ -1035,7 +1161,7 @@ local function handleKey(key)
   elseif screen=='confirm' then
     if key=='left' or key=='right' or key=='x' then selectedCard=3-selectedCard
     elseif key=='a' then
-      if external.download(selectedGame,selectedCard) then navigate('transferring')
+      if external.inspect(selectedGame,selectedCard) then awaitInspect=true
       else notice=tr('download_failed');noticeTime=3 end
     elseif key=='b' then back() end
     return
@@ -1053,6 +1179,9 @@ local function handleKey(key)
   elseif screen=='installed' then
     if key=='up' then installIndex=math.max(1,installIndex-1)
     elseif key=='down' then installIndex=math.min(#downloads,installIndex+1)
+    elseif key=='x' then
+      local d=downloads[installIndex]
+      if d then pendingDelete=d end
     elseif key=='b' then mainRoute('home') end
     return
   elseif screen=='favorites' then
@@ -1170,7 +1299,14 @@ function love.textinput(t)
 end
 function love.mousepressed(x,y,button)
   if button~=1 then return end
-  if qrModal then qrModal=nil;return end
+  if qrModal then
+    if qrExpanded then qrExpanded=false
+    elseif x<325 and y>365 then qrExpanded=true
+    else qrModal=nil end
+    return
+  end
+  if duplicateModal then if x<323 then handleKey('a') else handleKey('b') end;return end
+  if pendingDelete then if x<323 then handleKey('a') else handleKey('b') end;return end
   if screen=='startup' then return end
   if screen=='first_language' then
     if x>=109 and x<=530 and y>=207 and y<388 then
@@ -1210,7 +1346,8 @@ function love.mousepressed(x,y,button)
     local selected=isSearch and searchResultIndex or gameIndex
     if x>=180 and x<=417 and y>=128 and y<410 then
       local row=math.floor((y-128)/47)
-      local idx=math.floor((selected-1)/6)*6+row+1
+      local first=math.max(1,math.min(selected-2,math.max(1,#list-5)))
+      local idx=first+row
       if list[idx] then
         if isSearch then searchResultIndex=idx else gameIndex=idx end
         focus='grid'
