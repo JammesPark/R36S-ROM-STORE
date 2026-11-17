@@ -25,7 +25,7 @@ CATEGORY_ALIAS = {"genesis": "megadrive"}
 MAX_JSON = 3 * 1024 * 1024
 MAX_DOWNLOAD = 16 * 1024**3
 MAX_COVER_BYTES = 700 * 1024
-HOME = os.environ.get("R36S_STORE_HOME", "/roms/ports/r36s-store-kpm")
+HOME = os.environ.get("R36S_STORE_HOME", "/roms/ports/r36s-roms-store")
 STATE = os.path.join(HOME, "state")
 STATUS = os.path.join(STATE, "gamestore_status.json")
 LOCK = os.path.join(STATE, "gamestore.lock")
@@ -83,7 +83,7 @@ def load_api(action, **params):
     for proto in ("https", "http"):
         url = f"{proto}://{API_HOST}{API_PATH}?{qs}"
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "R36S-Ports-BR-Store-KPM/0.2"})
+            req = urllib.request.Request(url, headers={"User-Agent": "R36S-ROMs-Store/0.2.2"})
             with OPENER.open(req, timeout=22) as r:
                 raw = r.read(MAX_JSON + 1)
                 if len(raw) > MAX_JSON:
@@ -192,14 +192,14 @@ def download(url, category, sd, name, checksum=""):
         raise ValueError("Arquivo já existe no destino: " + basename)
     if checksum and not re.fullmatch(r"[a-fA-F0-9]{64}", checksum):
         raise ValueError("SHA-256 inválido")
-    temp = os.path.join(dest, f".kpm-{os.getpid()}-{basename}.part")
+    temp = os.path.join(dest, f".roms-{os.getpid()}-{basename}.part")
     if os.path.lexists(temp):
         raise ValueError("Download temporário já existe")
     digest = hashlib.sha256()
     count = 0
     try:
         status("downloading", f"Baixando {name[:60]} para {sd.upper()}", task="download")
-        req = urllib.request.Request(url, headers={"User-Agent": "R36S-Ports-BR-Store-KPM/0.2"})
+        req = urllib.request.Request(url, headers={"User-Agent": "R36S-ROMs-Store/0.2.2"})
         with OPENER.open(req, timeout=40) as response:
             expected = int(response.headers.get("Content-Length") or 0)
             if expected > MAX_DOWNLOAD:

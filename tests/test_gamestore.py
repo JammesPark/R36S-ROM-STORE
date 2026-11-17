@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-p = pathlib.Path("port/r36s-store-kpm/bin/gamestore_source.py")
+p = pathlib.Path("port/r36s-roms-store/bin/gamestore_source.py")
 spec = importlib.util.spec_from_file_location("gamestore_source", p)
 source = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(source)

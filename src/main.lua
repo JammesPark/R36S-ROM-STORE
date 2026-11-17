@@ -5,7 +5,7 @@ local external=require('external')
 local ui=require('ui')
 local theme=require('theme')
 local i18n=require('i18n')
-local HOME=os.getenv('R36S_STORE_HOME') or '/roms/ports/r36s-store-kpm'
+local HOME=os.getenv('R36S_STORE_HOME') or '/roms/ports/r36s-roms-store'
 local STATE=HOME..'/state'
 local mainPages={'home','catalog','downloads','installed','favorites','settings','about'}
 local screen='startup'
@@ -13,7 +13,6 @@ local stack={}
 local settings={language='pt',theme='ocean',card=1}
 local favorites={}
 local downloads={}
-local manifests={}
 local focus='grid'; local menuIndex=1;local categoryIndex=1;local gameIndex=1
 local favIndex=1;local installIndex=1;local historyIndex=1;local settingsIndex=1
 local languageIndex=1;local themeIndex=1;local searchIndex=1;local query=''
@@ -76,18 +75,6 @@ local function reloadDownloads()
   if not s or s==lastManifest then return end
   local list=json.decode(s)
   if type(list)=='table' then downloads=list;lastManifest=s end
-end
-local function reloadInstalled()
-  local proc=io.popen('find "'..STATE..'/installations" -maxdepth 1 -name "*.json" -type f 2>/dev/null')
-  if not proc then return end
-  local list={}
-  for path in proc:lines() do
-    local p=json.decode(read(path) or '')
-    if type(p)=='table' and type(p.name)=='string' and
-      (p.root=='/roms/ports' or p.root=='/roms2/ports') and
-      type(p.id)=='string' then list[#list+1]=p end
-  end
-  proc:close();manifests=list
 end
 local function favoriteIdx(g)
   if not g or not g.game_path then return nil end
@@ -245,7 +232,7 @@ local function header(eyebrow,title,right)
 end
 local function footer(phrase)
   ui.footer(tr('select'),tr('back'),phrase or tr('tabs'))
-  txt('v0.2.1',579,452,10,theme.accent)
+  txt('v0.2.2',579,452,10,theme.accent)
 end
 local function card(game,x,y,w,h,idx,active,badge)
   panel(x,y,w,h,active)
@@ -410,10 +397,9 @@ local function installedPage()
   header(tr('manage'),tr('title_installed'))
   local n=#downloads
   txt(tr('files')..': '..n,181,107,12,theme.accent)
-  if n==0 and #manifests==0 then centerEmpty(tr('no_installed'));footer();return end
+  if n==0 then centerEmpty(tr('no_installed'));footer();return end
   local list={}
   for _,d in ipairs(downloads) do list[#list+1]={name=d.name,subtitle=(d.card or ''):upper()..' / '..(d.category or '')} end
-  for _,p in ipairs(manifests) do list[#list+1]={name=p.name,subtitle=(p.root=='/roms2/ports' and 'SD2' or 'SD1')..' / PORT'} end
   for i=math.max(1,installIndex-5),math.min(#list,math.max(1,installIndex-5)+5) do
     local d=list[i];local y=130+(i-math.max(1,installIndex-5))*46
     panel(180,y,440,42,i==installIndex)
@@ -546,7 +532,7 @@ function love.load()
   love.graphics.setDefaultFilter('linear','linear')
   ui.init();loadData()
   external.init(HOME,STATE)
-  reloadDownloads();reloadInstalled()
+  reloadDownloads()
   screen='startup'
   if os.getenv('R36S_STORE_OFFLINE_TEST')~='1' then external.enter() end
 end
@@ -685,7 +671,7 @@ local function handleKey(key)
     return
   elseif screen=='installed' then
     if key=='up' then installIndex=math.max(1,installIndex-1)
-    elseif key=='down' then installIndex=math.min(#downloads+#manifests,installIndex+1)
+    elseif key=='down' then installIndex=math.min(#downloads,installIndex+1)
     elseif key=='b' then mainRoute('home') end
     return
   elseif screen=='favorites' then

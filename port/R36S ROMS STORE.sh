@@ -1,10 +1,27 @@
 #!/usr/bin/env bash
 # R36S ROMS STORE - inicializador LÖVE 11.5 / PortMaster.
-# Os erros sao registrados em r36s-store-kpm/log.txt, mesmo sem imagem.
+# Os erros sao registrados em r36s-roms-store/log.txt, mesmo sem imagem.
 set -o pipefail
 BASE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)" || exit 1
-APP="$BASE/r36s-store-kpm"
+APP="$BASE/r36s-roms-store"
 LOG="$APP/log.txt"
+# Reaproveita dados de uma instalacao anterior sem copiar os binarios antigos.
+# O padrao so procura instalacoes antigas desta familia no SD1.
+# Nao sobrescreve preferencias do aplicativo novo e nao exclui o anterior.
+if [[ ! -f "$APP/state/.migration_checked" ]]; then
+  mkdir -p "$APP/state" || exit 1
+  for legacy in "$BASE"/r36s-store-*; do
+    [[ -d "$legacy/state" && ! -L "$legacy" && "$legacy" != "$APP" ]] || continue
+    for item in roms_settings.json roms_favorites.json roms_downloads.json gamestore_categories.json gamestore_games.json; do
+      if [[ -f "$legacy/state/$item" && ! -e "$APP/state/$item" && ! -L "$legacy/state/$item" ]]; then
+        cp -p -- "$legacy/state/$item" "$APP/state/$item" || echo "AVISO: nao foi possivel migrar $item" >&2
+      fi
+    done
+    # Capas sao cache opcional e serao carregadas novamente se necessario.
+    break
+  done
+  : > "$APP/state/.migration_checked"
+fi
 if ! mkdir -p "$APP/state/logs" "$APP/state/installations" "$APP/conf"; then
   echo "ERRO: nao foi possivel criar pastas em $APP" >&2
   exit 1
