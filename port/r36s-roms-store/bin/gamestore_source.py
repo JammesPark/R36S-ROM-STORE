@@ -121,15 +121,8 @@ def categories():
     save_json(os.path.join(STATE, "gamestore_categories.json"), {"categories": result})
     status("done", "Categorias GameStoreBR carregadas", task="categories", count=len(result))
 
-def games(category, page):
-    cat = category_name(category)
-    page = int(page)
-    if not 1 <= page <= 100000:
-        raise ValueError("Página inválida")
-    params = {"page": page, "limit": 10}
-    if cat != "ALL":
-        params["category"] = cat
-    data = load_api("games", **params)
+def validated_games(data, cat):
+    """Sanitizacao compartilhada por listagem e pesquisa remota."""
     clean = []
     for entry in data.get("games", [])[:30]:
         if not isinstance(entry, dict):
@@ -157,6 +150,36 @@ def games(category, page):
             image_url, cover_id = "", ""
         clean.append({"name": name, "category": platform, "game_path": path,
                       "image_url": image_url, "cover_id": cover_id})
+    return clean
+
+
+def search_games(query, page):
+    """Usa action=search do catalogo, nao apenas a pagina de 10 itens carregados."""
+    query = str(query or "").strip()
+    if len(query) < 2 or len(query) > 80 or any(ord(c)<32 for c in query):
+        raise ValueError("Busca deve ter entre 2 e 80 caracteres")
+    page = int(page)
+    if not 1 <= page <= 100000:
+        raise ValueError("Pagina de busca invalida")
+    data = load_api("search", search=query, page=page, limit=10)
+    clean = validated_games(data, "ALL")
+    out = {"games": clean, "query": query, "page": page,
+           "total_pages": max(1, int(data.get("total_pages", 1) or 1)),
+           "total": max(0, int(data.get("total", 0) or 0))}
+    save_json(os.path.join(STATE, "gamestore_search.json"), out)
+    status("done", f"{len(clean)} resultados para {query[:32]}", task="search", page=page)
+
+
+def games(category, page):
+    cat = category_name(category)
+    page = int(page)
+    if not 1 <= page <= 100000:
+        raise ValueError("Página inválida")
+    params = {"page": page, "limit": 10}
+    if cat != "ALL":
+        params["category"] = cat
+    data = load_api("games", **params)
+    clean = validated_games(data, cat)
     out = {"games": clean, "category": cat, "page": page,
            "total_pages": max(1,int(data.get("total_pages", 1) or 1)),
            "total": max(0,int(data.get("total", 0) or 0))}
@@ -254,9 +277,9 @@ def download(url, category, sd, name, checksum=""):
             os.remove(temp)
 
 
-def covers():
+def covers(source="games"):
     """Cache opt-in de imagens do catalogo sem bloquear o fluxo de downloads."""
-    data_path = os.path.join(STATE, "gamestore_games.json")
+    data_path = os.path.join(STATE, "gamestore_search.json" if source == "search" else "gamestore_games.json")
     try:
         with open(data_path, encoding="utf-8") as f:
             records = json.load(f).get("games", [])
@@ -299,7 +322,7 @@ def run(args):
     os.makedirs(STATE, exist_ok=True)
     if args and args[0] == "covers":
         # Capa é cache opcional, não utiliza lock/status do download.
-        covers()
+        covers(args[1] if len(args)>1 else "games")
         return
     os.mkdir(LOCK)
     try:
@@ -309,6 +332,9 @@ def run(args):
         elif args[0] == "games":
             status("loading", "Consultando jogos", task="games")
             games(args[1], args[2])
+        elif args[0] == "search":
+            status("loading", "Pesquisando ROMs", task="search")
+            search_games(args[1], args[2])
         elif args[0] == "download":
             download(*args[1:])
         else:

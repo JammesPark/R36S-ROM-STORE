@@ -30,6 +30,23 @@ class CatalogTests(unittest.TestCase):
                     self.assertEqual(len(d["games"]), 1)
                     self.assertEqual(d["games"][0]["category"], "megadrive")
                     self.assertEqual(d["games"][0]["game_path"], "http://r36swiki.com/roms/demo.zip")
+    def test_remote_search_all_pages(self):
+        # A pesquisa usa a API remota, nao a primeira pagina local de ROMs.
+        with tempfile.TemporaryDirectory() as td:
+            with patch.object(source, "STATE", td), patch.object(source, "status"):
+                with patch.object(source, "load_api", return_value={
+                    "success": True, "total": 11, "total_pages": 2,
+                    "games": [{"name":"Sonic da pagina 7", "category":"megadrive",
+                               "game_path":"roms/sonic.zip"}]}) as api:
+                    source.search_games("sonic", 2)
+                    api.assert_called_once_with("search", search="sonic", page=2, limit=10)
+                    data = __import__("json").loads((pathlib.Path(td)/"gamestore_search.json").read_text())
+                    self.assertEqual(data["query"], "sonic")
+                    self.assertEqual(data["page"], 2)
+                    self.assertEqual(data["total_pages"], 2)
+                    self.assertEqual(data["games"][0]["name"], "Sonic da pagina 7")
+                with self.assertRaises(ValueError):
+                    source.search_games("x", 1)
     def test_category_fetch(self):
         with tempfile.TemporaryDirectory() as td:
             with patch.object(source, "STATE", td), patch.object(source, "status"):

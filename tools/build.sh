@@ -5,10 +5,10 @@ mkdir -p build
 rm -f build/*.zip port/r36s-roms-store/game.love
 find port -type d -name __pycache__ -prune -exec rm -rf -- {} +
 (cd src && zip -q -X -r ../port/r36s-roms-store/game.love .)
-(cd port && zip -q -r ../build/R36S_ROMS_STORE_v0.2.5_TESTE.zip \
+(cd port && zip -q -r ../build/R36S_ROMS_STORE_v0.2.6_TESTE.zip \
   "R36S ROMS STORE.sh" r36s-roms-store \
   -x 'r36s-roms-store/state/*')
-zip -q -r build/R36S_ROMS_STORE_v0.2.5_FONTE.zip \
+zip -q -r build/R36S_ROMS_STORE_v0.2.6_FONTE.zip \
   README.md src port tools tests .github \
   -x 'port/r36s-roms-store/state/*'
 echo 'Pacotes criados em build/'

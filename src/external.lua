@@ -1,7 +1,7 @@
 -- GameStoreBR: somente adaptador de dados. O layout pertence a main.lua.
 local json=require('json')
 local M={categories={{category='ALL',count=0}},games={},category='ALL',page=1,totalPages=1,total=0,
-         pending=nil,phase='idle',message='',downloaded=0,expected=0,error=false,connected=nil,maintenance=false,activeDownload=nil}
+         pending=nil,phase='idle',message='',downloaded=0,expected=0,error=false,connected=nil,maintenance=false,activeDownload=nil,searchResults={},searchQuery="",searchPage=1,searchTotalPages=1,searchTotal=0}
 local home,state,lastStatus='',nil
 local function read(path)
   local f=io.open(path,'rb');if not f then return nil end
@@ -36,9 +36,32 @@ function M.loadGames()
   end
   return false
 end
+function M.loadSearch()
+  local data=cached(state..'/gamestore_search.json')
+  if data and type(data.games)=='table' then
+    M.searchResults=data.games
+    M.searchQuery=tostring(data.query or M.searchQuery)
+    M.searchPage=tonumber(data.page) or 1
+    M.searchTotalPages=math.max(1,tonumber(data.total_pages) or 1)
+    M.searchTotal=math.max(0,tonumber(data.total) or #M.searchResults)
+    return true
+  end
+  return false
+end
+function M.search(term,page)
+  term=tostring(term or ''):gsub('^%s+',''):gsub('%s+$','')
+  if #term<2 or #term>80 or M.pending then return false end
+  M.searchQuery=term
+  return M.request('search',{term,tostring(page or 1)})
+end
+function M.searchPageChange(delta)
+  local dest=M.searchPage+delta
+  if dest<1 or dest>M.searchTotalPages or M.pending then return false end
+  return M.search(M.searchQuery,dest)
+end
 function M.init(appPath, statePath)
   home,state=appPath,statePath
-  M.loadCategories();M.loadGames()
+  M.loadCategories();M.loadGames();M.loadSearch()
 end
 function M.request(task,args)
   if M.pending then return false end
@@ -93,14 +116,17 @@ function M.update()
   if M.phase=='error' then
     local task=M.pending
     M.error=true;M.pending=nil
-    if task=='categories' or task=='games' then M.connected=false end
+    if task=='categories' or task=='games' or task=='search' then M.connected=false end
     M.maintenance=M.message:lower():find('manuten',1,true)~=nil or M.message:lower():find('maintenance',1,true)~=nil
   elseif M.phase=='done' then
     local task=M.pending;M.pending=nil
-    if task=='categories' or task=='games' then M.connected=true;M.maintenance=false end
+    if task=='categories' or task=='games' or task=='search' then M.connected=true;M.maintenance=false end
     if task=='categories' then
       M.loadCategories()
       if not M.request('games',{M.category,tostring(M.page)}) then M.error=true end
+    elseif task=='search' then
+      M.loadSearch()
+      command({'covers','search'})
     elseif task=='games' then
       M.loadGames()
       -- As capas sao opcionais: baixadas em paralelo, sem bloquear o menu.

@@ -90,3 +90,13 @@ O uso do Wi-Fi, da bateria e a aceitação do controle dependem do dispositivo e
 - Categorias do menu usam icones vetoriais contextualizados; nomes exibidos com inicial maiuscula e siglas preservadas.
 
 A integracao grafica ainda depende de validacao no console real.
+
+
+## v0.2.6 — logo oficial, catálogo em lista e busca real
+
+- `src/assets/logo.png`: logo enviada e revisada pelo usuário, com fundo transparente. Incluída no `game.love`; aplicada na entrada, cabeçalho lateral e Sobre, com fallback se a imagem estiver danificada.
+- Menu de plataformas com marcadores distintos (NES, SNES, PSX, GBA, N64, etc.).
+- Início com espaçamento melhor e slide mais estreito, próximo ao formato retrato.
+- Catálogo em lista de seis ROMs por bloco, com capa grande selecionada à direita, sem cortar imagem. **D-pad cima/baixo** seleciona, **A** abre detalhes e **L1/R1** troca páginas.
+- **Busca remota completa:** usa a ação `search` da API, com paginação e cache separado; não limita resultados às ROMs da página atual. **X** abre teclado, **START** consulta, **B** volta para editar.
+- Os dados reais e a disponibilidade dependem do servidor do catálogo e do dispositivo físico.

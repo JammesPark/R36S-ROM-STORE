@@ -5,6 +5,7 @@ local fonts={}
 local fallbackFont=nil
 local fontData=nil
 local fontScale=1
+local brandImage=nil
 local sizeOptions={small=0.91,medium=1.0,large=1.18}
 function U.setFontSize(key)
   fontScale=sizeOptions[key] or 1
@@ -28,6 +29,9 @@ local function loadSystemFont()
   end
 end
 function U.init()
+  -- Imagem da marca aprovada (PNG com transparencia) incluída no .love.
+  local ok,img=pcall(love.graphics.newImage,'assets/logo.png')
+  if ok and img then brandImage=img end
   fontData=loadSystemFont()
   for _,size in ipairs({9,10,11,12,13,14,15,16,17,18,19,20,22,24,26,27,28}) do
     local ok,font=pcall(function()
@@ -111,15 +115,7 @@ function U.layout(leftMode,selection)
   love.graphics.circle('fill',525,57,105)
   U.rect(158,436,482,44,{.035,.080,.13})
   U.rect(158,435,482,1,theme.border)
-  U.rect(13,29,34,34,theme.panel2,9,theme.accent)
-  -- gamepad: desenho vetorial simplificado, sem usar logo externa
-  U.stroke(21,40,18,13,theme.accent,5,2)
-  U.rect(25,45,8,2,theme.accent,1)
-  U.rect(28,42,2,8,theme.accent,1)
-  U.color(theme.accent);love.graphics.circle('fill',36,44,1.4)
-  U.color(theme.accent);love.graphics.circle('fill',39,47,1.4)
-  U.text('R36S ROMS',58,29,14,theme.text)
-  U.text('S T O R E',58,48,10,theme.accent)
+  U.drawLogo(14,6,133,76)
   -- bottom sidebar
   U.rect(12,442,134,1,theme.border)
   U.color(theme.green);love.graphics.circle('fill',20,460,3)
@@ -246,37 +242,26 @@ function U.menuIcon(kind,x,y,c)
   love.graphics.setLineWidth(1)
 end
 function U.platformIcon(category,x,y,c)
+  -- Em 18px, cada plataforma recebe um monograma/forma própria,
+  -- em vez de todas exibirem o mesmo controle genérico.
   local id=tostring(category or 'ALL'):lower()
-  U.color(c);love.graphics.setLineWidth(1.5)
-  if id=='all' then
-    for row=0,1 do for col=0,1 do love.graphics.rectangle('line',x+2+col*9,y+2+row*9,6,6,1,1) end end
-  elseif id:find('arcade') or id=='mame' or id:find('cps') then
-    love.graphics.rectangle('line',x+2,y+11,14,6,2,2)
-    love.graphics.line(x+8,y+11,x+8,y+5)
-    love.graphics.circle('fill',x+8,y+4,2)
-    love.graphics.circle('fill',x+13,y+13,1.6)
-  elseif id:find('ps') or id:find('dreamcast') or id:find('saturn') or id:find('cd') then
-    love.graphics.circle('line',x+9,y+9,8)
-    love.graphics.circle('line',x+9,y+9,2.1)
-    love.graphics.line(x+2,y+9,x+5,y+9)
-  elseif id:find('gb') or id:find('nds') or id:find('3ds') or id:find('psp') then
-    love.graphics.rectangle('line',x+4,y+1,10,17,2,2)
-    love.graphics.rectangle('line',x+6,y+4,6,7,1,1)
-    love.graphics.line(x+7,y+14,x+11,y+14)
-  elseif id:find('nes') or id:find('snes') or id:find('gba') or id:find('genesis') or id:find('mega') or id:find('n64') then
-    love.graphics.rectangle('line',x+3,y+3,12,13,2,2)
-    love.graphics.line(x+6,y+8,x+11,y+8)
-    love.graphics.line(x+6,y+11,x+11,y+11)
-  elseif id=='ports' or id:find('homebrew') then
-    love.graphics.line(x+4,y+15,x+12,y+6)
-    love.graphics.circle('line',x+13,y+5,4)
-    love.graphics.circle('fill',x+3,y+16,2)
-  else
-    love.graphics.rectangle('line',x+1,y+5,16,10,5,5)
-    love.graphics.line(x+5,y+9,x+9,y+9,x+7,y+7,x+7,y+11)
-    love.graphics.circle('fill',x+13,y+9,1.3)
-  end
-  love.graphics.setLineWidth(1)
+  local symbols={all='▦',nes='N',snes='SN',n64='64',gb='GB',gbc='GC',gba='GA',nds='DS',
+    psx='PS',ps1='P1',ps2='P2',psp='PP',megadrive='MD',genesis='MD',
+    mastersystem='MS',gamegear='GG',saturn='SS',dreamcast='DC',
+    mame='AR',neogeo='NG',atari2600='AT',pcengine='PC',amigacd32='AM',
+    ['3do']='3D',ports='HB'}
+  local colors={nes={.9,.37,.34},snes={.64,.54,1},n64={.28,.83,.42},
+    gb={.63,.81,.49},gbc={.42,.83,.46},gba={.64,.61,.98},nds={.8,.87,.98},
+    psx={.32,.68,1},psp={.39,.8,.96},megadrive={.94,.43,.48},
+    genesis={.94,.43,.48},mastersystem={.98,.52,.4},gamegear={.89,.58,.36},
+    saturn={.48,.8,.92},dreamcast={.96,.51,.32},mame={1,.75,.3},
+    neogeo={1,.82,.31},atari2600={.9,.58,.3},pcengine={.64,.9,.9},
+    amigacd32={.86,.57,.96},['3do']={.78,.76,.97},ports={.5,.91,.71}}
+  local label=symbols[id] or string.upper(id:sub(1,2))
+  local tint=colors[id] or c
+  U.rect(x,y,19,18,theme.panel2,4,tint)
+  U.rect(x+2,y+2,15,14,theme.sidebar,3)
+  U.text(label,x+1,y+4,9,tint,17,true)
 end
 function U.catalogFooter(selectText,backText,searchText,pageText)
   U.rect(158,436,482,44,{.035,.080,.13})
@@ -291,6 +276,15 @@ function U.catalogFooter(selectText,backText,searchText,pageText)
   key(270,'B',backText)
   key(351,'X',searchText)
   key(469,'L/R',pageText)
+end
+function U.drawLogo(x,y,w,h)
+  if brandImage then
+    U.imageContain(brandImage,x,y,w,h)
+    return true
+  end
+  -- Degradação graciosa se o arquivo de imagem for apagado.
+  U.text('R36S ROMS STORE',x,y+math.max(0,h/2-12),16,theme.accent,w,true)
+  return false
 end
 function U.brandLogo(x,y,scale)
   scale=scale or 1
