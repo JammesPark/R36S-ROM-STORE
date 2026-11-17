@@ -1,57 +1,41 @@
-# R36S PORTS BR STORE KPM
+# R36S ROMS STORE — v0.2.0 (teste)
 
-Aplicativo independente para R36S, com interface Lua/LÖVE 11.5 (640×480), integração à API GameStoreBR e downloads em SD1/SD2. Não inclui jogos, ROMs, BIOS ou conteúdo do aplicativo GameStoreBR.
+A interface aprovada da apresentação HTML 640×480 foi convertida para **Lua + LÖVE 11.5** e integrada ao aplicativo real. O catálogo único continua sendo o **GameStoreBR**, consultado pela API `r36swiki.com/getgames.php`. Nenhuma ROM ou BIOS é incluída.
 
-## Catálogo único: GameStoreBR
+## Interface e funcionalidades
 
-A aba **CATÁLOGO** abre diretamente GameStoreBR. O catálogo anterior KPM (JSON remoto manual) foi removido, junto com `src/catalog.json` e `config/catalog_url.txt`. Os downloads são consultados sob demanda na API `r36swiki.com/getgames.php`, via adaptador próprio `bin/gamestore_source.py`. Não é necessário configurar URL para abrir o catálogo, mas é necessário acesso à internet e à API do provedor.
+- **Novo tema moderno:** menu lateral fixo, painel principal à direita e grade de **3 colunas x 2 linhas** com capas, miniaturas geométricas de reserva e rolagem da página atual.
+- **Telas e fluxos:** entrada, início, catálogo, pesquisa, detalhes, confirmação/seleção SD, download, conclusão, histórico, instalados, favoritos, configurações, idiomas, temas, armazenamento, rede, sobre, ajuda e tela sem conexão.
+- **4 idiomas:** Português do Brasil, inglês, espanhol e russo. A fonte para cirílico é procurada no sistema; sem fonte compatível, o console poderá exibir caracteres ausentes.
+- **7 cores:** Azul Oceano, Roxo Neon, Verde Esmeralda, Laranja Âmbar, Rosa Sunset, Vermelho Coral e Branco Gelo. Seleção salva em `state/roms_settings.json`.
+- **Favoritos persistentes:** `state/roms_favorites.json`, com indicador SD1, SD2, ambos ou não baixado, obtido do registro de download e da existência do arquivo no cartão.
+- **Capas reais quando disponíveis:** baixadas por `bin/gamestore_source.py covers` para `state/covers/`, respeitando tamanho máximo; caso não haja rede, mostra ilustração geométrica.
+- **SD1/SD2:** as ROMs são salvas sem extração em `/roms/<plataforma>/` ou `/roms2/<plataforma>/`. Arquivos existentes não são substituídos.
+- O fluxo preserva o histórico de downloads e os manifestos legados de instalações de ports, sem instalar nem incluir esses ports no catálogo.
 
-A listagem não está embutida no aplicativo: o adaptador tenta HTTPS e, se não houver suporte, usa HTTP para esse provedor. **A disponibilidade real da API não foi confirmada no console.** HTTPS é preferível: metadados e links recebidos por HTTP não possuem proteção contra adulteração em trânsito.
+## Instalação para testar no console
 
-### Controles
+Baixe o artefato **R36S-ROMS-STORE-TESTE** da execução mais recente do GitHub Actions. Ele contém o instalador `R36S_ROMS_STORE_v0.2.0_TESTE.zip` e o código-fonte `R36S_ROMS_STORE_FONTE.zip`.
 
-- **A:** abrir catálogo, selecionar plataforma ou confirmar download.
-- **B:** voltar e cancelar.
-- **L/R:** mudar as abas da interface.
-- **START:** escolher a plataforma GameStoreBR.
-- **Direcional esquerda/direita:** mudar de página no catálogo.
-- **Y:** atualizar categorias/listas.
-- **X na confirmação do download:** alternar SD1 e SD2.
-- **X em Ajustes:** escolher cartão padrão para download.
-- **X em Instalados:** remover somente instalações antigas gerenciadas pela loja (após confirmação).
+Extraia o conteúdo do ZIP instalável dentro de **`/roms/ports/` no SD1**. O launcher se chama **`R36S ROMS STORE.sh`**. O diretório técnico `r36s-store-kpm/` continua o mesmo, para preservar preferências/logs do aplicativo anterior. **Remova apenas o launcher antigo `R36S PORTS BR STORE KPM.sh` da pasta `/roms/ports/`**, se estiver presente, para evitar um ícone duplicado no menu. Não apague a pasta `r36s-store-kpm/state/`.
 
-Arquivos GameStoreBR são salvos **sem extração ou execução**, como ROMs/ZIPs em `/roms/<plataforma>/` (SD1) ou `/roms2/<plataforma>/` (SD2). A loja não sobrescreve automaticamente arquivos existentes. Quando a API não fornece SHA-256, a origem não tem validação criptográfica; o hash calculado localmente não substitui um hash publicado pelo fornecedor.
+Requer **PortMaster com runtime LÖVE 11.5**, Python 3, Bash e acesso à internet para atualizar o catálogo (o último JSON da listagem fica salvo no cache). O runtime e o catálogo não são incorporados ao ZIP. A disponibilidade dos servidores GameStoreBR não foi confirmada no hardware.
 
-A aba **INSTALADOS** mantém os manifestos de ports instalados em versões anteriores do aplicativo. Removê-los é opcional e exige confirmação. Nenhum arquivo já presente no console é apagado pela atualização do repositório.
+## Controles do R36S
 
-## Instalação de teste
+- **A:** entrar/confirmar; **B:** voltar.
+- **L/R:** trocar as áreas principais; **direcional:** selecionar categorias, ROMs e opções.
+- **Catálogo:** esquerda na primeira coluna ativa as categorias da esquerda; **START** abre a pesquisa, **Y** sincroniza e **X** favorita/desfavorita.
+- **Detalhes:** **A** vai para a confirmação de download; **X** favorita.
+- **Confirmação:** **X** ou esquerda/direita alterna SD1/SD2 antes do download.
+- **Configurações:** seleção de idioma, cor do tema, cartão e rede com gravação local.
 
-No GitHub, acesse **Actions → Validar e empacotar R36S KPM → execução mais recente → Artifacts**. Baixe `R36S-PORTS-BR-STORE-KPM`, que contém:
+## Debug
 
-- `R36S_PORTS_BR_STORE_KPM_INSTALAR.zip`
-- `R36S_PORTS_BR_STORE_KPM_FONTE.zip`
+Se fechar antes de exibir a interface, verifique `r36s-store-kpm/log.txt` e `r36s-store-kpm/state/logs/startup.log`. O launcher usa a configuração de runtime `love_11.5/love.txt` do PortMaster. Alguns sistemas podem precisar de uma fonte Unicode (DejaVu Sans / Noto Sans) já instalada para russo.
 
-Extraia o conteúdo do ZIP instalável na pasta `/roms/ports/` do SD1. A interface é iniciada pelo script `R36S PORTS BR STORE KPM.sh`. O console precisa de um runtime LÖVE compatível com a versão 11.5, Bash, Python 3 e `findmnt` para validar o SD2. O aplicativo não embute o runtime.
+Testes automatizados verificam o código Lua/Bash/Python, telas, preferências, API simulada, downloads/manifestos, SD1/SD2 e o empacotamento. **O hardware R36S ainda precisa de validação real.**
 
-Os testes de CI verificam sintaxe, navegação estática, segurança básica do download e empacotamento; **não substituem testes com hardware real**.
+## Licenciamento e origem
 
-## Para quem mantém o projeto
-
-```sh
-lua5.4 tests/test_json.lua
-python3 tests/test_archives.py
-python3 tests/test_gamestore.py
-python3 tests/test_single_catalog.py
-bash tests/test_backend.sh
-bash tools/build.sh
-```
-
-O backend histórico `worker.sh` conserva as funções de remoção/registro de ports gerenciados, para compatibilidade. Não existe mais ação de catálogo KPM nem URL manual para a fonte anterior.
-
-## Correção para fechamento sem imagem — v0.1.1 (teste)
-
-O launcher usa agora o `control.txt` e o runtime `runtimes/love_11.5/love.txt` do PortMaster. Como alternativa, usa `love` instalado no sistema. O pacote ZIP preserva os bits de execução dos scripts `.sh`.
-
-**Log após falha de boot:** `/roms/ports/r36s-store-kpm/log.txt` e `/roms/ports/r36s-store-kpm/state/logs/startup.log`. O log registra o runtime selecionado e o motivo do encerramento do LÖVE.
-
-Copie o novo ZIP instalável para `/roms/ports/`, substituindo os arquivos antigos. Não é necessário remover os jogos. A inicialização foi simulada no GitHub Actions, mas o funcionamento gráfico ainda depende de teste no dispositivo.
+O código da interface aqui foi criado para este projeto. A API GameStoreBR e suas capas são externas; os arquivos do aplicativo GameStoreBR não foram copiados. Respeite os direitos de cada jogo, imagem e arquivo disponibilizado na API.

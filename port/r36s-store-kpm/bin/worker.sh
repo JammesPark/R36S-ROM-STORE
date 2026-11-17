@@ -45,7 +45,7 @@ fail() { log "$*"; write_status error "$*"; exit 1; }
 valid_id() { [[ "$1" =~ ^[a-z0-9][a-z0-9_-]{0,63}$ ]]; }
 valid_name() {
   [[ -n "$1" && "$1" != '.' && "$1" != '..' && "$1" != *'/'* && "$1" != *'\\'* && "$1" != *':'* && "$1" != *$'\n'* && "$1" != *$'\r'* ]] || return 1
-  case "${1,,}" in "portmaster"|"r36s-store-kpm"|"gamelist.xml"|"r36s ports br store kpm.sh") return 1;; esac
+  case "${1,,}" in "portmaster"|"r36s-store-kpm"|"gamelist.xml"|"r36s ports br store kpm.sh"|"r36s roms store.sh") return 1;; esac
 }
 valid_root() {
   [[ "$1" == /roms/ports || "$1" == /roms2/ports ]] || fail 'Destino invalido'
@@ -165,7 +165,7 @@ assert isinstance(obj["items"],list) and obj["items"]
 seen=set()
 for item in obj["items"]:
     assert isinstance(item,str) and item not in ("",".","..") and "/" not in item and "\\" not in item and "\n" not in item and "\r" not in item and ":" not in item
-    assert item.lower() not in ("portmaster","r36s-store-kpm","gamelist.xml","r36s ports br store kpm.sh")
+    assert item.lower() not in ("portmaster","r36s-store-kpm","gamelist.xml","r36s ports br store kpm.sh"|"r36s roms store.sh")
     assert item not in seen
     seen.add(item)
     print(item)

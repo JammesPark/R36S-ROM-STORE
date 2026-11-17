@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# R36S PORTS BR STORE KPM - inicializador LÖVE 11.5 / PortMaster.
+# R36S ROMS STORE - inicializador LÖVE 11.5 / PortMaster.
 # Os erros sao registrados em r36s-store-kpm/log.txt, mesmo sem imagem.
 set -o pipefail
 BASE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)" || exit 1
@@ -10,7 +10,7 @@ if ! mkdir -p "$APP/state/logs" "$APP/state/installations" "$APP/conf"; then
   exit 1
 fi
 exec > >(tee "$LOG" "$APP/state/logs/startup.log") 2>&1
-echo "=== R36S PORTS BR STORE KPM - STARTUP ==="
+echo "=== R36S ROMS STORE - STARTUP ==="
 echo "Data: $(date -u +%FT%TZ)"
 echo "Sistema: $(uname -a)"
 echo "Launcher: $0"

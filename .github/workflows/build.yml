@@ -1,4 +1,4 @@
-name: Validar e empacotar R36S KPM
+name: R36S ROMS STORE - testes e build
 on:
   push:
     branches: [main]
@@ -25,6 +25,7 @@ jobs:
       - name: Testes
         run: |
           lua5.4 tests/test_json.lua
+          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_ui_smoke.lua
           python3 tests/test_archives.py
           python3 tests/test_gamestore.py
           python3 tests/test_single_catalog.py
@@ -34,19 +35,19 @@ jobs:
         run: bash tools/build.sh
       - name: Verificar conteudo do instalador
         run: |
-          test -x 'port/R36S PORTS BR STORE KPM.sh'
+          test -x 'port/R36S ROMS STORE.sh'
           test -x port/r36s-store-kpm/bin/worker.sh
-          unzip -t build/R36S_PORTS_BR_STORE_KPM_INSTALAR.zip
-          unzip -Z1 build/R36S_PORTS_BR_STORE_KPM_INSTALAR.zip | grep -F 'r36s-store-kpm/game.love'
+          unzip -t build/R36S_ROMS_STORE_v0.2.0_TESTE.zip
+          unzip -Z1 build/R36S_ROMS_STORE_v0.2.0_TESTE.zip | grep -F 'r36s-store-kpm/game.love'
           tmp=$(mktemp -d)
-          unzip -q build/R36S_PORTS_BR_STORE_KPM_INSTALAR.zip -d "$tmp"
-          test -x "$tmp/R36S PORTS BR STORE KPM.sh"
+          unzip -q build/R36S_ROMS_STORE_v0.2.0_TESTE.zip -d "$tmp"
+          test -x "$tmp/R36S ROMS STORE.sh"
           test -x "$tmp/r36s-store-kpm/bin/worker.sh"
           test ! -d "$tmp/r36s-store-kpm/bin/__pycache__"
           rm -rf "$tmp"
       - name: Publicar artefatos para download
         uses: actions/upload-artifact@v4
         with:
-          name: R36S-PORTS-BR-STORE-KPM-BOOT-FIX
+          name: R36S-ROMS-STORE-TESTE
           path: build/*.zip
           if-no-files-found: error

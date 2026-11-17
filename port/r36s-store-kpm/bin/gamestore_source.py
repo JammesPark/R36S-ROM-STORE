@@ -24,6 +24,7 @@ gamegear""".split())
 CATEGORY_ALIAS = {"genesis": "megadrive"}
 MAX_JSON = 3 * 1024 * 1024
 MAX_DOWNLOAD = 16 * 1024**3
+MAX_COVER_BYTES = 700 * 1024
 HOME = os.environ.get("R36S_STORE_HOME", "/roms/ports/r36s-store-kpm")
 STATE = os.path.join(HOME, "state")
 STATUS = os.path.join(STATE, "gamestore_status.json")
@@ -145,8 +146,14 @@ def games(category, page):
             safe_url(path, allow_http=True)
         except ValueError:
             continue
+        image_url = str(entry.get("image_url") or "")[:400]
+        try:
+            safe_url(image_url, allow_http=True)
+            cover_id = hashlib.sha1(image_url.encode("utf-8")).hexdigest()
+        except ValueError:
+            image_url, cover_id = "", ""
         clean.append({"name": name, "category": platform, "game_path": path,
-                      "image_url": str(entry.get("image_url") or "")[:400]})
+                      "image_url": image_url, "cover_id": cover_id})
     out = {"games": clean, "category": cat, "page": page,
            "total_pages": max(1,int(data.get("total_pages", 1) or 1)),
            "total": max(0,int(data.get("total", 0) or 0))}
@@ -221,6 +228,21 @@ def download(url, category, sd, name, checksum=""):
         if os.path.lexists(final):
             raise ValueError("Destino ocupado")
         os.rename(temp, final)
+        # Manifesto propio da ROM para identificar SD1/SD2 em Favoritos.
+        manifest = os.path.join(STATE, "roms_downloads.json")
+        try:
+            with open(manifest, encoding="utf-8") as f:
+                records = json.load(f)
+                if not isinstance(records, list):
+                    records = []
+        except (OSError, ValueError):
+            records = []
+        records = [item for item in records if not
+                   (item.get("game_path") == url and item.get("card") == sd)]
+        records.append({"name": name[:160], "category": folder,
+                        "game_path": url, "card": sd, "filename": basename,
+                        "sha256": actual, "size": count, "time": int(time.time())})
+        save_json(manifest, records[-2000:])
         status("done", f"Salvo em {folder}/{basename} ({sd.upper()})",
                task="download", downloaded=count, sha256=actual,
                verified=bool(checksum))
@@ -228,8 +250,54 @@ def download(url, category, sd, name, checksum=""):
         if os.path.exists(temp):
             os.remove(temp)
 
+
+def covers():
+    """Cache opt-in de imagens do catalogo sem bloquear o fluxo de downloads."""
+    data_path = os.path.join(STATE, "gamestore_games.json")
+    try:
+        with open(data_path, encoding="utf-8") as f:
+            records = json.load(f).get("games", [])
+    except (OSError, ValueError):
+        return
+    folder = os.path.join(STATE, "covers")
+    os.makedirs(folder, exist_ok=True)
+    for record in records[:10]:
+        url = str(record.get("image_url") or "")
+        cover_id = str(record.get("cover_id") or "")
+        if not re.fullmatch(r"[a-f0-9]{40}", cover_id):
+            continue
+        if hashlib.sha1(url.encode("utf-8")).hexdigest() != cover_id:
+            continue
+        path = os.path.join(folder, cover_id + ".img")
+        if os.path.isfile(path):
+            continue
+        temp = path + ".tmp." + str(os.getpid())
+        try:
+            safe_url(url, allow_http=True)
+            req = urllib.request.Request(url,
+                  headers={"User-Agent": "Mozilla/5.0 (R36S ROMS STORE cover cache)"})
+            with OPENER.open(req, timeout=7) as response:
+                data = response.read(MAX_COVER_BYTES + 1)
+            # Love2D aceita JPEG/PNG; nunca carregamos outros formatos como imagem.
+            if (len(data) < 30 or len(data) > MAX_COVER_BYTES or
+                not (data.startswith(b"\x89PNG\r\n\x1a\n") or
+                     data.startswith(b"\xff\xd8\xff"))):
+                continue
+            with open(temp, "xb") as out:
+                out.write(data)
+            os.replace(temp, path)
+        except (OSError, ValueError, urllib.error.URLError):
+            pass
+        finally:
+            if os.path.exists(temp):
+                os.remove(temp)
+
 def run(args):
     os.makedirs(STATE, exist_ok=True)
+    if args and args[0] == "covers":
+        # Capa é cache opcional, não utiliza lock/status do download.
+        covers()
+        return
     os.mkdir(LOCK)
     try:
         if args[0] == "categories":
