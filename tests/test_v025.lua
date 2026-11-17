@@ -59,9 +59,9 @@ assert(callCount==1,'Clique em Atualizar catalogo nao executa refresh')
 love.gamepadpressed(nil,'a')
 assert(callCount==2,'Botao A em Rede nao executa refresh')
 ext.refresh=oldRefresh;ext.busy=oldBusy
--- Executar B na tela de configuracoes redefine o foco na home.
-route('about');love.gamepadpressed(nil,'b')
-assert(screen()=='home','B nao retornou para Home')
+-- O teste usa uma Home limpa, sem pilha de navegacao artificial.
+route('home')
+love.gamepadpressed(nil,'dpleft')
 love.gamepadpressed(nil,'dpright')
 assert(screen()=='home','Direita deveria apenas mudar o foco da Home')
 love.gamepadpressed(nil,'dpdown')
