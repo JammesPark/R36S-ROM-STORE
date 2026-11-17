@@ -5,7 +5,7 @@ source_files = [p for p in root.rglob('*') if p.is_file() and p.suffix in allowe
 for p in source_files:
     text = p.read_text(encoding='utf-8')
     old_name = 'k'+'pm'
-    assert old_name not in str(p).lower(), p
+    assert old_name not in p.relative_to(root).as_posix().lower(), p.name
     assert old_name not in text.lower(), f'Old brand at {p}'
 assert (root/'port/r36s-roms-store/bin/gamestore_source.py').is_file()
 assert not (root/'port/r36s-roms-store/bin/worker.sh').exists()
