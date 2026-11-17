@@ -74,13 +74,6 @@ fetch_url() {
   fi
   [[ -s "$output" ]] || fail 'Download vazio'
 }
-catalog() {
-  local url="${1:-}"
-  begin
-  write_status catalog 'Sincronizando catalogo remoto'
-  fetch_url "$url" "$STATE/catalog.pending.json"
-  write_status done 'Catalogo recebido: validacao na interface'
-}
 install() {
   local id="${1:-}" root="${2:-}" url="${3:-}" hash="${4:-}" size="${5:-0}" name="${6:-}"
   valid_id "$id" || fail 'ID do port invalido'
@@ -188,7 +181,6 @@ PY
   write_status done "Removido: $id ($card)"
 }
 case "${1:-}" in
-  catalog) shift; catalog "$@" ;;
   install) shift; install "$@" ;;
   uninstall) shift; uninstall "$@" ;;
   *) fail 'Acao desconhecida' ;;

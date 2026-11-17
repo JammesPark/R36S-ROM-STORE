@@ -27,6 +27,7 @@ jobs:
           lua5.4 tests/test_json.lua
           python3 tests/test_archives.py
           python3 tests/test_gamestore.py
+          python3 tests/test_single_catalog.py
           bash -x tests/test_backend.sh
       - name: Criar ZIPs instalavel e fonte
         run: bash tools/build.sh

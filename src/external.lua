@@ -1,6 +1,6 @@
 -- Navegador independente de metadados GameStoreBR. Não reutiliza o app original.
 local json=require('json')
-local M={active=false}
+local M={active=true}
 local HOME,STATE
 local games,categories={},{}
 local view='games'
@@ -87,10 +87,15 @@ function M.init(home,state)
   HOME,STATE=home,state
   loadCategories();loadGames()
 end
-function M.toggle()
-  M.active=not M.active
-  if M.active and #categories==0 then M.refresh() end
+function M.enter()
+  if not pending and #categories==0 then
+    M.refresh()
+  elseif not pending and #games==0 then
+    launch('games',{'games',category,tostring(page)})
+  end
 end
+function M.card() return sd end
+function M.toggleCard() sd=sd==1 and 2 or 1 end
 function M.refresh()
   launch('categories',{'categories'})
 end
@@ -128,8 +133,8 @@ local function changePage(n)
   end
 end
 function M.draw()
-  label('GAMESTORE BR  /  CATÁLOGO EXTERNO',24,120,15,colors.fg)
-  label('X: KPM   START: PLATAFORMA',24,140,11,colors.cyan)
+  label('GAMESTORE BR  /  CATÁLOGO',24,120,15,colors.fg)
+  label('START: PLATAFORMA   Y: ATUALIZAR',24,140,11,colors.cyan)
   if view=='games' then
     label(category..'  |  Página '..page..' / '..totalPages..'  |  '..(sd==1 and 'SD1' or 'SD2'),24,158,11,colors.soft)
     local begin=math.max(1,selected-4)

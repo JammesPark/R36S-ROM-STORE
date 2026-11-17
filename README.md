@@ -1,75 +1,49 @@
-# R36S PORTS BR STORE KPM — v0.1.0
+# R36S PORTS BR STORE KPM
 
-Projeto **novo e independente**, criado para R36S com interface Lua/LÖVE 11.5 (640×480), backend Bash e validador Python 3. Nao utiliza o codigo nem assets do KMP ou de outros projetos.
+Aplicativo independente para R36S, com interface Lua/LÖVE 11.5 (640×480), integração à API GameStoreBR e downloads em SD1/SD2. Não inclui jogos, ROMs, BIOS ou conteúdo do aplicativo GameStoreBR.
 
-## Funcionalidades
-- Interface moderna com abas Inicio, Catalogo, Instalados, Downloads e Ajustes; PT-BR/EN.
-- Catalogo JSON remoto por HTTPS, com cache local e fallback offline (inicialmente vazio).
-- Instalacao em SD1 `/roms/ports` ou SD2 `/roms2/ports` usando SHA-256 obrigatorio.
-- Verificacao e extracao de ZIP por Python (bloqueia traversal, links, sobrescrita e tipos especiais). 7z/RAR requer 7zz ou 7z.
-- Instalacao com registro de manifesto; recusa conflitos com arquivos existentes; desinstalacao apenas de ports gerenciados.
-- Controles: A seleciona/confirmar, B voltar, L/R abas, Y sincronizar, X alternar SD nos Ajustes ou desinstalar em Instalados.
-- Executa port instalado pelo proprio aplicativo por handoff do launcher.
-- Pipeline GitHub Actions: verifica Lua/Bash/Python, executa testes e publica ZIP instalavel e codigo-fonte.
+## Catálogo único: GameStoreBR
 
-## Como obter os pacotes
-Acesse **Actions → Validar e empacotar R36S KPM → execucao mais recente → Artifacts** e baixe `R36S-PORTS-BR-STORE-KPM`. Dentro estao:
+A aba **CATÁLOGO** abre diretamente GameStoreBR. O catálogo anterior KPM (JSON remoto manual) foi removido, junto com `src/catalog.json` e `config/catalog_url.txt`. Os downloads são consultados sob demanda na API `r36swiki.com/getgames.php`, via adaptador próprio `bin/gamestore_source.py`. Não é necessário configurar URL para abrir o catálogo, mas é necessário acesso à internet e à API do provedor.
+
+A listagem não está embutida no aplicativo: o adaptador tenta HTTPS e, se não houver suporte, usa HTTP para esse provedor. **A disponibilidade real da API não foi confirmada no console.** HTTPS é preferível: metadados e links recebidos por HTTP não possuem proteção contra adulteração em trânsito.
+
+### Controles
+
+- **A:** abrir catálogo, selecionar plataforma ou confirmar download.
+- **B:** voltar e cancelar.
+- **L/R:** mudar as abas da interface.
+- **START:** escolher a plataforma GameStoreBR.
+- **Direcional esquerda/direita:** mudar de página no catálogo.
+- **Y:** atualizar categorias/listas.
+- **X na confirmação do download:** alternar SD1 e SD2.
+- **X em Ajustes:** escolher cartão padrão para download.
+- **X em Instalados:** remover somente instalações antigas gerenciadas pela loja (após confirmação).
+
+Arquivos GameStoreBR são salvos **sem extração ou execução**, como ROMs/ZIPs em `/roms/<plataforma>/` (SD1) ou `/roms2/<plataforma>/` (SD2). A loja não sobrescreve automaticamente arquivos existentes. Quando a API não fornece SHA-256, a origem não tem validação criptográfica; o hash calculado localmente não substitui um hash publicado pelo fornecedor.
+
+A aba **INSTALADOS** mantém os manifestos de ports instalados em versões anteriores do aplicativo. Removê-los é opcional e exige confirmação. Nenhum arquivo já presente no console é apagado pela atualização do repositório.
+
+## Instalação de teste
+
+No GitHub, acesse **Actions → Validar e empacotar R36S KPM → execução mais recente → Artifacts**. Baixe `R36S-PORTS-BR-STORE-KPM`, que contém:
+
 - `R36S_PORTS_BR_STORE_KPM_INSTALAR.zip`
 - `R36S_PORTS_BR_STORE_KPM_FONTE.zip`
 
-Extraia o ZIP instalavel em `/roms/ports` do SD1. A estrutura deve ficar:
+Extraia o conteúdo do ZIP instalável na pasta `/roms/ports/` do SD1. A interface é iniciada pelo script `R36S PORTS BR STORE KPM.sh`. O console precisa de um runtime LÖVE compatível com a versão 11.5, Bash, Python 3 e `findmnt` para validar o SD2. O aplicativo não embute o runtime.
 
-```
-/roms/ports/R36S PORTS BR STORE KPM.sh
-/roms/ports/r36s-store-kpm/game.love
-/roms/ports/r36s-store-kpm/bin/worker.sh
-/roms/ports/r36s-store-kpm/bin/archive_safe.py
-/roms/ports/r36s-store-kpm/config/catalog_url.txt
-```
+Os testes de CI verificam sintaxe, navegação estática, segurança básica do download e empacotamento; **não substituem testes com hardware real**.
 
-Requisitos do console: **LÖVE 11.5 compatível, Bash, Python 3, curl ou wget, sha256sum, unzip apenas para testes, findmnt para SD2; 7zz ou 7z para RAR/7z**. O runtime LÖVE **não é incluído** nesta entrega; sem um `love` funcional no sistema a interface nao inicia. Os ZIPs da Actions sao artefatos de teste, nao uma certificacao de funcionamento em hardware real.
+## Para quem mantém o projeto
 
-## Catalogo JSON remoto
-Edite `r36s-store-kpm/config/catalog_url.txt` e coloque uma URL HTTPS pública com JSON no formato:
-
-```json
-{
-  "schema_version": 1,
-  "ports": [
-    {
-      "id": "demo",
-      "name": "Port de exemplo",
-      "category": "Aventura",
-      "size_bytes": 1234567,
-      "download_url": "https://exemplo.org/meu-port.zip",
-      "sha256": "COLOQUE_AQUI_SHA256_REAL_DO_ZIP"
-    }
-  ]
-}
-```
-
-Substitua o exemplo por links reais autorizados e o SHA-256 de 64 caracteres; o exemplo não permite instalacao. Pressione **Y** para sincronizar. Uma URL de repositório **privado** geralmente não funciona sem autenticacao no console, portanto use um endpoint HTTPS publico. O catalogo local de seguranca começa vazio; nenhum jogo, ROM, BIOS ou port comercial é distribuido.
-
-O ZIP esperado possui um ou mais arquivos `.sh` na raiz ou dentro de uma unica pasta externa, além dos arquivos do jogo. A desinstalacao remove tambem saves colocados dentro das pastas gerenciadas. A loja nao altera o PortMaster nem instala automaticamente dependencias especificas de cada port.
-
-## Testar localmente no Linux
 ```sh
 lua5.4 tests/test_json.lua
 python3 tests/test_archives.py
+python3 tests/test_gamestore.py
+python3 tests/test_single_catalog.py
 bash tests/test_backend.sh
 bash tools/build.sh
 ```
 
-## Estado atual
-**Primeira base de teste.** Ainda falta validar o runtime LÖVE no R36S/dArkOSen ou ArkOS, controlar downloads pausados/retomados e integrar um catalogo publico de verdade. O codigo de terceiros nao foi reutilizado.
-
-
-## Catálogo adicional GameStoreBR (integração independente)
-
-A aba **CATÁLOGO** possui duas fontes separadas: **KPM** (ports próprios, com SHA-256 obrigatório) e **GAMESTORE BR** (jogos de múltiplos sistemas). Pressione **X** dentro do catálogo para alternar as fontes; **START** abre a seleção de plataformas, direcional esquerda/direita muda as páginas; **A** confirma download, **X** no diálogo alterna SD1/SD2.
-
-O arquivo `GameStoreBR(1).zip` fornecido não contém a listagem de jogos: seu aplicativo consulta `r36swiki.com/getgames.php` usando as ações `categories` e `games`. O projeto implementa um adaptador **próprio**, `bin/gamestore_source.py`, que consulta essa API em tempo de execução, tenta HTTPS e, por compatibilidade com a origem, permite fallback HTTP **somente para a API desse provedor**. Isso não comprova que a API ainda esteja ativa; testes automatizados simulam respostas sem depender da conexão externa.
-
-Jogos externos são salvos como **arquivos ROM/ZIP sem extração ou execução**, dentro de `/roms/<plataforma>/` (SD1) ou `/roms2/<plataforma>/` (SD2). Não são instalados como ports pela loja KPM. A extensão e o formato são mantidos conforme o download. Os arquivos não são sobrescritos automaticamente; o SD2 é checado antes da gravação. Quando a fonte não fornece um SHA-256, o arquivo fica **sem verificação criptográfica de origem**, ainda que tenha checksum local calculado; prefira fontes autorizadas e confiáveis.
-
-O catálogo GameStoreBR e o catálogo KPM **não são mesclados**. Nenhum jogo/ROM é incluído nos ZIPs gerados. Links e capas são propriedade dos respectivos provedores; verifique permissões de uso e distribuição. A API original usa HTTP, o que implica risco de adulteração dos metadados e downloads se não houver HTTPS. Nenhum download é executado automaticamente.
+O backend histórico `worker.sh` conserva as funções de remoção/registro de ports gerenciados, para compatibilidade. Não existe mais ação de catálogo KPM nem URL manual para a fonte anterior.

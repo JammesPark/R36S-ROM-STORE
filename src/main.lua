@@ -13,8 +13,8 @@ local palette={
   line={0.16,0.24,0.32},txt={0.94,0.97,1.0},muted={0.56,0.65,0.74},
   blue={0.19,0.73,1},teal={0.27,0.91,0.77},red={1,0.39,0.45}
 }
-local lang='pt';local card=1;local tab=1;local chosen=1;local modal=nil
-local catalog={};local installed={};local status={phase='idle',message=''}
+local lang='pt';local tab=1;local chosen=1;local modal=nil
+local installed={};local status={phase='idle',message=''}
 local notice='';local noticeTime=0;local poll=0;local fonts={}
 local function t(pt,en) return lang=='pt' and pt or en end
 local function col(c,a) love.graphics.setColor(c[1],c[2],c[3],a or 1) end
@@ -37,32 +37,6 @@ end
 local function write(path,data)
   local f=io.open(path,'wb');if not f then return false end
   f:write(data);f:close();return true
-end
-local function validPort(p)
-  if type(p)~='table' or type(p.id)~='string' or
-    not p.id:match('^[a-z0-9][a-z0-9_-]*$') or #p.id>64 or
-    type(p.name)~='string' or #p.name>160 or
-    type(p.download_url)~='string' or
-    not p.download_url:match('^https://') then return false end
-  return true
-end
-local function setCatalog(raw)
-  local data=json.decode(raw or '')
-  if not data or type(data)~='table' or type(data.ports)~='table' then return false end
-  local fresh={};local seen={}
-  for _,p in ipairs(data.ports) do
-    if validPort(p) and not seen[p.id] then
-      fresh[#fresh+1]=p;seen[p.id]=true
-    end
-  end
-  table.sort(fresh,function(a,b) return a.name:lower()<b.name:lower() end)
-  catalog=fresh;chosen=1
-  return true
-end
-local function loadCatalog()
-  if setCatalog(read(STATE..'/catalog.json')) then return end
-  local pack=love.filesystem.read('catalog.json')
-  if pack then setCatalog(pack) end
 end
 local function loadInstalled()
   local result={}
@@ -109,23 +83,6 @@ local function worker(cmd,args)
   else status={phase=cmd=='catalog' and 'catalog' or cmd=='install' and 'downloading' or 'uninstalling',
       message=t('Preparando operacao...','Preparing operation...')} end
 end
-local function refresh()
-  local raw=read(HOME..'/config/catalog_url.txt') or ''
-  local url=raw:match('https://[^%s]+') or ''
-  if url=='' then
-    shout(t('Defina catalog_url.txt com uma URL publica HTTPS','Set public HTTPS URL in catalog_url.txt'))
-  else worker('catalog',{url}) end
-end
-local function install(p)
-  local sha=p.sha256 or ''
-  if type(sha)~='string' or #sha~=64 or not sha:match('^%x+$') then
-    shout(t('Port sem SHA-256: instalacao bloqueada','Missing SHA-256: install blocked'));return
-  end
-  local root=card==1 and '/roms/ports' or '/roms2/ports'
-  local n=math.floor(tonumber(p.size_bytes) or 0)
-  worker('install',{p.id,root,p.download_url,sha,tostring(n),p.name})
-  tab=4
-end
 local function remove(p)
   worker('uninstall',{p.id,p.root});tab=4
 end
@@ -136,7 +93,7 @@ local function launch(p)
   else shout(t('Nao foi possivel iniciar','Unable to launch')) end
 end
 local function currentList()
-  if tab==2 then return catalog elseif tab==3 then return installed else return {} end
+  if tab==3 then return installed else return {} end
 end
 local function drawHeader()
   col(palette.bg);love.graphics.rectangle('fill',0,0,W,H)
@@ -162,23 +119,22 @@ local function drawFooter()
 end
 local function drawHome()
   panel(24,130,592,128)
-  printx(t('SEUS PORTS, EM UM SO LUGAR','ALL YOUR PORTS. ONE PLACE.'),43,150,21,palette.txt,550)
-  printx(t('Catalogo online, validacao SHA-256 e instalacao no SD.','Online catalog, SHA-256 and SD install.'),43,193,13,palette.muted,540)
+  printx(t('SEUS JOGOS, EM UM SO LUGAR','ALL YOUR GAMES. ONE PLACE.'),43,150,21,palette.txt,550)
+  printx(t('GameStoreBR: jogos por plataforma, SD1 e SD2.','GameStoreBR: games by system, SD1 and SD2.'),43,193,13,palette.muted,540)
   printx(t('Pressione A para explorar o catalogo','Press A to browse the catalog'),43,221,13,palette.blue)
-  local blocks={{t('NO CATALOGO','IN CATALOG'),#catalog},{t('INSTALADOS','INSTALLED'),#installed},{t('CARTAO','CARD'),card==1 and 'SD1' or 'SD2'}}
+  local blocks={{t('CATALOGO','CATALOG'),'GAMESTORE BR'},{t('PORTS INSTALADOS','INSTALLED PORTS'),#installed},{t('CARTAO','CARD'),external.card()==1 and 'SD1' or 'SD2'}}
   for i,item in ipairs(blocks) do
     local x=24+(i-1)*201;panel(x,273,191,112)
     printx(item[1],x+16,289,12,palette.muted)
-    printx(tostring(item[2]),x+16,313,28,palette.teal)
+    printx(tostring(item[2]),x+16,313,i==1 and 18 or 28,palette.teal)
   end
 end
 local function drawList()
   local list=currentList()
-  printx(tab==2 and t('CATALOGO KPM  •  X: GAMESTORE BR','KPM CATALOG  •  X: GAMESTORE BR') or t('PORTS INSTALADOS','INSTALLED PORTS'),26,119,15)
+  printx(t('PORTS INSTALADOS','INSTALLED PORTS'),26,119,16)
   if #list==0 then
     panel(24,148,592,197)
-    printx(tab==2 and t('Catalogo vazio. Configure URL em AJUSTES.','Empty catalog. Configure the URL in SETTINGS.')
-      or t('Nenhum port instalado por esta loja.','No managed ports installed.'),42,225,14,palette.muted,550)
+    printx(t('Nenhum port gerenciado instalado.','No managed ports installed.'),42,225,14,palette.muted,550)
     return
   end
   local first=math.max(1,chosen-4)
@@ -188,10 +144,7 @@ local function drawList()
     panel(24,y,592,50,i==chosen)
     if i==chosen then col(palette.blue);love.graphics.rectangle('fill',24,y+8,3,34,2,2) end
     printx(p.name or p.id,43,y+7,15,palette.txt,425)
-    local subtitle=tab==2 and (p.category or 'PORT') or (p.root=='/roms2/ports' and 'SD2' or 'SD1')
-    if tab==2 and type(p.size_bytes)=='number' and p.size_bytes>0 then
-      subtitle=subtitle..'  /  '..math.floor(p.size_bytes/1048576)..' MB'
-    end
+    local subtitle=(p.root=='/roms2/ports' and 'SD2' or 'SD1')
     printx(subtitle,43,y+30,11,palette.muted,470)
     printx('>',582,y+14,16,i==chosen and palette.blue or palette.muted)
   end
@@ -221,20 +174,17 @@ local function drawSettings()
   printx(t('A  /  ALTERNAR IDIOMA','A  /  CHANGE LANGUAGE'),44,173,16,palette.blue)
   printx(lang=='pt' and 'PORTUGUES (BR)' or 'ENGLISH',44,202,13,palette.muted)
   printx(t('X  /  ALTERNAR CARTAO','X  /  CHANGE CARD'),44,241,16,palette.blue)
-  printx(card==1 and 'SD1  /roms/ports' or 'SD2  /roms2/ports',44,270,13,palette.muted)
+  printx(external.card()==1 and 'SD1  /roms/<plataforma>' or 'SD2  /roms2/<plataforma>',44,270,13,palette.muted)
   printx(t('Y  /  SINCRONIZAR CATALOGO','Y  /  SYNC CATALOG'),44,309,16,palette.blue)
-  printx('config/catalog_url.txt  /  HTTPS',44,338,12,palette.muted)
+  printx('Fonte: GameStoreBR  /  r36swiki.com',44,338,12,palette.muted)
 end
 local function drawModal()
   if not modal then return end
   col({0,0,0},0.70);love.graphics.rectangle('fill',0,0,W,H)
   panel(65,145,510,189,true)
-  printx(modal.kind=='install' and t('CONFIRMAR INSTALACAO','CONFIRM INSTALLATION')
-    or t('CONFIRMAR REMOCAO','CONFIRM REMOVAL'),86,168,18,palette.txt)
+  printx(t('CONFIRMAR REMOCAO','CONFIRM REMOVAL'),86,168,18,palette.txt)
   printx(modal.item.name or modal.item.id,86,204,14,palette.muted,465)
-  if modal.kind=='install' then
-    printx(t('Destino: ','Destination: ')..(card==1 and 'SD1' or 'SD2'),86,239,13,palette.blue)
-  else printx(t('Os arquivos e saves internos serao excluidos.','Files and internal saves will be deleted.'),86,239,12,palette.red) end
+  printx(t('Arquivos e saves internos serao excluidos.','Files and internal saves will be deleted.'),86,239,12,palette.red)
   printx(t('A CONFIRMAR    B CANCELAR','A CONFIRM    B CANCEL'),86,286,13,palette.teal)
 end
 function love.load()
@@ -251,7 +201,7 @@ function love.load()
   fonts[22]=love.graphics.newFont(22)
   fonts[28]=love.graphics.newFont(28)
   external.init(HOME,STATE)
-  loadCatalog();loadInstalled();parseStatus()
+  loadInstalled();parseStatus()
 end
 function love.update(dt)
   external.update(dt)
@@ -259,23 +209,13 @@ function love.update(dt)
   noticeTime=math.max(0,noticeTime-dt)
   if poll>=0.55 then
     poll=0;parseStatus()
-    local pending=read(STATE..'/catalog.pending.json')
-    if pending and status.phase=='done' then
-      if setCatalog(pending) then
-        os.rename(STATE..'/catalog.pending.json',STATE..'/catalog.json')
-        shout(t('Catalogo atualizado!','Catalog updated!'))
-      else
-        os.remove(STATE..'/catalog.pending.json')
-        shout(t('Catalogo remoto invalido; cache preservado.','Invalid remote catalog; cache preserved.'))
-      end
-    end
     loadInstalled()
   end
 end
 function love.draw()
   drawHeader()
-  if tab==1 then drawHome() elseif tab==2 and external.active then external.draw()
-  elseif tab==2 or tab==3 then drawList()
+  if tab==1 then drawHome() elseif tab==2 then external.draw()
+  elseif tab==3 then drawList()
   elseif tab==4 then drawDownload() else drawSettings() end
   if noticeTime>0 then
     panel(24,404,592,35,true)
@@ -284,13 +224,12 @@ function love.draw()
   drawFooter();drawModal()
 end
 local function action(key)
-  if tab==2 and external.active and external.handle(key) then return end
-  if tab==2 and key=='x' then external.toggle(); return end
+  if tab==2 and external.handle(key) then return end
   if modal then
     if key=='b' then modal=nil
     elseif key=='a' then
       local m=modal;modal=nil
-      if m.kind=='install' then install(m.item) else remove(m.item) end
+      remove(m.item)
     end
     return
   end
@@ -298,27 +237,26 @@ local function action(key)
   elseif key=='r' or key=='right' then tab=tab==5 and 1 or tab+1;chosen=1
   elseif key=='up' then chosen=math.max(1,chosen-1)
   elseif key=='down' then chosen=math.min(math.max(#currentList(),1),chosen+1)
-  elseif key=='y' then refresh()
+  elseif key=='y' then external.refresh()
   elseif key=='b' then tab=1;chosen=1
   elseif key=='x' then
-    if tab==5 then card=card==1 and 2 or 1
+    if tab==5 then external.toggleCard()
     elseif tab==3 then
       local p=installed[chosen];if p then modal={kind='remove',item=p} end
     end
   elseif key=='a' then
-    if tab==1 then tab=2;chosen=1
+    if tab==1 then tab=2;chosen=1;external.enter()
     elseif tab==5 then lang=lang=='pt' and 'en' or 'pt'
-    elseif tab==2 then
-      local p=catalog[chosen];if p then modal={kind='install',item=p} end
     elseif tab==3 then
       local p=installed[chosen];if p then launch(p) end
     end
   end
+  if (key=='l' or key=='r' or key=='left' or key=='right') and tab==2 then external.enter() end
 end
 function love.keypressed(k)
   local keys={['return']='a',kpenter='a',escape='b',backspace='b',
     up='up',down='down',left='left',right='right',q='l',e='r',
-    f5='y',r='y',delete='x',x='x',start='start'}
+    f5='y',r='y',delete='x',x='x',tab='start',start='start'}
   action(keys[k] or k)
 end
 function love.gamepadpressed(_,button)
