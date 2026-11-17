@@ -166,3 +166,12 @@ Observação: os três áudios `.ogg` e os QR codes continuam idênticos aos da 
 - No **Catálogo**, X é a única tecla para abrir a pesquisa. START não abre mais a tela de busca; a busca já aberta pode ser confirmada pelo teclado virtual.
 - Preview do jogo selecionado ocupa toda a área da capa sem títulos ou comandos sobrepostos, com modo esticado.
 - Adicionado teste automatizado para os novos posicionamentos e atalhos.
+
+## v0.2.12 — Correção de alinhamento e botão START
+
+- O título **Em destaque** está alinhado horizontalmente à esquerda do slide e na mesma altura do título Visão geral. O slide foi realinhado à altura dos cartões da visão geral sem interferir no nome da ROM.
+- O botão **START** agora é um botão amarelo sólido de 56 × 20 pixels, com texto escuro centralizado e sem cortes, inclusive com fonte Grande.
+- Na tela Sobre, A / Canal e START / LivePix possuem posições calculadas dentro do cartão central, sem invadir o limite direito.
+- Testes automatizados verificam a posição dos títulos, do slide e dos dois botões START (cartão e legenda do rodapé).
+
+Os ajustes precisam de validação final no console físico.

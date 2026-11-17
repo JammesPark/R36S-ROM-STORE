@@ -165,20 +165,27 @@ function U.kicker(text,x,y)
 end
 -- Botões do controle (cores dos botões reais do console).
 function U.buttonHint(x,y,key,label,maxwidth)
-  local colors={A={.95,.30,.50},B={.98,.77,.23},X={.30,.66,.97},Y={.37,.80,.55},START=theme.accent}
+  local colors={A={.95,.30,.50},B={.98,.77,.23},X={.30,.66,.97},Y={.37,.80,.55}}
   local c=colors[key] or theme.accent
+  local textOffset=23
   if key=='A' or key=='B' or key=='X' or key=='Y' then
     U.color(c)
     love.graphics.circle('fill',x+9,y+9,9)
     U.text(key,x+3,y+2,11,theme.bg,13,true)
+  elseif key=='START' then
+    -- START amarelo solido, com largura real para as cinco letras.
+    -- O antigo retangulo de 42 px e a fonte dimensionada cortavam o T.
+    local startColor={1.0,.82,.22}
+    U.rect(x,y,56,20,startColor,7)
+    U.text('START',x+4,y+4,9,theme.bg,48,true)
+    textOffset=61
   else
     U.rect(x,y,42,18,theme.panel2,7,c)
     U.text(key,x+3,y+3,9,c,36,true)
+    textOffset=46
   end
-  -- Não pedir printf com largura zero ao LÖVE quando só queremos o símbolo.
   if label and label~='' and (maxwidth==nil or maxwidth>0) then
-    local offset=(key=='START' and 46 or 23)
-    U.text(label,x+offset,y+3,10,theme.muted,maxwidth or 76)
+    U.text(label,x+textOffset,y+3,10,theme.muted,maxwidth or 76)
   end
 end
 function U.footer(a,b,c)

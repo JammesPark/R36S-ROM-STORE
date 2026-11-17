@@ -85,7 +85,7 @@ local sum=0;for _,x in ipairs(dots) do sum=sum+x end
 assert(math.abs(sum/#dots-511)<.01,'Bolinhas fora do centro do slide')
 assert(contains('DESTAQUE')>0,'Titulo EM DESTAQUE nao esta visivel')
 local slideFound=false
-for _,r in ipairs(rects) do if r.mode=='fill' and r.x==428 and r.y==227 and r.w==166 and r.h==197 then slideFound=true end end
+for _,r in ipairs(rects) do if r.mode=='fill' and r.x==428 and r.y==237 and r.w==166 and r.h==187 then slideFound=true end end
 assert(slideFound,'Slide nao foi reduzido/relocalizado')
 route('about');reset();love.draw()
 local header,community
@@ -100,7 +100,7 @@ for _,b in ipairs(buttons) do
  if b.key=='START' and b.y==157 then start=b end
  if b.maxwidth then assert(b.maxwidth>0,'Botoes nao podem usar largura de texto zero')end
 end
-assert(start and start.x+42<=community.x+community.w,'Botao START cortado no quadro')
+assert(start and start.x+56<=community.x+community.w,'Botao START cortado no quadro')
 route('catalog');focus('grid');reset();love.draw()
 assert(contains('ROM Dois')==1,'Nome do jogo duplicado na capa selecionada')
 local preview=false
