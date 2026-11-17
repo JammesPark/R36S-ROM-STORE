@@ -37,6 +37,7 @@ local function launch(task,args)
   end
   pending=task
   recentStatus=''
+  os.remove(STATE..'/gamestore_status.json') -- descarta status de operacao anterior
   info="Conectando ao catálogo remoto..."
   if not command(args) then
     info="Não foi possível iniciar Python 3"
