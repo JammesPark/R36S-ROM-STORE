@@ -22,6 +22,7 @@ local selectedGame=nil
 local lastStatus='';local lastManifest='';local coverImages={};local coverSeen={}
 local clock=0;local startupTime=0;local notice='';local noticeTime=0
 local selectedCard=1;local transferHandled=false
+local homeFocus='explore';local homeSlideIndex=1;local homeOverviewIndex=1;local homeSlideClock=0
 local storageInfo={};local storageLast=-999
 local suboptions={'languages','themes','font_size','storage','network','help'}
 local fontSizes={'small','medium','large'}
@@ -177,6 +178,7 @@ local function navigate(route)
 end
 local function mainRoute(route)
   screen=route;stack={};focus=route=='home' and 'sidebar' or 'grid'
+  if route=='home' then homeFocus='explore';homeOverviewIndex=1 end
   for i,k in ipairs(mainPages) do if k==route then menuIndex=i end end
   if route=='catalog' then external.enter() end
 end
@@ -228,14 +230,31 @@ local function cover(game,x,y,w,h,index)
     ui.imageContain(img,x+2,y+2,w-4,h-4)
   end
 end
+local function platformTitle(code)
+  code=tostring(code or '')
+  if code=='ALL' then return tr('all') end
+  if code:lower()=='ports' then return 'Homebrew' end
+  local aliases={nes='NES',snes='SNES',psx='PSX',ps1='PS1',ps2='PS2',psp='PSP',
+    gba='GBA',gb='GB',gbc='GBC',nds='NDS',n64='N64',n3ds='3DS',mame='MAME',
+    nintendo64='Nintendo 64',megadrive='Mega Drive',genesis='Genesis',
+    dreamcast='Dreamcast',saturn='Saturn',wii='Wii',gamecube='GameCube'}
+  local raw=code:lower()
+  if aliases[raw] then return aliases[raw] end
+  return raw:gsub('(%a)([%w]*)',function(c,rest) return c:upper()..rest end)
+end
 local function sideItem(name,y,active,index,count)
   if active then
     R(13,y,134,34,theme.panel2,8,theme.accent)
     R(13,y+7,3,20,theme.accent,1)
   end
-  -- Marcador geométrico simples no lugar de ícones externos.
-  R(27,y+12,12,12,active and theme.accent or theme.muted,3)
-  R(30,y+15,6,6,theme.sidebar,2)
+  -- Icones vetoriais especificos para cada categoria/plataforma.
+  local iconColor=active and theme.accent or theme.muted
+  if screen=='catalog' then
+    local c=external.categories[index]
+    ui.platformIcon(c and c.category or 'ALL',26,y+9,iconColor)
+  else
+    ui.menuIcon(menuPages[index] or 'home',26,y+9,iconColor)
+  end
   txt(ui.ellipsize(name,17),47,y+9,11,active and theme.text or theme.muted,83)
   if count then txt(tostring(count),131,y+10,9,theme.accent,13) end
 end
@@ -250,12 +269,10 @@ local function sidebar()
     local scroll=math.max(1,math.min(categoryIndex-4,total-7))
     for idx=scroll,math.min(total,scroll+7) do
       local cat=external.categories[idx]
-      local name=cat.category=='ALL' and tr('all') or (cat.category=='ports' and 'Homebrew' or cat.category)
+      local name=platformTitle(cat.category)
       sideItem(name,top+(idx-scroll)*37,cat.category==external.category,idx)
       if focus=='sidebar' and idx==categoryIndex then ui.stroke(16,top+(idx-scroll)*37+2,128,30,theme.accent,7,2) end
     end
-    R(13,406,134,24,theme.panel2,7,theme.border)
-    txt('◁ '..tr('main_menu'),24,411,10,theme.accent,114)
   else
     txt(tr('navigation'),27,89,10,theme.low)
     for i,route in ipairs(menuPages) do
@@ -276,8 +293,12 @@ local function header(eyebrow,title,right)
   if right then ui.pill(right,548,15,78,false) end
 end
 local function footer(phrase)
-  ui.footer(tr('select'),tr('back'),screen=='catalog' and tr('page') or nil)
-  txt('v0.2.4',579,452,10,theme.accent)
+  if screen=='catalog' then
+    ui.catalogFooter(tr('select'),tr('back'),tr('search'),tr('page'))
+  else
+    ui.footer(tr('select'),tr('back'))
+  end
+  txt('v0.2.5',579,452,10,theme.accent)
 end
 local function card(game,x,y,w,h,idx,active,badge)
   panel(x,y,w,h,active)
@@ -302,12 +323,12 @@ end
 
 local function homePage()
   header(tr('welcome'),tr('title_home'))
-  -- Banner superior compacto e informacoes em coluna, destaques 2x2.
-  panel(179,84,441,90,true)
+  panel(179,84,441,90,focus=='content' and homeFocus=='explore')
   ui.kicker('R36S ROMS STORE',192,92)
   txt(tr('subtitle'),192,111,17,theme.text,407)
   txt(tr('intro'),192,136,10,theme.muted,406)
   R(468,147,138,22,theme.accent,6)
+  if focus=='content' and homeFocus=='explore' then ui.stroke(467,146,140,24,theme.text,6,2) end
   txt(tr('explore'),474,151,10,theme.bg,126,true)
   txt(tr('overview'),181,187,12,theme.text,119)
   txt(tr('featured'),307,187,12,theme.text,300)
@@ -317,34 +338,41 @@ local function homePage()
     {tr('favorites'),tostring(#favorites)}}
   for i,item in ipairs(stats) do
     local y=211+(i-1)*72
-    panel(180,y,115,65)
+    panel(180,y,115,65,focus=='content' and homeFocus=='overview' and homeOverviewIndex==i)
     txt(ui.ellipsize(item[1],17),189,y+7,9,theme.muted,99)
     txt(item[2],189,y+30,19,theme.accent,93)
   end
-  if #external.games==0 then
-    panel(307,211,312,210)
-    txt(tr('loading'),316,300,12,theme.muted,291,true)
+  -- Somente um destaque por vez: capa integra, um nome e indicadores do slide.
+  panel(307,211,312,210,focus=='content' and homeFocus=='featured')
+  local total=#external.games
+  if total==0 then
+    txt(tr('loading'),315,294,12,theme.muted,293,true)
   else
-    for i=1,math.min(4,#external.games) do
-      local game=external.games[i]
-      local col=(i-1)%2;local row=math.floor((i-1)/2)
-      local x=307+col*160;local y=211+row*107
-      panel(x,y,152,100)
-      -- Capa sem titulo sobreposto: somente uma legenda abaixo da imagem.
-      cover(game,x+3,y+3,146,71,i)
-      R(x+3,y+75,146,22,theme.panel,0,nil,.97)
-      txt(ui.ellipsize(game.name,21),x+8,y+79,10,theme.text,136)
+    homeSlideIndex=math.max(1,math.min(total,homeSlideIndex))
+    local game=external.games[homeSlideIndex]
+    cover(game,315,219,296,155,homeSlideIndex)
+    R(315,374,296,39,theme.panel,5,nil,.98)
+    txt(ui.ellipsize(game.name or '?',29),324,380,12,theme.text,228)
+    txt(homeSlideIndex..' / '..total,550,380,10,theme.accent,53,true)
+    if total>1 then
+      local shown=math.min(7,total)
+      local first=math.max(1,math.min(homeSlideIndex-math.floor(shown/2),total-shown+1))
+      for n=0,shown-1 do
+        local dotIndex=first+n
+        ui.color(dotIndex==homeSlideIndex and theme.accent or theme.low)
+        love.graphics.circle('fill',435+(n-(shown-1)/2)*12,407,dotIndex==homeSlideIndex and 3.3 or 2.2)
+      end
     end
   end
   footer()
 end
 local function catalogPage()
   header(tr('library'),tr('title_catalog'))
-  -- Busca dedicada: botão acima do grid.
-  R(540,53,79,29,theme.panel,8,theme.border)
-  txt('X '..tr('search'),547,60,11,theme.accent,68)
+  -- Apenas lupa aqui; o atalho X fica identificado no rodape.
+  R(578,56,41,29,theme.panel,8,theme.border)
+  ui.searchIcon(591,63,theme.accent)
   local active=external.category
-  local catText=active=='ALL' and tr('all') or active:upper()
+  local catText=platformTitle(active)
   txt(ui.ellipsize(catText,18),180,102,13,theme.muted,223)
   txt('• '..(external.total>0 and external.total or #external.games)..' '..tr('games'),360,103,11,theme.accent)
   local g=external.games
@@ -587,18 +615,36 @@ local function networkPage()
   ui.color(color,.18);love.graphics.circle('fill',233,248,17)
   txt(label,260,234,18,theme.text,300)
   R(202,320,396,45,theme.accent,8)
+  ui.stroke(202,320,396,45,theme.text,8,1)
   txt(tr('refresh'),213,332,14,theme.bg,370,true)
   footer()
 end
 local function aboutPage()
   header(tr('info'),tr('title_about'))
-  panel(180,118,440,276)
-  ui.kicker('R36S ROMS STORE',200,144)
-  txt('R36S ROMS',201,184,25,theme.text)
-  txt('S T O R E',201,222,20,theme.accent)
-  txt(tr('about_note'),201,279,12,theme.muted,389)
-  txt('v0.2.4  •  640×480',201,311,12,theme.accent,389)
-  txt(tr('about_runtime'),201,344,11,theme.low,390)
+  -- Referencia: cartao de autoria e mensagem do projeto da imagem enviada.
+  -- Mantem visual proprio sem reproduzir logo/marca de terceiros.
+  panel(180,92,440,109)
+  R(188,100,423,4,theme.accent,2)
+  ui.brandLogo(195,113,.76)
+  txt('R36S ROMS',275,117,17,theme.text,196)
+  txt('STORE',275,142,16,theme.accent,140)
+  txt('v0.2.5  •  TESTE',275,171,10,theme.muted,180)
+  R(473,119,136,60,theme.panel2,8,theme.border)
+  txt(tr('about_author'),482,129,9,theme.muted,114,true)
+  txt('JAMES PARK',481,148,14,theme.accent,116,true)
+
+  panel(180,209,440,142)
+  ui.kicker(tr('about_project'),195,217)
+  txt(tr('about_line1'),196,241,12,theme.text,400)
+  txt(tr('about_line2'),196,261,12,theme.text,400)
+  R(195,288,408,1,theme.border,1)
+  txt('640×480  •  LUA + LÖVE 11.5  •  SD1 / SD2',196,301,11,theme.accent,406)
+  txt(tr('about_community'),196,326,10,theme.muted,407)
+
+  panel(180,360,440,69)
+  txt(tr('about_warning'),195,368,11,theme.accent,402)
+  txt(tr('about_warning1'),195,387,10,theme.muted,408)
+  txt(tr('about_warning2'),195,404,10,theme.muted,408)
   footer()
 end
 local function helpPage()
@@ -667,6 +713,13 @@ function love.update(dt)
   device.update(dt)
   if screen=='storage' and clock-storageLast>30 then refreshStorage() end
   external.update(dt)
+  if screen=='home' and not (focus=='content' and homeFocus=='featured') and #external.games>1 then
+    homeSlideClock=homeSlideClock+dt
+    if homeSlideClock>5 then
+      homeSlideClock=0
+      homeSlideIndex=homeSlideIndex%#external.games+1
+    end
+  end
   if screen=='startup' then
     startupTime=startupTime+dt
     if startupTime>1.2 then mainRoute('home') end
@@ -736,6 +789,18 @@ local function moveGrid(dx,dy)
   if dx==-1 and ((gameIndex-1)%3)==0 then focus='sidebar';return end
   if dx==1 and (gameIndex%3)==0 then return end
   gameIndex=math.max(1,math.min(n,next))
+end
+local function refreshCatalog()
+  if external.busy() then
+    notice=tr('syncing');noticeTime=2
+    return false
+  end
+  if external.refresh() then
+    notice=tr('syncing');noticeTime=2
+    return true
+  end
+  notice=tr('network_error');noticeTime=2.5
+  return false
 end
 local function handleKey(key)
   if screen=='startup' then if key=='a' or key=='b' then mainRoute('home') end;return end
@@ -864,37 +929,53 @@ local function handleKey(key)
     if key=='b' then back() end
     return
   elseif screen=='network' or screen=='offline' then
-    if key=='a' or key=='y' then external.refresh()
+    if key=='a' or key=='y' then refreshCatalog()
     elseif key=='b' then back() end
     return
   elseif screen=='about' or screen=='help' then
-    if key=='a' and screen=='about' then navigate('help')
-    elseif key=='b' then back() end
+    -- A nunca abre Ajuda automaticamente ao visitar Sobre.
+    if key=='b' then back() end
     return
   elseif screen=='home' then
-    -- O direcional move apenas o foco/seleção; nunca abre uma tela.
-    if key=='up' and focus=='sidebar' then
-      menuIndex=math.max(1,menuIndex-1)
-    elseif key=='down' and focus=='sidebar' then
-      menuIndex=math.min(#menuPages,menuIndex+1)
-    elseif key=='left' then
-      focus='sidebar'
-    elseif key=='right' then
-      focus='content'
-    elseif key=='a' then
-      -- A é a única tecla que confirma a rota selecionada.
-      if focus=='sidebar' then
+    -- D-pad escolhe item e regiao; somente A entra no item em foco.
+    if focus=='sidebar' then
+      if key=='up' then menuIndex=math.max(1,menuIndex-1)
+      elseif key=='down' then menuIndex=math.min(#menuPages,menuIndex+1)
+      elseif key=='right' then focus='content';homeFocus='explore'
+      elseif key=='a' then
         local route=menuPages[menuIndex]
-        if route=='home' then focus='content'
+        if route=='home' then focus='content';homeFocus='explore'
         elseif route=='exit' then navigate('exit_confirm')
         elseif route then mainRoute(route) end
-      else
-        mainRoute('catalog')
-      end
-    elseif key=='b' then
-      focus='sidebar'
-    elseif key=='y' then
-      external.refresh()
+      elseif key=='y' then external.refresh() end
+    else
+      if key=='b' then focus='sidebar'
+      elseif key=='up' then
+        if homeFocus=='featured' then homeFocus='explore'
+        elseif homeFocus=='overview' then homeOverviewIndex=math.max(1,homeOverviewIndex-1) end
+      elseif key=='down' then
+        if homeFocus=='explore' then homeFocus='featured'
+        elseif homeFocus=='overview' then homeOverviewIndex=math.min(3,homeOverviewIndex+1) end
+      elseif key=='left' then
+        if homeFocus=='featured' then homeFocus='overview'
+        elseif homeFocus=='explore' then focus='sidebar'
+        elseif homeFocus=='overview' then focus='sidebar' end
+      elseif key=='right' then
+        if homeFocus=='overview' then homeFocus='featured'
+        elseif homeFocus=='explore' then homeFocus='featured'
+        elseif homeFocus=='featured' and #external.games>1 then
+          homeSlideIndex=homeSlideIndex%#external.games+1;homeSlideClock=0
+        end
+      elseif key=='a' then
+        if homeFocus=='featured' then
+          enterGame(external.games[homeSlideIndex])
+        elseif homeFocus=='overview' then
+          local targets={'catalog','installed','favorites'}
+          mainRoute(targets[homeOverviewIndex])
+        else
+          mainRoute('catalog')
+        end
+      elseif key=='y' then external.refresh() end
     end
     return
   end
@@ -948,7 +1029,7 @@ function love.mousepressed(x,y,button)
       local idx=first+row*3+col
       if col>=0 and col<3 and row>=0 and row<2 and external.games[idx] then
         gameIndex=idx;focus='grid';enterGame(external.games[idx]) end
-    elseif y<90 and x>=540 then navigate('search') end
+    elseif y>=56 and y<=85 and x>=578 and x<=619 then navigate('search') end
   elseif screen=='settings' then
     local idx=math.floor((y-108)/53)+1
     if y>=108 and suboptions[idx] then settingsIndex=idx;navigate(suboptions[idx]) end
@@ -963,7 +1044,22 @@ function love.mousepressed(x,y,button)
   elseif screen=='languages' then
     local idx=math.floor((y-123)/72)+1
     if i18n.languages[idx] then languageIndex=idx;changeLanguage() end
-  elseif screen=='home' then mainRoute('catalog')
+  elseif screen=='network' then
+    if x>=202 and x<=598 and y>=320 and y<=365 then refreshCatalog() end
+  elseif screen=='offline' then
+    if x>=201 and x<=598 and y>=327 and y<=366 then refreshCatalog() end
+  elseif screen=='home' then
+    if x>=468 and x<=606 and y>=147 and y<=171 then
+      focus='content';homeFocus='explore';mainRoute('catalog')
+    elseif x>=307 and x<=619 and y>=211 and y<=421 then
+      focus='content';homeFocus='featured';enterGame(external.games[homeSlideIndex])
+    elseif x>=180 and x<=295 and y>=211 and y<=421 then
+      local index=math.floor((y-211)/72)+1
+      if index>=1 and index<=3 then
+        homeFocus='overview';homeOverviewIndex=index
+        local targets={'catalog','installed','favorites'};mainRoute(targets[index])
+      end
+    end
   elseif screen=='detail' then if y>=280 then handleKey('a') end
   elseif screen=='confirm' then
     if y>228 and y<332 then selectedCard=x<406 and 1 or 2

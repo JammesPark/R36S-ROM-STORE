@@ -184,26 +184,113 @@ end
 -- Indicadores visuais; dados são consultados localmente em sysfs/proc.
 function U.statusBar(data)
   data=data or {}
-  local y=5
-  U.rect(449,y,179,23,theme.sidebar,7,theme.border,.94)
-  -- Wi-Fi em ondas (cinza quando interface desconectada).
+  -- Alinhamento comum dos centros em y=18: Wi-Fi | hora | bateria.
+  U.rect(437,5,191,26,theme.sidebar,7,theme.border,.96)
+  U.rect(478,10,1,16,theme.border,0)
+  U.rect(541,10,1,16,theme.border,0)
   local wifi=data.wifi and theme.green or theme.low
   U.color(wifi)
-  love.graphics.setLineWidth(1.7)
-  love.graphics.line(461,13,466,10,471,13)
-  love.graphics.line(463,16,466,14,469,16)
-  love.graphics.circle('fill',466,19,1.4)
+  love.graphics.setLineWidth(1.9)
+  love.graphics.line(449,16,456,11,463,16)
+  love.graphics.line(452,19,456,16,460,19)
+  love.graphics.circle('fill',456,22,1.6)
   love.graphics.setLineWidth(1)
-  U.text(data.time or '--:--',480,10,11,theme.text,47)
-  -- Bateria e percentual do dispositivo (ou -- caso indisponível).
+  U.text(data.time or '--:--',483,11,11,theme.text,55,true)
   local p=tonumber(data.battery)
-  local c=(p and p<=15) and theme.error or theme.green
-  U.rect(542,12,24,12,theme.panel,2,theme.muted)
-  U.rect(566,16,2,4,theme.muted,1)
+  local fill=p and (p<=15 and theme.error or theme.green) or theme.low
+  U.rect(552,12,24,12,theme.panel,2,theme.muted)
+  U.rect(576,16,2,4,theme.muted,1)
   if p then
-    U.rect(545,15,math.max(0,18*math.min(100,math.max(0,p))/100),6,c,1)
+    U.rect(555,15,math.max(0,18*math.min(100,math.max(0,p))/100),6,fill,1)
   end
-  U.text(p and (tostring(math.floor(p+.5))..'%') or '--%',574,10,10,theme.text,45)
+  U.text(p and (tostring(math.floor(p+0.5))..'%') or '--%',582,11,10,theme.text,42,true)
+end
+-- Icones vetoriais de 17x17 para preservar legibilidade em 640x480.
+function U.searchIcon(x,y,c)
+  U.color(c);love.graphics.setLineWidth(2)
+  love.graphics.circle('line',x+7,y+7,5)
+  love.graphics.line(x+11,y+11,x+16,y+16)
+  love.graphics.setLineWidth(1)
+end
+function U.menuIcon(kind,x,y,c)
+  U.color(c);love.graphics.setLineWidth(1.7)
+  if kind=='home' then
+    love.graphics.line(x+1,y+8,x+9,y+1,x+17,y+8)
+    love.graphics.rectangle('line',x+4,y+8,11,9,2,2)
+    love.graphics.rectangle('line',x+8,y+11,3,6)
+  elseif kind=='catalog' then
+    for i=0,1 do for j=0,1 do love.graphics.rectangle('line',x+2+j*9,y+2+i*9,6,6,1,1) end end
+  elseif kind=='downloads' then
+    love.graphics.line(x+9,y+1,x+9,y+12,x+5,y+8)
+    love.graphics.line(x+9,y+12,x+13,y+8)
+    love.graphics.line(x+2,y+14,x+2,y+17,x+16,y+17,x+16,y+14)
+  elseif kind=='installed' then
+    love.graphics.rectangle('line',x+2,y+3,14,13,3,3)
+    love.graphics.line(x+5,y+10,x+8,y+13,x+14,y+6)
+  elseif kind=='favorites' then
+    love.graphics.polygon('line',x+9,y+1,x+11,y+6,x+17,y+7,x+13,y+11,x+14,y+17,x+9,y+14,x+4,y+17,x+5,y+11,x+1,y+7,x+7,y+6)
+  elseif kind=='settings' then
+    love.graphics.circle('line',x+9,y+9,6)
+    love.graphics.circle('line',x+9,y+9,2)
+    love.graphics.line(x+9,y,x+9,y+3,x+9,y+15,x+9,y+18,x,y+9,x+3,y+9,x+15,y+9,x+18,y+9)
+  elseif kind=='about' then
+    love.graphics.circle('line',x+9,y+9,8)
+    love.graphics.line(x+9,y+8,x+9,y+13)
+    love.graphics.circle('fill',x+9,y+5,1)
+  elseif kind=='exit' then
+    love.graphics.circle('line',x+9,y+10,7)
+    love.graphics.line(x+9,y+1,x+9,y+11)
+  else
+    love.graphics.rectangle('line',x+2,y+2,14,14,2,2)
+  end
+  love.graphics.setLineWidth(1)
+end
+function U.platformIcon(category,x,y,c)
+  local id=tostring(category or 'ALL'):lower()
+  U.color(c);love.graphics.setLineWidth(1.5)
+  if id=='all' then
+    for row=0,1 do for col=0,1 do love.graphics.rectangle('line',x+2+col*9,y+2+row*9,6,6,1,1) end end
+  elseif id:find('arcade') or id=='mame' or id:find('cps') then
+    love.graphics.rectangle('line',x+2,y+11,14,6,2,2)
+    love.graphics.line(x+8,y+11,x+8,y+5)
+    love.graphics.circle('fill',x+8,y+4,2)
+    love.graphics.circle('fill',x+13,y+13,1.6)
+  elseif id:find('ps') or id:find('dreamcast') or id:find('saturn') or id:find('cd') then
+    love.graphics.circle('line',x+9,y+9,8)
+    love.graphics.circle('line',x+9,y+9,2.1)
+    love.graphics.line(x+2,y+9,x+5,y+9)
+  elseif id:find('gb') or id:find('nds') or id:find('3ds') or id:find('psp') then
+    love.graphics.rectangle('line',x+4,y+1,10,17,2,2)
+    love.graphics.rectangle('line',x+6,y+4,6,7,1,1)
+    love.graphics.line(x+7,y+14,x+11,y+14)
+  elseif id:find('nes') or id:find('snes') or id:find('gba') or id:find('genesis') or id:find('mega') or id:find('n64') then
+    love.graphics.rectangle('line',x+3,y+3,12,13,2,2)
+    love.graphics.line(x+6,y+8,x+11,y+8)
+    love.graphics.line(x+6,y+11,x+11,y+11)
+  elseif id=='ports' or id:find('homebrew') then
+    love.graphics.line(x+4,y+15,x+12,y+6)
+    love.graphics.circle('line',x+13,y+5,4)
+    love.graphics.circle('fill',x+3,y+16,2)
+  else
+    love.graphics.rectangle('line',x+1,y+5,16,10,5,5)
+    love.graphics.line(x+5,y+9,x+9,y+9,x+7,y+7,x+7,y+11)
+    love.graphics.circle('fill',x+13,y+9,1.3)
+  end
+  love.graphics.setLineWidth(1)
+end
+function U.catalogFooter(selectText,backText,searchText,pageText)
+  U.rect(158,436,482,44,{.035,.080,.13})
+  U.rect(158,435,482,1,theme.border)
+  local function key(x,keyName,label)
+    local w=keyName=='L/R' and 34 or 20
+    U.rect(x,449,w,18,theme.panel2,5,theme.border)
+    U.text(keyName,x+3,452,10,theme.accent,w-6,true)
+    U.text(label,x+w+4,453,10,theme.muted,76)
+  end
+  key(177,'A',selectText)
+  key(270,'B',backText)
+  key(351,'X',searchText)
+  key(469,'L/R',pageText)
 end
 function U.brandLogo(x,y,scale)
   scale=scale or 1

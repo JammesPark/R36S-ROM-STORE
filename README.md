@@ -1,4 +1,4 @@
-# R36S ROMS STORE — v0.2.4 (teste)
+# R36S ROMS STORE — v0.2.5 (teste)
 
 Loja de ROMs para consoles R36S, com interface Lua + LÖVE 11.5 na resolução **640×480**, catálogo único GameStoreBR (`r36swiki.com/getgames.php`) e arquivos baixados diretamente para SD1/SD2. **Nenhuma ROM, BIOS ou conteúdo comercial é distribuído com o aplicativo.**
 
@@ -53,7 +53,7 @@ bash tools/build.sh
 
 A API GameStoreBR é de terceiros e sua disponibilidade depende do provedor. Os arquivos que ela disponibiliza estão sujeitos aos direitos dos respectivos titulares. A interface deste projeto é independente.
 
-## v0.2.4 — Melhorias de interface solicitadas
+## v0.2.5 — Melhorias de interface solicitadas
 
 - Tela de entrada redesenhada com **logo vetorial R36S ROMS STORE** integrada ao LÖVE e barra de progresso. O ZIP não inclui um logotipo PNG externo; caso exista uma arte oficial diferente, ela poderá substituir a marca vetorial.
 - Total de ROMs na Home agora é a soma dos contadores de todas as plataformas, excluindo a categoria ALL para evitar duplicidade. Antes da sincronização, exibe um traço.
@@ -67,7 +67,7 @@ A API GameStoreBR é de terceiros e sua disponibilidade depende do provedor. Os 
 **Observação:** esta versão depende de testes reais no R36S para confirmar desempenho da renderização, as capas e medição do espaço dos cartões.
 
 
-## Atualização v0.2.4 — UI, downloads e controles
+## Atualização v0.2.5 — UI, downloads e controles
 
 - **Downloads:** transferência ativa no painel superior e histórico de ROMs concluídas abaixo, com até 4 registros por página e rolagem pelo D-pad. A lista é lida do `state/roms_downloads.json`, não contém dados demonstrativos.
 - **Status:** Wi-Fi (interface detectada), hora local e bateria (%) consultados no Linux. Sensores ausentes mostram `--%`; Wi-Fi detectado não garante acesso à internet.
@@ -76,3 +76,17 @@ A API GameStoreBR é de terceiros e sua disponibilidade depende do provedor. Os 
 - **Controles:** o PortMaster continua fornecendo SDL_GAMECONTROLLERCONFIG; **GPTOKEYB foi desativado** para impedir eventos duplicados. D-pad navega, A confirma, B volta, X pesquisa no catálogo, Y atualiza, START pesquisa. L1/R1 paginam apenas dentro do catálogo. Não trocam telas na Home. Teclado PC usa Enter/Escape/setas/X/Y; apelidos antigos Z/Q/E/Space foram removidos.
 
 O uso do Wi-Fi, da bateria e a aceitação do controle dependem do dispositivo e firmware, ainda sujeitos a teste no console físico.
+
+
+## Atualizacao v0.2.5 — Interface, controles e navegacao
+
+- Removido botao visual de retorno ao menu nas categorias (B ainda retorna).
+- Barra superior Wi-Fi/hora/bateria alinhada e centralizada verticalmente.
+- Pesquisa no catalogo exibida por icone de lupa; o atalho **X Buscar** fica no rodape.
+- Tela Sobre totalmente redesenhada, com identidade propria, cartao do desenvolvedor James Park, dados tecnicos e aviso independente. O botao A nao abre Ajuda a partir da tela Sobre.
+- Botao Atualizar catalogo na tela Rede funciona por toque/clique ou botao A; quando ja existe atualizacao pendente, mostra feedback em vez de enviar operacao duplicada.
+- Inicio: a seta direita entra na area de conteudo, com foco entre Explorar, Visao geral e Destaques. A confirma o item destacado.
+- Destaques em formato slide unico com imagem inteira, uma legenda, posicao e navegacao. Troca automatica quando nao estiver selecionado.
+- Categorias do menu usam icones vetoriais contextualizados; nomes exibidos com inicial maiuscula e siglas preservadas.
+
+A integracao grafica ainda depende de validacao no console real.
