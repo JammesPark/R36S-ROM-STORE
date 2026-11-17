@@ -7,6 +7,7 @@ local theme=require('theme')
 local i18n=require('i18n')
 local legal=require('legal_text')
 local device=require('device_status')
+local music=require('music')
 local HOME=os.getenv('R36S_STORE_HOME') or '/roms/ports/r36s-roms-store'
 local STATE=HOME..'/state'
 local mainPages={'home','catalog','downloads','installed','favorites','settings','about'}
@@ -17,6 +18,7 @@ local settings={language='pt',theme='ocean',font_size='medium'}
 local languageChosen=false -- salvo apenas depois da escolha inicial do usuario
 local aboutScroll=0
 local aboutMaxScroll=0
+local qrModal=nil -- 'telegram' ou 'livepix'
 local favorites={}
 local downloads={}
 local focus='sidebar'; local menuIndex=1;local categoryIndex=1;local gameIndex=1
@@ -169,6 +171,7 @@ end
 local function navigate(route)
   if screen~=route then stack[#stack+1]=screen end
   screen=route
+  music.updateRoute(screen)
   if route=='storage' then refreshStorage() end
   if route=='font_size' then
     for idx,v in ipairs(fontSizes) do if v==settings.font_size then fontSizeIndex=idx end end
@@ -180,10 +183,12 @@ local function mainRoute(route)
   if route=='home' then homeFocus='explore';homeOverviewIndex=1 end
   for i,k in ipairs(mainPages) do if k==route then menuIndex=i end end
   if route=='catalog' then external.enter() end
+  music.updateRoute(screen)
 end
 local function back()
   if #stack>0 then screen=table.remove(stack)
   elseif screen~='home' then mainRoute('home') end
+  music.updateRoute(screen)
 end
 local function selectedFromGames()
   local list=currentGames()
@@ -227,6 +232,14 @@ local function cover(game,x,y,w,h,index)
   if img then
     R(x,y,w,h,theme.panel,4)
     ui.imageContain(img,x+2,y+2,w-4,h-4)
+  end
+end
+local function coverStretch(game,x,y,w,h,index)
+  local img=cachedImage(game)
+  if img then
+    ui.imageStretch(img,x,y,w,h)
+  else
+    cover(game,x,y,w,h,index)
   end
 end
 local function platformTitle(code)
@@ -297,7 +310,7 @@ local function footer(phrase)
   else
     ui.footer(tr('select'),tr('back'))
   end
-  txt('v0.2.7',579,452,10,theme.accent)
+  txt('v0.2.8',579,452,10,theme.accent)
 end
 local function card(game,x,y,w,h,idx,active,badge)
   panel(x,y,w,h,active)
@@ -350,9 +363,10 @@ local function homePage()
   else
     homeSlideIndex=math.max(1,math.min(total,homeSlideIndex))
     local game=external.games[homeSlideIndex]
-    cover(game,425,217,171,162,homeSlideIndex)
-    R(424,381,173,40,theme.panel,4,nil,.98)
-    txt(ui.ellipsize(game.name or '?',20),430,387,10,theme.text,159)
+    coverStretch(game,425,217,171,201,homeSlideIndex)
+    -- Faixa opaca acima da capa: nome sempre a frente, nunca atras.
+    R(424,378,173,43,theme.sidebar,4,nil,1)
+    txt(ui.ellipsize(game.name or '?',21),430,382,11,theme.text,159)
     txt(homeSlideIndex..'/'..total,557,407,9,theme.accent,36,true)
     if total>1 then
       local shown=math.min(5,total)
@@ -652,7 +666,7 @@ local function legalParagraph(content,x,y,width,size,color,lineHeight)
   local f=ui.font(size)
   ui.color(color)
   love.graphics.setFont(f)
-  love.graphics.printf(content,x,y,width,'left')
+  love.graphics.printf(content,x,y,width,'justify')
   local lines=1
   if type(f.getWrap)=='function' then
     local _,result=f:getWrap(content,width)
@@ -704,38 +718,57 @@ local function disclaimerPage()
 end
 local function aboutPage()
   header(tr('info'),tr('title_about'))
-  panel(180,95,440,338)
+  panel(180,95,440,339)
   local copy=legal.get(settings.language)
-  local top=111-aboutScroll
-  love.graphics.setScissor(187,101,426,327)
-  ui.drawLogo(198,top,182,87)
-  txt('R36S ROMS STORE',390,top+22,13,theme.text,209)
-  txt('v0.2.7 • JAMES PARK',390,top+45,11,theme.accent,203)
-  local y=top+103
-  R(196,y,406,1,theme.border)
-  y=y+17
-  txt(copy.aboutHeading,197,y,13,theme.accent,402)
-  y=y+26
+  -- Cabecalho com duas marcas laterais e cartao central inspirado na referencia.
+  R(188,103,424,86,theme.panel2,9,theme.border)
+  ui.drawLogo(192,111,86,69)
+  R(282,108,238,74,theme.panel,8,theme.accent)
+  ui.drawAsset('telegram_icon',289,119,51,51)
+  txt(settings.language=='pt' and 'CANAL DA COMUNIDADE' or 'COMMUNITY CHANNEL',345,116,11,theme.text,173)
+  txt('@r36sportsbr',346,135,10,theme.accent,174)
+  txt('A  CANAL    START  LIVEPIX',344,155,9,theme.muted,179)
+  ui.drawAsset('logo_dev',528,112,78,65)
+  local y=208-aboutScroll
+  love.graphics.setScissor(191,201,418,226)
+  txt(copy.aboutHeading,197,y,13,theme.accent,407)
+  y=y+28
   for _,p in ipairs(copy.aboutIntro) do
-    y=legalParagraph(p,198,y,403,12,theme.text,17)+11
+    y=legalParagraph(p,198,y,402,12,theme.text,17)+12
   end
-  txt(copy.aboutSlogan,198,y,11,theme.accent,407)
-  y=y+33
-  R(196,y,406,1,theme.border)
-  y=y+14
-  txt(copy.warningTitle,198,y,14,theme.accent,399)
-  y=y+25
+  txt(copy.aboutSlogan,198,y,11,theme.accent,405)
+  y=y+31
+  R(197,y,405,1,theme.border)
+  y=y+15
+  txt(copy.warningTitle,198,y,14,theme.accent,402)
+  y=y+24
   for _,p in ipairs(copy.aboutWarnings) do
-    y=legalParagraph(p,198,y,403,12,theme.muted,17)+12
+    y=legalParagraph(p,198,y,402,12,theme.muted,17)+13
   end
-  aboutMaxScroll=math.max(0,math.ceil((y+aboutScroll)-423))
+  aboutMaxScroll=math.max(0,math.ceil((y+aboutScroll)-425))
   love.graphics.setScissor()
   if aboutMaxScroll>0 then
-    R(610,110,4,312,theme.border,2)
-    local bar=math.max(35,312*(312/(312+aboutMaxScroll)))
-    R(610,110+(312-bar)*aboutScroll/aboutMaxScroll,4,bar,theme.accent,2)
+    R(610,205,4,213,theme.border,2)
+    local bar=math.max(34,213*(213/(213+aboutMaxScroll)))
+    R(610,205+(213-bar)*aboutScroll/aboutMaxScroll,4,bar,theme.accent,2)
   end
-  txt('↑ ↓  '..copy.scroll..'    •    B  '..tr('back'),184,441,10,theme.muted,426)
+  txt('A CANAL   START LIVEPIX   B '..tr('back')..'   ↑↓ '..copy.scroll,185,445,10,theme.muted,426)
+end
+local function qrPage()
+  local telegram=qrModal=='telegram'
+  R(0,0,640,480,theme.bg)
+  R(40,35,560,414,theme.panel,16,theme.accent)
+  if telegram then
+    ui.drawAsset('telegram_icon',190,48,56,56)
+  end
+  txt(telegram and 'TELEGRAM  @r36sportsbr' or 'LIVEPIX  •  JAMES PARK',
+    telegram and 255 or 120,65,17,theme.text,telegram and 310 or 400)
+  R(189,117,262,262,{1,1,1},10)
+  if not ui.drawAsset(telegram and 'qr_telegram' or 'qr_livepix',194,122,252,252) then
+    txt('QR Code',215,230,19,theme.bg,200,true)
+  end
+  txt(telegram and '@r36sportsbr' or 'LivePix — James Park',164,386,14,theme.accent,312,true)
+  txt('B  •  '..tr('back'),218,422,12,theme.muted,208,true)
 end
 local function helpPage()
   header(tr('info'),tr('help'))
@@ -795,6 +828,7 @@ function love.load()
   external.init(HOME,STATE)
   reloadDownloads()
   device.update(0,true)
+  music.init()
   screen='startup'
   if os.getenv('R36S_STORE_OFFLINE_TEST')~='1' then external.enter() end
 end
@@ -814,6 +848,7 @@ function love.update(dt)
     startupTime=startupTime+dt
     if startupTime>1.2 then screen=languageChosen and 'disclaimer' or 'first_language' end
   end
+  music.updateRoute(screen)
   noticeTime=math.max(0,noticeTime-dt)
   if math.floor(clock*2)~=math.floor((clock-dt)*2) then
     reloadDownloads()
@@ -855,6 +890,7 @@ function love.draw()
   end
   ui.statusBar(device.get())
   if screen=='exit_confirm' then exitDialog() end
+  if qrModal then qrPage() end
 end
 local function changeTheme()
   local o=theme.options[themeIndex];if not o then return end
@@ -896,6 +932,10 @@ local function refreshCatalog()
   return false
 end
 local function handleKey(key)
+  if qrModal then
+    if key=='b' or key=='start' then qrModal=nil end
+    return
+  end
   if screen=='startup' then return end
   if screen=='first_language' then
     if key=='up' then languageIndex=math.max(1,languageIndex-1)
@@ -935,7 +975,10 @@ local function handleKey(key)
       elseif key=='down' then categoryIndex=math.min(#external.categories,categoryIndex+1)
       elseif key=='right' then focus='grid'
       elseif key=='a' then chooseCategory()
-      elseif key=='b' then mainRoute('home') end
+      elseif key=='b' then
+        -- Com o foco nas categorias, B pode voltar ao Inicio; o primeiro B
+        -- vindo da lista vai para as categorias, sem sair do catalogo.
+        mainRoute('home') end
       return
     end
     if key=='left' then focus='sidebar';return end
@@ -943,7 +986,7 @@ local function handleKey(key)
     if key=='up' then gameIndex=math.max(1,gameIndex-1);return end
     if key=='down' then gameIndex=math.min(#external.games,gameIndex+1);return end
     if key=='a' then enterGame(selectedFromGames());return end
-    if key=='b' then mainRoute('home');return end
+    if key=='b' then focus='sidebar';return end
     if key=='pageup' or key=='pagedown' then
       if external.pageChange(key=='pagedown' and 1 or -1) then gameIndex=1 end
       return
@@ -1054,7 +1097,9 @@ local function handleKey(key)
     return
   elseif screen=='about' or screen=='help' then
     if screen=='about' then
-      if key=='up' then aboutScroll=math.max(0,aboutScroll-47)
+      if key=='a' then qrModal='telegram';return
+      elseif key=='start' then qrModal='livepix';return
+      elseif key=='up' then aboutScroll=math.max(0,aboutScroll-47)
       elseif key=='down' then aboutScroll=math.min(aboutMaxScroll,aboutScroll+47)
       elseif key=='b' then back() end
     elseif key=='b' then back() end
@@ -1123,6 +1168,7 @@ function love.textinput(t)
 end
 function love.mousepressed(x,y,button)
   if button~=1 then return end
+  if qrModal then qrModal=nil;return end
   if screen=='startup' then return end
   if screen=='first_language' then
     if x>=109 and x<=530 and y>=207 and y<388 then
@@ -1186,6 +1232,11 @@ function love.mousepressed(x,y,button)
   elseif screen=='languages' then
     local idx=math.floor((y-123)/72)+1
     if i18n.languages[idx] then languageIndex=idx;changeLanguage() end
+  elseif screen=='about' then
+    if y>=103 and y<=189 then
+      if x>=280 and x<=519 then qrModal='telegram'
+      elseif x>=525 and x<=614 then qrModal='livepix' end
+    end
   elseif screen=='network' then
     if x>=202 and x<=598 and y>=320 and y<=365 then refreshCatalog() end
   elseif screen=='offline' then

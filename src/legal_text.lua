@@ -4,9 +4,9 @@ pt={
  languageTitle='Escolha seu idioma',languageHint='Selecione uma vez. Você poderá alterá-lo nas configurações.',choose='SELECIONAR E CONTINUAR',
  welcome='Bem-vindo ao R36S ROMS STORE!',
  notice={
-  'Este projeto é uma iniciativa independente, criada por fãs e para fãs do console R36S, com o objetivo de facilitar o acesso, a organização e a descoberta de ROMs e ports de jogos.',
-  'Não somos desenvolvedores, proprietários nem representantes dos jogos e ports disponibilizados por terceiros.',
-  'Não nos responsabilizamos pela criação, pelo funcionamento, pelo conteúdo, pela distribuição ou por eventuais problemas relacionados a jogos e ports de terceiros.',
+  'Este projeto é uma iniciativa independente, criada por fãs e para fãs do console R36S, com o objetivo de facilitar o acesso, a organização e a descoberta de ROMs.',
+  'Não somos desenvolvedores, proprietários nem representantes dos jogos disponibilizados por terceiros.',
+  'Não nos responsabilizamos pela criação, pelo funcionamento, pelo conteúdo, pela distribuição ou por eventuais problemas relacionados a jogos de terceiros.',
   'Todos os direitos pertencem aos respectivos desenvolvedores e detentores da propriedade intelectual. Respeite as licenças e os direitos autorais de cada projeto.'
  },
  community='FEITO PELA COMUNIDADE, PARA A COMUNIDADE!',continue='PARA CONTINUAR',scroll='ROLAR',
@@ -27,9 +27,9 @@ en={
  languageTitle='Choose your language',languageHint='Choose once. You can change it later in Settings.',choose='SELECT AND CONTINUE',
  welcome='Welcome to R36S ROMS STORE!',
  notice={
-  'This is an independent project created by and for R36S fans to help people access, organize and discover game ROMs and ports.',
-  'We are not the developers, owners or representatives of games and ports provided by third parties.',
-  'We are not responsible for the creation, operation, content, distribution or any problems related to third-party games and ports.',
+  'This is an independent project created by and for R36S fans to help people access, organize and discover game ROMs.',
+  'We are not the developers, owners or representatives of games provided by third parties.',
+  'We are not responsible for the creation, operation, content, distribution or any problems related to third-party games.',
   'All rights belong to their respective developers and intellectual property holders. Please respect each project’s licenses and copyrights.'
  },
  community='MADE BY THE COMMUNITY, FOR THE COMMUNITY!',continue='CONTINUE',scroll='SCROLL',
@@ -50,9 +50,9 @@ es={
  languageTitle='Elige tu idioma',languageHint='Elige una vez. Puedes cambiarlo luego en Ajustes.',choose='SELECCIONAR Y CONTINUAR',
  welcome='¡Bienvenido a R36S ROMS STORE!',
  notice={
-  'Este es un proyecto independiente, creado por y para aficionados de R36S, con el objetivo de facilitar el acceso, la organización y el descubrimiento de ROM y ports de videojuegos.',
-  'No somos desarrolladores, propietarios ni representantes de los juegos y ports proporcionados por terceros.',
-  'No nos responsabilizamos de la creación, funcionamiento, contenido, distribución o posibles problemas relacionados con juegos y ports de terceros.',
+  'Este es un proyecto independiente, creado por y para aficionados de R36S, con el objetivo de facilitar el acceso, la organización y el descubrimiento de ROM de videojuegos.',
+  'No somos desarrolladores, propietarios ni representantes de los juegos proporcionados por terceros.',
+  'No nos responsabilizamos de la creación, funcionamiento, contenido, distribución o posibles problemas relacionados con juegos de terceros.',
   'Todos los derechos pertenecen a sus respectivos desarrolladores y titulares de la propiedad intelectual. Respeta las licencias y los derechos de autor de cada proyecto.'
  },
  community='¡HECHO POR LA COMUNIDAD, PARA LA COMUNIDAD!',continue='PARA CONTINUAR',scroll='DESPLAZAR',
@@ -73,9 +73,9 @@ ru={
  languageTitle='Выберите язык',languageHint='Выберите один раз. Затем язык можно изменить в настройках.',choose='ВЫБРАТЬ И ПРОДОЛЖИТЬ',
  welcome='Добро пожаловать в R36S ROMS STORE!',
  notice={
-  'Это независимый проект, созданный поклонниками R36S для сообщества. Он помогает находить, упорядочивать и получать доступ к игровым ROM-файлам и портам.',
-  'Мы не являемся разработчиками, правообладателями или представителями сторонних игр и портов.',
-  'Мы не отвечаем за создание, работу, содержание, распространение или возможные проблемы сторонних игр и портов.',
+  'Это независимый проект, созданный поклонниками R36S для сообщества. Он помогает находить, упорядочивать и получать доступ к игровым ROM-файлам.',
+  'Мы не являемся разработчиками, правообладателями или представителями сторонних игр.',
+  'Мы не отвечаем за создание, работу, содержание, распространение или возможные проблемы сторонних игр.',
   'Все права принадлежат соответствующим разработчикам и правообладателям. Соблюдайте лицензии и авторские права каждого проекта.'
  },
  community='СОЗДАНО СООБЩЕСТВОМ ДЛЯ СООБЩЕСТВА!',continue='ПРОДОЛЖИТЬ',scroll='ПРОКРУТКА',

@@ -109,3 +109,19 @@ Ao iniciar pela primeira vez, após o carregamento, o usuário escolhe um dos qu
 **O aviso de responsabilidade aparece em toda inicialização**, após o carregamento e, quando necessário, após a escolha de idioma. O botão A confirma a leitura e permite entrar na loja. O botão B não ignora o aviso. Os textos do aviso e da tela Sobre foram revisados e traduzidos para quatro idiomas em `src/legal_text.lua`. O texto da tela Sobre dispõe de rolagem pelo direcional cima/baixo e inclui a indicação da licença e os avisos autorais.
 
 **Licenciamento:** o código original do aplicativo é distribuído sob GNU GPL-3.0 (`LICENSE`). Também incluímos `THIRD_PARTY_NOTICES.txt`. A licença do código não se estende automaticamente a ROMs, jogos, capas, marcas nem runtimes de terceiros. As licenças e os créditos dos componentes de terceiros devem ser respeitados e preservados. O aplicativo não é afiliado oficialmente a fabricantes ou desenvolvedores de jogos.
+
+
+## Versão 0.2.8 — Ajustes visuais, música e QR Code
+
+- Aviso inicial: redação sem menção a ports de terceiros e parágrafos justificados nos 4 idiomas.
+- Idiomas: bandeiras em PNG rasterizadas do conjunto Noto Color Emoji.
+- Início: capa do slide redimensionada para preencher todo o espaço (esticamento autorizado) e faixa opaca sobreposta com o título legível.
+- Menu: ícones externos Lucide (ISC), diferentes por função e com símbolos associados às plataformas, incluindo pequenos identificadores de hardware.
+- Voltar no catálogo: do jogo para a lista; da lista para as categorias; das categorias para Início.
+- Sobre: logo da loja menor à esquerda, logo James Park à direita e canal Telegram central. **A** abre QR do canal e **START** abre QR do LivePix (imagens originais fornecidas). **B** fecha o QR. O cabeçalho permanece fixo durante a rolagem do texto legal.
+- Trilha sonora local: `tema_principal.ogg` no Início, `tema_navegacao.ogg` nas demais telas e `tema_download.ogg` na área de downloads. LÖVE usa stream OGG (volume reduzido); se um áudio não abrir, a loja continua funcionando.
+- A apresentação HTML offline acompanha o instalador em um ZIP à parte; não contém catálogo remoto real.
+
+### Licenças e permissões
+
+O código da loja está sob GPL-3.0. Os ícones Lucide seguem licença ISC e as bandeiras usam imagem de emoji colorido. Os três áudios e os QR codes foram enviados para integração pelo usuário, mas a distribuição pública das faixas depende de seus respectivos direitos; os arquivos não são licenciados automaticamente pela GPL. Para distribuir os arquivos, confirme que há autorização dos titulares.

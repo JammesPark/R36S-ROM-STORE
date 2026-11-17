@@ -58,7 +58,9 @@ love.gamepadpressed(nil,'dpleft')
 love.gamepadpressed(nil,'a')
 assert(currentRoute()=='catalog','Botao A nao abriu a opcao Catálogo selecionada')
 love.gamepadpressed(nil,'b')
-assert(currentRoute()=='home','Botao B nao retornou ao inicio')
+assert(currentRoute()=='catalog','B na lista deve focar categorias sem abrir inicio')
+love.gamepadpressed(nil,'b')
+assert(currentRoute()=='home','Segundo B na categoria deve voltar ao inicio')
 ext.enter=oldEnter
 print('NAVEGACAO: direcional nao abre telas, A confirma e B retorna: OK')
 

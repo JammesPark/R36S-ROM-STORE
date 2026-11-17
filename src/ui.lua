@@ -6,6 +6,8 @@ local fallbackFont=nil
 local fontData=nil
 local fontScale=1
 local brandImage=nil
+local assets={}
+local function asset(name) return assets[name] end
 local sizeOptions={small=0.91,medium=1.0,large=1.18}
 function U.setFontSize(key)
   fontScale=sizeOptions[key] or 1
@@ -32,6 +34,19 @@ function U.init()
   -- Imagem da marca aprovada (PNG com transparencia) incluída no .love.
   local ok,img=pcall(love.graphics.newImage,'assets/logo.png')
   if ok and img then brandImage=img end
+  -- Imagens do usuario, bandeiras PNG e icones Lucide (ISC), sempre locais.
+  local names={'logo_dev','telegram_icon','qr_telegram','qr_livepix',
+    'flag_pt','flag_en','flag_es','flag_ru'}
+  for _,k in ipairs(names) do
+    local valid,resource=pcall(love.graphics.newImage,'assets/'..k..'.png')
+    if valid and resource then assets[k]=resource end
+  end
+  local glyphs={'house','library-big','download','hard-drive','heart','settings','info','log-out',
+    'gamepad-2','joystick','disc-3','monitor','tablet','cpu','disc','circuit-board','gamepad','search'}
+  for _,k in ipairs(glyphs) do
+    local valid,resource=pcall(love.graphics.newImage,'assets/icons/'..k..'.png')
+    if valid and resource then assets['ico_'..k]=resource end
+  end
   fontData=loadSystemFont()
   for _,size in ipairs({9,10,11,12,13,14,15,16,17,18,19,20,22,24,26,27,28}) do
     local ok,font=pcall(function()
@@ -208,60 +223,56 @@ function U.searchIcon(x,y,c)
   love.graphics.line(x+11,y+11,x+16,y+16)
   love.graphics.setLineWidth(1)
 end
-function U.menuIcon(kind,x,y,c)
-  U.color(c);love.graphics.setLineWidth(1.7)
-  if kind=='home' then
-    love.graphics.line(x+1,y+8,x+9,y+1,x+17,y+8)
-    love.graphics.rectangle('line',x+4,y+8,11,9,2,2)
-    love.graphics.rectangle('line',x+8,y+11,3,6)
-  elseif kind=='catalog' then
-    for i=0,1 do for j=0,1 do love.graphics.rectangle('line',x+2+j*9,y+2+i*9,6,6,1,1) end end
-  elseif kind=='downloads' then
-    love.graphics.line(x+9,y+1,x+9,y+12,x+5,y+8)
-    love.graphics.line(x+9,y+12,x+13,y+8)
-    love.graphics.line(x+2,y+14,x+2,y+17,x+16,y+17,x+16,y+14)
-  elseif kind=='installed' then
-    love.graphics.rectangle('line',x+2,y+3,14,13,3,3)
-    love.graphics.line(x+5,y+10,x+8,y+13,x+14,y+6)
-  elseif kind=='favorites' then
-    love.graphics.polygon('line',x+9,y+1,x+11,y+6,x+17,y+7,x+13,y+11,x+14,y+17,x+9,y+14,x+4,y+17,x+5,y+11,x+1,y+7,x+7,y+6)
-  elseif kind=='settings' then
-    love.graphics.circle('line',x+9,y+9,6)
-    love.graphics.circle('line',x+9,y+9,2)
-    love.graphics.line(x+9,y,x+9,y+3,x+9,y+15,x+9,y+18,x,y+9,x+3,y+9,x+15,y+9,x+18,y+9)
-  elseif kind=='about' then
-    love.graphics.circle('line',x+9,y+9,8)
-    love.graphics.line(x+9,y+8,x+9,y+13)
-    love.graphics.circle('fill',x+9,y+5,1)
-  elseif kind=='exit' then
-    love.graphics.circle('line',x+9,y+10,7)
-    love.graphics.line(x+9,y+1,x+9,y+11)
-  else
-    love.graphics.rectangle('line',x+2,y+2,14,14,2,2)
+-- Icones oficiais Lucide obtidos da internet, convertidos em PNG para LÖVE.
+local navIcons={home='house',catalog='library-big',downloads='download',installed='hard-drive',
+  favorites='heart',settings='settings',about='info',exit='log-out'}
+local categoryKinds={all='library-big',nes='gamepad',snes='gamepad-2',n64='gamepad-2',
+  gb='tablet',gbc='tablet',gba='tablet',nds='tablet',n3ds='tablet',
+  psx='disc-3',ps1='disc-3',ps2='disc',psp='tablet',ps3='disc',
+  megadrive='gamepad-2',genesis='gamepad-2',mastersystem='gamepad',gamegear='tablet',
+  saturn='disc-3',dreamcast='disc',mame='joystick',neogeo='joystick',
+  atari2600='joystick',pcengine='circuit-board',amigacd32='monitor',
+  wii='gamepad-2',gamecube='gamepad',ports='cpu',pico8='cpu',dos='monitor'}
+local platformShort={nes='N',snes='SN',n64='64',gb='GB',gbc='GC',gba='GA',nds='DS',
+ psx='PS',ps1='P1',ps2='P2',psp='PP',mame='AR',neogeo='NG',wii='W',
+ megadrive='MD',genesis='MD',saturn='SS',dreamcast='DC',ports='HB'}
+function U.icon(name,x,y,w,h,color)
+  local image=asset('ico_'..name)
+  if image then
+    U.color(color or theme.text)
+    local iw,ih=image:getDimensions()
+    love.graphics.draw(image,x,y,0,(w or 18)/iw,(h or 18)/ih)
+    U.color({1,1,1})
+    return true
   end
-  love.graphics.setLineWidth(1)
+  return false
+end
+function U.drawAsset(name,x,y,w,h,stretch)
+  local image=asset(name)
+  if not image then return false end
+  if stretch then
+    local iw,ih=image:getDimensions()
+    U.color({1,1,1});love.graphics.draw(image,x,y,0,w/iw,h/ih)
+  else U.imageContain(image,x,y,w,h) end
+  return true
+end
+function U.menuIcon(kind,x,y,c)
+  if U.icon(navIcons[kind] or 'gamepad',x,y,18,18,c) then return end
+  U.rect(x+2,y+2,14,14,c,3)
 end
 function U.platformIcon(category,x,y,c)
-  -- Em 18px, cada plataforma recebe um monograma/forma própria,
-  -- em vez de todas exibirem o mesmo controle genérico.
   local id=tostring(category or 'ALL'):lower()
-  local symbols={all='▦',nes='N',snes='SN',n64='64',gb='GB',gbc='GC',gba='GA',nds='DS',
-    psx='PS',ps1='P1',ps2='P2',psp='PP',megadrive='MD',genesis='MD',
-    mastersystem='MS',gamegear='GG',saturn='SS',dreamcast='DC',
-    mame='AR',neogeo='NG',atari2600='AT',pcengine='PC',amigacd32='AM',
-    ['3do']='3D',ports='HB'}
-  local colors={nes={.9,.37,.34},snes={.64,.54,1},n64={.28,.83,.42},
-    gb={.63,.81,.49},gbc={.42,.83,.46},gba={.64,.61,.98},nds={.8,.87,.98},
-    psx={.32,.68,1},psp={.39,.8,.96},megadrive={.94,.43,.48},
-    genesis={.94,.43,.48},mastersystem={.98,.52,.4},gamegear={.89,.58,.36},
-    saturn={.48,.8,.92},dreamcast={.96,.51,.32},mame={1,.75,.3},
-    neogeo={1,.82,.31},atari2600={.9,.58,.3},pcengine={.64,.9,.9},
-    amigacd32={.86,.57,.96},['3do']={.78,.76,.97},ports={.5,.91,.71}}
-  local label=symbols[id] or string.upper(id:sub(1,2))
-  local tint=colors[id] or c
-  U.rect(x,y,19,18,theme.panel2,4,tint)
-  U.rect(x+2,y+2,15,14,theme.sidebar,3)
-  U.text(label,x+1,y+4,9,tint,17,true)
+  if id=='all' then return U.icon('library-big',x,y,19,19,c) end
+  local kind=categoryKinds[id] or (id:find('playstation',1,true) and 'disc-3')
+    or (id:find('gameboy',1,true) and 'tablet') or 'gamepad-2'
+  local used=U.icon(kind,x,y,19,19,c)
+  -- Pequenissimo identificador para diferenciar plataformas da mesma familia.
+  if not used then U.rect(x+3,y+3,13,13,c,2) end
+  local tag=platformShort[id]
+  if tag then
+    U.rect(x+11,y+12,13,9,theme.sidebar,2)
+    U.text(tag,x+11,y+12,8,theme.accent,13,true)
+  end
 end
 function U.catalogFooter(selectText,backText,searchText,pageText)
   U.rect(158,436,482,44,{.035,.080,.13})
@@ -310,32 +321,21 @@ function U.brandLockup(x,y)
   U.text('ROMS STORE',x+102,y+45,20,theme.accent)
 end
 function U.flag(code,x,y,w,h)
-  local white={.98,.98,.98};local red={.86,.15,.22};local blue={.09,.21,.52}
-  U.rect(x-1,y-1,w+2,h+2,theme.border,3)
-  if code=='pt' then
-    U.rect(x,y,w,h,{.09,.55,.27},2)
-    U.color({.98,.84,.10});love.graphics.polygon('fill',x+w*.5,y+h*.10,x+w*.92,y+h*.5,x+w*.5,y+h*.9,x+w*.08,y+h*.5)
-    U.color(blue);love.graphics.circle('fill',x+w*.5,y+h*.5,h*.23)
-    U.rect(x+w*.32,y+h*.48,w*.36,1,white,1)
-  elseif code=='en' then
-    U.rect(x,y,w,h,white,2)
-    for i=0,6 do U.rect(x,y+i*h/7,w,h/14,red,0) end
-    U.rect(x,y,w*.45,h*.55,blue,0)
-    U.color(white)
-    for i=0,2 do for j=0,2 do love.graphics.circle('fill',x+4+j*w*.105,y+3+i*h*.13,1) end end
-  elseif code=='es' then
-    U.rect(x,y,w,h,{.97,.77,.15},2)
-    U.rect(x,y,w,h*.25,red,1)
-    U.rect(x,y+h*.75,w,h*.25,red,1)
-    U.rect(x+w*.29,y+h*.39,w*.08,h*.22,red,1)
-  elseif code=='ru' then
-    U.rect(x,y,w,h,white,2)
-    U.rect(x,y+h/3,w,h/3,{.11,.34,.74},0)
-    U.rect(x,y+h*2/3,w,h/3,{.78,.15,.22},0)
+  -- Bandeiras reais: PNGs coloridos do conjunto de emojis de bandeiras.
+  local img=asset('flag_'..tostring(code))
+  U.rect(x-2,y-1,w+4,h+2,theme.border,3)
+  if img then
+    U.imageContain(img,x,y,w,h)
+  else
+    U.text(tostring(code):upper(),x,y+2,11,theme.text,w,true)
   end
-  U.stroke(x-1,y-1,w+2,h+2,theme.border,2,1)
 end
-
+function U.imageStretch(image,x,y,w,h)
+  if not image then return end
+  local iw,ih=image:getDimensions()
+  if iw<1 or ih<1 then return end
+  U.color({1,1,1});love.graphics.draw(image,x,y,0,w/iw,h/ih)
+end
 function U.imageCrop(image,x,y,w,h)
   local iw,ih=image:getDimensions()
   if iw<=0 or ih<=0 then return end
