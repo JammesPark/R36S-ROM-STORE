@@ -165,7 +165,7 @@ assert isinstance(obj["items"],list) and obj["items"]
 seen=set()
 for item in obj["items"]:
     assert isinstance(item,str) and item not in ("",".","..") and "/" not in item and "\\" not in item and "\n" not in item and "\r" not in item and ":" not in item
-    assert item.lower() not in ("portmaster","r36s-store-kpm","gamelist.xml","r36s ports br store kpm.sh"|"r36s roms store.sh")
+    assert item.lower() not in ("portmaster","r36s-store-kpm","gamelist.xml","r36s ports br store kpm.sh","r36s roms store.sh")
     assert item not in seen
     seen.add(item)
     print(item)
