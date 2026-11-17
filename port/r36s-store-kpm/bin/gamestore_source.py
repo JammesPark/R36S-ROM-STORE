@@ -132,7 +132,7 @@ def games(category, page):
             continue
         name = str(entry.get("name") or "").strip()[:160]
         path = str(entry.get("game_path") or "").strip()
-        raw_category = entry.get("category", cat)
+        raw_category = entry.get("category", "ports" if cat == "ALL" else cat)
         try:
             platform = category_name(raw_category)
         except ValueError:
