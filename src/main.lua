@@ -142,7 +142,7 @@ local function navigate(route)
   screen=route
 end
 local function mainRoute(route)
-  screen=route;stack={};focus='grid'
+  screen=route;stack={};focus=route=='home' and 'sidebar' or 'grid'
   for i,k in ipairs(mainPages) do if k==route then menuIndex=i end end
   if route=='catalog' then external.enter() end
 end
@@ -227,11 +227,11 @@ local function sidebar()
   else
     txt(tr('navigation'),27,89,10,theme.low)
     for i,route in ipairs(mainPages) do
-      sideItem(tr(route),121+(i-1)*39,menuIndex==i and screen==route)
-    end
-    if screen~='home' and screen~='startup' then
-      local index=1;for i,v in ipairs(mainPages) do if v==screen then index=i end end
-      if index~=menuIndex then sideItem(tr(mainPages[menuIndex]),121+(menuIndex-1)*39,true) end
+      local y=121+(i-1)*39
+      sideItem(tr(route),y,menuIndex==i)
+      if screen=='home' and focus=='sidebar' and menuIndex==i then
+        ui.stroke(15,y+1,130,32,theme.accent,7,2)
+      end
     end
   end
   txt('●',20,449,11,theme.green)
@@ -245,7 +245,7 @@ local function header(eyebrow,title,right)
 end
 local function footer(phrase)
   ui.footer(tr('select'),tr('back'),phrase or tr('tabs'))
-  txt('v0.2.0',579,452,10,theme.accent)
+  txt('v0.2.1',579,452,10,theme.accent)
 end
 local function card(game,x,y,w,h,idx,active,badge)
   panel(x,y,w,h,active)
@@ -731,9 +731,29 @@ local function handleKey(key)
     elseif key=='b' then back() end
     return
   elseif screen=='home' then
-    if key=='a' or key=='right' then mainRoute('catalog')
-    elseif key=='down' then mainRoute('catalog')
-    elseif key=='y' then external.refresh() end
+    -- O direcional move apenas o foco/seleção; nunca abre uma tela.
+    if key=='up' and focus=='sidebar' then
+      menuIndex=math.max(1,menuIndex-1)
+    elseif key=='down' and focus=='sidebar' then
+      menuIndex=math.min(#mainPages,menuIndex+1)
+    elseif key=='left' then
+      focus='sidebar'
+    elseif key=='right' then
+      focus='content'
+    elseif key=='a' then
+      -- A é a única tecla que confirma a rota selecionada.
+      if focus=='sidebar' then
+        local route=mainPages[menuIndex]
+        if route=='home' then focus='content'
+        elseif route then mainRoute(route) end
+      else
+        mainRoute('catalog')
+      end
+    elseif key=='b' then
+      focus='sidebar'
+    elseif key=='y' then
+      external.refresh()
+    end
     return
   end
   if key=='b' then back() end

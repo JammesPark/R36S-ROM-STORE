@@ -30,6 +30,38 @@ local function setRoute(r)
   end
   error('Nenhuma variavel screen encontrada')
 end
+-- Regressão: seta do D-pad nunca deve abrir o catálogo automaticamente.
+local function currentRoute()
+  for i=1,50 do
+    local name,val=debug.getupvalue(love.draw,i)
+    if not name then break end
+    if name=='screen' then return val end
+  end
+  error('Sem estado screen')
+end
+local oldEnter=ext.enter
+ext.enter=function() end -- Sem internet na simulação.
+setRoute('home')
+love.keypressed('down')
+assert(currentRoute()=='home','D-pad BAIXO abriu o catalogo sem confirmar')
+love.keypressed('right')
+assert(currentRoute()=='home','D-pad DIREITA abriu o catalogo sem confirmar')
+love.keypressed('left')
+assert(currentRoute()=='home','D-pad ESQUERDA abriu o catalogo sem confirmar')
+love.keypressed('up')
+assert(currentRoute()=='home','D-pad CIMA abriu o catalogo sem confirmar')
+love.gamepadpressed(nil,'dpdown')
+assert(currentRoute()=='home','Controle dpdown abriu catalogo')
+love.gamepadpressed(nil,'dpright')
+assert(currentRoute()=='home','Controle dpright abriu catalogo')
+love.gamepadpressed(nil,'dpleft')
+love.gamepadpressed(nil,'a')
+assert(currentRoute()=='catalog','Botao A nao abriu a opcao Catálogo selecionada')
+love.gamepadpressed(nil,'b')
+assert(currentRoute()=='home','Botao B nao retornou ao inicio')
+ext.enter=oldEnter
+print('NAVEGACAO: direcional nao abre telas, A confirma e B retorna: OK')
+
 local screens={'home','catalog','search','detail','confirm','transferring','success',
  'downloads','history','installed','favorites','settings','languages','themes',
  'storage','network','about','help','offline','startup'}

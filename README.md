@@ -39,3 +39,7 @@ Testes automatizados verificam o código Lua/Bash/Python, telas, preferências, 
 ## Licenciamento e origem
 
 O código da interface aqui foi criado para este projeto. A API GameStoreBR e suas capas são externas; os arquivos do aplicativo GameStoreBR não foram copiados. Respeite os direitos de cada jogo, imagem e arquivo disponibilizado na API.
+
+## Ajuste v0.2.1 — Navegação do menu inicial
+
+Corrigida a entrada involuntária no catálogo: **cima/baixo** movem o destaque na coluna lateral, **esquerda/direita** alternam o foco entre menu e conteúdo, **A** confirma a opção destacada e **B** volta ao menu. O catálogo não deve mais abrir por um simples movimento do direcional. O teste automatizado simula teclado e D-pad para evitar regressões.
