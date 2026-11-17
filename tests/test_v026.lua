@@ -43,7 +43,12 @@ love.gamepadpressed(nil,'dpdown')
 rendered={};love.draw()
 local selected=table.concat(rendered,'|')
 local _,count=selected:gsub('ROM Dois','')
-assert(count>=2,'D-pad nao selecionou a proxima ROM e atualizou o preview')
+assert(count==1,'Preview nao deve repetir o nome da ROM selecionada')
+-- A confirma a ROM em destaque mesmo com o preview composto apenas pela capa.
+love.gamepadpressed(nil,'a')
+assert(get('screen')=='detail','D-pad nao selecionou a ROM para abrir detalhes')
+rendered={};love.draw()
+assert(table.concat(rendered,'|'):find('ROM Dois',1,true),'A ROM selecionada nao corresponde a linha em foco')
 local ui=require('ui')
 for _,code in ipairs({'nes','snes','psx','gba','n64','dreamcast','mame','3do','ports'}) do
   ui.platformIcon(code,10,10,{1,1,1})

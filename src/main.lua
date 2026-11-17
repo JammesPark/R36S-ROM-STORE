@@ -304,7 +304,7 @@ local function sidebar()
   end
   txt('●',20,449,11,theme.green)
   txt('ROMS STORE',30,452,10,theme.muted)
-  txt('640×480',106,452,9,theme.low)
+  txt('v0.2.11',105,452,9,theme.low,50)
 end
 local function header(eyebrow,title,right)
   ui.kicker(eyebrow,179,23)
@@ -317,7 +317,7 @@ local function footer(phrase)
   else
     ui.footer(tr('select'),tr('back'))
   end
-  txt('v0.2.10',571,452,10,theme.accent)
+  -- A versão fica na barra lateral; a área do rodapé é reservada aos controles.
 end
 local function card(game,x,y,w,h,idx,active,badge)
   panel(x,y,w,h,active)
@@ -362,28 +362,33 @@ local function homePage()
     txt(ui.ellipsize(item[1],23),191,y+6,11,theme.muted,166)
     txt(item[2],191,y+27,19,theme.accent,162)
   end
-  -- Slide 1x1 quase vertical, bem mais estreito que a versao anterior.
-  panel(418,208,185,220,focus=='content' and homeFocus=='featured')
+  -- Área de destaque: reduzida para mostrar o cabeçalho EM DESTAQUE por inteiro.
+  local slideX,slideY,slideW,slideH=428,227,166,197
+  panel(slideX,slideY,slideW,slideH,focus=='content' and homeFocus=='featured')
   local total=#external.games
   if total==0 then
-    txt(tr('loading'),425,301,11,theme.muted,166,true)
+    txt(tr('loading'),slideX+8,299,11,theme.muted,slideW-16,true)
   else
     homeSlideIndex=math.max(1,math.min(total,homeSlideIndex))
     local game=external.games[homeSlideIndex]
-    coverStretch(game,425,217,171,201,homeSlideIndex)
-    -- A faixa do titulo fica acima da capa, em uma area exclusiva (sem o
-    -- contador antigo por cima do texto e sem titulos desenhados na arte).
-    R(422,368,177,56,theme.sidebar,6,nil,1)
-    R(422,368,177,2,theme.accent,0)
-    local label=ui.ellipsize(game.name or '?',28)
-    ui.paragraph(label,431,376,159,11,theme.text,2)
+    coverStretch(game,slideX+6,slideY+6,slideW-12,131,homeSlideIndex)
+    -- Fundo opaco para o título. Nunca sobrepor capa, navegação ou bolinhas.
+    local bandX,bandY,bandW=slideX+6,slideY+141,slideW-12
+    R(bandX,bandY,bandW,34,theme.sidebar,4)
+    R(bandX,bandY,bandW,2,theme.accent,0)
+    love.graphics.setScissor(bandX+4,bandY+4,bandW-8,27)
+    ui.paragraph(ui.ellipsize(game.name or '?',38),bandX+4,bandY+5,bandW-8,10,theme.text,1)
+    love.graphics.setScissor()
     if total>1 then
       local shown=math.min(5,total)
       local first=math.max(1,math.min(homeSlideIndex-math.floor(shown/2),total-shown+1))
+      local step=11
+      local dotCenterX=slideX+slideW/2
+      local firstDotX=dotCenterX-(shown-1)*step/2
       for n=0,shown-1 do
         local dotIndex=first+n
         ui.color(dotIndex==homeSlideIndex and theme.accent or theme.low)
-        love.graphics.circle('fill',473+(n-(shown-1)/2)*11,415,dotIndex==homeSlideIndex and 2.9 or 1.9)
+        love.graphics.circle('fill',firstDotX+n*step,slideY+slideH-10,dotIndex==homeSlideIndex and 2.9 or 1.9)
       end
     end
   end
@@ -409,11 +414,9 @@ local function gameList(items,chosen)
   end
   local selected=items[math.max(1,math.min(total,chosen))]
   panel(428,128,191,289,true)
-  txt(tr('game'),438,137,10,theme.accent,167)
-  cover(selected,437,159,173,195,chosen)
-  R(437,361,173,48,theme.panel2,4)
-  txt(ui.ellipsize(selected.name or '?',22),444,368,12,theme.text,158)
-  txt('A  '..tr('select'),444,392,10,theme.accent,149)
+  -- Apenas a capa do jogo selecionado: amplia até preencher, sem títulos extras.
+  coverStretch(selected,434,134,179,277,chosen)
+  ui.stroke(431,131,185,283,theme.accent,7,1)
 end
 local function catalogPage()
   header(tr('library'),tr('title_catalog'))
@@ -735,19 +738,22 @@ local function aboutPage()
   panel(180,95,440,339)
   local copy=legal.get(settings.language)
   -- Cabecalho com duas marcas laterais e cartao central inspirado na referencia.
-  R(188,103,424,86,theme.panel2,9,theme.border)
-  ui.drawLogo(190,110,86,70)
-  R(278,107,232,76,theme.panel,8,theme.accent)
-  ui.drawAsset('telegram_icon',286,117,43,43)
-  txt(settings.language=='pt' and 'CANAL DA COMUNIDADE' or 'COMMUNITY CHANNEL',333,115,11,theme.text,175)
-  txt('@r36sportsbr',333,134,10,theme.accent,175)
-  -- Os dois atalhos usam o desenho de botoes do console, nao letras soltas.
-  ui.buttonHint(332,157,'A','',0)
-  txt(settings.language=='pt' and 'Canal' or 'Channel',354,159,9,theme.muted,52)
-  ui.buttonHint(405,157,'START','',0)
-  txt('LivePix',451,159,9,theme.muted,57)
-  -- Imagem com margens transparentes removidas para crescer de verdade.
-  ui.drawAsset('logo_dev',511,102,105,83)
+  local aboutHeadX,aboutHeadW=181,438
+  R(aboutHeadX,103,aboutHeadW,86,theme.panel2,9,theme.border)
+  ui.drawLogo(191,111,88,70)
+  -- O cartão central está rigorosamente centrado no cabeçalho.
+  local cardW=232
+  local cardX=aboutHeadX+(aboutHeadW-cardW)/2
+  R(cardX,107,cardW,76,theme.panel,8,theme.accent)
+  ui.drawAsset('telegram_icon',cardX+8,115,38,38)
+  txt(settings.language=='pt' and 'CANAL DA COMUNIDADE' or 'COMMUNITY CHANNEL',cardX+51,114,10,theme.text,174)
+  txt('@r36sportsbr',cardX+51,133,10,theme.accent,171)
+  -- Botões e descrições alinhados na mesma linha, com espaço para START completo.
+  ui.buttonHint(cardX+29,157,'A')
+  txt(settings.language=='pt' and 'Canal' or 'Channel',cardX+53,159,9,theme.muted,52)
+  ui.buttonHint(cardX+117,157,'START')
+  txt('LivePix',cardX+164,159,9,theme.muted,61)
+  ui.drawAsset('logo_dev',518,103,101,83)
   txt('R36S ROMS STORE',197,192,10,theme.accent,403)
   local y=208-aboutScroll
   love.graphics.setScissor(191,201,418,226)
@@ -772,10 +778,10 @@ local function aboutPage()
     local bar=math.max(34,213*(213/(213+aboutMaxScroll)))
     R(610,205+(213-bar)*aboutScroll/aboutMaxScroll,4,bar,theme.accent,2)
   end
-  ui.buttonHint(185,445,'A','Canal',58)
-  ui.buttonHint(282,445,'START','LivePix',75)
-  ui.buttonHint(436,445,'B',tr('back'),74)
-  txt('↑↓',569,449,10,theme.accent,44)
+  ui.buttonHint(183,448,'A','Canal',70)
+  ui.buttonHint(318,448,'START','LivePix',74)
+  ui.buttonHint(486,448,'B',tr('back'),72)
+  txt('↑↓',596,451,10,theme.accent,28)
 end
 local function qrPage()
   local telegram=qrModal=='telegram'
@@ -795,26 +801,31 @@ local function qrPage()
   -- Modal legível na resolução física 640x480. Fundo do Sobre fica visível.
   R(0,0,640,480,{0,0,0},0,nil,.70)
   local border=telegram and {.98,.35,.76} or {1,.82,.22}
-  R(61,60,518,366,theme.panel,12,border)
-  R(66,65,508,356,theme.panel2,10)
+  local boxX,boxY,boxW,boxH=61,60,518,366
+  R(boxX,boxY,boxW,boxH,theme.panel,12,border)
+  R(boxX+5,boxY+5,boxW-10,boxH-10,theme.panel2,10)
   if telegram then ui.drawAsset('telegram_icon',85,83,31,31) end
   local title=telegram and 'SIGA NOSSO CANAL NO TELEGRAM' or 'APOIE O PROJETO'
-  txt(title,telegram and 124 or 87,88,telegram and 13 or 16,border,430)
+  txt(title,telegram and 124 or 87,88,telegram and 13 or 16,border,424)
   R(83,143,204,204,{1,1,1},4)
   ui.drawAsset(asset,88,148,194,194)
-  local x,w=307,248
-  txt('James Park',x,144,14,theme.text,w)
-  txt(link,x,167,11,theme.accent,w)
+  local x,w=305,249
+  txt('James Park',x,145,14,theme.text,w)
+  txt(link,x,168,11,theme.accent,w)
+  -- Área de mensagens não invade as legendas dos botões no rodapé.
+  love.graphics.setScissor(x,190,w,178)
   if telegram then
-    ui.paragraph('Escaneie para seguir nosso canal no Telegram.',x,211,w,11,theme.text,3)
+    ui.paragraph('Escaneie para seguir nosso canal no Telegram.',x,212,w,11,theme.text,3)
   else
-    local y=199
-    y=ui.paragraph('Esta loja é gratuita. Se ela ajudou você, considere apoiar o desenvolvimento da R36S ROMS STORE.',x,y,w,10,theme.text,2)+10
-    y=ui.paragraph('Leia o QR Code com a câmera do celular para abrir livepix.gg/jammespark. Escolha o valor e conclua o apoio no site. Este não é um código Pix de pagamento direto.',x,y,w,9,theme.muted,2)+9
-    txt('Obrigado pelo apoio!',x,math.min(354,y),11,border,w)
+    local y=194
+    y=ui.paragraph('Esta loja é gratuita. Se ela ajudou você, considere apoiar o desenvolvimento da R36S ROMS STORE.',x,y,w,10,theme.text,2)+6
+    y=ui.paragraph('Leia o QR Code com a câmera do celular para abrir livepix.gg/jammespark. Escolha o valor e conclua o apoio no site. Este não é um código Pix de pagamento direto.',x,y,w,9,theme.muted,2)+7
+    txt('Obrigado pelo apoio!',x,math.min(347,y),11,border,w)
   end
-  ui.buttonHint(85,388,'A','Ampliar QR Code',125)
-  ui.buttonHint(446,388,'B','Fechar',72)
+  love.graphics.setScissor()
+  R(77,378,485,1,theme.border)
+  ui.buttonHint(83,391,'A','Ampliar QR Code',140)
+  ui.buttonHint(453,391,'B','Fechar',72)
 end
 local function helpPage()
   header(tr('info'),tr('help'))
@@ -822,7 +833,7 @@ local function helpPage()
   local pairs={
     {'A',tr('select')},{'B',tr('back')},{'L/R',tr('tabs')},
     {'X',tr('search')..' / '..tr('favorites')},{'Y',tr('sync')},
-    {'START',tr('search')}
+    {'START',tr('confirm')}
   }
   for i,pair in ipairs(pairs) do
     local x=201+((i-1)%2)*210;local y=140+math.floor((i-1)/2)*69
@@ -855,7 +866,7 @@ local function splashPage()
   local progress=math.max(0,math.min(1,startupTime/1.2))
   R(168,331,304*progress,8,theme.accent,4)
   txt(tr('loading'),135,352,10,theme.accent,370,true)
-  txt('640 × 480  •  LÖVE 11.5',185,409,10,theme.low,270,true)
+  txt('R36S ROMS STORE  •  LÖVE 11.5',172,409,10,theme.low,296,true)
 end
 local function exitDialog()
   -- Modal de confirmação visível acima da Home.
@@ -1094,7 +1105,7 @@ local function handleKey(key)
     return
   end
   if screen=='catalog' then
-    if key=='start' or key=='x' then navigate('search');searchIndex=1;return end
+    if key=='x' then navigate('search');searchIndex=1;return end
     if key=='y' then external.refresh();return end
     if focus=='sidebar' then
       if key=='up' then categoryIndex=math.max(1,categoryIndex-1)
@@ -1383,7 +1394,7 @@ function love.mousepressed(x,y,button)
   elseif screen=='home' then
     if x>=465 and x<=608 and y>=160 and y<=184 then
       focus='content';homeFocus='explore';mainRoute('catalog')
-    elseif x>=418 and x<=603 and y>=208 and y<=428 then
+    elseif x>=428 and x<=594 and y>=227 and y<=424 then
       focus='content';homeFocus='featured';enterGame(external.games[homeSlideIndex])
     elseif x>=180 and x<=370 and y>=237 and y<=422 then
       local index=math.floor((y-237)/64)+1

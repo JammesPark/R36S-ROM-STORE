@@ -155,3 +155,14 @@ Atenção: a loja só reconhece como excluíveis ROMs presentes no seu próprio 
 Extraia `R36S_ROMS_STORE_v0.2.10_TESTE.zip` em `/roms/ports/`, substituindo os arquivos do aplicativo. **Não apague** `r36s-roms-store/state/` nem suas ROMs em SD1/SD2.
 
 Observação: os três áudios `.ogg` e os QR codes continuam idênticos aos da v0.2.9. O instalador inclui a versão recortada da logo `logo_dev.png`, além dos novos ícones, dentro de `game.love`.
+
+
+## Ajustes v0.2.11 — alinhamento visual em 640×480
+
+- Removidas as indicações redundantes de resolução da interface (o display do console permanece 640×480).
+- Cartão de comunidade da tela **Sobre** centralizado; ícones A e START, legendas e botão de voltar com espaçamento consistente.
+- Rodapés revisados para não sobrepor os controles com a versão do aplicativo.
+- Bolinhas do carrossel centralizadas matematicamente dentro do slide; cartão reduzido para deixar o título **Em destaque** totalmente visível.
+- No **Catálogo**, X é a única tecla para abrir a pesquisa. START não abre mais a tela de busca; a busca já aberta pode ser confirmada pelo teclado virtual.
+- Preview do jogo selecionado ocupa toda a área da capa sem títulos ou comandos sobrepostos, com modo esticado.
+- Adicionado teste automatizado para os novos posicionamentos e atalhos.

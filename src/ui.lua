@@ -175,13 +175,22 @@ function U.buttonHint(x,y,key,label,maxwidth)
     U.rect(x,y,42,18,theme.panel2,7,c)
     U.text(key,x+3,y+3,9,c,36,true)
   end
-  local offset=(key=='START' and 46 or 23)
-  U.text(label or '',x+offset,y+3,10,theme.muted,maxwidth or 76)
+  -- Não pedir printf com largura zero ao LÖVE quando só queremos o símbolo.
+  if label and label~='' and (maxwidth==nil or maxwidth>0) then
+    local offset=(key=='START' and 46 or 23)
+    U.text(label,x+offset,y+3,10,theme.muted,maxwidth or 76)
+  end
 end
 function U.footer(a,b,c)
-  U.buttonHint(177,449,'A',a or 'OK',100)
-  U.buttonHint(296,449,'B',b or 'VOLTAR',104)
-  if c then U.buttonHint(424,449,'START',c,140) end
+  -- Duas ou três colunas proporcionais; nenhuma legenda invade a seguinte.
+  if c then
+    U.buttonHint(183,448,'A',a or 'OK',95)
+    U.buttonHint(311,448,'B',b or 'VOLTAR',95)
+    U.buttonHint(454,448,'START',c,102)
+  else
+    U.buttonHint(185,448,'A',a or 'OK',132)
+    U.buttonHint(405,448,'B',b or 'VOLTAR',164)
+  end
 end
 local coverPalettes={
   {{.08,.10,.35},{.42,.17,.55},{1,.68,.48}},
@@ -301,10 +310,11 @@ end
 function U.catalogFooter(selectText,backText,searchText,scrollText)
   U.rect(158,436,482,44,{.035,.080,.13})
   U.rect(158,435,482,1,theme.border)
-  U.buttonHint(172,449,'A',selectText,55)
-  U.buttonHint(258,449,'B',backText,57)
-  U.buttonHint(340,449,'X',searchText,62)
-  U.buttonHint(441,449,'START',scrollText,112)
+  -- Pesquisa é X: nenhum ícone START é exibido no catálogo.
+  U.buttonHint(176,448,'A',selectText,68)
+  U.buttonHint(290,448,'B',backText,68)
+  U.buttonHint(404,448,'X',searchText,70)
+  U.text(scrollText or '↑↓',524,452,10,theme.muted,99)
 end
 function U.drawLogo(x,y,w,h)
   if brandImage then
