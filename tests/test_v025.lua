@@ -49,6 +49,8 @@ assert(author:find('JAMES PARK',1,true),'Tela Sobre sem cartao do desenvolvedor'
 assert(author:find('SOBRE O PROJETO',1,true),'Sobre sem secao de descricao')
 route('about');love.gamepadpressed(nil,'a')
 assert(screen()=='about','A abriu ajuda ao selecionar Sobre')
+-- A agora abre o QR do canal; B fecha antes de testar a Rede.
+love.gamepadpressed(nil,'b')
 local callCount=0
 local oldRefresh=ext.refresh
 local oldBusy=ext.busy
