@@ -1,4 +1,4 @@
-# R36S ROMS STORE — v0.2.2 (teste)
+# R36S ROMS STORE — v0.2.3 (teste)
 
 Loja de ROMs para consoles R36S, com interface Lua + LÖVE 11.5 na resolução **640×480**, catálogo único GameStoreBR (`r36swiki.com/getgames.php`) e arquivos baixados diretamente para SD1/SD2. **Nenhuma ROM, BIOS ou conteúdo comercial é distribuído com o aplicativo.**
 
@@ -52,3 +52,16 @@ bash tools/build.sh
 ```
 
 A API GameStoreBR é de terceiros e sua disponibilidade depende do provedor. Os arquivos que ela disponibiliza estão sujeitos aos direitos dos respectivos titulares. A interface deste projeto é independente.
+
+## v0.2.3 — Melhorias de interface solicitadas
+
+- Tela de entrada redesenhada com **logo vetorial R36S ROMS STORE** integrada ao LÖVE e barra de progresso. O ZIP não inclui um logotipo PNG externo; caso exista uma arte oficial diferente, ela poderá substituir a marca vetorial.
+- Total de ROMs na Home agora é a soma dos contadores de todas as plataformas, excluindo a categoria ALL para evitar duplicidade. Antes da sincronização, exibe um traço.
+- Layout da Home compactado no topo, visão geral elevada e **capas dos destaques maiores**. Capas reais de ROMs agora usam enquadramento **contain**, sem corte. Cards do catálogo exibem somente título (sem nome da plataforma), com mais área para capa.
+- Adicionado **Sair** no menu esquerdo, com diálogo **A confirmar / B cancelar** antes de encerrar. Navegação do direcional permanece sem abrir telas automaticamente.
+- Quantidades de ROMs removidas das linhas de plataformas. **X abre pesquisa** no catálogo; favoritos continuam disponíveis nos detalhes do jogo.
+- Tela de idiomas: bandeiras vetoriais de Brasil, EUA, Espanha e Rússia, sem depender de fontes de emoji.
+- Armazenamento: exibe somente total e espaço disponível de SD1/SD2; alerta quando SD2 não está montado separadamente. A escolha entre SD1 e SD2 acontece **exclusivamente na confirmação do download**.
+- Rede e catálogo: mostra somente luz de status e ação Atualizar catálogo, sem informar o provedor. Verde = resposta online confirmada, vermelho = erro de conexão, amarelo = verificando ou manutenção sinalizada pela API. O cache offline não é tratado como prova de conexão. Sobre não mostra mais o provedor.
+
+**Observação:** esta versão depende de testes reais no R36S para confirmar desempenho da renderização, as capas e medição do espaço dos cartões.

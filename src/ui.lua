@@ -145,6 +145,67 @@ function U.poster(x,y,w,h,name,index)
   U.rect(x,y+h-31,w,31,{.015,.030,.075},0,nil,.75)
   U.text(n,x+8,y+h-26,12,theme.text,w-16)
 end
+-- Mantém a capa inteira dentro do espaço, sem recortar as extremidades.
+function U.imageContain(image,x,y,w,h)
+  local iw,ih=image:getDimensions()
+  if iw<=0 or ih<=0 then return end
+  local factor=math.min(w/iw,h/ih)
+  local fw,fh=iw*factor,ih*factor
+  U.color({1,1,1})
+  love.graphics.draw(image,x+(w-fw)/2,y+(h-fh)/2,0,factor,factor)
+end
+
+-- Logo vetorial integrada ao app, sem depender de PNG ou internet.
+function U.brandLogo(x,y,scale)
+  scale=scale or 1
+  local function p(v) return v*scale end
+  U.rect(x,y,p(86),p(76),theme.panel2,p(17),theme.accent)
+  U.color(theme.accent,.12)
+  love.graphics.circle('fill',x+p(43),y+p(38),p(34))
+  -- Silhueta de portátil com visor e controles.
+  U.rect(x+p(13),y+p(16),p(60),p(44),theme.sidebar,p(9),theme.accent)
+  U.rect(x+p(21),y+p(22),p(44),p(22),theme.panel,p(4),theme.border)
+  U.rect(x+p(25),y+p(26),p(36),p(14),theme.accent,p(2),nil,.17)
+  U.rect(x+p(25),y+p(49),p(15),p(3),theme.accent,p(1))
+  U.rect(x+p(31),y+p(43),p(3),p(16),theme.accent,p(1))
+  U.color(theme.green)
+  love.graphics.circle('fill',x+p(60),y+p(49),p(3))
+  U.color(theme.accent)
+  love.graphics.circle('fill',x+p(54),y+p(54),p(2.5))
+end
+function U.brandLockup(x,y)
+  U.brandLogo(x,y,1)
+  U.text('R36S',x+102,y+1,28,theme.text)
+  U.rect(x+102,y+38,183,2,theme.accent,1)
+  U.text('ROMS STORE',x+102,y+45,20,theme.accent)
+end
+function U.flag(code,x,y,w,h)
+  local white={.98,.98,.98};local red={.86,.15,.22};local blue={.09,.21,.52}
+  U.rect(x-1,y-1,w+2,h+2,theme.border,3)
+  if code=='pt' then
+    U.rect(x,y,w,h,{.09,.55,.27},2)
+    U.color({.98,.84,.10});love.graphics.polygon('fill',x+w*.5,y+h*.10,x+w*.92,y+h*.5,x+w*.5,y+h*.9,x+w*.08,y+h*.5)
+    U.color(blue);love.graphics.circle('fill',x+w*.5,y+h*.5,h*.23)
+    U.rect(x+w*.32,y+h*.48,w*.36,1,white,1)
+  elseif code=='en' then
+    U.rect(x,y,w,h,white,2)
+    for i=0,6 do U.rect(x,y+i*h/7,w,h/14,red,0) end
+    U.rect(x,y,w*.45,h*.55,blue,0)
+    U.color(white)
+    for i=0,2 do for j=0,2 do love.graphics.circle('fill',x+4+j*w*.105,y+3+i*h*.13,1) end end
+  elseif code=='es' then
+    U.rect(x,y,w,h,{.97,.77,.15},2)
+    U.rect(x,y,w,h*.25,red,1)
+    U.rect(x,y+h*.75,w,h*.25,red,1)
+    U.rect(x+w*.29,y+h*.39,w*.08,h*.22,red,1)
+  elseif code=='ru' then
+    U.rect(x,y,w,h,white,2)
+    U.rect(x,y+h/3,w,h/3,{.11,.34,.74},0)
+    U.rect(x,y+h*2/3,w,h/3,{.78,.15,.22},0)
+  end
+  U.stroke(x-1,y-1,w+2,h+2,theme.border,2,1)
+end
+
 function U.imageCrop(image,x,y,w,h)
   local iw,ih=image:getDimensions()
   if iw<=0 or ih<=0 then return end

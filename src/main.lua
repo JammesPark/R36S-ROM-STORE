@@ -8,9 +8,10 @@ local i18n=require('i18n')
 local HOME=os.getenv('R36S_STORE_HOME') or '/roms/ports/r36s-roms-store'
 local STATE=HOME..'/state'
 local mainPages={'home','catalog','downloads','installed','favorites','settings','about'}
+local menuPages={'home','catalog','downloads','installed','favorites','settings','about','exit'}
 local screen='startup'
 local stack={}
-local settings={language='pt',theme='ocean',card=1}
+local settings={language='pt',theme='ocean'}
 local favorites={}
 local downloads={}
 local focus='grid'; local menuIndex=1;local categoryIndex=1;local gameIndex=1
@@ -20,6 +21,7 @@ local selectedGame=nil
 local lastStatus='';local lastManifest='';local coverImages={};local coverSeen={}
 local clock=0;local startupTime=0;local notice='';local noticeTime=0
 local selectedCard=1;local transferHandled=false
+local storageInfo={};local storageLast=-999
 local suboptions={'languages','themes','storage','network','help'}
 local keyboard={'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','SPACE','DEL','CLEAR','OK'}
 local function tr(key) return i18n.get(settings.language,key) end
@@ -39,8 +41,8 @@ local function encodeString(s)
   return '"'..tostring(s or ''):gsub('[\\"\n\r\t]',replacements)..'"'
 end
 local function saveSettings()
-  write(STATE..'/roms_settings.json',string.format('{"language":%s,"theme":%s,"card":%d}',
-    encodeString(settings.language),encodeString(settings.theme),settings.card))
+  write(STATE..'/roms_settings.json',string.format('{"language":%s,"theme":%s}',
+    encodeString(settings.language),encodeString(settings.theme)))
 end
 local function saveFavorites()
   local items={}
@@ -58,7 +60,6 @@ local function loadData()
   if type(c)=='table' then
     for _,l in ipairs(i18n.languages) do if l.code==c.language then settings.language=l.code end end
     for _,t in ipairs(theme.options) do if t.key==c.theme then settings.theme=t.key end end
-    if c.card==1 or c.card==2 then settings.card=c.card end
   end
   local f=json.decode(read(STATE..'/roms_favorites.json') or '')
   if type(f)=='table' then
@@ -124,9 +125,46 @@ local function currentGames()
   end
   return external.games
 end
+local function dfUsage(path)
+  local pipe=io.popen('df -Pk '..path..' 2>/dev/null','r')
+  if not pipe then return nil end
+  local line
+  for v in pipe:lines() do line=v end
+  pipe:close()
+  if not line then return nil end
+  local tokens={}
+  for tok in line:gmatch('%S+') do tokens[#tokens+1]=tok end
+  if #tokens<5 then return nil end
+  local total,available=tonumber(tokens[2]),tonumber(tokens[4])
+  if not total or total<=0 or not available then return nil end
+  return {total=total*1024,free=math.max(0,available)*1024}
+end
+local function mountSource(path)
+  local cmd='findmnt -T '..path..' -no SOURCE 2>/dev/null'
+  local pipe=io.popen(cmd,'r')
+  if not pipe then return nil end
+  local src=pipe:read('*l');pipe:close()
+  return src and src~='' and src or nil
+end
+local function refreshStorage()
+  local sd1=mountSource('/roms')
+  local sd2=mountSource('/roms2')
+  storageInfo[1]=dfUsage('/roms')
+  -- SD2 não pode mostrar o espaço do SD1 ou da raiz quando não montado.
+  storageInfo[2]=(sd1 and sd2 and sd1~=sd2) and dfUsage('/roms2') or nil
+  storageLast=clock
+end
+local function formatBytes(bytes)
+  if not bytes then return tr('unavailable') end
+  local gb=bytes/1073741824
+  if gb>=1 then return string.format('%.1f GB',gb) end
+  return string.format('%.0f MB',bytes/1048576)
+end
+
 local function navigate(route)
   if screen~=route then stack[#stack+1]=screen end
   screen=route
+  if route=='storage' then refreshStorage() end
 end
 local function mainRoute(route)
   screen=route;stack={};focus=route=='home' and 'sidebar' or 'grid'
@@ -181,7 +219,10 @@ end
 local function cover(game,x,y,w,h,index)
   ui.poster(x,y,w,h,game and game.name or '?',index or 1)
   local img=cachedImage(game)
-  if img then ui.imageCrop(img,x,y,w,h) end
+  if img then
+    R(x,y,w,h,theme.panel,4)
+    ui.imageContain(img,x+2,y+2,w-4,h-4)
+  end
 end
 local function sideItem(name,y,active,index,count)
   if active then
@@ -206,15 +247,15 @@ local function sidebar()
     for idx=scroll,math.min(total,scroll+7) do
       local cat=external.categories[idx]
       local name=cat.category=='ALL' and tr('all') or (cat.category=='ports' and 'Homebrew' or cat.category)
-      sideItem(name,top+(idx-scroll)*37,cat.category==external.category,idx,cat.count)
+      sideItem(name,top+(idx-scroll)*37,cat.category==external.category,idx)
       if focus=='sidebar' and idx==categoryIndex then ui.stroke(16,top+(idx-scroll)*37+2,128,30,theme.accent,7,2) end
     end
     R(13,406,134,24,theme.panel2,7,theme.border)
     txt('◁ '..tr('main_menu'),24,411,10,theme.accent,114)
   else
     txt(tr('navigation'),27,89,10,theme.low)
-    for i,route in ipairs(mainPages) do
-      local y=121+(i-1)*39
+    for i,route in ipairs(menuPages) do
+      local y=121+(i-1)*38
       sideItem(tr(route),y,menuIndex==i)
       if screen=='home' and focus=='sidebar' and menuIndex==i then
         ui.stroke(15,y+1,130,32,theme.accent,7,2)
@@ -222,7 +263,7 @@ local function sidebar()
     end
   end
   txt('●',20,449,11,theme.green)
-  txt('GAMESTORE BR',30,452,10,theme.muted)
+  txt('ROMS STORE',30,452,10,theme.muted)
   txt('640×480',106,452,9,theme.low)
 end
 local function header(eyebrow,title,right)
@@ -232,18 +273,18 @@ local function header(eyebrow,title,right)
 end
 local function footer(phrase)
   ui.footer(tr('select'),tr('back'),phrase or tr('tabs'))
-  txt('v0.2.2',579,452,10,theme.accent)
+  txt('v0.2.3',579,452,10,theme.accent)
 end
 local function card(game,x,y,w,h,idx,active,badge)
   panel(x,y,w,h,active)
-  cover(game,x+2,y+2,w-4,86,idx)
-  txt(ui.ellipsize(game.name or '?',17),x+8,y+92,11,theme.text,w-16)
-  local category=tostring(game.category or ''):upper()
-  txt(ui.ellipsize(category,20),x+8,y+110,9,theme.low,w-16)
+  -- A imagem inteira fica visível; texto isolado numa faixa inferior.
+  local coverH=h-34
+  cover(game,x+3,y+3,w-6,coverH-4,idx)
   if badge then
-    R(x+6,y+67,w-12,17,theme.sidebar,4,nil,.91)
-    txt(badge,x+10,y+70,10,theme.accent,w-20)
+    R(x+7,y+coverH-19,w-14,17,theme.sidebar,4,nil,.93)
+    txt(ui.ellipsize(badge,18),x+10,y+coverH-16,10,theme.accent,w-20)
   end
+  txt(ui.ellipsize(game.name or '?',26),x+7,y+h-29,10,theme.text,w-14)
   if active then ui.stroke(x,y,w,h,theme.accent,9,2) end
 end
 local function centerEmpty(text,sub)
@@ -251,38 +292,44 @@ local function centerEmpty(text,sub)
   txt(text,201,213,15,theme.text,400,true)
   if sub then txt(sub,201,246,12,theme.muted,400,true) end
 end
+local function totalRoms()
+  return external.totalCatalog()
+end
+
 local function homePage()
   header(tr('welcome'),tr('title_home'),'R36S 640×480')
-  panel(179,111,441,131,true)
-  ui.kicker('R36S ROMS STORE',200,126)
-  txt(tr('subtitle'),200,150,20,theme.text,390)
-  txt(tr('intro'),200,181,11,theme.muted,390)
-  R(468,205,133,26,theme.accent,7)
-  txt(tr('explore'),476,213,10,theme.bg,126)
-  txt(tr('overview'),180,253,13,theme.text)
+  -- Cartão superior reposicionado para dar mais espaço às capas de destaque.
+  panel(179,90,441,116,true)
+  ui.kicker('R36S ROMS STORE',200,101)
+  txt(tr('subtitle'),200,121,19,theme.text,393)
+  txt(tr('intro'),200,149,11,theme.muted,392)
+  R(458,172,144,26,theme.accent,7)
+  txt(tr('explore'),465,179,11,theme.bg,130,true)
+  txt(tr('overview'),180,217,13,theme.text)
+  local count=totalRoms()
   local stats={
-    {tr('catalog_games'),tostring(external.total>0 and external.total or #external.games)},
+    {tr('catalog_games'),count and tostring(count) or '—'},
     {tr('installed_games'),tostring(#downloads)},
-    {tr('active_card'),'SD'..settings.card}}
-  for i,v in ipairs(stats) do
+    {tr('favorites'),tostring(#favorites)}}
+  for i,value in ipairs(stats) do
     local x=180+(i-1)*149
-    panel(x,274,140,70)
-    txt(v[1],x+10,286,10,theme.muted,126)
-    txt(v[2],x+10,306,19,theme.accent)
+    panel(x,235,140,64)
+    txt(value[1],x+10,244,10,theme.muted,122)
+    txt(value[2],x+10,264,20,theme.accent)
   end
-  txt(tr('featured'),180,351,13,theme.text)
-  txt(tr('see_all')..' ›',553,352,10,theme.accent)
+  txt(tr('featured'),180,306,13,theme.text)
+  txt(tr('see_all')..' ›',548,307,10,theme.accent)
   if #external.games==0 then
-    panel(180,376,439,52)
-    txt(tr('loading'),197,390,12,theme.muted,390)
+    panel(180,332,439,95)
+    txt(tr('loading'),197,368,12,theme.muted,390)
   else
     for i=1,math.min(3,#external.games) do
-      local g=external.games[i]
+      local game=external.games[i]
       local x=180+(i-1)*149
-      panel(x,374,140,53)
-      cover(g,x+1,375,138,33,i)
-      R(x+1,405,138,21,theme.panel,0,nil,.96)
-      txt(ui.ellipsize(g.name,16),x+6,408,10,theme.text,128)
+      panel(x,330,140,97)
+      cover(game,x+3,333,134,67,i)
+      R(x+3,400,134,24,theme.panel,0,nil,.96)
+      txt(ui.ellipsize(game.name,18),x+7,407,10,theme.text,128)
     end
   end
   footer()
@@ -290,8 +337,8 @@ end
 local function catalogPage()
   header(tr('library'),tr('title_catalog'))
   -- Busca dedicada: botão acima do grid.
-  R(581,57,38,28,theme.panel,8,theme.border)
-  txt('?',594,62,15,theme.accent)
+  R(540,53,79,29,theme.panel,8,theme.border)
+  txt('X '..tr('search'),547,60,11,theme.accent,68)
   local active=external.category
   local catText=active=='ALL' and tr('all') or active:upper()
   txt(ui.ellipsize(catText,18),180,102,13,theme.muted,223)
@@ -306,7 +353,7 @@ local function catalogPage()
   for i=first,last do
     local slot=i-first;local col=slot%3;local row=math.floor(slot/3)
     local x=180+col*149;local y=132+row*143
-    card(g[i],x,y,140,133,i,focus=='grid' and gameIndex==i)
+    card(g[i],x,y,140,137,i,focus=='grid' and gameIndex==i)
   end
   txt(tr('page')..' '..external.page..'/'..external.totalPages,508,420,11,theme.muted,108)
   footer(tr('page'))
@@ -422,7 +469,7 @@ end
 local function settingsPage()
   header(tr('personalize'),tr('title_settings'))
   local values={tr('language'),tr('theme'),tr('storage'),tr('network'),tr('help')}
-  local shown={i18n.languages[1].name, tr('theme_blue'),'SD1 / SD2','GameStoreBR', 'A / B / L / R'}
+  local shown={i18n.languages[1].name, tr('theme_blue'),tr('free_space')..' / '..tr('total_space'),tr('status'), 'A / B / L / R'}
   for _,o in ipairs(i18n.languages) do if o.code==settings.language then shown[1]=o.name end end
   for _,o in ipairs(theme.options) do if o.key==settings.theme then shown[2]=tr(o.name) end end
   for i,label in ipairs(values) do
@@ -442,7 +489,7 @@ local function languagesPage()
     local active=settings.language==lang.code
     panel(180,y,440,62,languageIndex==i)
     R(193,y+13,42,35,theme.panel2,7,active and theme.accent or theme.border)
-    txt(({pt='BR',en='EN',es='ES',ru='RU'})[lang.code],202,y+22,13,theme.accent)
+    ui.flag(lang.code,198,y+20,32,21)
     txt(lang.name,247,y+20,15,theme.text,290)
     if active then txt('✓',583,y+20,16,theme.accent) end
   end
@@ -463,25 +510,37 @@ local function themesPage()
 end
 local function storagePage()
   header(tr('manage'),tr('storage'))
-  txt(tr('card_info'),180,104,12,theme.muted,438)
-  for i=1,2 do
-    local y=149+(i-1)*116
-    panel(180,y,440,100,settings.card==i)
-    txt('SD'..i,200,y+13,23,settings.card==i and theme.accent or theme.text)
-    txt(i==1 and '/roms/' or '/roms2/',200,y+48,13,theme.muted)
-    if settings.card==i then txt('● '..tr('primary'),489,y+22,11,theme.accent,113) end
+  for n=1,2 do
+    local y=125+(n-1)*146
+    panel(180,y,440,130)
+    txt('SD'..n,199,y+16,23,theme.text)
+    local entry=storageInfo[n]
+    if entry then
+      txt(tr('free_space')..': '..formatBytes(entry.free),298,y+17,15,theme.accent,292)
+      txt(tr('total_space')..': '..formatBytes(entry.total),199,y+53,12,theme.muted,400)
+      R(200,y+88,399,11,theme.border,5)
+      local used=math.max(0,math.min(1,(entry.total-entry.free)/entry.total))
+      if used>0 then R(200,y+88,399*used,11,theme.accent,5) end
+    else
+      txt(tr('not_mounted'),298,y+25,13,theme.muted,290)
+    end
   end
   footer()
 end
 local function networkPage()
   header(tr('info'),tr('network'))
   panel(180,116,440,279)
-  txt('GAMESTORE BR',201,146,20,theme.text)
-  txt('r36swiki.com/getgames.php',201,183,12,theme.accent)
-  txt(tr('network_note'),201,223,12,theme.muted,392)
-  txt(external.error and tr('offline') or external.busy() and tr('loading') or tr('status')..': '..external.phase,201,268,12,external.error and theme.error or theme.green,396)
-  R(202,325,397,40,theme.accent,8)
-  txt(tr('refresh'),213,336,14,theme.bg,373,true)
+  local state=external.networkState()
+  local color=state=='online' and theme.green or state=='offline' and theme.error or theme.accent
+  local label=state=='online' and tr('online') or state=='offline' and tr('offline') or
+    state=='maintenance' and tr('maintenance') or tr('syncing')
+  txt(tr('connection_status'),202,158,14,theme.muted,373)
+  R(202,216,396,63,theme.panel2,10,theme.border)
+  ui.color(color);love.graphics.circle('fill',233,248,11)
+  ui.color(color,.18);love.graphics.circle('fill',233,248,17)
+  txt(label,260,234,18,theme.text,300)
+  R(202,320,396,45,theme.accent,8)
+  txt(tr('refresh'),213,332,14,theme.bg,370,true)
   footer()
 end
 local function aboutPage()
@@ -490,9 +549,9 @@ local function aboutPage()
   ui.kicker('R36S ROMS STORE',200,144)
   txt('R36S ROMS',201,184,25,theme.text)
   txt('S T O R E',201,222,20,theme.accent)
-  txt(tr('about_note'),201,277,12,theme.muted,389)
-  txt(tr('about_source'),201,309,12,theme.muted,390)
-  txt(tr('about_runtime'),201,342,11,theme.low,390)
+  txt(tr('about_note'),201,279,12,theme.muted,389)
+  txt('v0.2.3  •  640×480',201,311,12,theme.accent,389)
+  txt(tr('about_runtime'),201,344,11,theme.low,390)
   footer()
 end
 local function helpPage()
@@ -500,7 +559,7 @@ local function helpPage()
   panel(180,115,440,292)
   local pairs={
     {'A',tr('select')},{'B',tr('back')},{'L/R',tr('tabs')},
-    {'X',tr('favorites')..' / SD'},{'Y',tr('sync')},
+    {'X',tr('search')..' / '..tr('favorites')},{'Y',tr('sync')},
     {'START',tr('search')}
   }
   for i,pair in ipairs(pairs) do
@@ -522,11 +581,30 @@ local function offlinePage()
   footer()
 end
 local function splashPage()
-  ui.layout()
-  txt('R36S ROMS',221,184,30,theme.text,390)
-  txt('S T O R E',267,228,22,theme.accent)
-  txt(tr('startup_note'),188,286,12,theme.muted,438,true)
-  txt('Lua + LÖVE 11.5 · 640×480',220,335,11,theme.low,360,true)
+  -- Tela de entrada exclusiva, sem menu lateral, com a logo vetorial da loja.
+  R(0,0,640,480,theme.bg)
+  ui.color(theme.accent,.065);love.graphics.circle('fill',344,205,220)
+  ui.color(theme.accent,.035);love.graphics.circle('fill',344,205,285)
+  R(102,100,438,256,theme.panel,20,theme.border)
+  R(102,100,438,5,theme.accent,3)
+  ui.brandLockup(155,156)
+  txt(tr('startup_note'),135,268,12,theme.muted,370,true)
+  R(168,318,304,8,theme.border,4)
+  local progress=math.max(0,math.min(1,startupTime/1.2))
+  R(168,318,304*progress,8,theme.accent,4)
+  txt(tr('loading'),135,339,10,theme.accent,370,true)
+  txt('640 × 480  •  LÖVE 11.5',185,409,10,theme.low,270,true)
+end
+local function exitDialog()
+  -- Modal de confirmação visível acima da Home.
+  R(0,0,640,480,{0,0,0},0,nil,.78)
+  panel(143,137,356,208,true)
+  txt(tr('exit_question'),169,164,20,theme.text,306,true)
+  txt(tr('exit_note'),170,210,12,theme.muted,301,true)
+  R(166,276,142,43,theme.accent,8)
+  txt('A  '..tr('confirm_yes_short'),169,290,12,theme.bg,136,true)
+  R(334,276,142,43,theme.panel2,8,theme.border)
+  txt('B  '..tr('cancel'),339,290,12,theme.text,132,true)
 end
 function love.load()
   love.graphics.setDefaultFilter('linear','linear')
@@ -538,6 +616,7 @@ function love.load()
 end
 function love.update(dt)
   clock=clock+dt
+  if screen=='storage' and clock-storageLast>30 then refreshStorage() end
   external.update(dt)
   if screen=='startup' then
     startupTime=startupTime+dt
@@ -556,7 +635,7 @@ end
 function love.draw()
   if screen=='startup' then splashPage();return end
   sidebar()
-  if screen=='home' then homePage()
+  if screen=='home' or screen=='exit_confirm' then homePage()
   elseif screen=='catalog' then catalogPage()
   elseif screen=='search' then searchPage()
   elseif screen=='detail' then detailsPage()
@@ -578,6 +657,7 @@ function love.draw()
     R(180,401,440,30,theme.panel2,7,theme.accent)
     txt(ui.ellipsize(notice,60),190,409,11,theme.text,420)
   end
+  if screen=='exit_confirm' then exitDialog() end
 end
 local function changeTheme()
   local o=theme.options[themeIndex];if not o then return end
@@ -598,10 +678,15 @@ local function moveGrid(dx,dy)
 end
 local function handleKey(key)
   if screen=='startup' then if key=='a' or key=='b' then mainRoute('home') end;return end
+  if screen=='exit_confirm' then
+    if key=='a' then love.event.quit()
+    elseif key=='b' or key=='x' then back() end
+    return
+  end
   if key=='l' then mainNext(-1);return end
   if key=='r' then mainNext(1);return end
   if screen=='catalog' then
-    if key=='start' then navigate('search');searchIndex=1;return end
+    if key=='start' or key=='x' then navigate('search');searchIndex=1;return end
     if key=='y' then external.refresh();return end
     if focus=='sidebar' then
       if key=='up' then categoryIndex=math.max(1,categoryIndex-1)
@@ -615,7 +700,6 @@ local function handleKey(key)
     if key=='right' then moveGrid(1,0);return end
     if key=='up' then moveGrid(0,-1);return end
     if key=='down' then moveGrid(0,1);return end
-    if key=='x' then toggleFavorite(selectedFromGames());return end
     if key=='a' then enterGame(selectedFromGames());return end
     if key=='b' then mainRoute('home');return end
     if key=='pageup' or key=='pagedown' then
@@ -649,7 +733,7 @@ local function handleKey(key)
     end
     return
   elseif screen=='detail' then
-    if key=='a' then selectedCard=settings.card;navigate('confirm')
+    if key=='a' then selectedCard=1;navigate('confirm')
     elseif key=='x' then toggleFavorite(selectedGame)
     elseif key=='b' then back() end
     return
@@ -704,9 +788,7 @@ local function handleKey(key)
     elseif key=='b' then back() end
     return
   elseif screen=='storage' then
-    if key=='left' or key=='right' or key=='x' or key=='a' then
-      settings.card=3-settings.card;saveSettings()
-    elseif key=='b' then back() end
+    if key=='b' then back() end
     return
   elseif screen=='network' or screen=='offline' then
     if key=='a' or key=='y' then external.refresh()
@@ -721,7 +803,7 @@ local function handleKey(key)
     if key=='up' and focus=='sidebar' then
       menuIndex=math.max(1,menuIndex-1)
     elseif key=='down' and focus=='sidebar' then
-      menuIndex=math.min(#mainPages,menuIndex+1)
+      menuIndex=math.min(#menuPages,menuIndex+1)
     elseif key=='left' then
       focus='sidebar'
     elseif key=='right' then
@@ -729,8 +811,9 @@ local function handleKey(key)
     elseif key=='a' then
       -- A é a única tecla que confirma a rota selecionada.
       if focus=='sidebar' then
-        local route=mainPages[menuIndex]
+        local route=menuPages[menuIndex]
         if route=='home' then focus='content'
+        elseif route=='exit' then navigate('exit_confirm')
         elseif route then mainRoute(route) end
       else
         mainRoute('catalog')
@@ -761,13 +844,26 @@ function love.textinput(t)
 end
 function love.mousepressed(x,y,button)
   if button~=1 then return end
-  if x<158 and y>=121 then
+  if screen=='exit_confirm' then
+    if y>=275 and y<=320 then
+      if x>=166 and x<310 then handleKey('a')
+      elseif x>=334 and x<480 then handleKey('b') end
+    end
+    return
+  end
+  if x<158 and y>=121 and y<424 then
     if screen=='catalog' then
-      local idx=math.floor((y-121)/37)+1
-      if external.categories[idx] then categoryIndex=idx;chooseCategory() end
+      local total=#external.categories
+      local scroll=math.max(1,math.min(categoryIndex-4,total-7))
+      local idx=scroll+math.floor((y-121)/37)
+      if idx<scroll+8 and external.categories[idx] then categoryIndex=idx;chooseCategory() end
     else
-      local idx=math.floor((y-121)/39)+1
-      if mainPages[idx] then mainRoute(mainPages[idx]) end
+      local idx=math.floor((y-121)/38)+1
+      if menuPages[idx] then
+        menuIndex=idx
+        if menuPages[idx]=='exit' then navigate('exit_confirm')
+        else mainRoute(menuPages[idx]) end
+      end
     end
   elseif screen=='catalog' then
     if y>=132 and y<411 then
@@ -777,7 +873,7 @@ function love.mousepressed(x,y,button)
       local idx=first+row*3+col
       if col>=0 and col<3 and row>=0 and row<2 and external.games[idx] then
         gameIndex=idx;focus='grid';enterGame(external.games[idx]) end
-    elseif y<90 and x>=575 then navigate('search') end
+    elseif y<90 and x>=540 then navigate('search') end
   elseif screen=='settings' then
     local idx=math.floor((y-119)/59)+1
     if suboptions[idx] then settingsIndex=idx;navigate(suboptions[idx]) end

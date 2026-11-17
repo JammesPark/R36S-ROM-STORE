@@ -1,7 +1,7 @@
 -- GameStoreBR: somente adaptador de dados. O layout pertence a main.lua.
 local json=require('json')
 local M={categories={{category='ALL',count=0}},games={},category='ALL',page=1,totalPages=1,total=0,
-         pending=nil,phase='idle',message='',downloaded=0,expected=0,error=false}
+         pending=nil,phase='idle',message='',downloaded=0,expected=0,error=false,connected=nil,maintenance=false}
 local home,state,lastStatus='',nil
 local function read(path)
   local f=io.open(path,'rb');if not f then return nil end
@@ -45,7 +45,7 @@ function M.request(task,args)
   args=args or {}; local cmd={task}
   for _,arg in ipairs(args) do cmd[#cmd+1]=arg end
   lastStatus='';os.remove(state..'/gamestore_status.json')
-  M.pending=task;M.phase='loading';M.message='Conectando...';M.error=false
+  M.pending=task;M.phase='loading';M.message='Conectando...';M.error=false;M.maintenance=false
   if not command(cmd) then
     M.pending=nil;M.phase='error';M.message='Python 3 indisponível';M.error=true
     return false
@@ -85,9 +85,14 @@ function M.update()
   M.phase=s.phase or 'idle';M.message=s.message or ''
   M.downloaded=tonumber(s.downloaded) or M.downloaded or 0
   M.expected=tonumber(s.expected) or 0
-  if M.phase=='error' then M.error=true;M.pending=nil
+  if M.phase=='error' then
+    local task=M.pending
+    M.error=true;M.pending=nil
+    if task=='categories' or task=='games' then M.connected=false end
+    M.maintenance=M.message:lower():find('manuten',1,true)~=nil or M.message:lower():find('maintenance',1,true)~=nil
   elseif M.phase=='done' then
     local task=M.pending;M.pending=nil
+    if task=='categories' or task=='games' then M.connected=true;M.maintenance=false end
     if task=='categories' then
       M.loadCategories()
       if not M.request('games',{M.category,tostring(M.page)}) then M.error=true end
@@ -98,6 +103,26 @@ function M.update()
     end
   end
 end
+function M.totalCatalog()
+  -- O agregado exclui ALL para não contar todas as ROMs em duplicidade.
+  local total=0;local haveCounts=false
+  for _,item in ipairs(M.categories) do
+    if type(item)=='table' and item.category~='ALL' then
+      haveCounts=true
+      total=total+math.max(0,math.floor(tonumber(item.count) or 0))
+    end
+  end
+  if haveCounts then return total end
+  return nil
+end
+function M.networkState()
+  if M.maintenance then return 'maintenance' end
+  if M.pending=='categories' or M.pending=='games' then return 'syncing' end
+  if M.connected==true then return 'online' end
+  if M.connected==false then return 'offline' end
+  return 'syncing' -- Ainda sem uma resposta remota confirmada.
+end
+
 function M.busy() return M.pending~=nil end
 function M.statePath() return state end
 return M

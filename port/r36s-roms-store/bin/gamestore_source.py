@@ -83,12 +83,15 @@ def load_api(action, **params):
     for proto in ("https", "http"):
         url = f"{proto}://{API_HOST}{API_PATH}?{qs}"
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "R36S-ROMs-Store/0.2.2"})
+            req = urllib.request.Request(url, headers={"User-Agent": "R36S-ROMs-Store/0.2.3"})
             with OPENER.open(req, timeout=22) as r:
                 raw = r.read(MAX_JSON + 1)
                 if len(raw) > MAX_JSON:
                     raise ValueError("Resposta grande demais")
                 data = json.loads(raw.decode("utf-8"))
+                if isinstance(data, dict) and (data.get("maintenance") is True or
+                  str(data.get("status", "")).lower() in ("maintenance", "manutencao", "manutenção")):
+                    raise RuntimeError("maintenance")
                 if not isinstance(data, dict) or data.get("success") is not True:
                     raise ValueError("API indisponível ou resposta inválida")
                 return data
@@ -199,7 +202,7 @@ def download(url, category, sd, name, checksum=""):
     count = 0
     try:
         status("downloading", f"Baixando {name[:60]} para {sd.upper()}", task="download")
-        req = urllib.request.Request(url, headers={"User-Agent": "R36S-ROMs-Store/0.2.2"})
+        req = urllib.request.Request(url, headers={"User-Agent": "R36S-ROMs-Store/0.2.3"})
         with OPENER.open(req, timeout=40) as response:
             expected = int(response.headers.get("Content-Length") or 0)
             if expected > MAX_DOWNLOAD:

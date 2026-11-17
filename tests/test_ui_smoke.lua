@@ -64,7 +64,7 @@ print('NAVEGACAO: direcional nao abre telas, A confirma e B retorna: OK')
 
 local screens={'home','catalog','search','detail','confirm','transferring','success',
  'downloads','history','installed','favorites','settings','languages','themes',
- 'storage','network','about','help','offline','startup'}
+ 'storage','network','about','help','offline','startup','exit_confirm'}
 for _,route in ipairs(screens) do
   drawn={}
   setRoute(route)
@@ -73,7 +73,7 @@ for _,route in ipairs(screens) do
   assert(#drawn>2,'Nenhum texto desenhado na tela '..route)
 end
 setRoute('catalog')
-love.keypressed('x') -- Favoritos
+love.keypressed('x') -- Pesquisa dentro do catalogo
 setRoute('favorites')
 love.draw()
 -- Testar quatro idiomas/temas sem acesso de rede.

@@ -8,7 +8,8 @@ assert not (root/'port/r36s-roms-store/config/catalog_url.txt').exists()
 assert "require('external')" in main
 assert "require('theme')" in main
 assert "require('i18n')" in main
-assert 'GAMESTORE BR' in main
+assert 'R36S ROMS STORE' in main
+assert 'GAMESTORE BR' not in main  # Fonte do catálogo não é exibida na interface
 assert "mainPages={'home','catalog','downloads','installed','favorites','settings','about'}" in main
 assert "external.enter()" in main
 assert 'M.categoryChange' in ext
