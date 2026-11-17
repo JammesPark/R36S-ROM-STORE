@@ -45,7 +45,7 @@ assert(cat:find('X',1,true) and cat:find('Buscar',1,true),'Rodape nao mostra X B
 route('catalog');love.mousepressed(604,70,1)
 assert(screen()=='search','Clique na lupa nao abre pesquisa')
 local author=render('about')
-assert(author:find('JAMES PARK',1,true),'Tela Sobre sem cartao do desenvolvedor')
+assert(author:find('@r36sportsbr',1,true),'Tela Sobre sem canal da comunidade')
 assert(author:find('SOBRE O PROJETO',1,true),'Sobre sem secao de descricao')
 route('about');love.gamepadpressed(nil,'a')
 assert(screen()=='about','A abriu ajuda ao selecionar Sobre')
