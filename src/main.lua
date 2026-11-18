@@ -296,7 +296,7 @@ local function sidebar()
     txt(tr('navigation'),27,89,10,theme.low)
     for i,route in ipairs(menuPages) do
       local y=121+(i-1)*38
-      sideItem(tr(route),y,menuIndex==i)
+      sideItem(tr(route),y,menuIndex==i,i)
       if screen=='home' and focus=='sidebar' and menuIndex==i then
         ui.stroke(15,y+1,130,32,theme.accent,7,2)
       end
