@@ -260,7 +260,7 @@ class Updater:
         # Não permitir uma segunda atualização enquanto existe rollback pendente.
         if self.pending.exists():
             raise ValueError("Existe uma atualização aguardando validação")
-        stamp = "backup-" + str(int(time.time())) + "-" + str(os.getpid())
+        stamp = "backup-" + str(time.time_ns()) + "-" + str(os.getpid())
         backup = self.work / stamp
         backup.mkdir(parents=True, exist_ok=False)
         existing = []
