@@ -21,7 +21,7 @@ fi
   "R36S ROMS STORE.sh" r36s-roms-store \
   -x 'r36s-roms-store/state/*')
 zip -q -r build/R36S_ROMS_STORE_v${VERSION}_FONTE.zip \
-  VERSION VERSIONING.md CHANGELOG.md README.md LICENSE THIRD_PARTY_NOTICES.txt src port tools tests .github \
+  VERSION VERSIONING.md CHANGELOG.md README.md docs LICENSE THIRD_PARTY_NOTICES.txt src port tools tests .github \
   -x 'port/r36s-roms-store/state/*'
 # Pacote dedicado de atualização: apenas arquivos da aplicação, sem dados do usuário.
 python3 tools/make_roms_update.py --installer "build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip" \

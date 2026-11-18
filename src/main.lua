@@ -981,7 +981,7 @@ function love.load()
   love.graphics.setDefaultFilter('linear','linear')
   ui.init();loadData()
   storeUpdater.init(HOME,STATE)
-  storeUpdater.run('check')
+  if os.getenv('R36S_STORE_OFFLINE_TEST')~='1' then storeUpdater.run('check') end
   external.init(HOME,STATE)
   reloadDownloads()
   device.update(0,true)

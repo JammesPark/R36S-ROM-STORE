@@ -41,6 +41,7 @@ jobs:
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v0212.lua
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_nav_icons.lua
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v0215.lua
+          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_store_updates_ui.lua
           python3 tests/test_v029_backend.py
           python3 tests/test_gamestore.py
           python3 tests/test_single_catalog.py
