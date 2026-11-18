@@ -5,6 +5,7 @@ set -o pipefail
 BASE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)" || exit 1
 APP="$BASE/r36s-roms-store"
 LOG="$APP/log.txt"
+UPDATER="$APP/bin/store_updater.py"
 # Reaproveita dados de uma instalacao anterior sem copiar os binarios antigos.
 # O padrao so procura instalacoes antigas desta familia no SD1.
 # Nao sobrescreve preferencias do aplicativo novo e nao exclui o anterior.
@@ -38,6 +39,11 @@ fail() {
   exit 1
 }
 [[ -s "$APP/game.love" ]] || fail "game.love ausente ou vazio"
+# Reverte atualizações interrompidas por perda de energia antes de abrir o app.
+if [[ -f "$APP/state/updates/pending_health.json" ]]; then
+  echo "Atualização anterior sem confirmação de boot: restaurando backup..."
+  python3 "$UPDATER" recover || fail "Falha ao restaurar atualização interrompida"
+fi
 export R36S_STORE_HOME="$APP"
 ORIGINAL_XDG="${XDG_DATA_HOME:-${HOME:-/home/ark}/.local/share}"
 CONTROL=''
@@ -104,6 +110,7 @@ if [[ "$runtime" == portmaster ]]; then
     pm_platform_helper "$LOVE_BINARY" || echo "AVISO: pm_platform_helper retornou erro"
   fi
 fi
+UPDATE_RETRY=0
 while true; do
   rm -f "$APP/state/launch.request"
   echo "Iniciando interface LÖVE 640x480..."
@@ -115,7 +122,26 @@ while true; do
     code=$?
   fi
   echo "LÖVE encerrou com codigo: $code"
-  [[ "$code" -eq 0 ]] || fail "Falha no runtime LÖVE (codigo $code)"
+  if [[ "$code" -ne 0 ]]; then
+    if [[ -f "$APP/state/updates/pending_health.json" && "$UPDATE_RETRY" -eq 0 ]]; then
+      echo "Falha no primeiro boot da atualização: rollback automático"
+      python3 "$UPDATER" rollback || fail "Falha no rollback"
+      UPDATE_RETRY=1
+      continue
+    fi
+    fail "Falha no runtime LÖVE (codigo $code)"
+  fi
+  # Somente o launcher aplica atualização: LÖVE não altera seu arquivo em uso.
+  if [[ -f "$APP/state/store_update_apply.request" ]]; then
+    echo "Aplicando pacote de atualização verificado..."
+    python3 "$UPDATER" apply || fail "Instalação da atualização falhou"
+    UPDATE_RETRY=0
+    echo "Atualização aplicada, reiniciando interface..."
+    continue
+  fi
+  if [[ -f "$APP/state/updates/pending_health.json" ]]; then
+    python3 "$UPDATER" confirm || fail "Não foi possível confirmar a atualização"
+  fi
   [[ -f "$APP/state/launch.request" ]] || break
   IFS= read -r SCRIPT < "$APP/state/launch.request"
   case "$SCRIPT" in
