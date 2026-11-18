@@ -175,3 +175,11 @@ Observação: os três áudios `.ogg` e os QR codes continuam idênticos aos da 
 - Testes automatizados verificam a posição dos títulos, do slide e dos dois botões START (cartão e legenda do rodapé).
 
 Os ajustes precisam de validação final no console físico.
+
+
+## v0.2.13 — Destaques sem nomes e START verde
+
+- O texto **EM DESTAQUE** tem centro horizontal calculado a partir da caixa do slide, e permanece alinhado verticalmente ao título da Visão geral.
+- Os **nomes dos jogos foram removidos do slide**. O espaço ficou reservado para a capa completa e os indicadores centralizados.
+- As teclas **START** na tela Sobre (cartão e legenda inferior) passaram a ser exibidas em um botão sólido **verde**, com largura ampliada para não cortar a palavra.
+- O teste de regressão confere o alinhamento do título, a ausência dos nomes dos jogos e os dois botões verdes.

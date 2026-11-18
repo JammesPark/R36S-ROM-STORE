@@ -1,4 +1,4 @@
--- v0.2.12: START amarelo solido sem corte e titulo Em destaque alinhado.
+-- v0.2.13: START verde solido, sem nomes no destaque, titulo centralizado.
 package.path='src/?.lua;'..package.path
 local rects, texts, circles={},{},{}
 local currentColor={1,1,1,1}
@@ -83,10 +83,14 @@ end
 assert(overviewTitle and featuredTitle,'Titulos Visao geral ou Em destaque ausentes')
 assert(overviewTitle.y==featuredTitle.y and overviewTitle.y==209,
   'Titulos devem estar na mesma linha horizontal')
-assert(overviewTitle.x==180 and featuredTitle.x==428,
-  'Titulos devem comecar na mesma coordenada X de seus paineis')
+assert(overviewTitle.x==180 and featuredTitle.x==428 and featuredTitle.w==166 and featuredTitle.align=='center',
+  'Em destaque deve estar CENTRALIZADO na mesma largura real do slide')
 local slide=elementAt(rects,428,237)
 assert(slide and slide.w==166 and slide.h==187,'Slide fora do alinhamento da Visao geral')
+for _,t in ipairs(texts) do
+  assert(t.s~='ROM Exemplo' and t.s~='ROM Dois' and t.s~='ROM Tres',
+    'Destaque nao deve exibir nomes dos jogos')
+end
 local dots={}
 for _,c in ipairs(circles) do
   if c.mode=='fill' and c.y==414 then dots[#dots+1]=c.x end
@@ -98,12 +102,12 @@ assert(math.abs(sum/#dots-511)<0.01,'Bolinhas fora do centro do slide')
 route('about');reset();love.draw()
 local starts={}
 for _,r in ipairs(rects) do
-  if r.mode=='fill' and r.w==56 and r.h==20 and math.abs(r.color[1]-1)<.001 and
-     math.abs(r.color[2]-.82)<.001 and math.abs(r.color[3]-.22)<.001 then
+  if r.mode=='fill' and r.w==64 and r.h==20 and math.abs(r.color[1]-.29)<.001 and
+     math.abs(r.color[2]-.91)<.001 and math.abs(r.color[3]-.55)<.001 then
     starts[#starts+1]=r
   end
 end
-assert(#starts==2,'Os START do cartao e da legenda precisam ser amarelos solidos')
+assert(#starts==2,'Os START do cartao e da legenda precisam ser VERDES solidos')
 local startCard,startFooter
 for _,r in ipairs(starts) do
   if r.y==157 then startCard=r end
@@ -114,14 +118,14 @@ local community=elementAt(rects,284,107)
 assert(community and community.w==232,'Cartao da comunidade mudou de tamanho')
 assert(startCard.x>=community.x and startCard.x+startCard.w<=community.x+community.w,
   'START do cartao cortado na borda')
-assert(startFooter.x+startFooter.w+61<486,'START do rodape invade botao B')
+assert(startFooter.x+startFooter.w+60<486,'START do rodape invade botao B')
 local buttonWords=0
 for _,t in ipairs(texts) do
   if t.s=='START' then
     buttonWords=buttonWords+1
-    assert(t.w==48,'Texto START deve ter area util de 48 px')
+    assert(t.w==54,'Texto START deve ter area util de 54 px')
     assert(font:getWidth(t.s)<t.w,'Texto START cortado pela largura disponivel')
   end
 end
 assert(buttonWords>=2,'START da legenda foi truncado')
-print('v0.2.12: destaque alinhado; 2 botoes START amarelos solidos, inteiros, legiveis: OK')
+print('v0.2.13: destaque centralizado sem nomes e 2 botoes START verdes e legiveis: OK')

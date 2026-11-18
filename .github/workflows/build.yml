@@ -47,10 +47,10 @@ jobs:
       - name: Verificar conteudo do instalador
         run: |
           test -x 'port/R36S ROMS STORE.sh'
-          unzip -t build/R36S_ROMS_STORE_v0.2.12_TESTE.zip
-          unzip -Z1 build/R36S_ROMS_STORE_v0.2.12_TESTE.zip | grep -F 'r36s-roms-store/game.love'
+          unzip -t build/R36S_ROMS_STORE_v0.2.13_TESTE.zip
+          unzip -Z1 build/R36S_ROMS_STORE_v0.2.13_TESTE.zip | grep -F 'r36s-roms-store/game.love'
           tmp=$(mktemp -d)
-          unzip -p build/R36S_ROMS_STORE_v0.2.12_TESTE.zip 'r36s-roms-store/game.love' > "$tmp/game.love"
+          unzip -p build/R36S_ROMS_STORE_v0.2.13_TESTE.zip 'r36s-roms-store/game.love' > "$tmp/game.love"
           unzip -l "$tmp/game.love" | grep -F 'assets/logo.png'
           unzip -l "$tmp/game.love" | grep -F 'legal_text.lua'
           unzip -l "$tmp/game.love" | grep -F 'assets/logo_dev.png'
@@ -59,9 +59,9 @@ jobs:
           unzip -l "$tmp/game.love" | grep -F 'assets/qr_livepix.png'
           unzip -l "$tmp/game.love" | grep -F 'assets/qr_telegram.png'
           unzip -l "$tmp/game.love" | grep -F 'assets/music/tema_principal.ogg'
-          unzip -Z1 build/R36S_ROMS_STORE_v0.2.12_TESTE.zip | grep -F 'r36s-roms-store/LICENSE'
-          unzip -Z1 build/R36S_ROMS_STORE_v0.2.12_TESTE.zip | grep -F 'r36s-roms-store/THIRD_PARTY_NOTICES.txt'
-          unzip -q build/R36S_ROMS_STORE_v0.2.12_TESTE.zip -d "$tmp"
+          unzip -Z1 build/R36S_ROMS_STORE_v0.2.13_TESTE.zip | grep -F 'r36s-roms-store/LICENSE'
+          unzip -Z1 build/R36S_ROMS_STORE_v0.2.13_TESTE.zip | grep -F 'r36s-roms-store/THIRD_PARTY_NOTICES.txt'
+          unzip -q build/R36S_ROMS_STORE_v0.2.13_TESTE.zip -d "$tmp"
           test -x "$tmp/R36S ROMS STORE.sh"
           test ! -d "$tmp/r36s-roms-store/bin/__pycache__"
           rm -rf "$tmp"

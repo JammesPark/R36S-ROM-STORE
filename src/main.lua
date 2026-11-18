@@ -304,7 +304,7 @@ local function sidebar()
   end
   txt('●',20,449,11,theme.green)
   txt('ROMS STORE',30,452,10,theme.muted)
-  txt('v0.2.12',105,452,9,theme.low,50)
+  txt('v0.2.13',105,452,9,theme.low,50)
 end
 local function header(eyebrow,title,right)
   ui.kicker(eyebrow,179,23)
@@ -350,10 +350,12 @@ local function homePage()
   R(465,160,143,24,theme.accent,6)
   if focus=='content' and homeFocus=='explore' then ui.stroke(465,160,143,24,theme.text,6,2) end
   txt(tr('explore'),470,165,10,theme.bg,132,true)
-  -- Titulos compartilham linha de base e inicio exato dos paineis.
+  -- Os titulos compartilham a mesma altura, mas o destaque e centralizado
+  -- pelo retangulo REAL do slide para evitar deslocamentos visuais.
   local sectionTitleY=209
+  local slideX,slideY,slideW,slideH=428,237,166,187
   txt(tr('overview'),180,sectionTitleY,12,theme.text,190)
-  txt(tr('featured'),428,sectionTitleY,12,theme.text,166)
+  txt(tr('featured'),slideX,sectionTitleY,12,theme.text,slideW,true)
   local count=totalRoms()
   local stats={{tr('catalog_games'),count and tostring(count) or '—'},
     {tr('installed_games'),tostring(#downloads)},
@@ -364,8 +366,7 @@ local function homePage()
     txt(ui.ellipsize(item[1],23),191,y+6,11,theme.muted,166)
     txt(item[2],191,y+27,19,theme.accent,162)
   end
-  -- Alinhamento: o slide comeca na mesma altura dos cartoes da Visao geral.
-  local slideX,slideY,slideW,slideH=428,237,166,187
+  -- Area visual limpa: so capa + indicadores (sem nomes de ROMs).
   panel(slideX,slideY,slideW,slideH,focus=='content' and homeFocus=='featured')
   local total=#external.games
   if total==0 then
@@ -373,14 +374,9 @@ local function homePage()
   else
     homeSlideIndex=math.max(1,math.min(total,homeSlideIndex))
     local game=external.games[homeSlideIndex]
-    coverStretch(game,slideX+6,slideY+6,slideW-12,120,homeSlideIndex)
-    -- Fundo opaco para o título. Nunca sobrepor capa, navegação ou bolinhas.
-    local bandX,bandY,bandW=slideX+6,slideY+131,slideW-12
-    R(bandX,bandY,bandW,34,theme.sidebar,4)
-    R(bandX,bandY,bandW,2,theme.accent,0)
-    love.graphics.setScissor(bandX+4,bandY+4,bandW-8,27)
-    ui.paragraph(ui.ellipsize(game.name or '?',38),bandX+4,bandY+5,bandW-8,10,theme.text,1)
-    love.graphics.setScissor()
+    -- A capa ocupa o cartao quase inteiro; o rodape reserva apenas as bolinhas.
+    -- ui.poster e chamado sem showName no fallback offline.
+    coverStretch(game,slideX+6,slideY+6,slideW-12,slideH-32,homeSlideIndex)
     if total>1 then
       local shown=math.min(5,total)
       local first=math.max(1,math.min(homeSlideIndex-math.floor(shown/2),total-shown+1))
@@ -751,8 +747,8 @@ local function aboutPage()
   txt(settings.language=='pt' and 'CANAL DA COMUNIDADE' or 'COMMUNITY CHANNEL',cardX+51,114,10,theme.text,174)
   txt('@r36sportsbr',cardX+51,133,10,theme.accent,171)
   -- Grupos alinhados dentro do cartao. START tem 56px e nunca corta.
-  ui.buttonHint(cardX+14,157,'A',settings.language=='pt' and 'Canal' or 'Channel',60)
-  ui.buttonHint(cardX+100,157,'START','LivePix',65)
+  ui.buttonHint(cardX+14,157,'A',settings.language=='pt' and 'Canal' or 'Channel',47)
+  ui.buttonHint(cardX+91,157,'START','LivePix',67)
   ui.drawAsset('logo_dev',518,103,101,83)
   txt('R36S ROMS STORE',197,192,10,theme.accent,403)
   local y=208-aboutScroll

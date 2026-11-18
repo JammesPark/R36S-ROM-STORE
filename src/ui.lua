@@ -173,12 +173,12 @@ function U.buttonHint(x,y,key,label,maxwidth)
     love.graphics.circle('fill',x+9,y+9,9)
     U.text(key,x+3,y+2,11,theme.bg,13,true)
   elseif key=='START' then
-    -- START amarelo solido, com largura real para as cinco letras.
-    -- O antigo retangulo de 42 px e a fonte dimensionada cortavam o T.
-    local startColor={1.0,.82,.22}
-    U.rect(x,y,56,20,startColor,7)
-    U.text('START',x+4,y+4,9,theme.bg,48,true)
-    textOffset=61
+    -- START verde solido, no mesmo estilo dos botoes coloridos A/B.
+    -- Area generosa para o texto completo inclusive com fonte Grande.
+    local startGreen={.29,.91,.55}
+    U.rect(x,y,64,20,startGreen,10)
+    U.text('START',x+5,y+4,9,theme.bg,54,true)
+    textOffset=68
   else
     U.rect(x,y,42,18,theme.panel2,7,c)
     U.text(key,x+3,y+3,9,c,36,true)
