@@ -51,9 +51,10 @@ local confirmation=render('exit_confirm')
 assert(confirmation:find('SAIR',1,true) or confirmation:find('EXIT',1,true),'Janela de saida nao desenhada')
 love.gamepadpressed(nil,'b')
 assert(currentRoute()=='home','B nao cancelou saida')
-love.gamepadpressed(nil,'a')
-love.gamepadpressed(nil,'a')
-assert(quitted==1,'A nao chamou love.event.quit na confirmacao')
+love.gamepadpressed(nil,'a') -- abre confirmação com NÃO selecionado
+love.gamepadpressed(nil,'dpleft') -- seleciona SIM
+love.gamepadpressed(nil,'a') -- confirma SIM
+assert(quitted==1,'A em SIM nao chamou love.event.quit na confirmacao')
 local network=render('network')
 assert(not network:find('GAMESTORE',1,true) and not network:find('r36swiki',1,true),'Fonte aparece na tela de rede')
 local about=render('about')
