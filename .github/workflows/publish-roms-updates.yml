@@ -26,7 +26,7 @@ jobs:
        contains(github.event.workflow_run.head_commit.message, '[roms-online-release]'))
     runs-on: ubuntu-24.04
     env:
-      PUBLIC_REPO: JammesPark/R36SPORTSBR-STORE-UPDATES
+      PUBLIC_REPO: JammesPark/R36S-ROMS-STORE-UPDATES
       BUILD_RUN_ID: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || inputs.build_run_id }}
     steps:
       - name: Checkout
@@ -112,7 +112,13 @@ jobs:
             exit 1
           fi
           # Atualização antiga nunca substitui um feed mais recente.
-          OLD="$(gh api "repos/$PUBLIC_REPO/contents/roms-store/update.json" --jq '.content' | base64 -d)"
+          OLD='{}'
+          FILE_SHA=''
+          # Uma instalação nova não tem update.json: na primeira Release o workflow cria o arquivo.
+          if FILE_META="$(gh api "repos/$PUBLIC_REPO/contents/update.json" 2>/dev/null)"; then
+            OLD="$(jq -r '.content' <<< "$FILE_META" | base64 -d)"
+            FILE_SHA="$(jq -r '.sha' <<< "$FILE_META")"
+          fi
           export OLD
           python3 - <<'PY'
           import json,os,sys
@@ -131,11 +137,15 @@ jobs:
           mkdir -p verify
           gh release download "$TAG" --repo "$PUBLIC_REPO" --pattern "$F2" --dir verify
           cmp "dist/$F2" "verify/$F2"
-          # Este diretório é só do ROMS STORE, não alterar o update.json antigo.
-          FILE_SHA="$(gh api "repos/$PUBLIC_REPO/contents/roms-store/update.json" --jq '.sha')"
+          # Publica exclusivamente no novo repositório de atualizações da ROMS STORE.
           CONTENT="$(base64 -w0 dist/update.json)"
-          gh api "repos/$PUBLIC_REPO/contents/roms-store/update.json" --method PUT \
-            --field "message=Ativar atualização ROMS STORE $V (SHA verificado)" \
-            --field "sha=$FILE_SHA" \
-            --field "content=$CONTENT" >/dev/null
+          if [[ -n "$FILE_SHA" ]]; then
+            gh api "repos/$PUBLIC_REPO/contents/update.json" --method PUT \
+              --field "message=Ativar atualização ROMS STORE $V (SHA verificado)" \
+              --field "sha=$FILE_SHA" --field "content=$CONTENT" >/dev/null
+          else
+            gh api "repos/$PUBLIC_REPO/contents/update.json" --method PUT \
+              --field "message=Criar feed ROMS STORE $V (SHA verificado)" \
+              --field "content=$CONTENT" >/dev/null
+          fi
           echo "Feed exclusivo ROMS STORE ativado após publicação verificada."

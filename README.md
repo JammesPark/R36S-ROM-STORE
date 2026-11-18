@@ -204,4 +204,7 @@ A partir de **0.2.16-beta**, a numeração é centralizada no arquivo raiz `VERS
 
 ## Atualizações automáticas da loja
 
-A partir de **0.3.0-beta**, a loja verifica atualizações automaticamente. Em **Configurações → Atualizações**, o usuário pode confirmar download, instalação e reinicialização com backup e rollback. Não são alterados ROMs, configurações nem favoritos. O canal público é isolado daquele do R36SPORTSBR STORE HUB. A publicação inicial requer configurar o secret **ROMS_UPDATES_TOKEN**. Leia [o manual de atualização](docs/ATUALIZACAO_ROM_STORE.md).
+A partir de **0.3.0-beta**, a loja verifica atualizações automaticamente. Em **Configurações → Atualizações**, o usuário pode confirmar download, instalação e reinicialização com backup e rollback. Não são alterados ROMs, configurações nem favoritos. O canal público usa o repositório exclusivo `JammesPark/R36S-ROMS-STORE-UPDATES`, sem compartilhar a estrutura de outro projeto. A publicação inicial requer configurar o secret **ROMS_UPDATES_TOKEN**. Leia [o manual de atualização](docs/ATUALIZACAO_ROM_STORE.md).
+
+
+**Repositório público de updates exclusivo:** `https://github.com/JammesPark/R36S-ROMS-STORE-UPDATES`. A primeira publicação depende da criação do repositório público com branch `main`, do secret `ROMS_UPDATES_TOKEN` com acesso restrito e de uma Release verificada.

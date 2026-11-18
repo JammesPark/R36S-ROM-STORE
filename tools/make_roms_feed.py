@@ -8,7 +8,7 @@ import re
 import zipfile
 from pathlib import Path
 
-PUBLIC="JammesPark/R36SPORTSBR-STORE-UPDATES"
+PUBLIC="JammesPark/R36S-ROMS-STORE-UPDATES"
 def sha(path):
  h=hashlib.sha256()
  with path.open("rb") as f:

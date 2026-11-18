@@ -27,6 +27,7 @@ jobs:
           unzip -q -o src/assets/graphics.bundle.zip -d src/assets
           python3 tests/test_versioning.py
           python3 tests/test_store_update.py
+          python3 tests/test_update_isolation.py
           lua5.4 tests/test_json.lua
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_ui_smoke.lua
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_navigation_features.lua

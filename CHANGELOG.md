@@ -2,6 +2,12 @@
 
 O histórico mantém os números usados nas entregas anteriores, sem renumeração retroativa.
 
+## 0.3.1-beta
+- Atualizador migrado para o repositório público exclusivo `JammesPark/R36S-ROMS-STORE-UPDATES`, sem utilizar o canal do outro HUB.
+- Feed `update.json` próprio e publicação preparada para criar o feed na primeira Release.
+- Testes de isolamento do feed, versão, URL e ausência de dependências do repositório anterior.
+- A ativação pública depende da criação do novo repositório e do token restrito do Actions.
+
 ## 0.3.0-beta
 - Consulta automática por atualizações e nova área Configurações → Atualizações em PT/EN/ES/RU.
 - Download com confirmação e verificação SHA-256, manifesto e identidade da loja.

@@ -18,8 +18,8 @@ import zipfile
 from pathlib import Path
 
 APP_ID = "r36s-roms-store"
-PUBLIC_REPO = "JammesPark/R36SPORTSBR-STORE-UPDATES"
-FEED_URL = "https://raw.githubusercontent.com/" + PUBLIC_REPO + "/main/roms-store/update.json"
+PUBLIC_REPO = "JammesPark/R36S-ROMS-STORE-UPDATES"
+FEED_URL = "https://raw.githubusercontent.com/" + PUBLIC_REPO + "/main/update.json"
 VERS = re.compile(r"^(\d+)\.(\d+)\.(\d+)(?:-(beta|rc))?$")
 SHA = re.compile(r"^[0-9a-f]{64}$")
 ALLOWED = frozenset((
