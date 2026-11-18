@@ -9,6 +9,7 @@ O histórico mantém os números usados nas entregas anteriores, sem renumeraç�
 - No catálogo e nos resultados de busca, botão **Y** adiciona ou remove a ROM selecionada dos favoritos.
 - Na tela inicial, **B** abre a confirmação de saída; ←/→ selecionam Sim/Não, **A** confirma e **B** cancela.
 - Mantido canal público exclusivo de atualização, com pacote UPDATE incluindo o novo gerenciador de BIOS.
+- Todas as funcionalidades passaram no GitHub Actions antes da publicação beta.
 
 ## 0.3.1-beta
 - Atualizador migrado para o repositório público exclusivo `JammesPark/R36S-ROMS-STORE-UPDATES`, sem utilizar o canal do outro HUB.
