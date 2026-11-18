@@ -28,15 +28,30 @@ ui.menuIcon=function(kind,x,y,c)
   return original(kind,x,y,c)
 end
 local function up(name)
-  for i=1,90 do
-    local a,b=debug.getupvalue(love.draw,i)
-    if not a then break end
-    if a==name then return i,b end
+  -- Variáveis de foco são capturadas pela sidebar/homePage, não por love.draw diretamente.
+  local work={love.draw,love.gamepadpressed,love.update}
+  local visited={}
+  for _=1,600 do
+    local fn=table.remove(work,1)
+    if not fn then break end
+    if not visited[fn] then
+      visited[fn]=true
+      for i=1,150 do
+        local a,b=debug.getupvalue(fn,i)
+        if not a then break end
+        if a==name then return fn,i,b end
+        if type(b)=='function' then work[#work+1]=b end
+      end
+    end
   end
   error('Variável '..name..' ausente')
 end
-local function set(name,value) local i=up(name);debug.setupvalue(love.draw,i,value)end
-local function get(name) local _,v=up(name);return v end
+local function set(name,value)
+  local fn,i=up(name);debug.setupvalue(fn,i,value)
+end
+local function get(name)
+  local _,_,value=up(name);return value
+end
 local function reset()rows={};rects={};nav={}end
 local function has(s)
   for _,v in ipairs(rows) do if v.text:find(s,1,true) then return true end end
