@@ -25,6 +25,7 @@ jobs:
       - name: Testes
         run: |
           unzip -q -o src/assets/graphics.bundle.zip -d src/assets
+          python3 tests/test_versioning.py
           lua5.4 tests/test_json.lua
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_ui_smoke.lua
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_navigation_features.lua
@@ -48,11 +49,15 @@ jobs:
         run: bash tools/build.sh
       - name: Verificar conteudo do instalador
         run: |
+          VERSION="$(tr -d '\r\n' < VERSION)"
           test -x 'port/R36S ROMS STORE.sh'
-          unzip -t build/R36S_ROMS_STORE_v0.2.15_TESTE.zip
-          unzip -Z1 build/R36S_ROMS_STORE_v0.2.15_TESTE.zip | grep -F 'r36s-roms-store/game.love'
+          unzip -t build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip
+          unzip -Z1 build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip | grep -F 'r36s-roms-store/game.love'
           tmp=$(mktemp -d)
-          unzip -p build/R36S_ROMS_STORE_v0.2.15_TESTE.zip 'r36s-roms-store/game.love' > "$tmp/game.love"
+          unzip -p build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip 'r36s-roms-store/game.love' > "$tmp/game.love"
+          test "$(unzip -p "$tmp/game.love" VERSION | tr -d '\r\n')" = "$VERSION"
+          test "$(unzip -p "build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip" "r36s-roms-store/VERSION" | tr -d '\r\n')" = "$VERSION"
+          test "$(unzip -p "build/R36S_ROMS_STORE_v${VERSION}_FONTE.zip" VERSION | tr -d '\r\n')" = "$VERSION"
           unzip -l "$tmp/game.love" | grep -F 'assets/logo.png'
           unzip -l "$tmp/game.love" | grep -F 'legal_text.lua'
           unzip -l "$tmp/game.love" | grep -F 'assets/logo_dev.png'
@@ -61,9 +66,9 @@ jobs:
           unzip -l "$tmp/game.love" | grep -F 'assets/qr_livepix.png'
           unzip -l "$tmp/game.love" | grep -F 'assets/qr_telegram.png'
           unzip -l "$tmp/game.love" | grep -F 'assets/music/tema_principal.ogg'
-          unzip -Z1 build/R36S_ROMS_STORE_v0.2.15_TESTE.zip | grep -F 'r36s-roms-store/LICENSE'
-          unzip -Z1 build/R36S_ROMS_STORE_v0.2.15_TESTE.zip | grep -F 'r36s-roms-store/THIRD_PARTY_NOTICES.txt'
-          unzip -q build/R36S_ROMS_STORE_v0.2.15_TESTE.zip -d "$tmp"
+          unzip -Z1 build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip | grep -F 'r36s-roms-store/LICENSE'
+          unzip -Z1 build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip | grep -F 'r36s-roms-store/THIRD_PARTY_NOTICES.txt'
+          unzip -q build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip -d "$tmp"
           test -x "$tmp/R36S ROMS STORE.sh"
           test ! -d "$tmp/r36s-roms-store/bin/__pycache__"
           rm -rf "$tmp"

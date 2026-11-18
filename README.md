@@ -1,4 +1,6 @@
-# R36S ROMS STORE — v0.2.9 (teste)
+# R36S ROMS STORE
+
+**Versão atual:** consulte [VERSION](VERSION), fonte oficial para o aplicativo e os pacotes do GitHub Actions. **Canal:** beta; a versão estável 1.0.0 dependerá de validação no console físico. Leia a [política de versões](VERSIONING.md) e o [histórico de atualizações](CHANGELOG.md).
 
 Loja de ROMs para consoles R36S, com interface Lua + LÖVE 11.5 na resolução **640×480**, catálogo único GameStoreBR (`r36swiki.com/getgames.php`) e arquivos baixados diretamente para SD1/SD2. **Nenhuma ROM, BIOS ou conteúdo comercial é distribuído com o aplicativo.**
 
@@ -193,3 +195,8 @@ A navegação lateral agora desenha oito ícones independentes de arquivos PNG, 
 ## v0.2.15 — Download atual na tela inicial e ícones verificados
 
 O antigo texto promocional da tela Início foi substituído por um painel **DOWNLOAD ATUAL** que acompanha a transferência real, indicando nome da ROM, SD1/SD2, barra e porcentagem quando o tamanho esperado estiver disponível. Sem transferência mostra uma mensagem neutra, nunca um progresso demonstrativo. O botão **VER DOWNLOADS** abre a página Downloads por A ou clique. A navegação principal continua com oito desenhos diferentes, gerados diretamente pelo LÖVE e independentes de imagens. O novo teste automatizado valida os ícones na renderização da barra lateral real e os estados com e sem transferência; verifique `v0.2.15` no canto inferior esquerdo do console para confirmar que esta atualização foi instalada.
+
+
+## Organização de versões
+
+A partir de **0.2.16-beta**, a numeração é centralizada no arquivo raiz `VERSION`. O build copia essa informação para `game.love`, o diretório instalado e o nome dos ZIPs. O GitHub Actions verifica a correspondência. As versões anteriores permanecem documentadas sem renumeração retroativa. `0.3.0-beta` fica reservado para um marco funcional relevante; `1.0.0`, somente após testes físicos completos.

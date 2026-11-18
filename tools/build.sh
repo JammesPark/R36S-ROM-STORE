@@ -2,6 +2,13 @@
 set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p build
+VERSION="$(tr -d '\r\n' < VERSION)"
+if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9]+(\.[a-z0-9]+)*)?$ ]]; then
+  echo "ERRO: VERSION invalida: $VERSION" >&2
+  exit 1
+fi
+cp VERSION src/VERSION
+cp VERSION port/r36s-roms-store/VERSION
 rm -f build/*.zip port/r36s-roms-store/game.love
 find port -type d -name __pycache__ -prune -exec rm -rf -- {} +
 # Os PNGs oficiais ficam empacotados no repositorio como um unico bundle binario.
@@ -10,10 +17,10 @@ if [[ -f src/assets/graphics.bundle.zip ]]; then
   unzip -q -o src/assets/graphics.bundle.zip -d src/assets
 fi
 (cd src && zip -q -X -r ../port/r36s-roms-store/game.love .)
-(cd port && zip -q -r ../build/R36S_ROMS_STORE_v0.2.15_TESTE.zip \
+(cd port && zip -q -r ../build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip \
   "R36S ROMS STORE.sh" r36s-roms-store \
   -x 'r36s-roms-store/state/*')
-zip -q -r build/R36S_ROMS_STORE_v0.2.15_FONTE.zip \
-  README.md LICENSE THIRD_PARTY_NOTICES.txt src port tools tests .github \
+zip -q -r build/R36S_ROMS_STORE_v${VERSION}_FONTE.zip \
+  VERSION VERSIONING.md CHANGELOG.md README.md LICENSE THIRD_PARTY_NOTICES.txt src port tools tests .github \
   -x 'port/r36s-roms-store/state/*'
-echo 'Pacotes criados em build/'
+echo "Pacotes v$VERSION criados em build/"
