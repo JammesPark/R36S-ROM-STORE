@@ -37,7 +37,9 @@ for _,item in ipairs(cases) do
   for _,e in ipairs(events) do
     if not e:match('^width:') then meaningful[#meaningful+1]=e end
   end
-  assert(#meaningful>=2,'Ícone ausente/simplificado: '..item[1])
+  -- Coração é um contorno contínuo com vários vértices; uma linha é válida.
+  assert(#meaningful>=(item[1]=='favorites' and 1 or 2),
+    'Ícone ausente/simplificado: '..item[1])
   local signature=table.concat(meaningful,'|')
   if shapes[signature] then
     error('Ícones indistinguíveis: '..shapes[signature]..' e '..item[1])
