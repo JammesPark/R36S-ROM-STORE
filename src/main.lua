@@ -8,6 +8,7 @@ local i18n=require('i18n')
 local legal=require('legal_text')
 local device=require('device_status')
 local music=require('music')
+local storeUpdater=require('store_update')
 local HOME=os.getenv('R36S_STORE_HOME') or '/roms/ports/r36s-roms-store'
 local STATE=HOME..'/state'
 local mainPages={'home','catalog','downloads','installed','favorites','settings','about'}
@@ -20,6 +21,7 @@ local aboutScroll=0
 local aboutMaxScroll=0
 local qrModal=nil -- 'telegram' ou 'livepix'
 local qrExpanded=false
+local storeUpdateModal=false
 local pendingDelete=nil
 local duplicateModal=false
 local awaitInspect=false
@@ -37,7 +39,7 @@ local clock=0;local startupTime=0;local notice='';local noticeTime=0
 local selectedCard=1;local transferHandled=false
 local homeFocus='explore';local homeSlideIndex=1;local homeOverviewIndex=1;local homeSlideClock=0
 local storageInfo={};local storageLast=-999
-local suboptions={'languages','themes','font_size','storage','network','help'}
+local suboptions={'languages','themes','font_size','storage','network','updates','help'}
 local fontSizes={'small','medium','large'}
 local keyboard={'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','SPACE','DEL','CLEAR','OK'}
 -- Versão exibida obtida do arquivo VERSION incluído no game.love.
@@ -622,20 +624,23 @@ local function favoritesPage()
 end
 local function settingsPage()
   header(tr('personalize'),tr('title_settings'))
-  local values={tr('language'),tr('theme'),tr('font_size'),tr('storage'),tr('network'),tr('help')}
+  local values={tr('language'),tr('theme'),tr('font_size'),tr('storage'),tr('network'),storeUpdater.tr(settings.language,'title'),tr('help')}
+  local up=storeUpdater.status
+  local detail=(up.phase=='available' or up.phase=='ready') and ('v'..tostring(up.version or '?'))
+    or storeUpdater.tr(settings.language,up.phase or 'checking')
   local shown={i18n.languages[1].name,tr('theme_blue'),tr('font_'..settings.font_size),
-    tr('free_space')..' / '..tr('total_space'),tr('status'),'A / B / X / Y'}
+    tr('free_space')..' / '..tr('total_space'),tr('status'),detail,'A / B / X / Y'}
   for _,o in ipairs(i18n.languages) do if o.code==settings.language then shown[1]=o.name end end
   for _,o in ipairs(theme.options) do if o.key==settings.theme then shown[2]=tr(o.name) end end
   for i,label in ipairs(values) do
-    local y=108+(i-1)*53
-    panel(180,y,440,47,i==settingsIndex)
-    local symbols={'languages','palette','type','hard-drive','wifi','circle-help'}
-    R(191,y+10,27,27,theme.sidebar,7,theme.border)
-    ui.icon(symbols[i],196,y+15,17,17,i==settingsIndex and theme.accent or theme.muted)
-    txt(label,228,y+4,13,theme.text,345)
-    txt(shown[i],228,y+25,10,theme.muted,347)
-    txt('›',589,y+10,18,theme.accent)
+    local y=102+(i-1)*46
+    panel(180,y,440,42,i==settingsIndex)
+    local symbols={'languages','palette','type','hard-drive','wifi','download','circle-help'}
+    R(191,y+8,25,25,theme.sidebar,7,theme.border)
+    ui.icon(symbols[i],195,y+12,17,17,i==settingsIndex and theme.accent or theme.muted)
+    txt(label,226,y+2,12,theme.text,345)
+    txt(ui.ellipsize(shown[i],48),226,y+23,10,theme.muted,347)
+    txt('›',589,y+6,18,theme.accent)
   end
   footer()
 end
@@ -713,6 +718,46 @@ local function networkPage()
   ui.stroke(202,320,396,45,theme.text,8,1)
   txt(tr('refresh'),213,332,14,theme.bg,370,true)
   footer()
+end
+-- Atualização online do aplicativo, em canal separado dos outros projetos.
+local function storeUpdatesPage()
+  local lang=settings.language
+  header(tr('manage'),storeUpdater.tr(lang,'title'))
+  panel(180,108,440,303)
+  txt(storeUpdater.tr(lang,'current')..': v'..appVersion(),201,124,14,theme.text,400)
+  local info=storeUpdater.status
+  local phase=info.phase or 'idle'
+  local heading=storeUpdater.tr(lang,phase)
+  txt(heading,201,169,14,phase=='error' and theme.error or theme.accent,394)
+  if info.version and (phase=='available' or phase=='ready' or phase=='downloading' or phase=='verifying') then
+    txt(storeUpdater.tr(lang,'latest')..': v'..tostring(info.version),201,194,12,theme.text,396)
+  end
+  if phase=='downloading' then
+    local fraction=math.max(0,math.min(1,(tonumber(info.downloaded) or 0)/math.max(1,tonumber(info.expected) or 1)))
+    R(204,231,389,12,theme.border,6)
+    R(204,231,389*fraction,12,theme.accent,6)
+    txt(string.format('%d%%',math.floor(fraction*100+0.5)),203,254,11,theme.text,390,true)
+  elseif phase=='error' then
+    txt(ui.ellipsize(info.message or '',66),201,226,11,theme.muted,396)
+  elseif phase=='available' or phase=='ready' then
+    ui.paragraph(tostring(info.notes or ''):sub(1,260),202,223,394,11,theme.muted,3)
+  end
+  local action=phase=='available' and storeUpdater.tr(lang,'download')
+    or phase=='ready' and storeUpdater.tr(lang,'install')
+    or (phase=='checking' or phase=='downloading' or phase=='verifying') and heading
+    or storeUpdater.tr(lang,'check')
+  R(202,333,397,40,theme.accent,8)
+  txt(action,208,345,13,theme.bg,384,true)
+  txt(storeUpdater.tr(lang,'no_auto'),183,395,10,theme.muted,430,true)
+  footer()
+end
+local function storeUpdateOfferPage()
+  R(0,0,640,480,{0,0,0},0,nil,.75)
+  panel(164,167,355,144,true)
+  txt(storeUpdater.tr(settings.language,'notice'),181,181,18,theme.text,317,true)
+  txt('v'..tostring(storeUpdater.status.version or ''),181,214,15,theme.accent,317,true)
+  ui.buttonHint(183,268,'A',storeUpdater.tr(settings.language,'open'),115)
+  ui.buttonHint(380,268,'B',storeUpdater.tr(settings.language,'later'),100)
 end
 -- Renderizador de parágrafos: não usa ui.text, que trunca textos longos.
 local function legalParagraph(content,x,y,width,size,color,lineHeight,alignment)
@@ -935,6 +980,8 @@ end
 function love.load()
   love.graphics.setDefaultFilter('linear','linear')
   ui.init();loadData()
+  storeUpdater.init(HOME,STATE)
+  storeUpdater.run('check')
   external.init(HOME,STATE)
   reloadDownloads()
   device.update(0,true)
@@ -947,6 +994,11 @@ function love.update(dt)
   device.update(dt)
   if screen=='storage' and clock-storageLast>30 then refreshStorage() end
   external.update(dt)
+  storeUpdater.tick()
+  if screen=='home' and storeUpdater.status.phase=='available' and not storeUpdater.offered then
+    storeUpdater.offered=true
+    storeUpdateModal=true
+  end
   if awaitInspect and not external.busy() then
     awaitInspect=false
     if external.inspectResult then
@@ -1015,6 +1067,7 @@ function love.draw()
   elseif screen=='themes' then themesPage()
   elseif screen=='storage' then storagePage()
   elseif screen=='network' then networkPage()
+  elseif screen=='updates' then storeUpdatesPage()
   elseif screen=='about' then aboutPage()
   elseif screen=='help' then helpPage()
   elseif screen=='offline' then offlinePage()
@@ -1028,6 +1081,7 @@ function love.draw()
   if qrModal then qrPage() end
   if duplicateModal then overwriteDialog() end
   if pendingDelete then deleteDialog() end
+  if storeUpdateModal then storeUpdateOfferPage() end
 end
 local function changeTheme()
   local o=theme.options[themeIndex];if not o then return end
@@ -1069,6 +1123,11 @@ local function refreshCatalog()
   return false
 end
 local function handleKey(key)
+  if storeUpdateModal then
+    if key=='a' then storeUpdateModal=false;navigate('updates')
+    elseif key=='b' then storeUpdateModal=false end
+    return
+  end
   if qrModal then
     if qrExpanded then
       if key=='a' or key=='b' or key=='start' then qrExpanded=false end
@@ -1267,6 +1326,15 @@ local function handleKey(key)
   elseif screen=='storage' then
     if key=='b' then back() end
     return
+  elseif screen=='updates' then
+    if key=='a' and not storeUpdater.pending then
+      local phase=storeUpdater.status.phase
+      if phase=='available' then storeUpdater.run('download')
+      elseif phase=='ready' then
+        if storeUpdater.install() then love.event.quit() end
+      else storeUpdater.run('check') end
+    elseif key=='b' then back() end
+    return
   elseif screen=='network' or screen=='offline' then
     if key=='a' or key=='y' then refreshCatalog()
     elseif key=='b' then back() end
@@ -1344,6 +1412,10 @@ function love.textinput(t)
 end
 function love.mousepressed(x,y,button)
   if button~=1 then return end
+  if storeUpdateModal then
+    if y>252 and x<345 then handleKey('a') else handleKey('b') end
+    return
+  end
   if qrModal then
     if qrExpanded then qrExpanded=false
     elseif x<325 and y>365 then qrExpanded=true
@@ -1403,8 +1475,8 @@ function love.mousepressed(x,y,button)
       if isSearch then back() else navigate('search');searchIndex=1 end
     end
   elseif screen=='settings' then
-    local idx=math.floor((y-108)/53)+1
-    if y>=108 and suboptions[idx] then settingsIndex=idx;navigate(suboptions[idx]) end
+    local idx=math.floor((y-102)/46)+1
+    if y>=102 and y<427 and suboptions[idx] then settingsIndex=idx;navigate(suboptions[idx]) end
   elseif screen=='font_size' then
     local idx=math.floor((y-146)/78)+1
     if y>=146 and fontSizes[idx] then fontSizeIndex=idx;changeFontSize() end
@@ -1421,6 +1493,8 @@ function love.mousepressed(x,y,button)
       if x>=280 and x<=519 then qrModal='telegram'
       elseif x>=525 and x<=614 then qrModal='livepix' end
     end
+  elseif screen=='updates' then
+    if x>=202 and x<=599 and y>=333 and y<=373 then handleKey('a') end
   elseif screen=='network' then
     if x>=202 and x<=598 and y>=320 and y<=365 then refreshCatalog() end
   elseif screen=='offline' then
