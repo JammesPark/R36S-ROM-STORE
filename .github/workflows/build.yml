@@ -59,7 +59,7 @@ jobs:
           test -x 'port/R36S ROMS STORE.sh'
           unzip -t build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip
           unzip -t build/R36S_ROMS_STORE_v${VERSION}_UPDATE.zip
-          unzip -p "build/R36S_ROMS_STORE_v${VERSION}_UPDATE.zip" update_manifest.json | python3 -c 'import json,sys; m=json.load(sys.stdin); assert m["app"]=="r36s-roms-store" and len(m["files"])==8'
+          unzip -p "build/R36S_ROMS_STORE_v${VERSION}_UPDATE.zip" update_manifest.json | python3 -c 'import json,sys; m=json.load(sys.stdin); assert m["app"]=="r36s-roms-store" and len(m["files"])==(7 if m["version"]=="0.4.1-beta" else 8)'
           unzip -Z1 "build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip" | grep -F 'r36s-roms-store/bin/store_updater.py'
           unzip -Z1 "build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip" | grep -F 'r36s-roms-store/bin/bios_manager.py'
           unzip -Z1 build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip | grep -F 'r36s-roms-store/game.love'
