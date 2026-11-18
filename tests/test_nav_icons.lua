@@ -39,8 +39,9 @@ for _,item in ipairs(cases) do
   end
   assert(#meaningful>=2,'Ícone ausente/simplificado: '..item[1])
   local signature=table.concat(meaningful,'|')
-  assert(not shapes[signature],
-    'Ícones indistinguíveis: '..shapes[signature]..' e '..item[1])
+  if shapes[signature] then
+    error('Ícones indistinguíveis: '..shapes[signature]..' e '..item[1])
+  end
   shapes[signature]=item[1]
 end
 local n=0
