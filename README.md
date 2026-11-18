@@ -188,3 +188,8 @@ Os ajustes precisam de validação final no console físico.
 ## v0.2.14 — Ícones da navegação principal
 
 A navegação lateral agora desenha oito ícones independentes de arquivos PNG, evitando a falha anterior que mostrava o mesmo quadrado quando a imagem não carregava: **Início/casa; Catálogo/livros; Downloads/seta; Instalados/cartão SD marcado; Favoritos/coração; Configurações/engrenagem; Sobre/informação; Sair/porta com seta.** Os oito têm a mesma caixa de 18×18 pixels, cor inativa discreta e cor de destaque quando selecionados. Os ícones das plataformas e das opções de configurações não foram alterados. Um teste automatizado verifica que os oito desenhos são distintos.
+
+
+## v0.2.15 — Download atual na tela inicial e ícones verificados
+
+O antigo texto promocional da tela Início foi substituído por um painel **DOWNLOAD ATUAL** que acompanha a transferência real, indicando nome da ROM, SD1/SD2, barra e porcentagem quando o tamanho esperado estiver disponível. Sem transferência mostra uma mensagem neutra, nunca um progresso demonstrativo. O botão **VER DOWNLOADS** abre a página Downloads por A ou clique. A navegação principal continua com oito desenhos diferentes, gerados diretamente pelo LÖVE e independentes de imagens. O novo teste automatizado valida os ícones na renderização da barra lateral real e os estados com e sem transferência; verifique `v0.2.15` no canto inferior esquerdo do console para confirmar que esta atualização foi instalada.

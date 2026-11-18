@@ -304,7 +304,7 @@ local function sidebar()
   end
   txt('●',20,449,11,theme.green)
   txt('ROMS STORE',30,452,10,theme.muted)
-  txt('v0.2.14',105,452,9,theme.low,50)
+  txt('v0.2.15',105,452,9,theme.low,50)
 end
 local function header(eyebrow,title,right)
   ui.kicker(eyebrow,179,23)
@@ -342,14 +342,38 @@ end
 
 local function homePage()
   header(tr('welcome'),tr('title_home'))
-  -- Respiro real entre o cabecalho e o conteudo principal.
+  -- Painel superior: o download real substitui o texto promocional anterior.
+  -- Usa o mesmo estado do backend que alimenta a tela Downloads.
   panel(179,103,441,87,focus=='content' and homeFocus=='explore')
-  ui.kicker('R36S ROMS STORE',194,110)
-  txt(tr('subtitle'),193,133,17,theme.text,401)
-  txt(tr('intro'),193,155,10,theme.muted,260)
-  R(465,160,143,24,theme.accent,6)
-  if focus=='content' and homeFocus=='explore' then ui.stroke(465,160,143,24,theme.text,6,2) end
-  txt(tr('explore'),470,165,10,theme.bg,132,true)
+  ui.kicker(tr('current_download'),194,111)
+  local current=external.activeDownload
+  local inProgress=current and external.pending=='download' and
+    external.phase~='error' and external.phase~='done'
+  if inProgress then
+    local name=ui.ellipsize(current.name or 'ROM',34)
+    txt(name,194,132,12,theme.text,263)
+    txt('SD'..tostring(current.card or 1),459,132,10,theme.accent,28,true)
+    local expected=math.max(0,tonumber(external.expected) or 0)
+    local downloaded=math.max(0,tonumber(external.downloaded) or 0)
+    local percent=expected>0 and math.max(0,math.min(1,downloaded/expected)) or nil
+    R(194,155,258,9,theme.border,4)
+    if percent and percent>0 then R(194,155,258*percent,9,theme.green,4) end
+    txt(percent and string.format('%d%%',math.floor(percent*100+.5)) or '—',458,152,11,theme.text,29,true)
+    if expected>0 then
+      txt(string.format('%.1f / %.1f MB',downloaded/1048576,expected/1048576),194,173,9,theme.muted,285)
+    else
+      txt(tr('progress'),194,173,9,theme.muted,274)
+    end
+  else
+    txt(tr('no_current_download'),194,138,12,theme.muted,287)
+  end
+  -- Botão abre a área Downloads, também pelo botão A quando o painel tem foco.
+  local actionX,actionY,actionW,actionH=495,147,112,32
+  R(actionX,actionY,actionW,actionH,theme.panel2,7,theme.accent)
+  if focus=='content' and homeFocus=='explore' then
+    ui.stroke(actionX,actionY,actionW,actionH,theme.text,7,2)
+  end
+  txt(tr('view_downloads'),actionX+4,actionY+9,10,theme.accent,actionW-8,true)
   -- Os titulos compartilham a mesma altura, mas o destaque e centralizado
   -- pelo retangulo REAL do slide para evitar deslocamentos visuais.
   local sectionTitleY=209
@@ -1279,7 +1303,7 @@ local function handleKey(key)
           local targets={'catalog','installed','favorites'}
           mainRoute(targets[homeOverviewIndex])
         else
-          mainRoute('catalog')
+          mainRoute('downloads')
         end
       elseif key=='y' then external.refresh() end
     end
@@ -1388,8 +1412,8 @@ function love.mousepressed(x,y,button)
   elseif screen=='offline' then
     if x>=201 and x<=598 and y>=327 and y<=366 then refreshCatalog() end
   elseif screen=='home' then
-    if x>=465 and x<=608 and y>=160 and y<=184 then
-      focus='content';homeFocus='explore';mainRoute('catalog')
+    if x>=495 and x<=607 and y>=147 and y<=179 then
+      focus='content';homeFocus='explore';mainRoute('downloads')
     elseif x>=428 and x<=594 and y>=227 and y<=424 then
       focus='content';homeFocus='featured';enterGame(external.games[homeSlideIndex])
     elseif x>=180 and x<=370 and y>=237 and y<=422 then
