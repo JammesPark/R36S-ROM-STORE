@@ -16,5 +16,5 @@ for file in [p,root/'tools/make_roms_feed.py',root/'.github/workflows/publish-ro
     content=file.read_text(encoding='utf-8')
     assert old not in content, 'Canal do outro projeto em '+str(file)
 assert 'PUBLIC_REPO: '+repo in (root/'.github/workflows/publish-roms-updates.yml').read_text()
-assert (root/'VERSION').read_text().strip()=='0.3.1-beta'
+assert (root/'VERSION').read_text().strip()=='0.4.0-beta'
 print('UPDATE ISOLADO: repositório público e feed próprios; sem referências ao outro HUB: OK')

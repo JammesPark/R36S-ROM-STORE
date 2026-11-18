@@ -208,3 +208,12 @@ A partir de **0.3.0-beta**, a loja verifica atualizações automaticamente. Em *
 
 
 **Repositório público de updates exclusivo:** `https://github.com/JammesPark/R36S-ROMS-STORE-UPDATES`. A primeira publicação depende da criação do repositório público com branch `main`, do secret `ROMS_UPDATES_TOKEN` com acesso restrito e de uma Release verificada.
+
+
+## BIOS do Sistema (v0.4.0-beta)
+
+**Configurações → BIOS do Sistema:** botão **A** verifica as BIOS nas pastas reconhecidas no RetroArch (`/roms/bios` ou `/roms2/bios`), **X** inicia importação local após confirmação, **Y** restaura o backup anterior após confirmação e **B** volta. Setas escolhem o sistema. Uma BIOS encontrada **não é garantia de autenticidade ou compatibilidade**.
+
+A loja **não fornece BIOS, firmware proprietário ou links de distribuição não autorizada**. Para importar um arquivo que você tenha direito de usar, copie o BIOS (ou ZIP contendo apenas seus arquivos) para `r36s-roms-store/state/bios_import` no cartão, abra BIOS do Sistema e confirme a importação. O sistema instala apenas nomes conhecidos, confere hashes SHA-256 após copiar e preserva um backup das BIOS substituídas. Qualquer restauração exige confirmação. Os dados ficam em `state/bios_manager` e **não são apagados por atualizações da loja**. Consulte [`docs/BIOS.md`](docs/BIOS.md) para detalhes e limites.
+
+**Navegação:** no catálogo, botão **Y** alterna a ROM selecionada nos Favoritos; **X** pesquisa. Na tela Início, **B** abre a confirmação de saída; setas mudam a opção, **A** confirma e **B** cancela.

@@ -63,7 +63,7 @@ local texts={
    rolled_back='A versão anterior foi restaurada.',check='Verificar novamente',
    download='Baixar atualização',install='Instalar e reiniciar',back='Voltar',
    no_auto='A loja verifica automaticamente, mas a instalação exige confirmação.',
-   notice='Atualização disponível',open='Ver atualização',later='Depois'},
+   notice='Atualização disponível',changes='Novidades',open='Ver atualização',later='Depois'},
  en={title='Store updates',current='Current version',latest='New version available',
    idle='Ready to check.',no_release='No update published on this channel.',checking='Checking for updates...',uptodate='You have the latest version.',
    available='New update found.',downloading='Downloading update...',
@@ -72,7 +72,7 @@ local texts={
    rolled_back='Previous version restored.',check='Check again',download='Download update',
    install='Install and restart',back='Back',
    no_auto='The store checks automatically, but installation requires confirmation.',
-   notice='Update available',open='View update',later='Later'},
+   notice='Update available',changes="What's new",open='View update',later='Later'},
  es={title='Actualizaciones',current='Versión actual',latest='Nueva versión disponible',
    idle='Listo para buscar.',no_release='No hay actualizaciones publicadas.',checking='Buscando actualizaciones...',uptodate='Tienes la versión más reciente.',
    available='Nueva actualización encontrada.',downloading='Descargando...',
@@ -81,7 +81,7 @@ local texts={
    rolled_back='Versión anterior restaurada.',check='Buscar nuevamente',
    download='Descargar',install='Instalar y reiniciar',back='Volver',
    no_auto='Búsqueda automática, instalación solo con confirmación.',
-   notice='Actualización disponible',open='Ver actualización',later='Después'},
+   notice='Actualización disponible',changes='Novedades',open='Ver actualización',later='Después'},
  ru={title='Обновления магазина',current='Текущая версия',latest='Доступна новая версия',
    idle='Готово к проверке.',no_release='В канале пока нет обновлений.',checking='Проверка обновлений...',uptodate='Установлена последняя версия.',
    available='Доступно новое обновление.',downloading='Загрузка обновления...',
@@ -90,7 +90,7 @@ local texts={
    rolled_back='Восстановлена предыдущая версия.',check='Проверить снова',
    download='Скачать',install='Установить и перезапустить',back='Назад',
    no_auto='Проверка автоматическая, установка требует подтверждения.',
-   notice='Доступно обновление',open='Посмотреть',later='Позже'}
+   notice='Доступно обновление',changes='Что нового',open='Посмотреть',later='Позже'}
 }
 function M.tr(lang,key)
   return ((texts[lang] or texts.pt)[key] or texts.pt[key] or key)

@@ -2,6 +2,14 @@
 
 O histórico mantém os números usados nas entregas anteriores, sem renumeração retroativa.
 
+## 0.4.0-beta
+- Popup de nova atualização com versão instalada, versão disponível e resumo das mudanças.
+- Nova área **Configurações → BIOS do Sistema** com scanner próprio (sem reaproveitar código do Port Hub), importação de arquivos próprios, instalação cautelosa, backup e restauração.
+- O sistema não fornece nem baixa imagens de BIOS protegidas; apenas identifica nomes conhecidos e arquivos que o usuário coloca em `state/bios_import`.
+- No catálogo e nos resultados de busca, botão **Y** adiciona ou remove a ROM selecionada dos favoritos.
+- Na tela inicial, **B** abre a confirmação de saída; ←/→ selecionam Sim/Não, **A** confirma e **B** cancela.
+- Mantido canal público exclusivo de atualização, com pacote UPDATE incluindo o novo gerenciador de BIOS.
+
 ## 0.3.1-beta
 - Atualizador migrado para o repositório público exclusivo `JammesPark/R36S-ROMS-STORE-UPDATES`, sem utilizar o canal do outro HUB.
 - Feed `update.json` próprio e publicação preparada para criar o feed na primeira Release.

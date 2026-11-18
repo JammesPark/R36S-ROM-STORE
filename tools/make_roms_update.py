@@ -15,6 +15,7 @@ FILES=(
  APP+"/game.love",
  APP+"/bin/gamestore_source.py",
  APP+"/bin/store_updater.py",
+ APP+"/bin/bios_manager.py",
  APP+"/LICENSE",
  APP+"/THIRD_PARTY_NOTICES.txt",
  APP+"/VERSION",

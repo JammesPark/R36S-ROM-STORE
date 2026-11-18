@@ -27,6 +27,7 @@ ALLOWED = frozenset((
     APP_ID + "/game.love",
     APP_ID + "/bin/gamestore_source.py",
     APP_ID + "/bin/store_updater.py",
+    APP_ID + "/bin/bios_manager.py",
     APP_ID + "/LICENSE",
     APP_ID + "/THIRD_PARTY_NOTICES.txt",
     APP_ID + "/VERSION",

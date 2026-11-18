@@ -384,14 +384,14 @@ function U.platformIcon(category,x,y,c)
   if not used then U.rect(x+3,y+3,13,13,c,2) end
   -- Ícone sem siglas sobrepostas, como pedido para plataformas.
 end
-function U.catalogFooter(selectText,backText,searchText,scrollText)
+function U.catalogFooter(selectText,backText,searchText,favoriteText)
   U.rect(158,436,482,44,{.035,.080,.13})
   U.rect(158,435,482,1,theme.border)
-  -- Pesquisa é X: nenhum ícone START é exibido no catálogo.
-  U.buttonHint(176,448,'A',selectText,68)
-  U.buttonHint(290,448,'B',backText,68)
-  U.buttonHint(404,448,'X',searchText,70)
-  U.text(scrollText or '↑↓',524,452,10,theme.muted,99)
+  -- Quatro botões diferentes, sem o antigo Y Atualizar ou START Buscar.
+  U.buttonHint(169,448,'A',selectText,61)
+  U.buttonHint(285,448,'B',backText,61)
+  U.buttonHint(396,448,'X',searchText,63)
+  U.buttonHint(505,448,'Y',favoriteText,97)
 end
 function U.drawLogo(x,y,w,h)
   if brandImage then

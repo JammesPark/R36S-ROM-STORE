@@ -21,12 +21,13 @@ jobs:
         run: |
           find src -type f -name '*.lua' -print0 | xargs -0 -r -n1 luac5.4 -p
           find port tools tests -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
-          python3 -m py_compile port/r36s-roms-store/bin/gamestore_source.py port/r36s-roms-store/bin/store_updater.py tools/make_roms_update.py
+          python3 -m py_compile port/r36s-roms-store/bin/gamestore_source.py port/r36s-roms-store/bin/store_updater.py port/r36s-roms-store/bin/bios_manager.py tools/make_roms_update.py
       - name: Testes
         run: |
           unzip -q -o src/assets/graphics.bundle.zip -d src/assets
           python3 tests/test_versioning.py
           python3 tests/test_store_update.py
+          python3 tests/test_bios_manager.py
           python3 tests/test_update_isolation.py
           lua5.4 tests/test_json.lua
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_ui_smoke.lua
@@ -43,6 +44,7 @@ jobs:
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_nav_icons.lua
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v0215.lua
           R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_store_updates_ui.lua
+          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v040_features.lua
           python3 tests/test_v029_backend.py
           python3 tests/test_gamestore.py
           python3 tests/test_single_catalog.py
@@ -56,8 +58,9 @@ jobs:
           test -x 'port/R36S ROMS STORE.sh'
           unzip -t build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip
           unzip -t build/R36S_ROMS_STORE_v${VERSION}_UPDATE.zip
-          unzip -p "build/R36S_ROMS_STORE_v${VERSION}_UPDATE.zip" update_manifest.json | python3 -c 'import json,sys; m=json.load(sys.stdin); assert m["app"]=="r36s-roms-store" and len(m["files"])==7'
+          unzip -p "build/R36S_ROMS_STORE_v${VERSION}_UPDATE.zip" update_manifest.json | python3 -c 'import json,sys; m=json.load(sys.stdin); assert m["app"]=="r36s-roms-store" and len(m["files"])==8'
           unzip -Z1 "build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip" | grep -F 'r36s-roms-store/bin/store_updater.py'
+          unzip -Z1 "build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip" | grep -F 'r36s-roms-store/bin/bios_manager.py'
           unzip -Z1 build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip | grep -F 'r36s-roms-store/game.love'
           tmp=$(mktemp -d)
           unzip -p build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip 'r36s-roms-store/game.love' > "$tmp/game.love"
@@ -67,6 +70,7 @@ jobs:
           unzip -l "$tmp/game.love" | grep -F 'assets/logo.png'
           unzip -l "$tmp/game.love" | grep -F 'legal_text.lua'
           unzip -l "$tmp/game.love" | grep -F 'store_update.lua'
+          unzip -l "$tmp/game.love" | grep -F 'bios_manager.lua'
           unzip -l "$tmp/game.love" | grep -F 'assets/logo_dev.png'
           unzip -l "$tmp/game.love" | grep -F 'assets/icons/palette.png'
           unzip -l "$tmp/game.love" | grep -F 'assets/icons/languages.png'

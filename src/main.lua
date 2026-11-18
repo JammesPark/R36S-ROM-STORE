@@ -9,6 +9,7 @@ local legal=require('legal_text')
 local device=require('device_status')
 local music=require('music')
 local storeUpdater=require('store_update')
+local biosManager=require('bios_manager')
 local HOME=os.getenv('R36S_STORE_HOME') or '/roms/ports/r36s-roms-store'
 local STATE=HOME..'/state'
 local mainPages={'home','catalog','downloads','installed','favorites','settings','about'}
@@ -22,6 +23,8 @@ local aboutMaxScroll=0
 local qrModal=nil -- 'telegram' ou 'livepix'
 local qrExpanded=false
 local storeUpdateModal=false
+local biosActionModal=nil -- 'import' ou 'restore'
+local exitChoice=2 -- 1 Sim, 2 Não
 local pendingDelete=nil
 local duplicateModal=false
 local awaitInspect=false
@@ -39,7 +42,7 @@ local clock=0;local startupTime=0;local notice='';local noticeTime=0
 local selectedCard=1;local transferHandled=false
 local homeFocus='explore';local homeSlideIndex=1;local homeOverviewIndex=1;local homeSlideClock=0
 local storageInfo={};local storageLast=-999
-local suboptions={'languages','themes','font_size','storage','network','updates','help'}
+local suboptions={'languages','themes','font_size','storage','network','bios','updates','help'}
 local fontSizes={'small','medium','large'}
 local keyboard={'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','SPACE','DEL','CLEAR','OK'}
 -- Versão exibida obtida do arquivo VERSION incluído no game.love.
@@ -194,6 +197,8 @@ end
 local function navigate(route)
   if screen~=route then stack[#stack+1]=screen end
   screen=route
+  if route=='exit_confirm' then exitChoice=2 end
+  if route=='bios' and not biosManager.pending and biosManager.status.phase=='idle' then biosManager.run('scan') end
   music.updateRoute(screen)
   if route=='storage' then refreshStorage() end
   if route=='font_size' then
@@ -329,7 +334,7 @@ local function header(eyebrow,title,right)
 end
 local function footer(phrase)
   if screen=='catalog' or screen=='search_results' then
-    ui.catalogFooter(tr('select'),tr('back'),tr('search_short'),'↑↓ '..tr('games'))
+    ui.catalogFooter(tr('select'),tr('back'),tr('search_short'),tr('favorites'))
   else
     ui.footer(tr('select'),tr('back'))
   end
@@ -447,7 +452,8 @@ local function gameList(items,chosen)
     local active=chosen==i and focus~='sidebar'
     panel(180,y,237,42,active)
     R(188,y+12,3,18,active and theme.accent or theme.border,1)
-    txt(ui.ellipsize(items[i].name or '?',31),197,y+7,12,active and theme.text or theme.muted,207)
+    txt(ui.ellipsize(items[i].name or '?',27),197,y+7,12,active and theme.text or theme.muted,185)
+    if favoriteIdx(items[i]) then txt('♥',396,y+9,13,theme.green,17,true) end
     txt(string.format('%02d',i),197,y+26,9,active and theme.accent or theme.low,45)
   end
   local selected=items[math.max(1,math.min(total,chosen))]
@@ -624,23 +630,26 @@ local function favoritesPage()
 end
 local function settingsPage()
   header(tr('personalize'),tr('title_settings'))
-  local values={tr('language'),tr('theme'),tr('font_size'),tr('storage'),tr('network'),storeUpdater.tr(settings.language,'title'),tr('help')}
+  local lang=settings.language
+  local values={tr('language'),tr('theme'),tr('font_size'),tr('storage'),tr('network'),
+    biosManager.t(lang,'title'),storeUpdater.tr(lang,'title'),tr('help')}
   local up=storeUpdater.status
   local detail=(up.phase=='available' or up.phase=='ready') and ('v'..tostring(up.version or '?'))
-    or storeUpdater.tr(settings.language,up.phase or 'checking')
+    or storeUpdater.tr(lang,up.phase or 'checking')
   local shown={i18n.languages[1].name,tr('theme_blue'),tr('font_'..settings.font_size),
-    tr('free_space')..' / '..tr('total_space'),tr('status'),detail,'A / B / X / Y'}
+    tr('free_space')..' / '..tr('total_space'),tr('status'),
+    biosManager.t(lang,'scan'),detail,'A / B / X / Y'}
   for _,o in ipairs(i18n.languages) do if o.code==settings.language then shown[1]=o.name end end
   for _,o in ipairs(theme.options) do if o.key==settings.theme then shown[2]=tr(o.name) end end
+  local symbols={'languages','palette','type','hard-drive','wifi','cpu','download','circle-help'}
   for i,label in ipairs(values) do
-    local y=102+(i-1)*46
-    panel(180,y,440,42,i==settingsIndex)
-    local symbols={'languages','palette','type','hard-drive','wifi','download','circle-help'}
-    R(191,y+8,25,25,theme.sidebar,7,theme.border)
-    ui.icon(symbols[i],195,y+12,17,17,i==settingsIndex and theme.accent or theme.muted)
-    txt(label,226,y+2,12,theme.text,345)
-    txt(ui.ellipsize(shown[i],48),226,y+23,10,theme.muted,347)
-    txt('›',589,y+6,18,theme.accent)
+    local y=100+(i-1)*40
+    panel(180,y,440,37,i==settingsIndex)
+    R(191,y+7,24,24,theme.sidebar,6,theme.border)
+    ui.icon(symbols[i],195,y+10,17,17,i==settingsIndex and theme.accent or theme.muted)
+    txt(ui.ellipsize(label,38),224,y+2,11,theme.text,354)
+    txt(ui.ellipsize(shown[i],56),224,y+21,9,theme.muted,359)
+    txt('›',590,y+4,16,theme.accent)
   end
   footer()
 end
@@ -720,6 +729,58 @@ local function networkPage()
   footer()
 end
 -- Atualização online do aplicativo, em canal separado dos outros projetos.
+-- BIOS próprias do usuário: diagnóstico e importação segura com cópia de segurança.
+local function biosPage()
+  local lang=settings.language
+  local info=biosManager.status
+  header(tr('manage'),biosManager.t(lang,'title'))
+  txt(biosManager.t(lang,'hint'),182,88,10,theme.muted,428)
+  panel(180,112,440,300)
+  local entries=info.systems or {}
+  if info.phase=='working' then
+    txt(biosManager.t(lang,'working'),195,139,13,theme.accent,397)
+  elseif info.phase=='error' then
+    txt(biosManager.t(lang,'error'),196,132,13,theme.error,399)
+    ui.paragraph(tostring(info.message or ''),195,158,393,11,theme.muted,2)
+  elseif #entries==0 then
+    txt(biosManager.t(lang,'scan'),201,171,15,theme.text,381,true)
+  end
+  if #entries>0 then
+    biosManager.selected=math.max(1,math.min(#entries,biosManager.selected))
+    local first=math.max(1,math.min(biosManager.selected-2,math.max(1,#entries-5)))
+    for i=first,math.min(#entries,first+5) do
+      local y=123+(i-first)*39
+      local row=entries[i]
+      R(191,y,417,36,i==biosManager.selected and theme.panel2 or theme.panel,6,i==biosManager.selected and theme.accent or theme.border)
+      txt(ui.ellipsize(row.name or '?',30),199,y+6,11,theme.text,244)
+      local color=row.status=='present' and theme.green or row.status=='partial' and theme.accent or theme.error
+      txt(biosManager.t(lang,row.status or 'missing'),454,y+5,10,color,140)
+      txt(tostring(row.found or 0)..'/'..tostring(row.expected or 0),555,y+20,9,theme.muted,46,true)
+    end
+  end
+  local directory=tostring(info.directory or '')
+  txt(biosManager.t(lang,'source')..': '..(directory~='' and ui.ellipsize(directory,41) or biosManager.t(lang,'no_dir')),
+    191,369,10,theme.muted,409)
+  txt(biosManager.t(lang,'disclaimer'),191,388,9,theme.low,409)
+  -- Rodapé com quatro botões. A/X/Y são ações diferentes; B sai da tela.
+  ui.buttonHint(171,447,'A',biosManager.t(lang,'scan'),59)
+  ui.buttonHint(291,447,'X',biosManager.t(lang,'import'),59)
+  ui.buttonHint(412,447,'Y',biosManager.t(lang,'restore'),65)
+  ui.buttonHint(552,447,'B',tr('back'),45)
+end
+local function biosConfirmPage()
+  if not biosActionModal then return end
+  local lang=settings.language
+  R(0,0,640,480,{0,0,0},0,nil,.81)
+  panel(118,138,405,206,true)
+  txt(biosManager.t(lang,'choose'),144,157,18,theme.text,355,true)
+  local label=biosActionModal=='import' and biosManager.t(lang,'import_note') or biosManager.t(lang,'restore_note')
+  ui.paragraph(label,144,206,354,12,theme.muted,3)
+  R(143,283,150,43,exitChoice==1 and theme.accent or theme.panel2,8,exitChoice==1 and theme.text or theme.border)
+  txt(biosManager.t(lang,'yes'),154,297,13,exitChoice==1 and theme.bg or theme.text,130,true)
+  R(342,283,151,43,exitChoice==2 and theme.accent or theme.panel2,8,exitChoice==2 and theme.text or theme.border)
+  txt(biosManager.t(lang,'no'),355,297,13,exitChoice==2 and theme.bg or theme.text,126,true)
+end
 local function storeUpdatesPage()
   local lang=settings.language
   header(tr('manage'),storeUpdater.tr(lang,'title'))
@@ -752,12 +813,29 @@ local function storeUpdatesPage()
   footer()
 end
 local function storeUpdateOfferPage()
-  R(0,0,640,480,{0,0,0},0,nil,.75)
-  panel(164,167,355,144,true)
-  txt(storeUpdater.tr(settings.language,'notice'),181,181,18,theme.text,317,true)
-  txt('v'..tostring(storeUpdater.status.version or ''),181,214,15,theme.accent,317,true)
-  ui.buttonHint(183,268,'A',storeUpdater.tr(settings.language,'open'),115)
-  ui.buttonHint(380,268,'B',storeUpdater.tr(settings.language,'later'),100)
+  -- Popup centralizado com versão atual, nova versão e resumo de novidades.
+  local lang=settings.language
+  local info=storeUpdater.status
+  R(0,0,640,480,{0,0,0},0,nil,.79)
+  R(107,94,426,294,theme.panel,13,theme.accent)
+  R(113,100,414,282,theme.panel2,10,theme.border)
+  ui.color(theme.green);love.graphics.circle('fill',130,128,7)
+  txt(storeUpdater.tr(lang,'notice'),145,117,17,theme.text,360)
+  R(126,155,390,51,theme.panel,8,theme.border)
+  txt(storeUpdater.tr(lang,'current'),137,161,10,theme.muted,164)
+  txt('v'..appVersion(),137,178,13,theme.text,173)
+  txt(storeUpdater.tr(lang,'latest'),325,161,10,theme.muted,179)
+  txt('v'..tostring(info.version or '?'),325,178,13,theme.green,179)
+  txt(storeUpdater.tr(lang,'changes')..':',129,222,12,theme.accent,363)
+  local summary=tostring(info.notes or '')
+  summary=summary:gsub('^R36S ROMS STORE[^\n]*\n*',''):gsub('[\r\n]+',' ')
+  if summary=='' then summary=storeUpdater.tr(lang,'available') end
+  love.graphics.setScissor(126,244,386,58)
+  ui.paragraph(summary,130,245,380,10,theme.text,1)
+  love.graphics.setScissor()
+  R(125,326,391,1,theme.border)
+  ui.buttonHint(130,343,'A',storeUpdater.tr(lang,'open'),124)
+  ui.buttonHint(358,343,'B',storeUpdater.tr(lang,'later'),116)
 end
 -- Renderizador de parágrafos: não usa ui.text, que trunca textos longos.
 local function legalParagraph(content,x,y,width,size,color,lineHeight,alignment)
@@ -911,7 +989,7 @@ local function helpPage()
   panel(180,115,440,292)
   local pairs={
     {'A',tr('select')},{'B',tr('back')},{'L/R',tr('tabs')},
-    {'X',tr('search')..' / '..tr('favorites')},{'Y',tr('sync')},
+    {'X',tr('search')},{'Y',tr('favorites')},
     {'START',tr('confirm')}
   }
   for i,pair in ipairs(pairs) do
@@ -948,15 +1026,16 @@ local function splashPage()
   txt('R36S ROMS STORE  •  LÖVE 11.5',172,409,10,theme.low,296,true)
 end
 local function exitDialog()
-  -- Modal de confirmação visível acima da Home.
-  R(0,0,640,480,{0,0,0},0,nil,.78)
+  R(0,0,640,480,{0,0,0},0,nil,.80)
   panel(143,137,356,208,true)
   txt(tr('exit_question'),169,164,20,theme.text,306,true)
   txt(tr('exit_note'),170,210,12,theme.muted,301,true)
-  R(166,276,142,43,theme.accent,8)
-  txt('A  '..tr('confirm_yes_short'),169,290,12,theme.bg,136,true)
-  R(334,276,142,43,theme.panel2,8,theme.border)
-  txt('B  '..tr('cancel'),339,290,12,theme.text,132,true)
+  -- A confirma a seleção; B cancela. Setas alternam Sim/Não.
+  R(166,276,142,43,exitChoice==1 and theme.accent or theme.panel2,8,exitChoice==1 and theme.text or theme.border)
+  txt(tr('confirm_yes_short'),169,290,12,exitChoice==1 and theme.bg or theme.text,136,true)
+  R(334,276,142,43,exitChoice==2 and theme.accent or theme.panel2,8,exitChoice==2 and theme.text or theme.border)
+  txt(tr('cancel'),339,290,12,exitChoice==2 and theme.bg or theme.text,132,true)
+  txt('← / →  '..tr('select')..'   A  '..tr('confirm')..'   B  '..tr('back'),172,329,9,theme.low,296,true)
 end
 local function overwriteDialog()
   R(0,0,640,480,{0,0,0},0,nil,.76)
@@ -981,6 +1060,7 @@ function love.load()
   love.graphics.setDefaultFilter('linear','linear')
   ui.init();loadData()
   storeUpdater.init(HOME,STATE)
+  biosManager.init(HOME)
   if os.getenv('R36S_STORE_OFFLINE_TEST')~='1' then storeUpdater.run('check') end
   external.init(HOME,STATE)
   reloadDownloads()
@@ -995,6 +1075,7 @@ function love.update(dt)
   if screen=='storage' and clock-storageLast>30 then refreshStorage() end
   external.update(dt)
   storeUpdater.tick()
+  biosManager.tick()
   if screen=='home' and storeUpdater.status.phase=='available' and not storeUpdater.offered then
     storeUpdater.offered=true
     storeUpdateModal=true
@@ -1067,6 +1148,7 @@ function love.draw()
   elseif screen=='themes' then themesPage()
   elseif screen=='storage' then storagePage()
   elseif screen=='network' then networkPage()
+  elseif screen=='bios' then biosPage()
   elseif screen=='updates' then storeUpdatesPage()
   elseif screen=='about' then aboutPage()
   elseif screen=='help' then helpPage()
@@ -1082,6 +1164,7 @@ function love.draw()
   if duplicateModal then overwriteDialog() end
   if pendingDelete then deleteDialog() end
   if storeUpdateModal then storeUpdateOfferPage() end
+  if biosActionModal then biosConfirmPage() end
 end
 local function changeTheme()
   local o=theme.options[themeIndex];if not o then return end
@@ -1123,6 +1206,16 @@ local function refreshCatalog()
   return false
 end
 local function handleKey(key)
+  if biosActionModal then
+    if key=='left' or key=='up' then exitChoice=1
+    elseif key=='right' or key=='down' then exitChoice=2
+    elseif key=='a' then
+      local action=biosActionModal
+      biosActionModal=nil
+      if exitChoice==1 then biosManager.run(action) end
+    elseif key=='b' or key=='x' then biosActionModal=nil end
+    return
+  end
   if storeUpdateModal then
     if key=='a' then storeUpdateModal=false;navigate('updates')
     elseif key=='b' then storeUpdateModal=false end
@@ -1170,7 +1263,10 @@ local function handleKey(key)
     return
   end
   if screen=='exit_confirm' then
-    if key=='a' then love.event.quit()
+    if key=='left' or key=='up' then exitChoice=1
+    elseif key=='right' or key=='down' then exitChoice=2
+    elseif key=='a' then
+      if exitChoice==1 then love.event.quit() else back() end
     elseif key=='b' or key=='x' then back() end
     return
   end
@@ -1199,7 +1295,7 @@ local function handleKey(key)
   end
   if screen=='catalog' then
     if key=='x' then navigate('search');searchIndex=1;return end
-    if key=='y' then external.refresh();return end
+    if key=='y' then toggleFavorite(selectedFromGames());return end
     if focus=='sidebar' then
       if key=='up' then categoryIndex=math.max(1,categoryIndex-1)
       elseif key=='down' then categoryIndex=math.min(#external.categories,categoryIndex+1)
@@ -1222,6 +1318,7 @@ local function handleKey(key)
     if key=='a' then enterGame(selectedFromGames());return end
     if key=='b' then focus='sidebar';return end
   elseif screen=='search_results' then
+    if key=='y' then toggleFavorite(selectedFromGames());return end
     if key=='b' or key=='x' then back();return end
     if key=='up' then searchResultIndex=math.max(1,searchResultIndex-1)
     elseif key=='down' then
@@ -1259,7 +1356,7 @@ local function handleKey(key)
     return
   elseif screen=='detail' then
     if key=='a' then selectedCard=1;navigate('confirm')
-    elseif key=='x' then toggleFavorite(selectedGame)
+    elseif key=='x' or key=='y' then toggleFavorite(selectedGame)
     elseif key=='b' then back() end
     return
   elseif screen=='confirm' then
@@ -1326,6 +1423,14 @@ local function handleKey(key)
   elseif screen=='storage' then
     if key=='b' then back() end
     return
+  elseif screen=='bios' then
+    if key=='up' then biosManager.selected=math.max(1,biosManager.selected-1)
+    elseif key=='down' then biosManager.selected=math.min(#(biosManager.status.systems or {}),biosManager.selected+1)
+    elseif key=='a' then biosManager.run('scan')
+    elseif key=='x' then biosActionModal='import';exitChoice=2
+    elseif key=='y' then biosActionModal='restore';exitChoice=2
+    elseif key=='b' then back() end
+    return
   elseif screen=='updates' then
     if key=='a' and not storeUpdater.pending then
       local phase=storeUpdater.status.phase
@@ -1349,7 +1454,9 @@ local function handleKey(key)
     elseif key=='b' then back() end
     return
   elseif screen=='home' then
-    -- D-pad escolhe item e regiao; somente A entra no item em foco.
+    -- B na tela inicial sempre abre a confirmação de saída.
+    if key=='b' then navigate('exit_confirm');return end
+    -- D-pad escolhe item e região; somente A abre o item em foco.
     if focus=='sidebar' then
       if key=='up' then menuIndex=math.max(1,menuIndex-1)
       elseif key=='down' then menuIndex=math.min(#menuPages,menuIndex+1)
@@ -1361,8 +1468,7 @@ local function handleKey(key)
         elseif route then mainRoute(route) end
       elseif key=='y' then external.refresh() end
     else
-      if key=='b' then focus='sidebar'
-      elseif key=='up' then
+      if key=='up' then
         if homeFocus=='featured' then homeFocus='explore'
         elseif homeFocus=='overview' then homeOverviewIndex=math.max(1,homeOverviewIndex-1) end
       elseif key=='down' then
@@ -1412,6 +1518,13 @@ function love.textinput(t)
 end
 function love.mousepressed(x,y,button)
   if button~=1 then return end
+  if biosActionModal then
+    if y>=283 and y<=326 then
+      if x>=143 and x<=293 then exitChoice=1;handleKey('a')
+      elseif x>=342 and x<=493 then exitChoice=2;handleKey('a') end
+    end
+    return
+  end
   if storeUpdateModal then
     if y>252 and x<345 then handleKey('a') else handleKey('b') end
     return
@@ -1438,8 +1551,8 @@ function love.mousepressed(x,y,button)
   end
   if screen=='exit_confirm' then
     if y>=275 and y<=320 then
-      if x>=166 and x<310 then handleKey('a')
-      elseif x>=334 and x<480 then handleKey('b') end
+      if x>=166 and x<310 then exitChoice=1;handleKey('a')
+      elseif x>=334 and x<480 then exitChoice=2;handleKey('a') end
     end
     return
   end
@@ -1475,8 +1588,8 @@ function love.mousepressed(x,y,button)
       if isSearch then back() else navigate('search');searchIndex=1 end
     end
   elseif screen=='settings' then
-    local idx=math.floor((y-102)/46)+1
-    if y>=102 and y<427 and suboptions[idx] then settingsIndex=idx;navigate(suboptions[idx]) end
+    local idx=math.floor((y-100)/40)+1
+    if y>=100 and y<420 and suboptions[idx] then settingsIndex=idx;navigate(suboptions[idx]) end
   elseif screen=='font_size' then
     local idx=math.floor((y-146)/78)+1
     if y>=146 and fontSizes[idx] then fontSizeIndex=idx;changeFontSize() end
@@ -1495,6 +1608,18 @@ function love.mousepressed(x,y,button)
     end
   elseif screen=='updates' then
     if x>=202 and x<=599 and y>=333 and y<=373 then handleKey('a') end
+  elseif screen=='bios' then
+    if x>=180 and x<=620 and y>=123 and y<=357 then
+      local rows=biosManager.status.systems or {}
+      local first=math.max(1,math.min(biosManager.selected-2,math.max(1,#rows-5)))
+      local idx=first+math.floor((y-123)/39)
+      if rows[idx] then biosManager.selected=idx end
+    elseif y>=442 and y<474 then
+      if x<284 then handleKey('a')
+      elseif x<410 then handleKey('x')
+      elseif x<544 then handleKey('y')
+      else handleKey('b') end
+    end
   elseif screen=='network' then
     if x>=202 and x<=598 and y>=320 and y<=365 then refreshCatalog() end
   elseif screen=='offline' then
