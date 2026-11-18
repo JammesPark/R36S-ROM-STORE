@@ -2,6 +2,14 @@
 
 O histórico mantém os números usados nas entregas anteriores, sem renumeração retroativa.
 
+## 0.3.0-beta
+- Consulta automática por atualizações e nova área Configurações → Atualizações em PT/EN/ES/RU.
+- Download com confirmação e verificação SHA-256, manifesto e identidade da loja.
+- Instalação com backup/rollback realizada pelo launcher depois do fechamento do LÖVE.
+- Canal público isolado em roms-store/update.json e workflow próprio de publicação.
+- Testes de pacote, versão e recuperação sem alterar ROMs e arquivos de estado.
+- O feed só será ativado após publicação verificada da primeira Release.
+
 ## 0.2.16-beta
 - Versão unificada no arquivo VERSION, lida em execução pelo LÖVE.
 - Nomes dos ZIPs gerados automaticamente e validação cruzada no GitHub Actions.

@@ -7,7 +7,7 @@ No build, VERSION é copiado para src/VERSION (incluído no game.love) e port/r3
 
 ## Sequência
 - 0.2.X-beta: correções pequenas e melhorias dentro da fase atual.
-- 0.3.0-beta, 0.4.0-beta etc.: marcos funcionais relevantes.
+- 0.3.0-beta, 0.4.0-beta etc.: marcos funcionais relevantes. A versão 0.3.0-beta introduz o atualizador online.
 - 1.0.0: primeira versão estável somente após validação completa no console físico, incluindo SD1/SD2, catálogo, downloads, exclusão e controles.
 
 Não renumerar retroativamente versões ou pacotes já entregues. Commits e builds internos de teste não precisam gerar uma nova versão pública: aumentar VERSION somente ao entregar um conjunto identificável de mudanças.

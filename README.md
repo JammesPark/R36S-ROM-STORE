@@ -200,3 +200,8 @@ O antigo texto promocional da tela Início foi substituído por um painel **DOWN
 ## Organização de versões
 
 A partir de **0.2.16-beta**, a numeração é centralizada no arquivo raiz `VERSION`. O build copia essa informação para `game.love`, o diretório instalado e o nome dos ZIPs. O GitHub Actions verifica a correspondência. As versões anteriores permanecem documentadas sem renumeração retroativa. `0.3.0-beta` fica reservado para um marco funcional relevante; `1.0.0`, somente após testes físicos completos.
+
+
+## Atualizações automáticas da loja
+
+A partir de **0.3.0-beta**, a loja verifica atualizações automaticamente. Em **Configurações → Atualizações**, o usuário pode confirmar download, instalação e reinicialização com backup e rollback. Não são alterados ROMs, configurações nem favoritos. O canal público é isolado daquele do R36SPORTSBR STORE HUB. A publicação inicial requer configurar o secret **ROMS_UPDATES_TOKEN**. Leia [o manual de atualização](docs/ATUALIZACAO_ROM_STORE.md).
