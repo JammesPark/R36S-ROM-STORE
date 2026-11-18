@@ -10,22 +10,26 @@ import zipfile
 from pathlib import Path
 
 APP="r36s-roms-store"
-FILES=(
+LEGACY_FILES=(
  "R36S ROMS STORE.sh",
  APP+"/game.love",
  APP+"/bin/gamestore_source.py",
  APP+"/bin/store_updater.py",
- APP+"/bin/bios_manager.py",
  APP+"/LICENSE",
  APP+"/THIRD_PARTY_NOTICES.txt",
  APP+"/VERSION",
 )
+FILES=LEGACY_FILES+(APP+"/bin/bios_manager.py",)
+# UPDATE especial: a v0.3.1-beta só aceita os sete caminhos legados.
+# A BIOS será preparada pelo game.love quando a ferramenta for utilizada.
+LEGACY_BRIDGE_VERSION="0.4.1-beta"
 def sha(content): return hashlib.sha256(content).hexdigest()
 
 def make(installer, output, version):
+ package_files=LEGACY_FILES if version==LEGACY_BRIDGE_VERSION else FILES
  with zipfile.ZipFile(installer) as z:
   names=set(z.namelist())
-  for f in FILES:
+  for f in package_files:
    if f not in names: raise ValueError("Arquivo ausente no instalador: "+f)
   if z.read(APP+"/VERSION").decode("utf-8").strip()!=version: raise ValueError("VERSION divergente")
   with zipfile.ZipFile(io.BytesIO(z.read(APP+"/game.love"))) as inner:
@@ -33,7 +37,7 @@ def make(installer, output, version):
     raise ValueError("VERSION do LÖVE divergente")
   manifest={"app":APP,"version":version,"type":"full","files":[]}
   with zipfile.ZipFile(output,"w",compression=zipfile.ZIP_DEFLATED,compresslevel=6) as dest:
-   for file in FILES:
+   for file in package_files:
     data=z.read(file)
     manifest["files"].append({"path":file,"size":len(data),"sha256":sha(data)})
     zi=zipfile.ZipInfo(file)

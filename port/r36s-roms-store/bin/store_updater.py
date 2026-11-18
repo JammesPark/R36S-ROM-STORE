@@ -22,16 +22,19 @@ PUBLIC_REPO = "JammesPark/R36S-ROMS-STORE-UPDATES"
 FEED_URL = "https://raw.githubusercontent.com/" + PUBLIC_REPO + "/main/update.json"
 VERS = re.compile(r"^(\d+)\.(\d+)\.(\d+)(?:-(beta|rc))?$")
 SHA = re.compile(r"^[0-9a-f]{64}$")
-ALLOWED = frozenset((
+LEGACY_ALLOWED = frozenset((
     "R36S ROMS STORE.sh",
     APP_ID + "/game.love",
     APP_ID + "/bin/gamestore_source.py",
     APP_ID + "/bin/store_updater.py",
-    APP_ID + "/bin/bios_manager.py",
     APP_ID + "/LICENSE",
     APP_ID + "/THIRD_PARTY_NOTICES.txt",
     APP_ID + "/VERSION",
 ))
+ALLOWED = LEGACY_ALLOWED | frozenset((APP_ID + "/bin/bios_manager.py",))
+# 0.3.1-beta tem lista rígida de sete arquivos. 0.4.1 aceita ambos
+# os formatos SEM permitir arquivos arbitrários ou destinos externos.
+SUPPORTED_PACKAGES = (LEGACY_ALLOWED, ALLOWED)
 MAX_DOWNLOAD = 50 * 1024 * 1024
 MAX_FEED = 256 * 1024 * 1
 
@@ -109,7 +112,8 @@ def safe_zip(archive, version):
         names = [i.filename for i in members]
         if len(names) != len(set(names)):
             raise ValueError("ZIP tem entradas duplicadas")
-        if set(names) != ALLOWED | {"update_manifest.json"}:
+        paths = frozenset(names) - {"update_manifest.json"}
+        if paths not in SUPPORTED_PACKAGES:
             raise ValueError("ZIP contém arquivos inesperados ou ausentes")
         for i in members:
             if stat.S_ISLNK((i.external_attr >> 16) & 0o170000) or i.is_dir():
@@ -118,7 +122,7 @@ def safe_zip(archive, version):
         if not isinstance(manifest, dict) or manifest.get("app") != APP_ID or manifest.get("version") != version:
             raise ValueError("Identidade/versão do manifesto divergente")
         entries = manifest.get("files")
-        if not isinstance(entries, list) or {e.get("path") for e in entries if isinstance(e, dict)} != ALLOWED or len(entries) != len(ALLOWED):
+        if not isinstance(entries, list) or {e.get("path") for e in entries if isinstance(e, dict)} != paths or len(entries) != len(paths):
             raise ValueError("Manifesto incompleto")
         for e in entries:
             path = e["path"]
@@ -138,7 +142,7 @@ def safe_zip(archive, version):
         with zipfile.ZipFile(__import__("io").BytesIO(z.read(APP_ID + "/game.love"))) as lovezip:
             if lovezip.read("VERSION").decode("utf-8").strip() != version:
                 raise ValueError("VERSION no game.love diverge")
-    return True
+    return paths
 
 
 class Updater:
@@ -263,7 +267,7 @@ class Updater:
             raise ValueError("Pacote de atualização ausente")
         if filehash(path) != status["sha256"] or path.stat().st_size != status["size"]:
             raise ValueError("Pacote alterado após download")
-        safe_zip(path, version)
+        paths = safe_zip(path, version)
         # Não permitir uma segunda atualização enquanto existe rollback pendente.
         if self.pending.exists():
             raise ValueError("Existe uma atualização aguardando validação")
@@ -275,7 +279,7 @@ class Updater:
         try:
             with zipfile.ZipFile(path) as z:
                 # Fazer TODOS os backups antes de alterar qualquer arquivo.
-                for rel in sorted(ALLOWED):
+                for rel in sorted(paths):
                     dst = self.target(rel)
                     if dst.exists():
                         if not dst.is_file():
@@ -289,7 +293,7 @@ class Updater:
                 meta = {"version": version, "existing": existing, "added": added, "backup": stamp}
                 atomic_json(backup / "metadata.json", meta)
                 atomic_json(self.pending, meta)
-                for rel in sorted(ALLOWED):
+                for rel in sorted(paths):
                     dst = self.target(rel)
                     dst.parent.mkdir(parents=True, exist_ok=True)
                     tmp = dst.with_name(dst.name + ".store_update_new")

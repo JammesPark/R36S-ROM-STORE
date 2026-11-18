@@ -13,10 +13,31 @@ function M.init(app)
   local v=json.decode(read(state) or '')
   if type(v)=='table' then M.status=v end
 end
+-- Compatibilidade OTA: o pacote legado não aceita o oitavo arquivo.
+-- O backend fica embutido no game.love validado pelo checksum da Release.
+local function ensureBackend(path)
+  local existing=io.open(path,'rb')
+  if existing then existing:close();return true end
+  if not (love and love.filesystem and love.filesystem.read) then return false end
+  local data=love.filesystem.read('bundled/bios_manager.py')
+  if type(data)~='string' or #data<1000 then return false end
+  local temp=path..'.new-bios-manager'
+  local f=io.open(temp,'wb')
+  if not f then return false end
+  local ok=f:write(data)
+  f:close()
+  if not ok then os.remove(temp);return false end
+  if not os.rename(temp,path) then os.remove(temp);return false end
+  return true
+end
 function M.run(action)
   if M.pending or (action~='scan' and action~='import' and action~='restore') then return false end
   if not home then return false end
   local path=home..'/bin/bios_manager.py'
+  if not ensureBackend(path) then
+    M.status={phase='error',message='Componente BIOS indisponível. Reinstale o pacote completo.'}
+    return false
+  end
   M.pending=true;M.status={phase='working',action=action,systems=M.status.systems or {}}
   last=nil
   os.remove(state)

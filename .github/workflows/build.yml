@@ -27,6 +27,7 @@ jobs:
           unzip -q -o src/assets/graphics.bundle.zip -d src/assets
           python3 tests/test_versioning.py
           python3 tests/test_store_update.py
+          python3 tests/test_ota_legacy_compat.py
           python3 tests/test_bios_manager.py
           python3 tests/test_update_isolation.py
           lua5.4 tests/test_json.lua

@@ -16,6 +16,10 @@ find port -type d -name __pycache__ -prune -exec rm -rf -- {} +
 if [[ -f src/assets/graphics.bundle.zip ]]; then
   unzip -q -o src/assets/graphics.bundle.zip -d src/assets
 fi
+# O pacote de sete arquivos aceita game.love, que inclui o gerenciador BIOS.
+# O LÖVE prepara o script na primeira utilização, sem burlar a whitelist.
+mkdir -p src/bundled
+cp port/r36s-roms-store/bin/bios_manager.py src/bundled/bios_manager.py
 (cd src && zip -q -X -r ../port/r36s-roms-store/game.love .)
 (cd port && zip -q -r ../build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip \
   "R36S ROMS STORE.sh" r36s-roms-store \

@@ -2,6 +2,13 @@
 
 O histórico mantém os números usados nas entregas anteriores, sem renumeração retroativa.
 
+## 0.4.1-beta
+- Corrigida a atualização direta da v0.3.1-beta: o UPDATE mantém os sete caminhos permitidos no gerenciador legado, com SHA-256 e manifesto íntegros.
+- Componente BIOS incluído no game.love e preparado automaticamente quando necessário, evitando arquivos ausentes após atualizar.
+- Atualizador novo aceita apenas dois formatos oficiais (sete ou oito arquivos), mantendo lista de caminhos autorizados e backup/rollback.
+- Teste de compatibilidade executa o atualizador real da v0.3.1-beta com o ZIP da nova versão.
+- Quem já instalou manualmente v0.4.0-beta deve usar o instalador v0.4.1-beta; o atualizador v0.4.0-beta não reconhece o pacote legado.
+
 ## 0.4.0-beta
 - Popup de nova atualização com versão instalada, versão disponível e resumo das mudanças.
 - Nova área **Configurações → BIOS do Sistema** com scanner próprio (sem reaproveitar código do Port Hub), importação de arquivos próprios, instalação cautelosa, backup e restauração.
