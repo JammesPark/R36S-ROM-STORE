@@ -32,3 +32,8 @@ A Release publica instalador, atualização e código-fonte correspondente, como
 - Sinal de rollback pendente: r36s-roms-store/state/updates/pending_health.json
 
 Antes de existir o repositório público, a consulta retorna indisponível. Depois que ele for criado, o feed só passa a informar atualizações após a primeira Release verificada. Verifique Python 3 e acesso à internet no console.
+
+## Correção de compatibilidade 0.4.1-beta
+A v0.3.1-beta só aceita UPDATE com sete arquivos. A v0.4.0-beta adicionou um oitavo arquivo do gerenciador BIOS, gerando a mensagem "ZIP contém arquivos inesperados ou ausentes".
+A v0.4.1-beta distribui um pacote UPDATE com os sete arquivos oficiais, aceito pelo atualizador real da v0.3.1-beta; o componente de BIOS é incluído dentro de game.love e preparado localmente quando a ferramenta é utilizada. Depois da transição, o atualizador permite os conjuntos autorizados de sete e oito arquivos, sempre verificando os hashes e preservando o backup.
+**Se você instalou a v0.4.0-beta manualmente**, atualize para v0.4.1-beta com o instalador completo, porque o atualizador da v0.4.0-beta exige o formato de oito arquivos. A atualização OTA 0.4.1-beta é destinada à base instalada na v0.3.1-beta.
