@@ -183,3 +183,8 @@ Os ajustes precisam de validação final no console físico.
 - Os **nomes dos jogos foram removidos do slide**. O espaço ficou reservado para a capa completa e os indicadores centralizados.
 - As teclas **START** na tela Sobre (cartão e legenda inferior) passaram a ser exibidas em um botão sólido **verde**, com largura ampliada para não cortar a palavra.
 - O teste de regressão confere o alinhamento do título, a ausência dos nomes dos jogos e os dois botões verdes.
+
+
+## v0.2.14 — Ícones da navegação principal
+
+A navegação lateral agora desenha oito ícones independentes de arquivos PNG, evitando a falha anterior que mostrava o mesmo quadrado quando a imagem não carregava: **Início/casa; Catálogo/livros; Downloads/seta; Instalados/cartão SD marcado; Favoritos/coração; Configurações/engrenagem; Sobre/informação; Sair/porta com seta.** Os oito têm a mesma caixa de 18×18 pixels, cor inativa discreta e cor de destaque quando selecionados. Os ícones das plataformas e das opções de configurações não foram alterados. Um teste automatizado verifica que os oito desenhos são distintos.

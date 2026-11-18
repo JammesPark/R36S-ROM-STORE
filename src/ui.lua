@@ -300,9 +300,79 @@ function U.drawAsset(name,x,y,w,h,stretch)
   else U.imageContain(image,x,y,w,h) end
   return true
 end
+-- Ícones estáveis do menu principal: traçados Lua/LÖVE independentes de PNG.
+-- Todos ocupam a mesma caixa 18x18 e usam a mesma largura de traço.
+-- A cor é fornecida pela sidebar: tema.accent quando ativo, tema.muted quando inativo.
 function U.menuIcon(kind,x,y,c)
-  if U.icon(navIcons[kind] or 'gamepad',x,y,18,18,c) then return end
-  U.rect(x+2,y+2,14,14,c,3)
+  local shape=navIcons[kind] or 'info'
+  local S=18/24
+  local LG=love.graphics
+  local function p(v) return v*S end
+  local function line(...)
+    local coords={...}
+    for i=1,#coords,2 do
+      coords[i]=x+p(coords[i])
+      coords[i+1]=y+p(coords[i+1])
+    end
+    LG.line((table.unpack or unpack)(coords))
+  end
+  local function rect(a,b,w,h)
+    LG.rectangle('line',x+p(a),y+p(b),p(w),p(h))
+  end
+  local function circ(a,b,r)
+    LG.circle('line',x+p(a),y+p(b),p(r))
+  end
+  U.color(c or theme.text)
+  LG.setLineWidth(1.8)
+  if shape=='house' then
+    -- Início: casa, telhado e porta.
+    line(3,11,12,3,21,11)
+    line(5,10,5,21,19,21,19,10)
+    line(10,21,10,14,14,14,14,21)
+  elseif shape=='library-big' then
+    -- Catálogo: livros em prateleira.
+    rect(3,4,6,17)
+    rect(10,3,5,18)
+    line(16,5,20,4,23,19,19,20,16,5)
+    line(4,17,8,17)
+  elseif shape=='download' then
+    -- Downloads: seta de entrada e bandeja.
+    line(12,3,12,16)
+    line(6,10,12,16,18,10)
+    line(3,16,3,21,21,21,21,16)
+  elseif shape=='hard-drive' then
+    -- Instalados: cartão SD com marca de confirmação.
+    line(5,3,15,3,21,9,21,21,5,21,5,3)
+    line(14,3,14,10,21,10)
+    line(9,15,12,18,17,12)
+  elseif shape=='heart' then
+    -- Favoritos: coração.
+    line(12,21,4,13,2,10,2,7,5,4,9,4,12,7,15,4,19,4,22,7,22,10,20,13,12,21)
+  elseif shape=='settings' then
+    -- Configurações: engrenagem com centro e oito dentes.
+    circ(12,12,7)
+    circ(12,12,2.5)
+    line(12,1,12,5)
+    line(12,19,12,23)
+    line(1,12,5,12)
+    line(19,12,23,12)
+    line(4,4,7,7)
+    line(17,17,20,20)
+    line(4,20,7,17)
+    line(17,7,20,4)
+  elseif shape=='info' then
+    -- Sobre: informação.
+    circ(12,12,9)
+    LG.circle('fill',x+p(12),y+p(7),p(1.2))
+    line(12,11,12,17)
+  elseif shape=='log-out' then
+    -- Sair: porta e seta de saída.
+    line(10,3,5,3,5,21,10,21)
+    line(9,12,22,12)
+    line(17,7,22,12,17,17)
+  end
+  LG.setLineWidth(1)
+  return shape
 end
 function U.platformIcon(category,x,y,c)
   local id=tostring(category or 'ALL'):lower()

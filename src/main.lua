@@ -304,7 +304,7 @@ local function sidebar()
   end
   txt('●',20,449,11,theme.green)
   txt('ROMS STORE',30,452,10,theme.muted)
-  txt('v0.2.13',105,452,9,theme.low,50)
+  txt('v0.2.14',105,452,9,theme.low,50)
 end
 local function header(eyebrow,title,right)
   ui.kicker(eyebrow,179,23)
