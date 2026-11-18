@@ -174,6 +174,9 @@ class Updater:
     def check(self):
         self.publish("checking")
         data = self.fetch()
+        if not isinstance(data, dict) or data.get("status") != "published":
+            self.publish("no_release")
+            return None
         info = validate_feed(data, self.installed())
         if info:
             self.publish("available", **info)
@@ -225,8 +228,11 @@ class Updater:
         if rel not in ALLOWED:
             raise ValueError("Arquivo fora da aplicação")
         dest = self.ports / rel
-        if rel != "R36S ROMS STORE.sh" and not dest.is_relative_to(self.app):
-            raise ValueError("Destino fora da aplicação")
+        if rel != "R36S ROMS STORE.sh":
+            try:
+                dest.relative_to(self.app)
+            except ValueError:
+                raise ValueError("Destino fora da aplicação")
         p = dest
         while p != self.ports:
             if p.is_symlink():
