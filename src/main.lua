@@ -48,7 +48,13 @@ local function appVersion()
   if love and love.filesystem and type(love.filesystem.read)=='function' then
     local ok,raw=pcall(love.filesystem.read,'VERSION')
     if ok and type(raw)=='string' then
-      local value=raw:match('^%s*(.-)%s*
+      local value=raw:match('^%s*(.-)%s*$')
+      if value and value:match('^%d+%.%d+%.%d+') then cachedAppVersion=value end
+    end
+  end
+  return cachedAppVersion
+end
+local function tr(key) return i18n.get(settings.language,key) end
 local function txt(s,x,y,sz,c,w,center) ui.text(s,x,y,sz,c,w,center) end
 local function R(x,y,w,h,c,round,border,a) ui.rect(x,y,w,h,c,round,border,a) end
 local function panel(x,y,w,h,active) ui.panel(x,y,w,h,active) end
