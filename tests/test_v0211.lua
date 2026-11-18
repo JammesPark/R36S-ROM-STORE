@@ -100,7 +100,7 @@ for _,b in ipairs(buttons) do
  if b.key=='START' and b.y==157 then start=b end
  if b.maxwidth then assert(b.maxwidth>0,'Botoes nao podem usar largura de texto zero')end
 end
-assert(start and start.x+56<=community.x+community.w,'Botao START cortado no quadro')
+assert(start and start.x+64<=community.x+community.w,'Botao START cortado no quadro')
 route('catalog');focus('grid');reset();love.draw()
 assert(contains('ROM Dois')==1,'Nome do jogo duplicado na capa selecionada')
 local preview=false

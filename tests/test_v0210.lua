@@ -118,9 +118,9 @@ ext.games={{name='Jogo Em Destaque Para Teste',category='snes',cover_id='',game_
 set('homeSlideIndex',1)
 reset()
 love.draw()
-local titleVisible=false
+local nameVisible=false
 for _,t in ipairs(texts) do
-  if t.text:find('Jogo Em Destaque',1,true) and t.y>=368 and t.y<415 then titleVisible=true end
+  if t.text:find('Jogo Em Destaque',1,true) then nameVisible=true end
 end
-assert(titleVisible,'O nome do jogo em destaque nao apareceu acima da capa')
+assert(not nameVisible,'Slide nao pode exibir nomes dos jogos')
 print('v0.2.10: Sobre alinhado, A/START, logo DEV, QR sem corte, 6 icones e Destaque OK')
