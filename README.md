@@ -10,18 +10,18 @@ Aplicativo para consoles R36S/R36H, com interface Lua e LÖVE 11.5. Inclui catá
 
 ## Instalação
 
-No pacote gerado em **Actions**, extraia o ZIP na pasta `/roms/ports/` do cartão do console e execute `R36S ROMS STORE.sh` no EmulationStation. É necessário ter o runtime LÖVE apropriado. Para uma atualização manual, faça cópia de segurança do `game.love` anterior.
+Baixe o instalador ZIP em **[Releases](https://github.com/JammesPark/R36S-ROMS-HUB-STORE/releases)** e extraia seu conteúdo na pasta `/roms/ports/` do cartão do console e execute `R36S ROMS STORE.sh` no EmulationStation. É necessário ter o runtime LÖVE apropriado. Para uma atualização manual, faça cópia de segurança do `game.love` anterior.
 
 ## Código-fonte e compilação
 
 - `game/`: fonte Lua usada para gerar o `game.love`.
 - `r36sromsstore/`: arquivos de suporte e um `game.love` já empacotado, correspondente à fonte.
 - `tools/build.sh`: gerador do instalador ZIP.
-- `.github/workflows/build.yml`: valida a sintaxe LuaJIT e gera o ZIP como artefato do GitHub Actions.
+- `.github/workflows/build.yml`: valida a sintaxe LuaJIT e publica o ZIP da main como pré-release para download manual.
 
 Executar manualmente no Linux: `sh tools/build.sh`.
 
-**O GitHub Actions não instala nada no console e não publica atualizações OTA.** A execução é de build e validação, com ZIP para download nos artefatos da execução.
+**O GitHub Actions não instala nada no console e não publica atualizações OTA.** A execução é de build e validação, com ZIP para download na pré-release do commit.
 
 ## Autoria, licenças e conteúdo
 

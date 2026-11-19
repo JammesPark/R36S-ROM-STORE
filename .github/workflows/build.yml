@@ -49,10 +49,26 @@ jobs:
           sh tools/build.sh
           for pkg in build/*.zip; do unzip -tq "$pkg"; done
 
-      - name: Publicar artefatos desta execução
-        uses: actions/upload-artifact@v4
-        with:
-          name: R36S-ROMS-STORE-installer
-          path: build/*.zip
-          if-no-files-found: error
-          retention-days: 30
+  release:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gerar instalador do commit validado
+        run: sh tools/build.sh
+      - name: Publicar instalador para download manual
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version=$(python3 tools/version.py get)
+          tag="build-${GITHUB_SHA}"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" --target "$GITHUB_SHA" --prerelease \
+              --title "R36S ROMS STORE $version (${GITHUB_SHA:0:7})" \
+              --notes "Instalador manual para R36S/R36H. Extraia o ZIP na pasta ports do cartão."
+          fi
+          gh release upload "$tag" "build/R36S_ROMS_STORE_${version}.zip" --clobber
