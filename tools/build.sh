@@ -1,33 +1,42 @@
-#!/usr/bin/env bash
-set -Eeuo pipefail
-cd "$(dirname "$0")/.."
-mkdir -p build
-VERSION="$(tr -d '\r\n' < VERSION)"
-if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9]+(\.[a-z0-9]+)*)?$ ]]; then
-  echo "ERRO: VERSION invalida: $VERSION" >&2
-  exit 1
+#!/bin/sh
+# Adaptado de tools/build.sh do R36S PORT HUB, por Lag do Lira (GPL-3.0).
+# Reconstroi a versao da R36S ROMS STORE somente na pasta build/.
+# Uso: sh tools/build.sh [--dev]  (--dev inclui game/dev/)
+set -eu
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+OUT="$ROOT/build"
+case "${1:-}" in
+  ""|--dev) ;;
+  *) echo "Uso: sh tools/build.sh [--dev]" >&2; exit 2 ;;
+esac
+for cmd in zip python3 cp; do
+  command -v "$cmd" >/dev/null 2>&1 || { echo "Dependencia ausente: $cmd" >&2; exit 1; }
+done
+test -f "$ROOT/game/main.lua"
+test -f "$ROOT/game/config.lua"
+test -f "$ROOT/R36S ROMS STORE.sh"
+test -d "$ROOT/r36sromsstore"
+mkdir -p "$OUT"
+rm -rf "$OUT/ports"
+mkdir -p "$OUT/ports/r36sromsstore"
+cp -a "$ROOT/r36sromsstore/." "$OUT/ports/r36sromsstore/"
+cp "$ROOT/R36S ROMS STORE.sh" "$OUT/ports/"
+cp "$ROOT/README.md" "$ROOT/NOTICE.md" "$ROOT/LICENSE" "$OUT/ports/"
+rm -f "$OUT/ports/r36sromsstore/game.love"
+if [ "${1:-}" = "--dev" ]; then
+  ( cd "$ROOT/game" && zip -q -9 -n .ogg -r "$OUT/ports/r36sromsstore/game.love" . )
+else
+  ( cd "$ROOT/game" && zip -q -9 -n .ogg -r "$OUT/ports/r36sromsstore/game.love" . -x 'dev/*' )
 fi
-cp VERSION src/VERSION
-cp VERSION port/r36s-roms-store/VERSION
-rm -f build/*.zip port/r36s-roms-store/game.love
-find port -type d -name __pycache__ -prune -exec rm -rf -- {} +
-# Os PNGs oficiais ficam empacotados no repositorio como um unico bundle binario.
-# Extraidos em src/assets antes de montar o LÖVE, sem dependencias de rede.
-if [[ -f src/assets/graphics.bundle.zip ]]; then
-  unzip -q -o src/assets/graphics.bundle.zip -d src/assets
-fi
-# O pacote de sete arquivos aceita game.love, que inclui o gerenciador BIOS.
-# O LÖVE prepara o script na primeira utilização, sem burlar a whitelist.
-mkdir -p src/bundled
-cp port/r36s-roms-store/bin/bios_manager.py src/bundled/bios_manager.py
-(cd src && zip -q -X -r ../port/r36s-roms-store/game.love .)
-(cd port && zip -q -r ../build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip \
-  "R36S ROMS STORE.sh" r36s-roms-store \
-  -x 'r36s-roms-store/state/*')
-zip -q -r build/R36S_ROMS_STORE_v${VERSION}_FONTE.zip \
-  VERSION VERSIONING.md CHANGELOG.md README.md docs LICENSE THIRD_PARTY_NOTICES.txt src port tools tests .github \
-  -x 'port/r36s-roms-store/state/*'
-# Pacote dedicado de atualização: apenas arquivos da aplicação, sem dados do usuário.
-python3 tools/make_roms_update.py --installer "build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip" \
-  --version "$VERSION" --out "build/R36S_ROMS_STORE_v${VERSION}_UPDATE.zip"
-echo "Pacotes v$VERSION criados em build/"
+chmod +x "$OUT/ports/R36S ROMS STORE.sh" "$OUT/ports/r36sromsstore/bin/7zzs"
+for file in "$OUT/ports/r36sromsstore/bin/"*.sh "$OUT/ports/r36sromsstore/tools/"*.sh; do
+  [ -f "$file" ] && chmod +x "$file"
+done
+python3 "$ROOT/tools/version.py" check
+VERSION=$(python3 "$ROOT/tools/version.py" get)
+python3 "$ROOT/tools/make_update.py" full "$OUT/ports"
+PACKAGE="$OUT/R36S_ROMS_STORE_$VERSION.zip"
+rm -f "$PACKAGE"
+( cd "$OUT/ports" && zip -q -9 -r "$PACKAGE" "R36S ROMS STORE.sh" r36sromsstore README.md NOTICE.md LICENSE update_manifest.json )
+unzip -tq "$PACKAGE"
+echo "Pacote: $PACKAGE"

@@ -1,0 +1,56 @@
+{
+  "id": "forcesith",
+  "name": "Force Nexus — Sith",
+  "description": "Sith vermelho — logo oficial completa com BR prateado e bandeira, cabeçalho sem cortes. Revisado para atualizacao geral 0.0.27-beta: logo e cabecalho 640x480 validados.",
+  "version": "1.0.12",
+  "author": "R36S ROMS STORE",
+  "preview": "preview.png",
+  "colors": {
+    "bg0": "#0A070B",
+    "bg1": "#1B1016",
+    "bg2": "#2B141D",
+    "bg3": "#551929",
+    "line": "#573040",
+    "text": "#FFF2F3",
+    "dim": "#E1ABB6",
+    "faint": "#9C6572",
+    "accent": "#FF1744",
+    "accent2": "#F5002E",
+    "yellow": "#FFD163",
+    "green": "#78DCAA",
+    "red": "#FF526D",
+    "orange": "#FF9B76",
+    "black": "#000000",
+    "shadow": "#00000099"
+  },
+  "buttons": {
+    "a": "#FF1744",
+    "b": "#FF6973",
+    "x": "#FFA08A",
+    "y": "#FFD163",
+    "l1": "#E1ABB6",
+    "r1": "#E1ABB6",
+    "start": "#E1ABB6",
+    "select": "#E1ABB6",
+    "dpad": "#E1ABB6"
+  },
+  "style": {
+    "background": "modern",
+    "layout": "force",
+    "round": 1,
+    "glow": "#B80028",
+    "scanlines": false,
+    "focus": "#FF1744",
+    "effect": "neon",
+    "card": {
+      "fill": "#29131B",
+      "line": "#552335",
+      "text": "#FFF2F3",
+      "dim": "#E1ABB6",
+      "faint": "#9C6572",
+      "icon": "#FF1744"
+    },
+    "list": "grid",
+    "logo_header_scale": 1.1
+  }
+}

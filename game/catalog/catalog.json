@@ -1,0 +1,179 @@
+{
+  "catalog_version": 1,
+  "title": "Catálogo de ROMs — GameStoreBR (cache local)",
+  "updated": "2026-11-18",
+  "categories": [
+    {
+      "id": "3do",
+      "name": "3DO"
+    },
+    {
+      "id": "amigacd32",
+      "name": "Amiga CD32"
+    },
+    {
+      "id": "atari2600",
+      "name": "Atari 2600"
+    },
+    {
+      "id": "dreamcast",
+      "name": "Dreamcast"
+    },
+    {
+      "id": "gamegear",
+      "name": "Game Gear"
+    },
+    {
+      "id": "gb",
+      "name": "Game Boy"
+    },
+    {
+      "id": "gba",
+      "name": "Game Boy Advance"
+    },
+    {
+      "id": "gbc",
+      "name": "Game Boy Color"
+    },
+    {
+      "id": "mame",
+      "name": "MAME"
+    },
+    {
+      "id": "mastersystem",
+      "name": "Master System"
+    },
+    {
+      "id": "megadrive",
+      "name": "Mega Drive"
+    },
+    {
+      "id": "n64",
+      "name": "Nintendo 64"
+    },
+    {
+      "id": "nds",
+      "name": "Nintendo DS"
+    },
+    {
+      "id": "neogeo",
+      "name": "Neo Geo"
+    },
+    {
+      "id": "nes",
+      "name": "Nintendo NES"
+    },
+    {
+      "id": "pcengine",
+      "name": "PC Engine"
+    },
+    {
+      "id": "psp",
+      "name": "PSP"
+    },
+    {
+      "id": "psx",
+      "name": "PlayStation"
+    },
+    {
+      "id": "saturn",
+      "name": "Saturn"
+    },
+    {
+      "id": "snes",
+      "name": "Super Nintendo"
+    }
+  ],
+  "ports": [
+    {
+      "id": "dreamcast-aero-dancing-f-todoroki-tsubasa-no-hatsu-hikou-84c9734",
+      "name": "Aero Dancing F - Todoroki Tsubasa no Hatsu Hikou",
+      "category": "dreamcast",
+      "section": "games",
+      "platform": "Dreamcast",
+      "download_url": "https://archive.org/download/sega-dreamcast-redump/Aero%20Dancing%20F%20-%20Todoroki%20Tsubasa%20no%20Hatsu%20Hikou%20%28Japan%29.zip",
+      "cover": "https://raw.githubusercontent.com/libretro-thumbnails/Sega_-_Dreamcast/master/Named_Boxarts/Aero%20Dancing%20F%20-%20Todoroki%20Tsubasa%20no%20Hatsu%20Hikou%20%28Japan%29.png"
+    },
+    {
+      "id": "dreamcast-aero-dancing-featuring-blue-impulse-49e109b",
+      "name": "Aero Dancing featuring Blue Impulse",
+      "category": "dreamcast",
+      "section": "games",
+      "platform": "Dreamcast",
+      "download_url": "https://archive.org/download/sega-dreamcast-redump/Aero%20Dancing%20featuring%20Blue%20Impulse%20%28Japan%29%20%28Tentou%20Taikenban%29.zip",
+      "cover": "https://raw.githubusercontent.com/libretro-thumbnails/Sega_-_Dreamcast/master/Named_Boxarts/Aero%20Dancing%20featuring%20Blue%20Impulse%20%28Japan%29%20%28Tentou%20Taikenban%29.png"
+    },
+    {
+      "id": "dreamcast-aero-dancing-i-9ceec73",
+      "name": "Aero Dancing i",
+      "category": "dreamcast",
+      "section": "games",
+      "platform": "Dreamcast",
+      "download_url": "https://archive.org/download/sega-dreamcast-redump/Aero%20Dancing%20i%20%28Japan%29.zip",
+      "cover": "https://raw.githubusercontent.com/libretro-thumbnails/Sega_-_Dreamcast/master/Named_Boxarts/Aero%20Dancing%20i%20%28Japan%29.png"
+    },
+    {
+      "id": "dreamcast-aero-dancing-i-jikai-saku-made-matemasen-6c8c3cf",
+      "name": "Aero Dancing i - Jikai Saku made Matemasen",
+      "category": "dreamcast",
+      "section": "games",
+      "platform": "Dreamcast",
+      "download_url": "https://archive.org/download/sega-dreamcast-redump/Aero%20Dancing%20i%20-%20Jikai%20Saku%20made%20Matemasen%20%28Japan%29.zip",
+      "cover": "https://www.vgdb.com.br/gf/fotos/games/media_91049/aero-dancing-i-jikai-saku-made-matemasen-91049.jpg"
+    },
+    {
+      "id": "dreamcast-aerowings-06483c1",
+      "name": "AeroWings",
+      "category": "dreamcast",
+      "section": "games",
+      "platform": "Dreamcast",
+      "download_url": "https://archive.org/download/sega-dreamcast-redump/AeroWings%20%28Europe%29%20%28En%2CFr%2CDe%29.zip",
+      "cover": "https://raw.githubusercontent.com/libretro-thumbnails/Sega_-_Dreamcast/master/Named_Boxarts/AeroWings%20%28Europe%29%20%28En%2CFr%2CDe%29.png"
+    },
+    {
+      "id": "dreamcast-aerowings-2-airstrike-a72ce43",
+      "name": "AeroWings 2 - Airstrike",
+      "category": "dreamcast",
+      "section": "games",
+      "platform": "Dreamcast",
+      "download_url": "https://archive.org/download/sega-dreamcast-redump/AeroWings%202%20-%20Airstrike%20%28Europe%29%20%28En%2CDe%29.zip",
+      "cover": "https://raw.githubusercontent.com/libretro-thumbnails/Sega_-_Dreamcast/master/Named_Boxarts/AeroWings%202%20-%20Airstrike%20%28Europe%29%20%28En%2CDe%29.png"
+    },
+    {
+      "id": "dreamcast-after-wasureenu-kizuna-d386774",
+      "name": "After... Wasureenu Kizuna",
+      "category": "dreamcast",
+      "section": "games",
+      "platform": "Dreamcast",
+      "download_url": "https://archive.org/download/sega-dreamcast-redump/After...%20Wasureenu%20Kizuna%20%28Japan%29.zip",
+      "cover": "https://raw.githubusercontent.com/libretro-thumbnails/Sega_-_Dreamcast/master/Named_Boxarts/After...%20Wasureenu%20Kizuna%20%28Japan%29.png"
+    },
+    {
+      "id": "dreamcast-aikagi-hidamari-to-kanojo-no-heyagi-1637939",
+      "name": "Aikagi - Hidamari to Kanojo no Heyagi",
+      "category": "dreamcast",
+      "section": "games",
+      "platform": "Dreamcast",
+      "download_url": "https://archive.org/download/sega-dreamcast-redump/Aikagi%20-%20Hidamari%20to%20Kanojo%20no%20Heyagi%20%28Japan%29.zip",
+      "cover": "https://raw.githubusercontent.com/libretro-thumbnails/Sega_-_Dreamcast/master/Named_Boxarts/Aikagi%20-%20Hidamari%20to%20Kanojo%20no%20Heyagi%20%28Japan%29.png"
+    },
+    {
+      "id": "dreamcast-air-4d10050",
+      "name": "Air",
+      "category": "dreamcast",
+      "section": "games",
+      "platform": "Dreamcast",
+      "download_url": "https://archive.org/download/sega-dreamcast-redump/Air%20%28Japan%29%20%28Rev%20A%29.zip",
+      "cover": "https://raw.githubusercontent.com/libretro-thumbnails/Sega_-_Dreamcast/master/Named_Boxarts/Air%20%28Japan%29%20%28Rev%20A%29.png"
+    },
+    {
+      "id": "dreamcast-airforce-delta-adb8f8e",
+      "name": "AirForce Delta",
+      "category": "dreamcast",
+      "section": "games",
+      "platform": "Dreamcast",
+      "download_url": "https://archive.org/download/sega-dreamcast-redump/AirForce%20Delta%20%28USA%29.zip",
+      "cover": "https://raw.githubusercontent.com/libretro-thumbnails/Sega_-_Dreamcast/master/Named_Boxarts/AirForce%20Delta%20%28USA%29.png"
+    }
+  ]
+}

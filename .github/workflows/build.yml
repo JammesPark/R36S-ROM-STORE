@@ -1,92 +1,58 @@
-name: R36S ROMS STORE - testes e build
+name: Validar e empacotar R36S ROMS STORE
+
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
   workflow_dispatch:
+
 permissions:
   contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout do código
         uses: actions/checkout@v4
-      - name: Instalar dependencias de testes
+
+      - name: Instalar ferramentas de validação
         run: |
-          sudo apt-get update
-          sudo apt-get install -y lua5.4 zip unzip python3
-      - name: Verificar sintaxe Lua e Bash
+          sudo apt-get update -qq
+          sudo apt-get install -y luajit zip unzip
+
+      - name: Conferir estrutura e LuaJIT
+        shell: bash
         run: |
-          find src -type f -name '*.lua' -print0 | xargs -0 -r -n1 luac5.4 -p
-          find port tools tests -type f -name '*.sh' -print0 | xargs -0 -r -n1 bash -n
-          python3 -m py_compile port/r36s-roms-store/bin/gamestore_source.py port/r36s-roms-store/bin/store_updater.py port/r36s-roms-store/bin/bios_manager.py tools/make_roms_update.py
-      - name: Testes
+          set -euo pipefail
+          test -f game/main.lua
+          test -f game/config.lua
+          test -f 'R36S ROMS STORE.sh'
+          test -d r36sromsstore
+          test -f LICENSE
+          test -f NOTICE.md
+          grep -q 'Lag do Lira' NOTICE.md
+          find game -type f -name '*.lua' -print0 | while IFS= read -r -d '' f; do
+            luajit -b "$f" /dev/null
+          done
+
+      - name: Testar armazenamento e instalação de ROMs
         run: |
-          unzip -q -o src/assets/graphics.bundle.zip -d src/assets
-          python3 tests/test_versioning.py
-          python3 tests/test_store_update.py
-          python3 tests/test_ota_legacy_compat.py
-          python3 tests/test_bios_manager.py
-          python3 tests/test_update_isolation.py
-          lua5.4 tests/test_json.lua
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_ui_smoke.lua
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_navigation_features.lua
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v024.lua
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v025.lua
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v026.lua
-          bash tests/test_v027_onboarding.sh
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v028.lua
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v029.lua
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v0210.lua
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v0211.lua
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v0212.lua
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_nav_icons.lua
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v0215.lua
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_store_updates_ui.lua
-          R36S_STORE_OFFLINE_TEST=1 lua5.4 tests/test_v040_features.lua
-          python3 tests/test_v029_backend.py
-          python3 tests/test_gamestore.py
-          python3 tests/test_single_catalog.py
-          python3 tests/test_brand_cleanup.py
-          bash tests/test_bootstrap.sh
-      - name: Criar ZIPs instalavel e fonte
-        run: bash tools/build.sh
-      - name: Verificar conteudo do instalador
+          luajit tests/test_rom_storage.lua
+          PYTHONDONTWRITEBYTECODE=1 python3 tests/test_rom_install.py
+
+      - name: Gerar ZIP de instalação
+        shell: bash
         run: |
-          VERSION="$(tr -d '\r\n' < VERSION)"
-          test -x 'port/R36S ROMS STORE.sh'
-          unzip -t build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip
-          unzip -t build/R36S_ROMS_STORE_v${VERSION}_UPDATE.zip
-          unzip -p "build/R36S_ROMS_STORE_v${VERSION}_UPDATE.zip" update_manifest.json | python3 -c 'import json,sys; m=json.load(sys.stdin); assert m["app"]=="r36s-roms-store" and len(m["files"])==(7 if m["version"]=="0.4.1-beta" else 8)'
-          unzip -Z1 "build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip" | grep -F 'r36s-roms-store/bin/store_updater.py'
-          unzip -Z1 "build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip" | grep -F 'r36s-roms-store/bin/bios_manager.py'
-          unzip -Z1 build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip | grep -F 'r36s-roms-store/game.love'
-          tmp=$(mktemp -d)
-          unzip -p build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip 'r36s-roms-store/game.love' > "$tmp/game.love"
-          test "$(unzip -p "$tmp/game.love" VERSION | tr -d '\r\n')" = "$VERSION"
-          test "$(unzip -p "build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip" "r36s-roms-store/VERSION" | tr -d '\r\n')" = "$VERSION"
-          test "$(unzip -p "build/R36S_ROMS_STORE_v${VERSION}_FONTE.zip" VERSION | tr -d '\r\n')" = "$VERSION"
-          unzip -l "$tmp/game.love" | grep -F 'assets/logo.png'
-          unzip -l "$tmp/game.love" | grep -F 'legal_text.lua'
-          unzip -l "$tmp/game.love" | grep -F 'store_update.lua'
-          unzip -l "$tmp/game.love" | grep -F 'bios_manager.lua'
-          unzip -l "$tmp/game.love" | grep -F 'assets/logo_dev.png'
-          unzip -l "$tmp/game.love" | grep -F 'assets/icons/palette.png'
-          unzip -l "$tmp/game.love" | grep -F 'assets/icons/languages.png'
-          unzip -l "$tmp/game.love" | grep -F 'assets/qr_livepix.png'
-          unzip -l "$tmp/game.love" | grep -F 'assets/qr_telegram.png'
-          unzip -l "$tmp/game.love" | grep -F 'assets/music/tema_principal.ogg'
-          unzip -Z1 build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip | grep -F 'r36s-roms-store/LICENSE'
-          unzip -Z1 build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip | grep -F 'r36s-roms-store/THIRD_PARTY_NOTICES.txt'
-          unzip -q build/R36S_ROMS_STORE_v${VERSION}_TESTE.zip -d "$tmp"
-          test -x "$tmp/R36S ROMS STORE.sh"
-          test ! -d "$tmp/r36s-roms-store/bin/__pycache__"
-          rm -rf "$tmp"
-      - name: Publicar artefatos para download
+          set -euo pipefail
+          python3 tools/version.py get
+          sh tools/build.sh
+          for pkg in build/*.zip; do unzip -tq "$pkg"; done
+
+      - name: Publicar artefatos desta execução
         uses: actions/upload-artifact@v4
         with:
-          name: R36S-ROMS-STORE-TESTE
+          name: R36S-ROMS-STORE-installer
           path: build/*.zip
           if-no-files-found: error
+          retention-days: 30

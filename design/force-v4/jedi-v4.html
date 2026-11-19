@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#2954B9">
+  <title>R36S ROMS STORE — NEON GRID · JEDI | Ports Recentes em Carrossel + Top 5 Downloads | 640×480</title>
+  <style>
+    :root {
+      --r1:#ff4f68; /* vermelho vivo */
+      --r2:#df263f; /* vermelho principal */
+      --r3:#a91534; /* vinho / seleção */
+      --r4:#ff8b78; /* coral de destaque */
+      --night:#0b090e;--panel:#181318;--panel2:#221920;--edge:#442832;--text:#fff4f5;--muted:#b39aa4;--dim:#876f79;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:#08080b;color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif;padding:22px 16px 30px;display:flex;align-items:center;flex-direction:column;gap:15px}
+    .heading{width:min(100%,850px);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .heading h1{margin:0;font-size:18px;letter-spacing:.2px;font-weight:780}
+    .heading .sub{font-size:12px;margin-top:5px;color:#b5a3a9}
+    .pill{border:1px solid #65404b;color:#ef9da9;padding:7px 12px;border-radius:30px;font-size:11px;font-weight:700;letter-spacing:.7px}
+    .viewport{width:min(100%,640px);aspect-ratio:4/3;position:relative;box-shadow:0 24px 80px #0009,0 0 0 1px #70303d;border-radius:12px;overflow:hidden;background:#0b090e}
+    #stage{width:640px;height:480px;position:absolute;top:0;left:0;transform-origin:top left;overflow:hidden;background:radial-gradient(ellipse 480px 350px at 87% 23%,#4015207a,transparent 74%),radial-gradient(ellipse 330px 300px at 2% 83%,#46121e64,transparent 78%),#0b090e}
+    #stage::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.17;background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:30px 30px;mask-image:linear-gradient(to bottom,transparent,black 22%,black 75%,transparent)}
+    .header{height:46px;position:absolute;left:0;right:0;top:0;display:flex;align-items:center;padding:4px 14px;background:#0c0a0ecc;border-bottom:1px solid #4c2832;z-index:2}
+    .brandlogo{width:140px;height:38px;flex:0 0 140px;object-fit:contain;filter:drop-shadow(0 0 2px #35cfff80)}
+    .brand{margin-left:26px;display:flex;flex-direction:column;gap:2px}
+    .brand strong{font-weight:850;letter-spacing:.5px;font-size:10px}
+    .brand span{font-size:8px;letter-spacing:1.55px;color:var(--r4);font-weight:700}
+    .header-right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:11px;font-weight:700;color:#e2d0d5}
+    .wifi{width:19px;height:19px;color:#f76b7a}
+    .batt{width:27px;height:12px;border:1.5px solid #e4b9c3;border-radius:3px;position:relative;display:flex;align-items:center;padding:2px}
+    .batt:after{content:"";height:5px;width:3px;background:#e4b9c3;position:absolute;right:-5px;top:2.5px;border-radius:0 2px 2px 0}
+    .batt span{background:linear-gradient(90deg,var(--r2),var(--r1));height:100%;width:79%;border-radius:1px}
+    .left{position:absolute;left:14px;top:54px;width:182px;height:382px;background:linear-gradient(150deg,#241820,#161017 62%,#190f17);border:1px solid #50303b;border-radius:12px;box-shadow:0 12px 35px #0007;padding:11px}
+    .panel-head{display:flex;justify-content:space-between;align-items:center}
+    .panel-head strong{font-size:12px;font-weight:900;letter-spacing:.9px}
+    .panel-head .three{color:#8e6e78;font-size:15px;line-height:1}
+    .eyebrow{color:var(--r4);font-weight:850;font-size:10px;letter-spacing:1px}
+    .left .eyebrow{margin:17px 0 8px}
+    .vertical-carousel{height:190px;width:160px;position:relative;overflow:hidden;border-radius:8px;border:1px solid #a63248;background:#0b070b;box-shadow:0 0 0 1px #ff445012}
+    .vertical-track{height:100%;width:100%;display:flex;flex-direction:column;transition:transform .43s cubic-bezier(.2,.8,.2,1)}
+    .feature-slide{height:100%;width:100%;flex:0 0 100%;position:relative;overflow:hidden}
+    .feature-slide .art{width:100%;height:100%;display:block}
+    .feature-slide:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,#080409e8 76%);pointer-events:none}
+    .feature-info{position:absolute;bottom:10px;left:12px;right:22px;z-index:2;pointer-events:none}
+    .feature-info .mini{font-size:9px;letter-spacing:1.4px;color:#ffafac;font-weight:800;margin-bottom:5px}
+    .feature-info b{font-size:17px;line-height:17px;text-shadow:0 2px 8px #000d;display:block;font-weight:920;text-transform:uppercase}
+    .feature-info small{color:#e7bfc7;font-size:10px;margin-top:6px;display:block}
+    .feature-control{position:absolute;z-index:4;right:4px;width:20px;height:20px;border-radius:5px;background:#160b14c9;color:#fff1f0;border:1px solid #ff757c83;display:flex;justify-content:center;align-items:center;cursor:pointer;font-size:14px;font-weight:900;padding:0;line-height:1}
+    .feature-control:hover{background:#9b203c}
+    #prev{top:8px}#next{bottom:8px}
+    /* Indicadores do carrossel em HORIZONTAL; slides continuam deslizando na vertical. */
+    .rail{position:absolute;left:10px;right:35px;top:9px;height:7px;z-index:4;display:flex;flex-direction:row;gap:5px;align-items:center;justify-content:flex-start}
+    .rail button{border:0;width:16px;height:4px;padding:0;border-radius:6px;background:#bfa6ae88;cursor:pointer;transition:width .2s,background .2s;flex:0 0 auto}
+    .rail button.active{background:var(--r1);width:29px;box-shadow:0 0 8px #e1234688}
+    .left .short-label{font-size:11px;font-weight:900;letter-spacing:.35px;margin:13px 0 8px;color:#f4e6e9}
+    .quicklinks{display:flex;flex-direction:column;gap:5px}
+    .quick{height:23px;width:100%;border:1px solid transparent;background:transparent;border-radius:5px;display:flex;align-items:center;gap:9px;padding:0 7px;color:#ded0d5;text-align:left;cursor:pointer;font-weight:700;font-size:10px}
+    .quick:hover,.quick:focus-visible{background:#3c202c;border-color:#be3449;outline:none}
+    .quick svg{width:14px;height:14px;color:var(--r4)}
+    .recent-panel{position:absolute;left:208px;top:58px;width:418px;height:158px;background:linear-gradient(110deg,#251820,#161017);border:1px solid #51313d;border-radius:11px;padding:11px 10px 9px;box-shadow:0 8px 25px #0006}
+    .recent-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;height:13px}
+    .recent-top strong{font-size:10px;font-weight:850;letter-spacing:1px}
+    .recent-top span{font-size:9px;color:#b19da5}
+    .recent-items{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
+    .recent-card{height:106px;border:1px solid #49313a;background:#120e13;border-radius:6px;position:relative;overflow:hidden;cursor:pointer;padding:0;display:block;box-shadow:0 3px 8px #0007}
+    .recent-card:focus-visible,.recent-card.active{border-color:#ff6070;outline:none;box-shadow:0 0 0 1px #e5274b,0 0 12px #ed1e4755}
+    .recent-card .art{width:100%;height:100%;display:block}
+    .recent-card:after{content:"";position:absolute;inset:54% 0 0;background:linear-gradient(transparent,#09060add)}
+    .recent-card .port-label{position:absolute;z-index:1;bottom:5px;left:5px;right:4px;color:white;font-weight:900;font-size:9px;line-height:10px;letter-spacing:-.24px;text-align:left;text-shadow:0 2px 6px #000;overflow-wrap:break-word}
+    .recent-index{position:absolute;top:5px;left:5px;font-size:9px;color:#ffe4e6;background:#160a0fd9;border:1px solid #e64a627a;padding:1px 4px;border-radius:4px;z-index:2;font-weight:850}
+    .tile-grid{position:absolute;left:208px;top:226px;width:418px;height:204px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,98px);gap:8px}
+    .tile{position:relative;background:linear-gradient(145deg,#231821,#1d141a 70%);border:1px solid #55303e;border-radius:9px;text-align:left;color:#eee4e9;padding:11px 13px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;transition:border-color .15s,background .15s}
+    .tile:hover,.tile:focus-visible{outline:none;border-color:#ea405e;background:linear-gradient(145deg,#4a1b2d,#22131b)}
+    .tile.selected{background:linear-gradient(145deg,#aa2039,#6d172b 92%);border:2px solid #ff6776;box-shadow:0 0 0 1px #d5203b70,0 0 20px #c720404a}
+    .tile svg{width:29px;height:29px;stroke:var(--r4);stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .tile.selected svg{stroke:#fff2f0}
+    .tile span{font-size:11px;line-height:12px;text-transform:uppercase;font-weight:880;letter-spacing:.1px;max-width:115px}
+    .tile .arrow{position:absolute;top:9px;right:10px;font-size:14px;color:#e16d7f;opacity:.65}
+    .footer{position:absolute;bottom:0;left:0;width:640px;height:34px;border-top:1px solid #482533;background:#0a090dd9;display:flex;align-items:center;gap:14px;padding:0 18px;color:#b5a4ac;font-size:10px;font-weight:700}
+    .kbd{color:#ffe3e3;background:#8e2138;padding:2px 5px;border:1px solid #f15c70;border-radius:4px;margin-right:4px;font-size:9px}
+    .footer-right{margin-left:auto;font-size:9px;color:#9d7583}
+    .toast{position:absolute;left:50%;bottom:40px;transform:translate(-50%,12px);padding:9px 14px;background:#3b1b2b;border:1px solid #d5485d;box-shadow:0 10px 30px #0009;border-radius:7px;color:#ffe9ed;font-size:11px;font-weight:700;pointer-events:none;opacity:0;transition:transform .22s,opacity .22s;white-space:nowrap;z-index:10;max-width:90%;text-overflow:ellipsis;overflow:hidden}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .meta{width:min(100%,850px);display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:13px;color:#d3bfc6}
+    .meta b{font-size:12px;color:#f7ebef;display:block;margin-bottom:8px}
+    .swatches{display:flex;gap:9px;flex-wrap:wrap}
+    .swatch{display:flex;align-items:center;gap:6px;font-size:11px;color:#c3abb5}
+    .chip{width:17px;height:17px;border-radius:5px;border:1px solid #ffffff35}
+    .notes{font-size:12px;line-height:1.6;max-width:340px;color:#ae98a4}
+    .disclaimer{font-size:11px;color:#8f7680;width:min(100%,850px);line-height:1.4}
+    @media (max-width:640px){body{padding:12px 7px 28px;gap:12px}.heading h1{font-size:14px}.pill{font-size:9px}}
+
+    /* JEDI — serenidade, clareza, ar e luz; quatro tons de azul */
+    :root{--r1:#5FD0FF;--r2:#238BEE;--r3:#2954B9;--r4:#B0E9FF;--night:#08121C;--panel:#102237;--panel2:#18344B;--edge:#2D5879;--text:#F1F9FF;--muted:#A3C7D8;--dim:#729CAD}
+    body{background:radial-gradient(ellipse at 50% 0%,#133c5e,#070e17 72%)}
+    .viewport{box-shadow:0 24px 80px #000a,0 0 0 1px #356ea2,0 0 36px #349be332}
+    #stage{background:radial-gradient(ellipse 510px 340px at 88% 18%,#14579355,transparent 72%),radial-gradient(ellipse 330px 280px at 5% 85%,#0d73a64c,transparent 81%),#081522}
+    #stage::before{opacity:.16;background-image:linear-gradient(#7ed5ff20 1px,transparent 1px),linear-gradient(90deg,#7ed5ff20 1px,transparent 1px)}
+    .header{background:#071827dc;border-bottom-color:#335e80}
+    .header .brand span,.eyebrow,.left .eyebrow{color:var(--r4)}
+    .brandlogo{filter:hue-rotate(60deg) saturate(1.05) drop-shadow(0 0 5px #53bbff75)}
+    .header-right,.brand strong{color:#eaf8ff}
+    .wifi{color:#80d6ff}
+    .batt{border-color:#99cbe5}.batt:after{background:#a9d8ee}
+    .batt span{background:linear-gradient(90deg,#238bee,#89ddff)}
+    .left{background:linear-gradient(150deg,#1d3b55,#0d1b2c 64%,#133049);border-color:#386688;box-shadow:0 10px 36px #0015229e}
+    .panel-head .three{color:#7daac7}
+    .vertical-carousel{background:#081724;border-color:#348ecd;box-shadow:0 0 0 1px #6ad2ff28}
+    .feature-slide:after{background:linear-gradient(transparent,#061626e9 76%)}
+    .feature-info .mini{color:#b9ebff}
+    .feature-info small{color:#c8e7f6}
+    .feature-control{background:#102740da;border-color:#79cbf78a}
+    .feature-control:hover{background:#195b8c}
+    .rail button{background:#7eafc19c}
+    .rail button.active{background:#5fd0ff;box-shadow:0 0 9px #41c4ffaa}
+    .quick{color:#d5e7f4}
+    .quick:hover{background:#224965;border-color:#59aee5}
+    .quick svg{color:#a9e6ff}
+    .recent-panel{background:linear-gradient(115deg,#1b3951,#0c1e30);border-color:#376d92}
+    .recent-top span{color:#adc9da}
+    .recent-card{background:#0c1d2a;border-color:#386588}
+    .recent-card.active{border-color:#94e0ff;box-shadow:0 0 0 1px #3cbbff,0 0 14px #35b5ff5a}
+    .recent-index{background:#09354cd8;border-color:#66c2e8;color:#edf9ff}
+    .recent-card .port-label{color:#f7fdff}
+    .tile{background:linear-gradient(145deg,#1c3951,#112439 74%);border-color:#365e7a;color:#eaf7ff}
+    .tile:hover{background:linear-gradient(145deg,#20547e,#143450);border-color:#76d2ff}
+    .tile.selected{background:linear-gradient(145deg,#266db5,#214a84 90%);border-color:#81dfff;box-shadow:0 0 0 1px #56b6f380,0 0 19px #349fff4d}
+    .tile.selected svg{stroke:#f4ffff}
+    .tile svg{stroke:#8fdbff}
+    .tile .arrow{color:#8ad7ff}
+    .footer{background:#071a2ae6;border-top-color:#386b90;color:#bfd9e8}
+    .footer-right{color:#86b9d4}
+    .kbd{background:#286b9f;border-color:#6fc8f7;color:#f5fdff}
+    .toast{background:#12344f;border-color:#66cfff;color:#f3fdff}
+    .pill{background:#0d2b43;border-color:#60bfe8;color:#c6f0ff}
+    .heading .sub{color:#b3d0e1}
+    .notes,.disclaimer{color:#a1bbcd}
+    .swatch{color:#c9e8f7}
+    
+  
+    /* V2: setas lado a lado em uma faixa horizontal, sem encobrir as barras. */
+    .feature-control {top:4px;bottom:auto;width:22px;height:21px;border-radius:5px;font-size:14px;line-height:1}
+    #prev {top:4px;bottom:auto;right:29px}
+    #next {top:4px;bottom:auto;right:4px}
+    .rail {left:7px;right:58px;top:11px;height:8px;gap:4px}
+    .rail button {width:16px}
+    .rail button.active {width:27px}
+    .feature-control:focus-visible {outline:2px solid var(--r1);outline-offset:1px}
+
+
+    /* V3: início mais alto e navegação COMPLETAMENTE ABAIXO do carrossel. */
+    .left .eyebrow{margin:3px 0 8px;font-size:11px;letter-spacing:.9px}
+    .vertical-carousel{height:200px}
+    .carousel-nav{width:160px;height:24px;margin-top:8px;display:flex;align-items:center;gap:5px;justify-content:space-between}
+    .carousel-count{color:var(--r4);font-weight:900;font-size:9px;white-space:nowrap;letter-spacing:.1px;min-width:31px;font-variant-numeric:tabular-nums}
+    .carousel-nav .rail{position:static;left:auto;right:auto;top:auto;bottom:auto;min-width:0;flex:1;height:20px;margin:0;display:flex;align-items:center;gap:3px;justify-content:center}
+    .carousel-nav .rail button{width:9px;height:4px;min-width:9px;border-radius:4px;flex:0 0 auto}
+    .carousel-nav .rail button.active{width:16px;min-width:16px}
+    .carousel-nav .feature-control,.carousel-nav #prev,.carousel-nav #next{position:static;left:auto;right:auto;top:auto;bottom:auto;flex:none;width:20px;height:21px;font-size:13px;border-radius:5px}
+    .left .short-label{margin:9px 0 7px}
+    .left .quicklinks{gap:5px}
+    
+
+    /* Novidades + Em Breve, baseados na demonstracao HTML aprovada. */
+    .release-switch{height:18px;display:flex;gap:5px;margin:3px 0 8px;align-items:stretch}
+    .release-tab{flex:1;min-width:0;white-space:nowrap;text-overflow:ellipsis;
+      border:1px solid #ffffff25;border-radius:4px;background:#ffffff09;color:var(--r4);
+      font:850 8px/16px Inter,Segoe UI,Arial,sans-serif;letter-spacing:.15px;padding:0 4px;cursor:pointer}
+    .release-tab.active{background:linear-gradient(110deg,var(--r2),var(--r3));
+      color:#fff;border-color:var(--r1);box-shadow:0 0 10px #0007}
+    .release-tab:focus-visible{outline:2px solid var(--r1);outline-offset:2px}
+    .feature-slide .release-badge{position:absolute;z-index:4;top:11px;left:9px;
+      color:#fff;border-radius:4px;background:#102d3ce9;border:1px solid var(--r1);
+      padding:4px 6px;font-size:9px;font-weight:950;letter-spacing:.9px;
+      box-shadow:0 2px 14px #000b}
+    .feature-slide .release-badge.soon{background:#34252bea;border-color:#ffc87c;color:#ffe2b6}
+
+    /* Force Nexus V3 final: menu compacto no alto; Top 5 embaixo, capas grandes. */
+    #stage .tile-grid{
+      top:58px;left:208px;width:418px;height:174px;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      grid-template-rows:repeat(2,84px);gap:6px
+    }
+    #stage .tile{padding:10px 11px;border-radius:8px}
+    #stage .tile svg{width:24px;height:24px}
+    #stage .tile span{font-size:10px;line-height:11px;max-width:104px}
+    #stage .tile .arrow{top:8px;right:9px;font-size:13px}
+    #stage .recent-panel{top:242px;left:208px;width:418px;height:188px;padding:10px 10px 8px}
+    #stage .recent-items{gap:3px}
+    #stage .recent-card{height:134px}
+    #stage .recent-card:after{inset:52% 0 0}
+    #stage .recent-index{font-size:8px}
+    #stage .recent-top strong{letter-spacing:.75px}
+    /* Navegacao simplificada sem contador; barras centradas, setas na direita. */
+    #stage .carousel-nav{width:160px;height:24px;margin-top:8px;display:flex;
+      align-items:center;gap:6px;justify-content:center}
+    #stage .carousel-nav .rail{position:static;left:auto;right:auto;top:auto;bottom:auto;
+      min-width:0;flex:1;height:20px;margin:0;display:flex;
+      align-items:center;gap:5px;justify-content:center}
+    #stage .carousel-nav .rail button{width:10px;height:4px;min-width:10px;
+      border-radius:999px;flex:0 0 auto;opacity:.9}
+    #stage .carousel-nav .rail button.active{width:22px;min-width:22px}
+    #stage .carousel-nav .feature-control,#stage .carousel-nav #prev,#stage .carousel-nav #next{
+      position:static;left:auto;right:auto;top:auto;bottom:auto;
+      flex:none;width:20px;height:21px;font-size:13px;border-radius:5px}
+
+    /* V6: atalhos mais altos e alinhados, sem setas no carrossel. */
+    #stage .left .short-label{margin-top:0;margin-bottom:6px}
+    #stage .left .quicklinks{gap:4px}
+    #stage .carousel-nav{justify-content:center}
+    #stage .carousel-nav .rail{flex:none;width:auto;min-width:88px;
+      max-width:155px;display:flex;justify-content:center;gap:7px}
+    #stage .carousel-nav .rail button{height:5px}
+    #stage .quick[data-action="Favoritos"] svg{stroke:var(--r4);fill:none}
+    #stage .brand strong{font-size:10px;letter-spacing:.15px;white-space:nowrap}
+  </style>
+</head>
+<body>
+  <header class="heading"><div><h1>JEDI — conceito Neon Grid</h1><div class="sub">Calma · Harmonia · Clareza · Equilíbrio · HTML interativo</div></div><div class="pill">JEDI · PRÉVIA 640 × 480</div></header>
+  <main class="viewport" id="viewport" aria-label="Simulação de tela de console 640 por 480 pixels">
+    <div id="stage">
+      <header class="header">
+        <img class="brandlogo" id="brandLogo" alt="Logo da STORE — protótipo JEDI">
+        <div class="brand"><strong>R36S PORTS BR STORE HUB</strong><span>JEDI EDITION · v1.0.12</span></div>
+        <div class="header-right"><span id="time">21:34</span><svg class="wifi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M9 17a4.5 4.5 0 0 1 6 0"/><circle cx="12" cy="20" r="1.5" fill="currentColor" stroke="none"/></svg><div class="batt"><span></span></div></div>
+      </header>
+      <section class="left" aria-label="Carrossel de novidades e lançamentos em breve">
+        <div class="release-switch" role="group" aria-label="Tipo de lançamento">
+          <button type="button" class="release-tab active" data-feed="novos" aria-pressed="true">NOVOS</button>
+          <button type="button" class="release-tab" data-feed="breve" aria-pressed="false">EM BREVE</button>
+        </div>
+        <div class="vertical-carousel">
+          <div class="vertical-track" id="verticalTrack" aria-live="polite"></div>
+        </div>
+        <nav class="carousel-nav" aria-label="Controle de novidades e próximos ports">
+          <div class="rail" id="rail" aria-label="Indicadores do carrossel de lançamentos"></div>
+        </nav>
+        <div class="short-label">ATALHOS</div>
+        <div class="quicklinks">
+          <button class="quick" data-action="Meus Ports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M7 10h5M9.5 7.5v5"/></svg>Meus Ports</button>
+          <button class="quick" data-action="Favoritos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2.4 3 6.1 6.8 1-4.9 4.8 1.2 6.8-6.1-3.2-6.1 3.2 1.2-6.8-4.9-4.8 6.8-1Z"/></svg>Favoritos</button>
+          <button class="quick" data-action="Downloads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13m-5-5 5 5 5-5M4 20h16"/></svg>Downloads</button>
+        </div>
+      </section>
+      <section class="recent-panel" aria-label="Top 5 downloads em uma linha">
+        <div class="recent-top"><strong>TOP 5 DOWNLOADS</strong><span>5 CAPAS · 1 LINHA</span></div>
+        <div class="recent-items" id="recentRow"></div>
+      </section>
+      <section class="tile-grid" aria-label="Atalhos principais">
+        <button class="tile selected" data-action="Central de Conteúdo"><svg viewBox="0 0 32 32"><path d="M5 11h22v16H5zM8 11V7h16v4M11 17h10M11 22h7"/></svg><span>Central de<br>Conteúdo</span><b class="arrow">↗</b></button>
+        <button class="tile" data-action="Biblioteca"><svg viewBox="0 0 32 32"><path d="M7 12h18a4 4 0 0 1 4 4l-1 8a3 3 0 0 1-5 2l-4-4H13l-4 4a3 3 0 0 1-5-2l-1-8a4 4 0 0 1 4-4ZM10 17v6m-3-3h6M21 18h.1M25 21h.1"/></svg><span>Biblioteca</span><b class="arrow">↗</b></button>
+        <button class="tile" data-action="Categorias"><svg viewBox="0 0 32 32"><rect x="4" y="5" width="10" height="10" rx="2"/><rect x="18" y="5" width="10" height="10" rx="2"/><rect x="4" y="19" width="10" height="10" rx="2"/><rect x="18" y="19" width="10" height="10" rx="2"/></svg><span>Categorias</span><b class="arrow">↗</b></button>
+        <button class="tile" data-action="Configurações"><svg viewBox="0 0 32 32"><path d="M13 4h6l1 4 3 1 4-2 3 5-3 3v3l3 3-3 5-4-2-3 1-1 4h-6l-1-4-3-1-4 2-3-5 3-3v-3l-3-3 3-5 4 2 3-1Z"/><circle cx="16" cy="16" r="4"/></svg><span>Configurações</span><b class="arrow">↗</b></button>
+        <button class="tile" data-action="Sobre o Projeto"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13"/><path d="M16 14v9M16 9v1"/></svg><span>Sobre o<br>Projeto</span><b class="arrow">↗</b></button>
+        <button class="tile" data-action="Sair"><svg viewBox="0 0 32 32"><path d="M15 5H6v22h9M19 9l8 7-8 7M12 16h15"/></svg><span>Sair</span><b class="arrow">↗</b></button>
+      </section>
+      <div class="footer"><span><b class="kbd">A</b>Selecionar</span><span><b class="kbd">← →</b>Carrossel</span><span><b class="kbd">L1/R1</b>Navegar</span><span class="footer-right">JEDI · PRÉVIA VISUAL</span></div>
+      <div class="toast" id="toast" role="status"></div>
+    </div>
+  </main>
+  <div class="meta">
+    <div><b>Paleta de quatro cores · JEDI</b><div class="swatches"><span class="swatch"><span class="chip" style="background:var(--r1)"></span>Azul energia <code>#5FD0FF</code></span><span class="swatch"><span class="chip" style="background:var(--r2)"></span>Azul equilíbrio <code>#238BEE</code></span><span class="swatch"><span class="chip" style="background:var(--r3)"></span>Azul serenidade <code>#2954B9</code></span><span class="swatch"><span class="chip" style="background:var(--r4)"></span>Azul cristal <code>#B0E9FF</code></span></div></div>
+    <div class="notes">Paleta Jedi: quatro azuis serenos e brilhantes, com contraste suave e painéis em azul-profundo.<div style="height:6px"></div>O carrossel de <strong>Ports recentes</strong> foi deslocado para cima e mantém o movimento vertical; <strong>setas, indicadores e contagem</strong> ficam na parte inferior. O <strong>Top 5 Downloads (5×1)</strong> aparece à direita. Os seis atalhos permanecem no layout original.</div>
+  </div>
+  <div class="disclaimer">Protótipo independente em HTML/CSS/JS — os Ports recentes e as cinco posições do Top 5 são exemplos visuais, NÃO representam histórico ou downloads reais. Para o ranking real no console, é necessário ter contadores de downloads por port em uma fonte confiável. Nenhuma alteração foi feita no app instalado ou nos temas originais.</div>
+  <script>
+    // Logotipo embutido no arquivo final para funcionar sem Wi-Fi.
+    const LOGO_DATA = 'data:image/png;base64,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';
+    document.getElementById('brandLogo').src=LOGO_DATA;
+    const elStage=document.getElementById('stage');
+    const viewport=document.getElementById('viewport');
+    function resize(){const s=viewport.clientWidth/640;elStage.style.transform=`scale(${s})`;}
+    new ResizeObserver(resize).observe(viewport);resize();
+    const features=[
+      {title:'Need for Speed Underground',sub:'Exemplo · Corrida',art:'race',eyebrow:'ÚLTIMO ADICIONADO'},
+      {title:'Celeste',sub:'Exemplo · Plataforma',art:'mountain',eyebrow:'ÚLTIMO ADICIONADO'},
+      {title:'Katana ZERO',sub:'Exemplo · Ação',art:'katana',eyebrow:'ÚLTIMO ADICIONADO'},
+      {title:'Animal Crossing',sub:'Exemplo · Aventura',art:'village',eyebrow:'ÚLTIMO ADICIONADO'}
+    ];
+    // Ranking ILUSTRATIVO: substituir por Top 5 verdadeiro apenas quando houver contagens reais.
+    const topDownloads=[
+      {title:'Balatro',art:'cards'},
+      {title:'Dead Space',art:'space'},
+      {title:'Chrono Trigger',art:'clock'},
+      {title:'Celeste',art:'mountain'},
+      {title:'NFS Underground',art:'race'}
+    ];
+    function poster(type){
+      const bg={race:['#103a5b','#0a1e32'],mountain:['#162744','#080f25'],katana:['#5a1b3c','#14091d'],village:['#3f5263','#1b2738'],cards:['#461439','#12102c'],space:['#1c313e','#080d17'],clock:['#56352c','#161526']}[type]||['#431d2a','#11121d'];
+      const common=`<defs><linearGradient id="bg-${type}" x2="1" y2="1"><stop stop-color="${bg[0]}"/><stop offset="1" stop-color="${bg[1]}"/></linearGradient><linearGradient id="glow-${type}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#63ccff" stop-opacity=".85"/><stop offset="1" stop-color="#255cbe" stop-opacity=".12"/></linearGradient></defs><rect width="200" height="220" fill="url(#bg-${type})"/><circle cx="158" cy="56" r="74" fill="url(#glow-${type})" opacity=".45"/>`;
+      const art={
+        race:`<path d="M-10 218 77 78 111 77 208 218" fill="#082138"/><path d="M16 214 90 80 111 80 180 214" fill="#12364e" stroke="#48baff" stroke-width="2"/><path d="m96 104-25 69h70l-27-69z" fill="#0d273c" stroke="#91dcff" stroke-width="1.5"/><path d="M65 164h79l18 19-4 20H50l-4-20z" fill="#091e31" stroke="#3e95dd" stroke-width="2"/><path d="M56 180h29l-3 8H53zm66 0h28l4 8h-29z" fill="#6dd0ff"/><path d="M82 109 59 145M120 105l21 40" stroke="#75cfff" stroke-width="2" opacity=".7"/>`,
+        mountain:`<path d="M-20 180 48 79l34 42 44-75 99 143v45H-20z" fill="#6174a0"/><path d="m80 126 46-80 100 142h-65l-27-36-20-15z" fill="#a4b2cb"/><path d="m102 88 24-42 36 51-24-11-13 17z" fill="#f1e8ec"/><path d="m-10 194 61-54 29 31 24-20 83 69H-10" fill="#1c3145"/><circle cx="65" cy="50" r="2" fill="#fff"/><circle cx="23" cy="34" r="1.8" fill="#fff"/><path d="M23 100v-25M13 86h20" stroke="#ffeef0" opacity=".5"/>`,
+        katana:`<circle cx="135" cy="72" r="58" fill="#4ca6df" opacity=".85"/><path d="M0 210V118l20 6V89l26 4v57l25-12V88l31 8v34l35-19v99z" fill="#14101b"/><path d="M33 125v-18m10 19v-18m41 7v-18m6 20v-18" stroke="#c6e9ff" opacity=".5"/><path d="m122 118 25 33-5 65h-41l-7-45 14-24z" fill="#08090e"/><path d="m145 147 32-75" stroke="#d2e6f3" stroke-width="3"/><path d="m180 72-35 79" stroke="#70cfff" stroke-width="2"/>`,
+        village:`<circle cx="147" cy="49" r="32" fill="#f9ba96" opacity=".8"/><path d="M0 160c65-42 116-34 200 9v60H0" fill="#264942"/><path d="M14 161V93m0 19-23-17 23-48 25 50-25 15" fill="#1c584f" stroke="#579182" stroke-width="2"/><path d="M40 147V99m0 10-22-17 22-36 22 36-22 17" fill="#34665b"/><path d="M108 121 144 92l37 29v64h-73z" fill="#a65e58"/><path d="M101 122 144 88l44 34" fill="none" stroke="#f3ceb9" stroke-width="6"/><rect x="135" y="146" width="18" height="39" fill="#3e2839"/><rect x="110" y="133" width="15" height="19" fill="#f6bf98"/>`,
+        cards:`<rect x="46" y="43" width="80" height="118" rx="5" transform="rotate(-16 86 102)" fill="#f5d3bc" stroke="#91b5ce" stroke-width="3"/><rect x="61" y="42" width="80" height="118" rx="5" transform="rotate(3 101 101)" fill="#262550" stroke="#75c5ed" stroke-width="3"/><rect x="80" y="43" width="80" height="118" rx="5" transform="rotate(18 120 102)" fill="#3279c1" stroke="#d2effb" stroke-width="3"/><path d="M112 71c7-15 25-10 25 3 0 10-11 14-16 25-5-11-18-15-18-25 0-7 4-11 9-11z" fill="#ffd7bd"/>`,
+        space:`<circle cx="102" cy="77" r="52" fill="#2b4650" stroke="#a8c5bf" stroke-width="3"/><path d="M69 79q33-30 65 0l-5 25q-27 23-56 0z" fill="#09141d" stroke="#5a9aa1" stroke-width="3"/><path d="M70 84h64m-59 11h54" stroke="#78dee2" stroke-width="2" opacity=".6"/><path d="M72 133h60l33 81H39z" fill="#263b43" stroke="#719196" stroke-width="3"/><path d="M84 133v62m40-62v62" stroke="#76a0a0" stroke-width="3"/><path d="m33 24 18 28M154 25l-9 17" stroke="#67aada" stroke-width="2"/>`,
+        clock:`<circle cx="111" cy="94" r="63" fill="#baa37d" stroke="#44342e" stroke-width="11"/><circle cx="111" cy="94" r="48" fill="#504338" stroke="#c2ad8f" stroke-width="3"/><path d="M110 50v13m0 63v11M67 94h13m62 0h13M110 94l-18-28m18 28 25 16" stroke="#e8d2a8" stroke-width="4"/><path d="m0 205 66-57 57 32 77-51v92H0" fill="#343342" opacity=".7"/>`
+      }[type]||'';
+      return `<svg class="art" viewBox="0 0 200 220" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${common}${art}</svg>`;
+    }
+    const track=document.getElementById('verticalTrack'),rail=document.getElementById('rail');
+    track.innerHTML=features.map(f=>`<div class="feature-slide">${poster(f.art)}</div>`).join('');
+    rail.innerHTML=features.map((f,i)=>`<button type="button" aria-label="Ir para port recente ${i+1}" data-index="${i}" ${i===0?'class="active"':''}></button>`).join('');
+    let selectedFeature=0,selectedTop=0,autoTimer;
+
+    function gotoFeature(i){selectedFeature=(i+features.length)%features.length;track.style.transform=`translateY(-${selectedFeature*100}%)`;rail.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===selectedFeature));}
+    function moveFeature(n){gotoFeature(selectedFeature+n);resetAuto();}
+    function resetAuto(){clearInterval(autoTimer);autoTimer=setInterval(()=>gotoFeature(selectedFeature+1),5500)}resetAuto();
+    rail.querySelectorAll('button').forEach(b=>b.onclick=()=>{gotoFeature(+b.dataset.index);resetAuto()});
+    const row=document.getElementById('recentRow');
+    row.innerHTML=topDownloads.map((p,i)=>`<button type="button" class="recent-card ${i===0?'active':''}" data-index="${i}" title="Posição ${i+1}: ${p.title} (simulação)" aria-label="Top ${i+1}: ${p.title}">${poster(p.art)}<span class="recent-index">0${i+1}</span></button>`).join('');
+    function markTop(i){selectedTop=(i+topDownloads.length)%topDownloads.length;row.querySelectorAll('.recent-card').forEach((el,j)=>el.classList.toggle('active',selectedTop===j))}
+    const toast=document.getElementById('toast');let timeout;
+    function say(s){toast.textContent=s;toast.classList.add('show');clearTimeout(timeout);timeout=setTimeout(()=>toast.classList.remove('show'),2100)}
+    row.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{markTop(+b.dataset.index);say('Top '+(selectedTop+1)+' (exemplo): '+topDownloads[selectedTop].title)}));
+    document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>{
+      document.querySelectorAll('.tile').forEach(t=>t.classList.toggle('selected',t===b));
+      say('Prévia do atalho: '+b.dataset.action);
+    }));
+    document.addEventListener('keydown',e=>{
+      if(['ArrowDown','ArrowUp','ArrowLeft','ArrowRight','Enter'].includes(e.key))e.preventDefault();
+      if(e.key==='ArrowUp')moveFeature(-1);
+      if(e.key==='ArrowDown')moveFeature(1);
+      if(e.key==='ArrowLeft')markTop(selectedTop-1);
+      if(e.key==='ArrowRight')markTop(selectedTop+1);
+      if(e.key==='Enter')say('Top '+(selectedTop+1)+' (exemplo): '+topDownloads[selectedTop].title);
+    });
+    // Relógio só para apresentação. Os dados reais continuam sendo lidos no console.
+    const now=new Date();document.getElementById('time').textContent=now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)clearInterval(autoTimer);else resetAuto()});
+  </script>
+</body>
+</html>

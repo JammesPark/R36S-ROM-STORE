@@ -1,0 +1,66 @@
+name: Importar codigo completo 0.0.4-beta
+on:
+  push:
+    branches: [main]
+    paths: ['_import_parts/source.part.*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  importar-e-empacotar:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout da main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reconstruir e validar codigo-fonte
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t parts < <(find _import_parts -maxdepth 1 -type f -name 'source.part.*' | LC_ALL=C sort)
+          test "${#parts[@]}" -eq 28
+          cat "${parts[@]}" > "$RUNNER_TEMP/source_004b.zip"
+          echo "8df27ae26e9c620f884b68da6aaa421b499585e11a877cfab68d09502c1b9143  $RUNNER_TEMP/source_004b.zip" | sha256sum --check
+          unzip -tq "$RUNNER_TEMP/source_004b.zip"
+          mkdir -p "$RUNNER_TEMP/unpacked"
+          unzip -q "$RUNNER_TEMP/source_004b.zip" -d "$RUNNER_TEMP/unpacked"
+          test -f "$RUNNER_TEMP/unpacked/game/main.lua"
+          test -f "$RUNNER_TEMP/unpacked/game/config.lua"
+          test -f "$RUNNER_TEMP/unpacked/r36sportsbrstore/README.md"
+          test -f "$RUNNER_TEMP/unpacked/LICENSE"
+          grep -q "GNU GENERAL PUBLIC LICENSE" "$RUNNER_TEMP/unpacked/LICENSE"
+          grep -q "Lag do Lira" "$RUNNER_TEMP/unpacked/NOTICE.md"
+          test "$(find "$RUNNER_TEMP/unpacked" -type f -name '*.lua' | wc -l)" -eq 170
+          echo "Codigo-fonte integro: 170 arquivos Lua e avisos legais presentes."
+
+      - name: Publicar codigo-fonte integral na main
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -mindepth 1 -maxdepth 1 ! -name .git ! -name .github -exec rm -rf {} +
+          cp -a "$RUNNER_TEMP/unpacked/." .
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Publicar codigo completo R36SPORTSBR STORE & HUB 0.0.4-beta"
+          git push origin HEAD:main
+
+      - name: Preparar pacote instalavel
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd game
+          zip -q -r ../r36sportsbrstore/game.love .
+          cd ..
+          mkdir -p dist
+          zip -q -r dist/R36SPORTSBR_STORE_0.0.4-beta.zip r36sportsbrstore "R36SPORTSBR STORE.sh" README.md NOTICE.md LICENSE update_manifest.json
+          unzip -tq dist/R36SPORTSBR_STORE_0.0.4-beta.zip
+
+      - name: Disponibilizar pacote para console
+        uses: actions/upload-artifact@v4
+        with:
+          name: R36SPORTSBR-STORE-0.0.4-beta-COMPLETA
+          path: dist/R36SPORTSBR_STORE_0.0.4-beta.zip
+          if-no-files-found: error

@@ -1,0 +1,56 @@
+{
+  "id": "forcejedi",
+  "name": "Force Nexus — Jedi",
+  "description": "Jedi azul — logo oficial completa com BR prateado e bandeira, cabeçalho sem cortes. Revisado para atualizacao geral 0.0.27-beta: logo e cabecalho 640x480 validados.",
+  "version": "1.0.12",
+  "author": "R36S ROMS STORE",
+  "preview": "preview.png",
+  "colors": {
+    "bg0": "#08121C",
+    "bg1": "#10263A",
+    "bg2": "#18364C",
+    "bg3": "#174C72",
+    "line": "#27516F",
+    "text": "#F2FAFF",
+    "dim": "#B0D0E3",
+    "faint": "#6D9AB5",
+    "accent": "#5FD0FF",
+    "accent2": "#238BEE",
+    "yellow": "#FFDA73",
+    "green": "#70F0C8",
+    "red": "#FF5877",
+    "orange": "#FFAD71",
+    "black": "#000000",
+    "shadow": "#00000099"
+  },
+  "buttons": {
+    "a": "#5FD0FF",
+    "b": "#FF5877",
+    "x": "#70F0C8",
+    "y": "#FFDA73",
+    "l1": "#B0D0E3",
+    "r1": "#B0D0E3",
+    "start": "#B0D0E3",
+    "select": "#B0D0E3",
+    "dpad": "#B0D0E3"
+  },
+  "style": {
+    "background": "modern",
+    "layout": "force",
+    "round": 1,
+    "glow": "#2954B9",
+    "scanlines": false,
+    "focus": "#5FD0FF",
+    "effect": "soft",
+    "card": {
+      "fill": "#152E46",
+      "line": "#29506C",
+      "text": "#F2FAFF",
+      "dim": "#B0D0E3",
+      "faint": "#6D9AB5",
+      "icon": "#5FD0FF"
+    },
+    "list": "grid",
+    "logo_header_scale": 1.1
+  }
+}

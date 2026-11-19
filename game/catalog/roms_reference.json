@@ -1,0 +1,88 @@
+{
+  "source": "GameStoreBR",
+  "source_type": "snapshot_from_prior_roms_store",
+  "total_roms": 13424,
+  "total_systems": 20,
+  "systems": [
+    {
+      "category": "3do",
+      "count": 21
+    },
+    {
+      "category": "amigacd32",
+      "count": 38
+    },
+    {
+      "category": "atari2600",
+      "count": 466
+    },
+    {
+      "category": "dreamcast",
+      "count": 869
+    },
+    {
+      "category": "gamegear",
+      "count": 275
+    },
+    {
+      "category": "gb",
+      "count": 610
+    },
+    {
+      "category": "gba",
+      "count": 660
+    },
+    {
+      "category": "gbc",
+      "count": 587
+    },
+    {
+      "category": "mame",
+      "count": 1811
+    },
+    {
+      "category": "mastersystem",
+      "count": 288
+    },
+    {
+      "category": "megadrive",
+      "count": 817
+    },
+    {
+      "category": "n64",
+      "count": 390
+    },
+    {
+      "category": "nds",
+      "count": 312
+    },
+    {
+      "category": "neogeo",
+      "count": 124
+    },
+    {
+      "category": "nes",
+      "count": 902
+    },
+    {
+      "category": "pcengine",
+      "count": 292
+    },
+    {
+      "category": "psp",
+      "count": 1695
+    },
+    {
+      "category": "psx",
+      "count": 569
+    },
+    {
+      "category": "saturn",
+      "count": 1782
+    },
+    {
+      "category": "snes",
+      "count": 916
+    }
+  ]
+}

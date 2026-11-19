@@ -1,0 +1,28 @@
+name = "r36sportsbr-download-stats"
+main = "src/worker.mjs"
+compatibility_date = "2026-11-01"
+workers_dev = true
+preview_urls = false
+
+# Publicacao inicial em modo somente leitura.
+[vars]
+STATS_WRITES_ENABLED = "false"
+CATALOG_LIRA_URL = "https://raw.githubusercontent.com/liralflsti-wq/r36s-port-hub/main/ports.json"
+CATALOG_R36SBR_URL = "https://raw.githubusercontent.com/JammesPark/R36SPORTSBR-STORE-UPDATES/main/catalog/catalog.json"
+
+[triggers]
+crons = ["0 * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "r36sportsbr-download-stats"
+database_id = "2ddd61ab-3c81-4a89-94b9-ecde7d498919"
+
+# Aproximadamente 12 eventos por minuto e por IP, por colo da Cloudflare.
+[[ratelimits]]
+name = "EVENT_RATE_LIMITER"
+namespace_id = "6819726"
+
+[ratelimits.simple]
+limit = 12
+period = 60
