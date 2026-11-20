@@ -233,12 +233,15 @@ end
 --- consulta a ultima Release pela API do GitHub (ou um JSON proprio)
 local function check_api(url, api, want_name, on_done)
   local out = love.filesystem.getSaveDirectory() .. "/update_info.json"
-  Fetcher.get("catalog", api or url, out, function(ok, path, reason)
+  Fetcher.get(url == C.UPDATE_URL and "ota_feed" or "catalog", api or url, out, function(ok, path, reason)
     if not ok then
       finish(nil, L("Não foi possível consultar a atualização (") .. tostring(reason) .. L("). Verifique o Wi-Fi."))
     else
       local info, err = parse_info(U.read_file(path), api ~= nil, want_name)
       os.remove(path)
+      if url == C.UPDATE_URL and info and not valid_package(info.url, info.sha256, info.size) then
+        info, err = nil, L("Manifesto de atualização ausente")
+      end
       if info and want_name and is_package_url(url) and info.name ~= want_name then
         -- a Release nao tem o arquivo do link: baixa pelo proprio link
         info.url, info.name, info.size = url, want_name, nil

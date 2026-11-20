@@ -1,5 +1,9 @@
 # Histórico de versões
 
+## [0.6.7-beta] - 2026-11-19
+
+- Consulta automática do canal público de atualizações ao abrir a loja, com aviso no menu e instalação confirmada pelo usuário.
+
 ## [0.6.6-beta] - 2026-11-18
 
 - Restaurados integralmente os ícones originais da Central de Conteúdo da versão 0.6.3-beta, conforme preferência do usuário, revertendo o redesenho simplificado de 0.6.4-beta que piorou o visual.

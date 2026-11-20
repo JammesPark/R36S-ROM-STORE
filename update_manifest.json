@@ -1,151 +1,144 @@
 {
-  "format": 1,
-  "name": "R36S ROMS STORE",
-  "type": "full",
-  "version": "0.6.6-beta",
-  "version_label": "0.6.6-beta",
-  "date": "2026-11-19",
-  "description": "Atualizacao local: busca integrada removida, icones, destaque ajustavel e contadores de ROMs.",
-  "files": [
-    {
-      "path": "R36S ROMS STORE.sh",
-      "size": 14660,
-      "sha256": "af797fd4418d6b35adfd7f154bd05e208ffc2da6f781c653975f8f1f147f13e8"
-    },
-    {
-      "path": "r36sromsstore/README.md",
-      "size": 2972,
-      "sha256": "0c5044de99c22c9df6923c2f71062e54ac3e9c773fc99043bd8990a5aa9731c0"
-    },
-    {
-      "path": "r36sromsstore/bin/7zzs",
-      "size": 3121928,
-      "sha256": "2f9b4ffcdc83eedb737a95bbdb04ab7f4805f8ad92aaef32ccc6b2bf32883209"
-    },
-    {
-      "path": "r36sromsstore/bin/es_theme_apply.sh",
-      "size": 1542,
-      "sha256": "1b5af8d3891c42aa96113cea067a4ac359adaea9d825953101585bf2fb5eb227"
-    },
-    {
-      "path": "r36sromsstore/bin/fetch.sh",
-      "size": 3826,
-      "sha256": "2ac2abc9cce4d24d37de9ee0feec8ecc71944db915c397b52b1f90ea653cb516"
-    },
-    {
-      "path": "r36sromsstore/bin/secure_7z.py",
-      "size": 2255,
-      "sha256": "2530ed007611d1e7a024c36b041ca716e48e853bbe8501b5c7c1d5bdd7d5582a"
-    },
-    {
-      "path": "r36sromsstore/catalog.json",
-      "size": 6351,
-      "sha256": "dfd620807ac1c853d8691ffd7efdce623d8579828f6085d56552047eb7177f13"
-    },
-    {
-      "path": "r36sromsstore/cover.png",
-      "size": 20660,
-      "sha256": "39e1c8d20b488376efa692e51bc86fd3582b374db5f6075473ec2905d9d1e4d1"
-    },
-    {
-      "path": "r36sromsstore/fanart.png",
-      "size": 2311,
-      "sha256": "c63d028134aba398205ea3f01f12dc9f0c80766b7c7a462be5a20c91a2a7c899"
-    },
-    {
-      "path": "r36sromsstore/game.love",
-      "size": 11538347,
-      "sha256": "d8ccfa681f0973a8bf61dc3d614a4e54dbca7593f04377a4f4ac59678ef17350"
-    },
-    {
-      "path": "r36sromsstore/gameinfo.xml",
-      "size": 682,
-      "sha256": "7a0c3782db9937c41368d4ef22f6bd73d534994df0e797c431115b0ce50a55e2"
-    },
-    {
-      "path": "r36sromsstore/licenses/7-Zip-License.txt",
-      "size": 6029,
-      "sha256": "1790374e5352329cedb46ee3808930a88e9ca2f08b82b10fcf5cf605d2c301b1"
-    },
-    {
-      "path": "r36sromsstore/licenses/GPL-3.0.txt",
-      "size": 35149,
-      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
-    },
-    {
-      "path": "r36sromsstore/licenses/LICENSE.Inter.txt",
-      "size": 6267,
-      "sha256": "781ffde332be9bdb6ccc527e6ccd6d6a586f3960c2d598b5580b8c7d1ae53d66"
-    },
-    {
-      "path": "r36sromsstore/licenses/LICENSE.love2d.txt",
-      "size": 72878,
-      "sha256": "781f3b7254c9a5b721b88c2ff2f61bdb0de5868117f9eb74a394f28ae04caab9"
-    },
-    {
-      "path": "r36sromsstore/licenses/LICENSE.luaqrcode.md",
-      "size": 1542,
-      "sha256": "589ed758767cd7bad07510a9bcae16a1b482c022845db1b8dca2838ff33af378"
-    },
-    {
-      "path": "r36sromsstore/licenses/NOTICE.md",
-      "size": 852,
-      "sha256": "c584242dd5a71042bc85052ee9bb39df743b068cb9540e4ef4f023e57d48d941"
-    },
-    {
-      "path": "r36sromsstore/licenses/OFL-ChakraPetch.txt",
-      "size": 4396,
-      "sha256": "13831d02389d917d22fcfa6c79f98f8acbf61d230add0e73a4d4dc5f3bfb9e56"
-    },
-    {
-      "path": "r36sromsstore/licenses/OFL-PressStart2P.txt",
-      "size": 4413,
-      "sha256": "705960c3281a5765ecc0b59bd4ed7ca59eed165748076bc2fc3e8fdbfeb944b0"
-    },
-    {
-      "path": "r36sromsstore/logo.png",
-      "size": 24116,
-      "sha256": "82f904dac0860e8063b451b7b31cf559ce6da6adf13cee06b4ea97b27fc2a58b"
-    },
-    {
-      "path": "r36sromsstore/tools/R36S_Analog_Tester.sh",
-      "size": 637,
-      "sha256": "aa000f1484f6f2251043bed68e40f2d6a530e5efdea87d1e9f0b4a88538e4082"
-    },
-    {
-      "path": "r36sromsstore/tools/converter_gravacao.html",
-      "size": 7711,
-      "sha256": "e50870477e7ed3c69bafd80c6071aaec261a9b5319f6750d0670f9170ff1222c"
-    },
-    {
-      "path": "r36sromsstore/tools/r36s_analog_tester/LEIA-ME.txt",
-      "size": 2620,
-      "sha256": "0626794e1ccc410584389f29dcb593433957f2e28a9f874591b5a9e6323494af"
-    },
-    {
-      "path": "r36sromsstore/tools/r36s_analog_tester/fonte_menu.bin",
-      "size": 47808,
-      "sha256": "1a2112ebf7ab85d10c624bb079b5d0344a4385616019a695f18c823dc08d4694"
-    },
-    {
-      "path": "r36sromsstore/tools/r36s_analog_tester/logo_menu.bin",
-      "size": 56427,
-      "sha256": "94310f8f6d075732145c53192af56d27e563d092ee22fb784e2029f673f04428"
-    },
-    {
-      "path": "r36sromsstore/tools/r36s_analog_tester/r36s_analog_tester.py",
-      "size": 65463,
-      "sha256": "6f222630ab44891494f26f8b109baafbaa40052d5967b26b5a4a39796309d5fc"
-    },
-    {
-      "path": "r36sromsstore/tools/r36s_analog_tester/ui_imagens.bin",
-      "size": 228752,
-      "sha256": "989581ead0cab9a2b020a2486746fc96890dff93bf538ce401392c59bac3337a"
-    }
-  ],
-  "changes": [
-    "Nome da copia atualizado para R36S ROMS STORE; catalogo de ROMs, temas e funcionalidades mantidos.",
-    "Atualizacao online da PORTS STORE desativada para evitar sobrescrever a copia independente.",
-    "Corrigido erro de sintaxe em core/archives.lua durante renomeacao; credenciais e grupo de origem preservados."
-  ]
+ "format": 1,
+ "name": "R36S ROMS STORE",
+ "type": "full",
+ "version": "0.6.7-beta",
+ "version_label": "0.6.7-beta",
+ "date": "2026-11-19",
+ "description": "Pacote completo do R36S ROMS STORE.",
+ "files": [
+  {
+   "path": "R36S ROMS STORE.sh",
+   "size": 14660,
+   "sha256": "af797fd4418d6b35adfd7f154bd05e208ffc2da6f781c653975f8f1f147f13e8"
+  },
+  {
+   "path": "r36sromsstore/README.md",
+   "size": 2972,
+   "sha256": "e35f2e9cfdf87d55e127fa3e2e151508d3a1181511952433ed8671e9422bc5cc"
+  },
+  {
+   "path": "r36sromsstore/bin/7zzs",
+   "size": 3121928,
+   "sha256": "2f9b4ffcdc83eedb737a95bbdb04ab7f4805f8ad92aaef32ccc6b2bf32883209"
+  },
+  {
+   "path": "r36sromsstore/bin/es_theme_apply.sh",
+   "size": 1542,
+   "sha256": "1b5af8d3891c42aa96113cea067a4ac359adaea9d825953101585bf2fb5eb227"
+  },
+  {
+   "path": "r36sromsstore/bin/fetch.sh",
+   "size": 3826,
+   "sha256": "2ac2abc9cce4d24d37de9ee0feec8ecc71944db915c397b52b1f90ea653cb516"
+  },
+  {
+   "path": "r36sromsstore/bin/secure_7z.py",
+   "size": 2255,
+   "sha256": "2530ed007611d1e7a024c36b041ca716e48e853bbe8501b5c7c1d5bdd7d5582a"
+  },
+  {
+   "path": "r36sromsstore/cover.png",
+   "size": 20660,
+   "sha256": "39e1c8d20b488376efa692e51bc86fd3582b374db5f6075473ec2905d9d1e4d1"
+  },
+  {
+   "path": "r36sromsstore/fanart.png",
+   "size": 2311,
+   "sha256": "c63d028134aba398205ea3f01f12dc9f0c80766b7c7a462be5a20c91a2a7c899"
+  },
+  {
+   "path": "r36sromsstore/game.love",
+   "size": 11552933,
+   "sha256": "0237f8357d40ad648c5fd4e440576ccb71afe7d6bf8dd9d4a0ef79cc3ba2adc2"
+  },
+  {
+   "path": "r36sromsstore/gameinfo.xml",
+   "size": 682,
+   "sha256": "7a0c3782db9937c41368d4ef22f6bd73d534994df0e797c431115b0ce50a55e2"
+  },
+  {
+   "path": "r36sromsstore/licenses/7-Zip-License.txt",
+   "size": 6029,
+   "sha256": "1790374e5352329cedb46ee3808930a88e9ca2f08b82b10fcf5cf605d2c301b1"
+  },
+  {
+   "path": "r36sromsstore/licenses/GPL-3.0.txt",
+   "size": 35149,
+   "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+  },
+  {
+   "path": "r36sromsstore/licenses/LICENSE.Inter.txt",
+   "size": 6267,
+   "sha256": "781ffde332be9bdb6ccc527e6ccd6d6a586f3960c2d598b5580b8c7d1ae53d66"
+  },
+  {
+   "path": "r36sromsstore/licenses/LICENSE.love2d.txt",
+   "size": 72878,
+   "sha256": "781f3b7254c9a5b721b88c2ff2f61bdb0de5868117f9eb74a394f28ae04caab9"
+  },
+  {
+   "path": "r36sromsstore/licenses/LICENSE.luaqrcode.md",
+   "size": 1542,
+   "sha256": "589ed758767cd7bad07510a9bcae16a1b482c022845db1b8dca2838ff33af378"
+  },
+  {
+   "path": "r36sromsstore/licenses/NOTICE.md",
+   "size": 852,
+   "sha256": "c584242dd5a71042bc85052ee9bb39df743b068cb9540e4ef4f023e57d48d941"
+  },
+  {
+   "path": "r36sromsstore/licenses/OFL-ChakraPetch.txt",
+   "size": 4396,
+   "sha256": "13831d02389d917d22fcfa6c79f98f8acbf61d230add0e73a4d4dc5f3bfb9e56"
+  },
+  {
+   "path": "r36sromsstore/licenses/OFL-PressStart2P.txt",
+   "size": 4413,
+   "sha256": "705960c3281a5765ecc0b59bd4ed7ca59eed165748076bc2fc3e8fdbfeb944b0"
+  },
+  {
+   "path": "r36sromsstore/logo.png",
+   "size": 24116,
+   "sha256": "82f904dac0860e8063b451b7b31cf559ce6da6adf13cee06b4ea97b27fc2a58b"
+  },
+  {
+   "path": "r36sromsstore/tools/R36S_Analog_Tester.sh",
+   "size": 637,
+   "sha256": "aa000f1484f6f2251043bed68e40f2d6a530e5efdea87d1e9f0b4a88538e4082"
+  },
+  {
+   "path": "r36sromsstore/tools/converter_gravacao.html",
+   "size": 7711,
+   "sha256": "e50870477e7ed3c69bafd80c6071aaec261a9b5319f6750d0670f9170ff1222c"
+  },
+  {
+   "path": "r36sromsstore/tools/r36s_analog_tester/LEIA-ME.txt",
+   "size": 2620,
+   "sha256": "0626794e1ccc410584389f29dcb593433957f2e28a9f874591b5a9e6323494af"
+  },
+  {
+   "path": "r36sromsstore/tools/r36s_analog_tester/fonte_menu.bin",
+   "size": 47808,
+   "sha256": "1a2112ebf7ab85d10c624bb079b5d0344a4385616019a695f18c823dc08d4694"
+  },
+  {
+   "path": "r36sromsstore/tools/r36s_analog_tester/logo_menu.bin",
+   "size": 56427,
+   "sha256": "94310f8f6d075732145c53192af56d27e563d092ee22fb784e2029f673f04428"
+  },
+  {
+   "path": "r36sromsstore/tools/r36s_analog_tester/r36s_analog_tester.py",
+   "size": 65463,
+   "sha256": "6f222630ab44891494f26f8b109baafbaa40052d5967b26b5a4a39796309d5fc"
+  },
+  {
+   "path": "r36sromsstore/tools/r36s_analog_tester/ui_imagens.bin",
+   "size": 228752,
+   "sha256": "989581ead0cab9a2b020a2486746fc96890dff93bf538ce401392c59bac3337a"
+  }
+ ],
+ "changes": [
+  "Consulta automática do canal público de atualizações ao abrir a loja, com aviso no menu e instalação confirmada pelo usuário."
+ ]
 }

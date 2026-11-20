@@ -832,6 +832,7 @@ function love.load(args)
     -- avisos da abertura: so depois do aviso importante (nao cobrem o botao dele)
     App.boot_toasts = {}
     -- aviso de versao nova no alto da tela inicial (consulta leve em segundo plano)
+    require("core.updnotice").start()
     -- atualizacao: confirma a versao nova (o app abriu) ou conclui uma recuperacao
     local okn, notice = pcall(UpdMgr.on_boot)
     if okn and notice then App.boot_toasts[#App.boot_toasts + 1] = notice

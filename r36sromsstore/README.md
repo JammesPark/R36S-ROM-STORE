@@ -5,7 +5,7 @@ Loja independente para o R36S com catalogo local de ROMs, construída como uma v
 > **Baseado no R36S PORT HUB, por Lag do Lira**  
 > https://youtube.com/@lagdolira
 
-**Status:** versão 0.6.6-beta com identificadores internos R36SBR; o catálogo próprio e a distribuição de atualizações aponta para o canal público oficial. Não é uma versão oficial do projeto original.
+**Status:** versão 0.6.7-beta com identificadores internos R36SBR; o catálogo próprio e a distribuição de atualizações aponta para o canal público oficial. Não é uma versão oficial do projeto original.
 
 ## Instalação (SD1)
 

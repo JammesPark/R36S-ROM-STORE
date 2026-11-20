@@ -12,8 +12,7 @@ local N = { version = nil, label = nil, phase = "idle", popup_seen = false }  --
 
 local NET_WAIT = 25      -- segundos esperando a rede antes de desistir nesta abertura
 
--- Consulta automatica temporariamente desativada; atualizacao manual preservada.
-function N.enabled() return false end
+function N.enabled() return Prefs.get("upd_notify") ~= "0" end
 
 --- comeca a espera pela rede; a consulta sai em N.update()
 function N.start()
@@ -37,7 +36,7 @@ local function run_check()
 end
 
 function N.update(dt)
-  if N.phase ~= "waitnet" then return end
+  if N.phase ~= "waitnet" or not N.enabled() then return end
   local st = require("core.net").current()
   if st and st.connected then
     -- nao disputa com uma verificacao aberta pelo usuario

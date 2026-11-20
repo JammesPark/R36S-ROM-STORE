@@ -10,8 +10,8 @@ local L = require("lib.i18n").L
 local C = {}
 
 C.APP_NAME = L("R36S ROMS STORE")
-C.VERSION = L("0.6.6-beta")       -- texto exibido
-C.VERSION_NUM = "0.6.6-beta"        -- numero usado para comparar com a atualizacao
+C.VERSION = L("0.6.7-beta")       -- texto exibido
+C.VERSION_NUM = "0.6.7-beta"        -- numero usado para comparar com a atualizacao
 -- R36 Hub OS: o hub e a interface principal do sistema (supervisor exporta R36HUBOS=1)
 C.OS_MODE = os.getenv("R36HUBOS") == "1"
 C.OS_NAME = "R36 Hub OS"
@@ -23,7 +23,7 @@ C.OS_VERSION = os.getenv("R36HUBOS_VERSION") or ""
 -- https://github.com/USUARIO/REPO, usa a ultima Release) ou de um JSON
 -- { "version", "url", "sha256", "notes" }.
 -- Tambem pode ser definido em <pasta do app>/update_url.txt (sobrescreve este).
-C.UPDATE_URL = ""  -- ROMS STORE independente: sem repositorio de atualizacoes
+C.UPDATE_URL = "https://raw.githubusercontent.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/main/ota/update.json"
 
 -- Catalogo de temas (Configuracoes > Temas > Baixar novos temas). Vazio ate o
 -- repositorio de temas ser publicado. Tambem pode ser definido em

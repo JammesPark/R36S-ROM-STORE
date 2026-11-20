@@ -72,3 +72,28 @@ jobs:
               --notes "Instalador manual para R36S/R36H. Extraia o ZIP na pasta ports do cartão."
           fi
           gh release upload "$tag" "build/R36S_ROMS_STORE_${version}.zip" --clobber
+
+      - name: Enviar versão nova ao canal público
+        env:
+          GH_TOKEN: ${{ secrets.ROMS_UPDATES_TOKEN }}
+          PUBLIC_REPO: JammesPark/R36S-ROMS-HUB-STORE-UPDATES
+        run: |
+          set -euo pipefail
+          version=$(python3 tools/version.py get)
+          test -n "$GH_TOKEN" || { echo "::error::Configure ROMS_UPDATES_TOKEN com escrita de conteúdo no repositório público."; exit 1; }
+          gh auth setup-git
+          gh repo clone "$PUBLIC_REPO" "$RUNNER_TEMP/canal" -- --depth=1
+          cd "$RUNNER_TEMP/canal"
+          if [[ -f distribution/version.txt ]]; then
+            current=$(cat distribution/version.txt)
+            [[ "$current" != "$version" ]] || exit 0
+            [[ "$(printf '%s\n' "$version" "$current" | sort -V | tail -1)" == "$version" ]] || exit 1
+          fi
+          mkdir -p distribution
+          cp "$GITHUB_WORKSPACE/build/R36S_ROMS_STORE_${version}.zip" distribution/installer.zip
+          printf '%s\n' "$version" > distribution/version.txt
+          git config user.name github-actions
+          git config user.email github-actions[bot]@users.noreply.github.com
+          git add distribution
+          git commit -m "Distribuir R36S ROMS STORE $version"
+          git push origin HEAD:main

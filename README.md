@@ -2,7 +2,7 @@
 
 Repositório do projeto **R36S ROMS STORE**, hospedado com o nome **R36S-ROMS-HUB-STORE**.
 
-**Status:** versão 0.6.6-beta
+**Status:** versão 0.6.7-beta
 
 Aplicativo para consoles R36S/R36H, com interface Lua e LÖVE 11.5. Inclui catálogo de ROMs por sistema, gerenciamento de downloads, instalação em SD1/SD2, favoritos, BIOS, temas e gerenciamento seguro dos arquivos instalados.
 
@@ -21,7 +21,7 @@ Baixe o instalador ZIP em **[Releases](https://github.com/JammesPark/R36S-ROMS-H
 
 Executar manualmente no Linux: `sh tools/build.sh`.
 
-**O GitHub Actions não instala nada no console e não publica atualizações OTA.** A execução é de build e validação, com ZIP para download na pré-release do commit.
+A loja verifica o canal público ao abrir. Quando encontra uma versão nova, oferece o download e a instalação com confirmação. Consulte [o canal OTA](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES).
 
 ## Autoria, licenças e conteúdo
 

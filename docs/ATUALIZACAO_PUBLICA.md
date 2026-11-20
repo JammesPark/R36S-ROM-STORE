@@ -1,5 +1,5 @@
-# Distribuição da R36S ROMS STORE
+# Atualizações públicas
 
-O repositório do aplicativo é [JammesPark/R36S-ROMS-HUB-STORE](https://github.com/JammesPark/R36S-ROMS-HUB-STORE). O workflow da branch `main` verifica as fontes e os testes, recompila o `game.love` e empacota o instalador. Cada build aprovada da main disponibiliza o ZIP de instalação em Releases, identificado pelo commit.
+A partir da 0.6.7-beta, a loja consulta `ota/update.json` no repositório público JammesPark/R36S-ROMS-HUB-STORE-UPDATES. A primeira instalação desta versão é manual. O aviso pode ser alterado em Configurações. O instalador completo inclui o catálogo inicial. O pacote OTA contém apenas os arquivos do manifesto para preservar os dados locais.
 
-A instalação é manual. A URL de atualização do aplicativo está vazia e a publicação da pré-release usa permissão de escrita apenas na main. Em pull requests, a validação usa permissão de leitura. O catálogo remoto de temas é independente da distribuição do aplicativo.
+Aumente a versão com `python3 tools/version.py bump patch --note "Descrição"`. Após os testes da main, o workflow envia o instalador ao repositório público usando o segredo ROMS_UPDATES_TOKEN com escrita de conteúdo nesse destino. O workflow público gera o ZIP OTA, verifica a integridade, publica a Release e só então atualiza o feed.

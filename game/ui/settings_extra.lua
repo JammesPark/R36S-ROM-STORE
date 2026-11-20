@@ -132,9 +132,12 @@ function X.prefs_category()
         enabled = function() return pref_on("notif") end,
         get = function() return pref_on("notif_alert") end, set = function(v) Prefs.set("notif_alert", v and "1" or "0") end },
       { kind = "toggle", label = L("Aviso de nova versão do hub"),
-        desc = L("A verificação automática de novas versões está temporariamente desativada. A atualização manual permanece disponível."),
-        enabled = function() return false end,
-        get = function() return false end, set = function(v) end },
+        desc = L("Ao abrir o hub, confere o link oficial em segundo plano. Se houver versão nova, um aviso desliza no alto da tela inicial até você atualizar (SELECT abre a atualização). Nada é baixado sozinho."),
+        get = function() return pref_on("upd_notify") end,
+        set = function(v)
+          Prefs.set("upd_notify", v and "1" or "0")
+          if v then require("core.updnotice").start() end
+        end },
       { kind = "toggle", label = L("Som das notificações"),
         desc = L("Toca um aviso curto quando uma notificação aparece."),
         get = function() return require("core.sfx").notif end,
