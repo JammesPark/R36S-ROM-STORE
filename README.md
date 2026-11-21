@@ -15,13 +15,14 @@ Atenção: esta edição utiliza o mesmo launcher e diretório de instalação d
 **Não use as Releases oficiais para obter esta edição.** Elas continuam
 destinadas à `main`, preservada em 0.6.7-beta.
 
-1. Entre na aba **Actions** da branch `experimental/0.6.7-beta-20261121`.
-2. Baixe o artifact `R36S_ROMSTORE_Experimental_Etapa1` da execução validada.
-3. Faça backup da loja instalada e extraia o instalador para `/roms/ports/`.
-4. Extraia, em seguida, o pacote de **dados** `R36S_ROMSTORE_Etapa1_INSTALAR_SD.zip`
-   no mesmo local. É ele que contém o catálogo próprio e sua cópia de segurança.
-5. Abra o aplicativo, em **Configurações > Catálogo de ROMs**, e confirme
-   que são exibidas **12.488 ROMs**. O catálogo não depende da API GameStoreBR.
+1. Após uma execução **verde** do GitHub Actions da branch `experimental/0.6.7-beta-20261121`,
+   baixe o ZIP na [branch de downloads experimentais](https://github.com/JammesPark/R36S-ROMS-HUB-STORE/tree/experimental-downloads/distribution):
+   `R36S_ROMSTORE_Experimental_Etapa1.zip`.
+2. Faça backup da loja instalada e extraia o ZIP do aplicativo em `/roms/ports/`.
+3. Extraia, em seguida, o pacote de **dados** `R36S_ROMSTORE_Etapa1_INSTALAR_SD.zip`,
+   distribuído separadamente, no mesmo local. Ele contém o catálogo e a cópia válida.
+4. Abra **Configurações > Catálogo de ROMs** e confirme **12.488 ROMs**.
+   O aplicativo não usa a API GameStoreBR.
 
 Em instalação personalizada/SD2, coloque os dois ZLIBs na pasta real da loja
 (`R36SBR_DIR` / `C.APP_DIR`). O aplicativo não faz fallback automático
@@ -37,8 +38,10 @@ necessário. **Testes no hardware real ainda não foram realizados.**
 - `tests/test_own_catalog.lua`: teste do leitor e cópia válida;
 - `tests/test_catalog_offline.py`: teste de ausência da API de jogos antiga;
 - `tools/build.sh`: gera o instalador e recompila o `game.love`;
-- `.github/workflows/build.yml`: valida LuaJIT, testes, empacota e fornece
-  um **artifact de teste** somente para a Experimental (sem Release oficial e sem OTA).
+- `.github/workflows/build.yml`: valida LuaJIT, testa e empacota, publicando
+  o ZIP somente na branch `experimental-downloads` (sem Release oficial nem OTA).
+  O GitHub Actions `upload-artifact` foi desativado porque a cota do repositório está cheia.
+  Nenhum link para a branch de downloads é atualizado caso o build falhe.
 
 ```sh
 sh tools/build.sh
