@@ -78,7 +78,10 @@ function S:read()
     for i = 1, math.min(24, j:getButtonCount()) do raw.buttons[i] = j:isDown(i) end
     -- Fallback pelos indices fisicos: algumas builds SDL nao expõem back/start
     -- como botoes Gamepad apesar de ler os botoes numericos normalmente.
-    local sel, start = Input.raw_start_select(j)
+    -- A base original do Port Store nao expoe raw_start_select.
+    -- A tela de teste deve funcionar tambem sem esse fallback opcional.
+    local sel, start
+    if Input.raw_start_select then sel, start = Input.raw_start_select(j) end
     if sel and raw.buttons[sel] then down.back = true end
     if start and raw.buttons[start] then down.start = true end
     raw.name = j:getName()
