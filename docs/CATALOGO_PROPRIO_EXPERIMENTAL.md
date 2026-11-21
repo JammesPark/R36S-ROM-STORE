@@ -1,65 +1,118 @@
 # Catálogo próprio — R36S ROMS STORE — Experimental
 
-Base: 0.6.7-beta (`f9f7d2b`). **Somente a branch Experimental**; sem alterações na `main` ou no repositório público OTA.
+**Etapa 1 — catálogo próprio offline (2026-11-21).** Apenas na branch
+`experimental/0.6.7-beta-20261121`. A `main` permanece em **0.6.7-beta**
+(`f9f7d2b9caa87ca3f6e8242641a3b483d1f29f50`).
 
-## Fonte e resultado
+## Dados e auditoria do filtro
 
-- Fonte entregue: `links(1).zip`, arquivos `links/*.csv`.
-- 15.727 links inspecionados de 48 sistemas.
-- 15.652 itens classificados como ROMs/jogos cadastrados.
-- 75 links de arquivos auxiliares (`.nfo`, `.sav`, `.srm`, `.rtc`, etc.) ficaram em relatório separado e **não** entram como jogos.
-- Todas as URLs foram preservadas exatamente como fornecidas. A disponibilidade individual dos servidores e os direitos de distribuição não foram verificados.
-- Nenhuma capa foi fornecida na fonte. `cover` fica vazio, sem imagens inventadas.
+| Medida | Resultado |
+| --- | ---: |
+| Links inspecionados nos CSVs originais | 15.727 |
+| Arquivos auxiliares descartados | 75 |
+| Jogos no catálogo inicial | 15.652 |
+| Jogos excluídos no filtro anterior | 3.177 |
+| Versões multilíngues/traduzidas reintegradas na revisão | **13** |
+| Jogos excluídos após a revisão | **3.164** |
+| Exclusões por região JP/CN/TW/HK sem idioma comprovado | **3.162** |
+| Exclusões por idioma explícito JA/CH | **2** |
+| **Jogos do catálogo próprio final** | **12.488** |
+| Sistemas | **48** |
 
-O ZIP do catálogo é entregue separadamente ao usuário e **não está commitado** nesta branch. Portanto, o instalador padrão construído pelo GitHub Actions **não inclui** o arquivo de dados do catálogo próprio até que ele seja instalado manualmente.
+**Atenção:** `(Japan)`, `(JP)`, `(China)`, `(CN)`,
+`(Taiwan)` e `(HK)` são marcadores de **região** e não provam,
+isoladamente, que o jogo não ofereça inglês ou outro idioma. Para respeitar
+o pedido de excluir essas versões, as 3.162 entradas continuam de fora,
+**com relatório individual para eventual verificação manual posterior**.
+Não estão classificadas como idioma confirmado.
 
-## Instalação do arquivo de dados
+A revisão reintegrou jogos com indicação explícita de tradução `[T-En ...]`,
+`[T-Fr ...]`, `[T-Fre ...]`, `[tr en]` ou idiomas `(en-ja)`.
+Nenhum jogo foi reintegrado com base em palpite sobre seu conteúdo.
 
-1. Instalar a edição Experimental da loja (em ambiente de teste, com backup).
-2. Extrair o ZIP do catálogo na raiz de `/roms/ports/`, preservando o caminho `r36sromsstore/catalogo_proprio.zlib`.
-3. Em uma instalação no SD2, copiar `catalogo_proprio.zlib` para a **pasta real da loja**, conforme `C.APP_DIR`.
-4. Na loja, abrir **Configurações → Catálogo de ROMs → Fonte do catálogo → R36S ROMS STORE — Experimental**.
-5. Para retornar ao original, selecionar **GameStoreBR**. Os catálogos não são mesclados.
+Os pacotes de dados, separados do código no repositório, incluem:
+- `catalogo_proprio.json`, `catalogo_proprio.zlib`;
+- `r36sromsstore/catalogo_proprio.zlib`;
+- `r36sromsstore/catalogo_proprio_ultimo_valido.zlib` (cópia inicial validada);
+- `auditoria_regiao_sem_idioma_comprovado.csv` (3.162 itens);
+- `exclusoes_idioma_explicito.csv` (2 itens);
+- `restauradas_multilingue_traduzidas.csv` (13 itens);
+- `resumo_por_sistema.csv` (originais, removidas, restantes);
+- `filtrar_regioes_roms_etapa1.py` (filtro reproduzível).
 
-O catálogo próprio é descompactado e validado localmente. Limites atuais da edicao experimental: 4 MiB compactado, 16 MiB em JSON e 50.000 entradas. A memoria e o desempenho ainda precisam de testes no console. O arquivo validado contém 15.652 registros e 48 categorias. Quando escolhido, todas as entradas aparecem de imediato, sem paginação da API GameStoreBR; a busca funciona localmente.
+As URLs de download originais foram preservadas. Não se verificou a
+disponibilidade de cada link ou autorização de distribuição dos jogos.
 
-## Compatibilidade de instalação
+## Independência da API GameStoreBR
 
-As 20 plataformas já aceitas pelo instalador da versão 0.6.7-beta mantêm suas regras originais. Os outros 28 sistemas aparecem no catálogo e podem ser pesquisados, mas a instalação automática desses sistemas requer uma revisão futura de pastas, formatos e emuladores para cada firmware. **Não adicionar mapeamentos arbitrários.**
+Na edição Experimental:
+1. `game/core/catalog.lua` usa exclusivamente `core.own_source`.
+   `Catalog.provider()` devolve somente `r36s_own`;
+2. `game/main.lua` carrega e recarrega somente o ZLIB instalado, sem consultas
+   ao serviço de jogos anterior;
+3. `game/core/rom_source.lua` mantém apenas uma interface inerte de compatibilidade,
+   sem HTTP;
+4. as telas de loja, pesquisa e configurações não fazem busca paginada;
+5. se o ZLIB próprio falhar, **não existe retorno automático para GameStoreBR,
+   catálogo legado ou outra fonte remota**;
+6. as URLs diretas de ROM presentes no catálogo continuam externas e
+   independentes da API usada para listar jogos.
 
-Os links podem apontar para ROMs, pacotes ou arquivos com formatos inadequados para cada emulador. O catálogo **não garante** download bem-sucedido, funcionamento no console ou permissão para redistribuir o conteúdo.
+O projeto continua com outros recursos de rede (como ROMs, capas,
+atualizações de temas); não confundir a retirada de **uma API de catálogo**
+com funcionamento integralmente offline de todas as ferramentas.
 
-## Integridade
+## Cópia de recuperação e comportamento em falhas
 
-- Compactado (SHA-256): `e31d90c9623e1a8336f6e671af37cde06a84f5126b45f3575eb2e1279621f392`
-- JSON (SHA-256): `d948b001fb93d7b833b34df579854af263ce95a9f98fabf555ab10af00ffb7cf`
+O arquivo principal fica em `<pasta da loja>/catalogo_proprio.zlib`.
+O backup fica no mesmo diretório com o nome
+`catalogo_proprio_ultimo_valido.zlib`.
 
-A validação do arquivo é feita antes de aceitar as entradas. Os jogos, capas, favoritos e downloads já existentes não são apagados durante a troca de fonte.
+- Após validar estrutura, URLs, IDs e normalizar **100%** dos registros,
+  a loja grava a cópia válida por arquivo temporário + renomeação;
+- se o principal faltar ou estiver inválido, tenta a cópia validada;
+- quando o backup é utilizado, tenta restaurar automaticamente o principal;
+- sem ambos, avisa o erro, sem consultar APIs nem carregar dados falsos;
+- se uma atualização falhar durante a mesma sessão, preserva a lista
+  anteriormente carregada na memória.
 
-## Testes
+Limites do leitor: **4 MiB ZLIB, 16 MiB JSON, 50.000 jogos, 100 categorias**.
+O backup é do catálogo, não das ROMs baixadas. Não apaga favoritos,
+jogos instalados ou histórico.
 
-`tests/test_own_catalog.lua` simula um catálogo válido, registros duplicados, URL não HTTP(S), JSON descompactado excessivo e arquivo ausente. O GitHub Actions da branch experimental executa esse teste e a compilação LuaJIT; não publica uma Release oficial.
+## Instalação da etapa 1
 
-## Preparacao de capas e sinopses (etapa posterior)
+1. Faça backup da pasta atual da loja Experimental.
+2. Instale o código da branch Experimental (não a versão oficial `main`).
+3. Extraia o pacote `R36S_ROMSTORE_Etapa1_INSTALAR_SD.zip` na raiz de
+   `/roms/ports/`, preservando:
+   - `r36sromsstore/catalogo_proprio.zlib`;
+   - `r36sromsstore/catalogo_proprio_ultimo_valido.zlib`.
+4. Se o aplicativo estiver no SD2 ou em pasta diferente, copie esses dois
+   arquivos para a pasta **real do aplicativo** (`C.APP_DIR`).
+5. Na loja: **Configurações → Catálogo de ROMs**. A fonte é fixa e
+   `Recarregar catálogo do cartão` faz somente leitura local.
+6. Verifique que a loja mostra **12.488 ROMs**. O catálogo não inclui capas
+   nem descrições: isto pertence às etapas seguintes.
 
-Foi preparado um utilitario externo `enriquecer_catalogo_r36s.py` para localizar capas por nome, sistema e regiao no indice Libretro e para incorporar sinopses reais vindas de CSV revisado. O utilitario ainda e entregue em ZIP separado, nao integrado ao pipeline automatizado do GitHub. Nenhuma consulta em massa foi executada no ambiente de edicao: 10 URLs de capas vieram do cache original 0.6.7-beta e nao foram verificadas individualmente; 0 imagens baixadas e 0 sinopses reais obtidas nesta etapa. Os campos restantes ficam vazios ate enriquecimento verificado.
+**Os arquivos de dados não foram commitados no GitHub**. O ZIP da build
+gerado apenas pelo GitHub Actions não carrega automaticamente as 12.488 ROMs;
+é necessário instalar o ZIP de dados separado. Os links não foram alterados.
 
-## Filtro de versoes japonesas e chinesas — 2026-11-21
+## Testes e limites
 
-O catalogo fornecido com 15.652 registros foi filtrado separadamente, **sem alterar os links da API GameStoreBR e sem alterar a `main`**:
+- `tests/test_own_catalog.lua`: validação do ZLIB, IDs, URLs, backup,
+  recuperação e ausência sem fallback;
+- `tests/test_catalog_offline.py`: garante que o runtime não contém o
+  endpoint anterior, a fonte é única, a busca da loja é local e o OTA da
+  Experimental segue desligado;
+- `.github/workflows/build.yml`: compila LuaJIT, executa testes e constrói
+  o pacote apenas no CI. Não distribui esta edição pelo canal oficial.
 
-- 3.177 ROMs removidas por marcadores de idioma japones/chines ou regiao exclusiva Japan/JP/China/CN/Taiwan/TW/Hong Kong/HK;
-- **12.475 ROMs restantes**, nas 48 categorias;
-- conservadas versoes explicitamente multilingues, como `(En,Ja)`, ou lancamentos `(Japan, USA)`/`(Japan, Europe)`;
-- nomes de jogos contendo palavras como `China` nao bastam para remove-los;
-- **o local de lancamento nao prova o idioma**: exclusoes baseadas apenas na regiao podem exigir revisao manual.
+Testes no console real (memória, desempenho e instalação dos 48 sistemas)
+não fazem parte desta verificação de código. Apenas 20 plataformas tinham
+instalação automática implementada na base 0.6.7-beta; as demais exigem
+compatibilidade específica antes de serem habilitadas.
 
-O arquivo gerado fora do GitHub `R36S_ROMS_STORE_Experimental_Catalogo_Sem_Japones_Chines.zip` contem:
-
-- `catalogo_proprio.json`, `catalogo_proprio.zlib`, `r36sromsstore/catalogo_proprio.zlib`;
-- `roms_excluidas_japones_chines.csv` (auditoria), `sistemas.csv`, `manifest.json`;
-- `filtrar_regioes_roms.py`, para aplicar novamente o filtro apos a busca de capas/descricoes.
-
-Para usar no console, extrair **somente a copia filtrada** de `r36sromsstore/catalogo_proprio.zlib` na pasta da loja, com copia de seguranca do arquivo anterior. O script de filtragem tambem aceita ZIPs enriquecidos posteriormente e preserva `cover`, `description` e demais metadados ja presentes.
-
-O arquivo compactado nao esta commitado no repositorio. O pacote de catalogo e distribuido separadamente.
+A **Etapa 1 não inclui** migração de acervos Archive.org, CPS1/CPS3,
+ScreenScraper, download de capas ou otimização de downloads.
