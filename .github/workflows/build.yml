@@ -12,6 +12,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # somente para enviar ZIP a branch experimental-downloads
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -54,15 +56,50 @@ jobs:
           sh tools/build.sh
           for pkg in build/*.zip; do unzip -tq "$pkg"; done
 
-      - name: Disponibilizar instalador Experimental para testes (sem Release/OTA)
+      # upload-artifact nao e usado: a cota de artifacts deste repositorio
+      # esta esgotada, embora o build e os testes estejam funcionando.
+      - name: Publicar instalador na branch experimental-downloads (sem Release ou OTA)
         if: github.ref == 'refs/heads/experimental/0.6.7-beta-20261121' && github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: R36S_ROMSTORE_Experimental_Etapa1
-          path: build/R36S_ROMS_STORE_*.zip
-          retention-days: 14
-          if-no-files-found: error
-
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = 'refs/heads/experimental/0.6.7-beta-20261121'
+          pkg="build/R36S_ROMS_STORE_$(python3 tools/version.py get).zip"
+          test -s "$pkg"
+          # Limite de arquivo individual permitido pelo GitHub.
+          test "$(stat -c%s "$pkg")" -lt 100000000 || {
+            echo "::error::ZIP acima de 100 MB; GitHub nao permite arquivo desse tamanho em Git."
+            exit 1
+          }
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          branch="experimental-downloads"
+          pub="$RUNNER_TEMP/romstore-exp-downloads"
+          if git fetch --depth=1 origin "$branch:refs/remotes/origin/$branch"; then
+            git worktree add -B "$branch" "$pub" "refs/remotes/origin/$branch"
+          else
+            git worktree add --detach "$pub" HEAD
+            git -C "$pub" switch --orphan "$branch"
+            git -C "$pub" rm -rf . || true
+          fi
+          mkdir -p "$pub/distribution"
+          cp "$pkg" "$pub/distribution/R36S_ROMSTORE_Experimental_Etapa1.zip"
+          (
+            cd "$pub"
+            printf '%s\n' '# Instalação R36S ROMS STORE Experimental' '' \
+              'Esta branch publica somente o instalador gerado de uma build testada da Experimental.' \
+              'Nao e a branch main nem o canal OTA oficial.' '' \
+              'Instale também R36S_ROMSTORE_Etapa1_INSTALAR_SD.zip (catalogo .zlib, fornecido separadamente).' \
+              "Commit do codigo: $GITHUB_SHA" > README.md
+            git add -A
+            if git diff --cached --quiet; then
+              echo "O ZIP publicado ja esta atualizado."
+            else
+              git commit -m "build(experimental): disponibilizar ZIP validado de $GITHUB_SHA"
+              git push origin "HEAD:refs/heads/$branch"
+            fi
+          )
+          echo "Instalador disponivel na branch $branch; nao usa Actions artifacts."
   release:
     needs: build
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
