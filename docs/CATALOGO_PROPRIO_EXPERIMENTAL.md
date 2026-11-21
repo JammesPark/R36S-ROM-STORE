@@ -92,5 +92,29 @@ sem as novas siglas para não prejudicar o reconhecimento dos títulos.
 Libretro é a primeira fonte de capas, ScreenScraper é complementar;
 a consulta deve ser feita no PC, não durante a navegação do console.
 
+### Alteração visual aprovada para implementação futura — etiquetas de região
+
+**Status: planejada, ainda não aplicada ao Lua nem aos dados do catálogo.**
+
+- [ ] Exibir a região numa etiqueta própria ao lado da identificação do sistema,
+  utilizando o mesmo estilo arredondado/contornado das etiquetas da loja.
+- [ ] Atribuir cor fixa a cada região:
+  - **JP** (Japão): rosa-coral `#FF738A`.
+  - **CN** (China): laranja `#FFC065`.
+  - **TW** (Taiwan): verde `#58E0A6`.
+  - **HK** (Hong Kong): lilás `#B9A1FF`.
+- [ ] Preservar a identificação do sistema em ciano, separada da região.
+- [ ] Retirar a sigla redundante do **nome exibido** quando a etiqueta estiver
+  presente, sem alterar os nomes originais, IDs, URLs ou nomes de arquivo
+  necessários à busca de capas e à instalação.
+- [ ] Reproduzir o padrão nos modos **Lista, Grade e Detalhes**, mantendo o
+  posicionamento consistente nos temas e a legibilidade em 640×480.
+- [ ] Testar a apresentação de jogos sem região identificada (não mostrar
+  etiqueta vazia) e de títulos longos (sem cortes e sobreposições).
+
+Referência visual: protótipo HTML `R36S_ROMSTORE_Prototipo_Regioes_Coloridas_640x480.html`
+aprovado na conversa. **Esta alteração fica na lista para uma atualização
+posterior; não inicia a etapa de capas nem muda o funcionamento atual.**
+
 Migração de links para Archive.org, inclusão de CPS1/CPS3, novas instalações
 por sistema e otimizações de velocidade não fazem parte desta alteração.
