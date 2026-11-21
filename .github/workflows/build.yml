@@ -51,6 +51,15 @@ jobs:
           sh tools/build.sh
           for pkg in build/*.zip; do unzip -tq "$pkg"; done
 
+      - name: Disponibilizar instalador Experimental para testes (sem Release/OTA)
+        if: github.ref == 'refs/heads/experimental/0.6.7-beta-20261121' && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: R36S_ROMSTORE_Experimental_Etapa1
+          path: build/R36S_ROMS_STORE_0.6.7-beta.zip
+          retention-days: 14
+          if-no-files-found: error
+
   release:
     needs: build
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
