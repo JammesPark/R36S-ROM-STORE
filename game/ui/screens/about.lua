@@ -31,9 +31,9 @@ local SUPPORT_TEXT = L("Esta loja é gratuita. Se ela ajudou você, considere ap
 local SUPPORT_HOW = L("Leia o QR Code com a câmera do celular para abrir livepix.gg/jammespark. Escolha o valor e conclua o apoio no site. Este não é um QR Pix de pagamento direto.")
 
 -- Credito preservado conforme a licenca GPL-3.0 e o pedido do autor da base.
-local TITLE = L("Sobre a R36S ROMS STORE")
+local TITLE = C.APP_NAME
 local PARAGRAPHS = {
-  L("R36S ROMS STORE é uma loja independente de ports e ferramentas para o console R36S."),
+  L("Esta edição experimental da R36S ROMS STORE é uma loja independente de ports e ferramentas para o console R36S."),
   L("Baseado no R36S PORT HUB, por Lag do Lira"),
   L("Canal do autor da base: https://youtube.com/@lagdolira"),
   L("Esta é uma versão modificada, com identidade e manutenção próprias. Não é um lançamento oficial do autor da base."),
