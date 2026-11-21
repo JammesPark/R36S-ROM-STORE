@@ -171,6 +171,17 @@ end
 --- Atualiza o catalogo. on_done(ok, mensagem) e opcional (usado pelas Configuracoes).
 --- Os ports instalados sao preservados: o registro de instalados nao e tocado.
 function App.refresh_catalog(user_initiated, on_done)
+  if Catalog.provider()=="r36s_own" then
+    -- O arquivo proprio ja contem todos os jogos. Nao chama a API GameStoreBR.
+    local ok=Catalog.load_local() and Catalog.provider()=="r36s_own"
+    local msg=ok and string.format("Catalogo proprio carregado: %d ROMs.",#Catalog.ports)
+      or ("Arquivo proprio indisponivel: "..(Catalog.remote_error or ""))
+    Catalog.remote_state=ok and "ok" or "failed"
+    if ok then App.on_catalog_changed() end
+    if on_done then on_done(ok,msg)
+    elseif user_initiated then App.toast(msg,ok and "ok" or "warn") end
+    return
+  end
   local ROMs = require("core.rom_source")
   local ok = ROMs.refresh("all", function(success, added, reason)
     Catalog.remote_state = success and "ok" or "failed"
@@ -822,7 +833,7 @@ function love.load(args)
       U.log("dados:", love.filesystem.getSaveDirectory())
       Catalog.load_local()
       -- Configuracoes > Catalogo > Atualizar ao abrir o hub (ligado por padrao)
-      if Prefs.get("cat_auto") ~= "0" then App.refresh_catalog(false)
+      if Prefs.get("cat_auto") ~= "0" and Catalog.provider()~="r36s_own" then App.refresh_catalog(false)
       else U.log("catalogo: atualizacao automatica desligada; usando", Catalog.source_label()) end
     end },
     { L("Verificando espaço livre..."), function() App.update_free_space() end },
