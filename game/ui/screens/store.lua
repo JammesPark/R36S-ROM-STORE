@@ -22,6 +22,9 @@ local Themes = require("core.themes")
 local S = {}
 -- Tema Padrao: lista original + Grade Jedi + Vitrine Pastel selecionaveis.
 -- Neon Grid preserva sua grade; nunca depende da preferencia do Padrao.
+local VIEWS = { "list", "grid", "showcase" }
+local VIEW_NAMES = { list = "Lista", grid = "Grade Jedi", showcase = "Vitrine Pastel" }
+
 local function active_view()
   if Themes.current == "default" then
     local id = Prefs.get("rom_view_default")
@@ -30,6 +33,19 @@ local function active_view()
   end
   if T.style.list == "grid" then return "grid" end
   if T.style.layout == "carousel" then return "showcase" end
+  return "list"
+end
+
+local function change_view(direction)
+  local current = active_view()
+  for i, value in ipairs(VIEWS) do
+    if value == current then
+      local next_mode = VIEWS[(i - 1 + direction + #VIEWS) % #VIEWS + 1]
+      Prefs.set("rom_view_default", next_mode)
+      return next_mode
+    end
+  end
+  Prefs.set("rom_view_default", "list")
   return "list"
 end
 
@@ -269,7 +285,7 @@ function S:draw_preview()
 end
 
 function S:update(dt)
-  if CV.active() then CV.update(self, self.sel, dt) end
+  if active_view() == "showcase" then CV.update(self, self.sel, dt) end
 end
 
 -- Pastel Pop: vitrine de capas (ui/coverview.lua) no lugar da lista + previa
@@ -426,8 +442,15 @@ function S:switch_tab(d)
 end
 
 function S:action(act)
-  -- L2 e R2 sao desativados nesta listagem de ROMs; nao mudam abas ou jogos.
-  if act == "l2" or act == "r2" then return end
+  -- Troca o modo SOMENTE na listagem de ROMs do Tema Padrao.
+  if act == "l2" or act == "r2" then
+    if self.section == "games" and Themes.current == "default" then
+      local mode = change_view(act == "l2" and -1 or 1)
+      self.cg_scroll, self.cv_pos = nil, self.sel
+      App.toast("Visualização: " .. VIEW_NAMES[mode], "info")
+    end
+    return
+  end
   local n = #self.items
   if active_view() == "grid" and n > 0 and (act == "up" or act == "down" or act == "left" or act == "right") then
     -- grade de capas: esquerda/direita andam 1, cima/baixo uma fileira
