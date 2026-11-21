@@ -1,12 +1,14 @@
-# R36S ROMS STORE
+# R36S ROMS STORE — Experimental
 
-Repositório do projeto **R36S ROMS STORE**, hospedado com o nome **R36S-ROMS-HUB-STORE**.
+Edição **R36S ROMS STORE — Experimental**, criada a partir da versão oficial **0.6.7-beta**, commit `f9f7d2b`, sem reutilizar as modificações descartadas. O código experimental fica exclusivamente na branch `experimental/0.6.7-beta-20261121`; o projeto oficial permanece na `main`.
 
-**Status:** versão 0.6.7-beta
+**Status:** edição Experimental, base 0.6.7-beta (mesmo número de versão para preservar compatibilidade).
 
 Aplicativo para consoles R36S/R36H, com interface Lua e LÖVE 11.5. Inclui catálogo de ROMs por sistema, gerenciamento de downloads, instalação em SD1/SD2, favoritos, BIOS, temas e gerenciamento seguro dos arquivos instalados.
 
 **Esta revisão** usa a versão com **Configurações em lista**, com o `game.love` correspondente e as fontes Lua da mesma compilação.
+
+Atenção: esta edição utiliza o mesmo launcher e diretório de instalação da versão oficial. Antes de testar no console, faça backup da instalação atual. Esta branch não publica OTA nem substitui a versão oficial.
 
 ## Instalação
 
