@@ -44,7 +44,9 @@ jobs:
       - name: Testar armazenamento e instalação de ROMs
         run: |
           luajit tests/test_own_catalog.lua
+          luajit tests/test_region_view.lua
           PYTHONDONTWRITEBYTECODE=1 python3 tests/test_catalog_offline.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tests/test_theme_layouts_experimental.py
           luajit tests/test_rom_storage.lua
           PYTHONDONTWRITEBYTECODE=1 python3 tests/test_rom_install.py
 
