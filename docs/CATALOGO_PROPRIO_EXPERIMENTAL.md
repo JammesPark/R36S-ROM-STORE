@@ -63,10 +63,10 @@ o executável não coloca as 15.652 ROMs no catálogo.
    `/roms/ports/r36sromsstore/catalogo_proprio_ultimo_valido.zlib`.
 5. Reinicie a loja e confira **15.652 ROMs / 48 sistemas**.
 
-O `game.love` existente na edição Experimental Etapa 1 já suporta
-até 50.000 entradas e não precisa de alteração para exibir as siglas.
-Não há motivo para instalar novamente o executável somente para trocar
-o catálogo.
+Para **trocar apenas os dados do catálogo**, não é necessário substituir
+`game.love`. Para usar as **etiquetas coloridas e L2/R2**, instale o
+**novo instalador Experimental** publicado na branch de downloads: são
+mudanças de interface Lua, não fazem parte do arquivo `.zlib`.
 
 ## Validação e recuperação offline
 
@@ -92,29 +92,39 @@ sem as novas siglas para não prejudicar o reconhecimento dos títulos.
 Libretro é a primeira fonte de capas, ScreenScraper é complementar;
 a consulta deve ser feita no PC, não durante a navegação do console.
 
-### Alteração visual aprovada para implementação futura — etiquetas de região
+### Interface de regiões e visualizações (código implementado)
 
-**Status: planejada, ainda não aplicada ao Lua nem aos dados do catálogo.**
+**Status: código integrado e compilação automatizada; teste real no console pendente.**
 
-- [ ] Exibir a região numa etiqueta própria ao lado da identificação do sistema,
-  utilizando o mesmo estilo arredondado/contornado das etiquetas da loja.
-- [ ] Atribuir cor fixa a cada região:
-  - **JP** (Japão): rosa-coral `#FF738A`.
-  - **CN** (China): laranja `#FFC065`.
-  - **TW** (Taiwan): verde `#58E0A6`.
-  - **HK** (Hong Kong): lilás `#B9A1FF`.
-- [ ] Preservar a identificação do sistema em ciano, separada da região.
-- [ ] Retirar a sigla redundante do **nome exibido** quando a etiqueta estiver
-  presente, sem alterar os nomes originais, IDs, URLs ou nomes de arquivo
-  necessários à busca de capas e à instalação.
-- [ ] Reproduzir o padrão nos modos **Lista, Grade e Detalhes**, mantendo o
-  posicionamento consistente nos temas e a legibilidade em 640×480.
-- [ ] Testar a apresentação de jogos sem região identificada (não mostrar
-  etiqueta vazia) e de títulos longos (sem cortes e sobreposições).
+- [x] Identificar a região por etiqueta colorida, separada do sistema.
+- [x] **JP** rosa-coral `#FF738A`, **CN** laranja `#FFC065`,
+      **TW** verde `#58E0A6`, **HK** lilás `#B9A1FF`.
+- [x] Manter o sistema em ciano `#38D6FF`, usando etiquetas arredondadas.
+- [x] Retirar `[JP]`, `[CN]`, `[TW]` ou `[HK]` e, quando coincidir
+      com o selo, a indicação textual `(Japan)`, `(China)`, `(Taiwan)`
+      e `(Hong Kong)` apenas da **visualização**. Preservar `p.name`,
+      `original_name`, ID, URL e arquivo original.
+- [x] Aplicar nas telas de **Lista, Grade, Vitrine e Detalhes**; listas de
+      resultados de pesquisa também compartilham o componente de linha.
+- [x] Disponibilizar no **Tema Padrão** três visões reaproveitadas:
+      Lista original, Grade Jedi (`ui/covergrid.lua`) e Vitrine Pastel
+      (`ui/coverview.lua`).
+- [x] Adicionar **L2 para anterior** e **R2 para próximo** na tela de ROMs.
+      A preferência `rom_view_default` é persistida; existe alternativa
+      em Configurações > Catálogo de ROMs.
+- [x] Manter o tema Neon com seu próprio modo de grade, sem troca de perfil
+      via L2/R2.
+- [x] Remover do pacote do código **Pastel, Wii Blue, Force Nexus Jedi e Sith**.
+      Somente `themes/default` e `themes/neongrid` são incluídos.
+- [x] Impedir que temas antigos já instalados no SD sejam exibidos e
+      selecionados (sem apagar dados privados automaticamente).
+- [x] Acrescentar testes de região, mapeamento de gatilhos e integridade
+      da lista de temas ao GitHub Actions.
+- [ ] Testar a navegação, a legibilidade de títulos longos e o funcionamento
+      físico dos gatilhos em console R36S/R36H real.
 
-Referência visual: protótipo HTML `R36S_ROMSTORE_Prototipo_Regioes_Coloridas_640x480.html`
-aprovado na conversa. **Esta alteração fica na lista para uma atualização
-posterior; não inicia a etapa de capas nem muda o funcionamento atual.**
+O protótipo HTML de referência continua independente. Alterar o visual
+não modifica as 15.652 ROMs nem inicia a busca por capas.
 
 Migração de links para Archive.org, inclusão de CPS1/CPS3, novas instalações
 por sistema e otimizações de velocidade não fazem parte desta alteração.
