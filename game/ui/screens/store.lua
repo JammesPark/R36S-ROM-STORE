@@ -15,8 +15,23 @@ local Favorites = require("core.favorites")
 local Tools = require("core.tools")
 local Icons = require("ui.icons")
 local CV = require("ui.coverview")
+local Region = require("ui.region")
+local Prefs = require("core.prefs")
+local Themes = require("core.themes")
 
 local S = {}
+-- Tema Padrao: lista original + Grade Jedi + Vitrine Pastel selecionaveis.
+-- Neon Grid preserva sua grade; nunca depende da preferencia do Padrao.
+local function active_view()
+  if Themes.current == "default" then
+    local id = Prefs.get("rom_view_default")
+    if id == "grid" or id == "showcase" then return id end
+    return "list"
+  end
+  if T.style.list == "grid" then return "grid" end
+  if T.style.layout == "carousel" then return "showcase" end
+  return "list"
+end
 
 local ROW_H, LIST_Y, LIST_X, LIST_W = 50, 84, 12, 356
 local VISIBLE = 7
@@ -224,10 +239,12 @@ function S:draw_preview()
     G.cover(Covers.get(p), p, px + (pw - cw) / 2, py + 12, cw, ch, Covers.is_loading(p), App.t)
   end
   local y = py + ch + 22
-  G.text_fit(T.f.h3, p.name, px + 14, y, pw - 28, T.c.text)
+  G.text_fit(T.f.h3, Region.display_name(p), px + 14, y, pw - 28, T.c.text)
   y = y + 24
-  local tw = G.tag(U.upper(p.category), px + 14, y, T.c.accent2, T.c.bg0)
-  if p.version ~= "" then G.tag("v" .. p.version, px + 20 + tw, y, T.c.bg3, T.c.dim) end
+  local tw = Region.draw_system(p, px + 14, y, pw - 28)
+  local rx = px + 20 + tw
+  if Region.code(p) then rx = rx + Region.draw_region(p, rx, y) + 6 end
+  if p.version ~= "" and rx < px + pw - 52 then G.tag("v" .. p.version, rx, y, T.c.bg3, T.c.dim) end
   y = y + 26
   if self.mine then
     local loc = Manifest.location_label(p)
@@ -271,7 +288,8 @@ function S:draw_showcase()
   end
   local p = items[self.sel]
   local pills, tags = {}, {}
-  pills[#pills + 1] = { PortRow.subtitle(p):match("^(.-)  •") or p.category, T.c.accent2 }
+  pills[#pills + 1] = { p.category, Region.SYSTEM_COLOR }
+  if Region.code(p) then pills[#pills + 1] = { Region.code(p), Region.color(Region.code(p)) } end
   if not p.builtin then
     if p.size_label and p.size_label ~= "?" then pills[#pills + 1] = { p.size_label, T.c.line } end
     if (p.version or "") ~= "" then pills[#pills + 1] = { "v" .. p.version, T.c.line } end
@@ -311,7 +329,7 @@ function S:draw_showcase()
   CV.draw(self, {
     top = 82, n = #items, sel = self.sel, draw_cover = cover,
     bg_cover = (not p.builtin) and function(x, y, w, h) G.cover(Covers.get(p), p, x, y, w, h, false, App.t) end or nil,
-    name = p.name, pills = pills, tags = tags, sections = sections,
+    name = Region.display_name(p), pills = pills, tags = tags, sections = sections,
   })
 end
 
@@ -327,6 +345,10 @@ function S:draw_grid()
     else
       G.cover(Covers.get(p), p, x, y, w, h, Covers.is_loading(p), App.t)
     end
+    if w >= 80 and h >= 105 and Region.code(p) then
+      local code = Region.code(p)
+      Region.draw_region(p, x + w - Region.pill_width(code) - 3, y + 3)
+    end
     if self.mine then
       local loc = Manifest.location_label(p)
       if loc then
@@ -337,7 +359,8 @@ function S:draw_grid()
   end
   local p = items[self.sel]
   local pills, tags = {}, {}
-  pills[#pills + 1] = { PortRow.subtitle(p):match("^(.-)  •") or p.category, T.c.accent2 }
+  pills[#pills + 1] = { p.category, Region.SYSTEM_COLOR }
+  if Region.code(p) then pills[#pills + 1] = { Region.code(p), Region.color(Region.code(p)) } end
   if not p.builtin then
     if p.size_label and p.size_label ~= "?" then pills[#pills + 1] = { p.size_label, T.c.line } end
     if (p.version or "") ~= "" then pills[#pills + 1] = { "v" .. p.version, T.c.line } end
@@ -351,7 +374,7 @@ function S:draw_grid()
   local short = p.builtin and (p.short or "") or Catalog.text(p, "short")
   CG.draw(self, {
     top = 82, n = #items, sel = self.sel, draw_cover = cover,
-    name = p.name, pills = pills, tags = tags, desc = short ~= "" and short or I18N.tr(L("Sem descrição.")),
+    name = Region.display_name(p), pills = pills, tags = tags, desc = short ~= "" and short or I18N.tr(L("Sem descrição.")),
     is_new = function(i) return Catalog.is_new(items[i]) and App.status(items[i]) == "none" end,
     badge = function(i)
       local q = items[i]
@@ -366,9 +389,9 @@ function S:draw()
   local right = string.format(L("%d de %d"), #self.items > 0 and self.sel or 0, #self.items)
   G.header(self:title(), right)
   self:draw_tabs()
-  if CG.active() and #self.items > 0 then
+  if active_view() == "grid" and #self.items > 0 then
     self:draw_grid()
-  elseif CV.active() and #self.items > 0 then
+  elseif active_view() == "showcase" and #self.items > 0 then
     self:draw_showcase()
   else
     self:draw_list()
@@ -406,7 +429,7 @@ function S:action(act)
   -- L2 e R2 sao desativados nesta listagem de ROMs; nao mudam abas ou jogos.
   if act == "l2" or act == "r2" then return end
   local n = #self.items
-  if CG.active() and n > 0 and (act == "up" or act == "down" or act == "left" or act == "right") then
+  if active_view() == "grid" and n > 0 and (act == "up" or act == "down" or act == "left" or act == "right") then
     -- grade de capas: esquerda/direita andam 1, cima/baixo uma fileira
     local c = CG.COLS
     if act == "left" then self.sel = math.max(1, self.sel - 1)
