@@ -69,10 +69,6 @@ end
 function S:refresh()
   local cur = self.items and self.items[self.sel]
   self.items = {}
-  if not self.mine and not self.favs and self.section=="games" then
-    local cat = self.filter=="all" and "all" or self.filter:match("^cat:(.+)$")
-    if cat then require("core.rom_source").ensure(cat) end
-  end
   -- ferramentas integradas (Manutencao) primeiro; depois os ports do catalogo
   if not self.mine and not self.favs then
     for _, t in ipairs(Tools.for_filter(self.section, self.filter)) do self.items[#self.items + 1] = t end
@@ -186,15 +182,7 @@ function S:draw_list()
     elseif self.filter == "installed" then
       msg, sub = L("Nada instalado"), L("Nenhum port de ") .. area .. L(" instalado no console.")
     elseif self.section=="games" and (self.filter=="all" or self.filter:sub(1,4)=="cat:") then
-      local cat=self.filter=="all" and "all" or self.filter:sub(5)
-      local state=require("core.rom_source").state(cat)
-      if state and state.loading then
-        msg,sub=L("Carregando ROMs"),L("Consultando jogos deste sistema...")
-      elseif state and state.failed then
-        msg,sub=L("Sem conexão"),L("Não foi possível carregar as ROMs. Pressione Y para tentar novamente.")
-      else
-        msg,sub=L("Categoria vazia"),L("Não há ROMs em cache para este sistema.")
-      end
+      msg,sub=L("Categoria vazia"),L("Não há ROMs neste sistema do catálogo próprio.")
     elseif self.filter:sub(1, 4) == "cat:" then
       msg, sub = L("Categoria vazia"), L("Não existem ports disponíveis nesta categoria.")
     else
@@ -265,12 +253,6 @@ end
 
 function S:update(dt)
   if CV.active() then CV.update(self, self.sel, dt) end
-  if self.section=="games" and not self.mine and not self.favs then
-    local cat = self.filter=="all" and "all" or self.filter:match("^cat:(.+)$")
-    if cat and self.sel>=math.max(1,#self.items-3) then
-      require("core.rom_source").ensure(cat)
-    end
-  end
 end
 
 -- Pastel Pop: vitrine de capas (ui/coverview.lua) no lugar da lista + previa
@@ -452,14 +434,7 @@ function S:action(act)
     if self.favs then self:refresh() end
   elseif act == "x" then
     App.push("search", { from = "store" })
-  elseif act == "y" and self.section=="games" and not self.mine and not self.favs then
-    local cat = self.filter=="all" and "all" or self.filter:match("^cat:(.+)$")
-    if cat then
-      require("core.rom_source").retry(cat)
-      App.toast(L("Atualizando catálogo..."),"info")
-    end
   elseif act == "y" then
-    App.toast(L("Atualizando catálogo..."), "info")
     App.refresh_catalog(true)
   end
 end
