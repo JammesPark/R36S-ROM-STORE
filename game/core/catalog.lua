@@ -22,20 +22,10 @@ local Catalog = {
   news = {},
 }
 
--- Provedores independentes: a fonte original GameStoreBR nunca se mescla com o
--- arquivo compactado da R36S ROMS STORE — Experimental.
-local Prefs=require("core.prefs")
-local PROVIDER_KEY="roms_catalog_provider"
-function Catalog.provider()
-  return Prefs.get(PROVIDER_KEY)=="r36s_own" and "r36s_own" or "gamestorebr"
-end
-function Catalog.catalog_source()
-  return Catalog.provider()=="r36s_own" and "r36s_own" or "r36sbr"
-end
-function Catalog.catalog_source_label()
-  return Catalog.provider()=="r36s_own" and "R36S ROMS STORE — Experimental" or "GameStoreBR"
-end
-local function cache_file() return "catalog_cache_roms.json" end
+-- A edicao Experimental utiliza exclusivamente catalogo proprio local.
+function Catalog.provider() return "r36s_own" end
+function Catalog.catalog_source() return "r36s_own" end
+function Catalog.catalog_source_label() return "R36S ROMS STORE — Experimental" end
 
 --- texto do port no idioma atual (description/short); sem traducao, usa o original
 function Catalog.text(p, field)
@@ -278,48 +268,6 @@ function Catalog.parse(text)
   return res
 end
 
--- Incrementa as ROMs fornecidas pela API paginada, sem apagar o cache local.
--- A deduplicacao pela URL evita repetir os itens do cache Dreamcast.
-function Catalog.add_rom_games(raws)
-  if type(raws) ~= "table" then return 0 end
-  local names = {}
-  for _,c in ipairs(Catalog.categories) do
-    if c.section == "games" then names[c.id] = c.name end
-  end
-  local by_url = {}
-  for _,p in ipairs(Catalog.ports) do
-    if p.section == "games" and p.download_url and p.download_url ~= "" then
-      by_url[p.download_url] = true
-    end
-  end
-  local added = 0
-  for _,raw in ipairs(raws) do
-    if type(raw)=="table" then
-      local p = normalize_port(raw,#Catalog.ports+1,names)
-      if p and p.section == "games" and p.download_url ~= ""
-          and not by_url[p.download_url] and not Catalog.by_id[p.id] then
-        Catalog.ports[#Catalog.ports+1]=p
-        Catalog.by_id[p.id]=p
-        by_url[p.download_url]=true
-        added=added+1
-        local exists=false
-        for _,c in ipairs(Catalog.categories) do
-          if c.section=="games" and c.id==p.category_id then
-            c.count=(c.count or 0)+1
-            exists=true
-            break
-          end
-        end
-        if not exists then
-          Catalog.categories[#Catalog.categories+1]={id=p.category_id,name=p.category,
-            section="games",icon="games",count=1}
-        end
-      end
-    end
-  end
-  return added
-end
-
 local function apply(res, source)
   Catalog.ports = res.ports
   Catalog.by_id = res.by_id
@@ -333,118 +281,62 @@ local function apply(res, source)
   U.log(string.format("catalogo carregado (%s): %d ports, %d categorias", source, #res.ports, #res.categories))
 end
 
--- A API de ROMs e consultada por core.rom_source, nunca pela rotina
--- de troca/atualizacao de catalogos JSON de ports. Ignora catalog_url.txt
--- antigo mesmo que o usuario ja tenha selecionado Lira ou PORTS STORE.
-function Catalog.get_remote_url()
-  if Catalog.provider()=="r36s_own" then return "" end
-  return "https://r36swiki.com/getgames.php?action=categories"
-end
-
--- Apenas catálogos com os sistemas oficiais de ROMs podem entrar na loja.
--- Evita reusar acidentalmente catalog.json ou cache antigo de ports.
-local ROM_SYSTEMS = {
-  ["3do"]=true, amigacd32=true, atari2600=true, dreamcast=true,
-  gamegear=true, gb=true, gba=true, gbc=true, mame=true,
-  mastersystem=true, megadrive=true, n64=true, nds=true, neogeo=true,
-  nes=true, pcengine=true, psp=true, psx=true, saturn=true, snes=true,
-}
-local function only_roms(text)
-  local data = type(text)=="string" and json.decode(text) or nil
-  if type(data)~="table" or type(data.categories)~="table" then return false end
-  local count = 0
-  for _,c in ipairs(data.categories) do
-    if type(c)~="table" or not ROM_SYSTEMS[c.id] then return false end
-    count = count+1
-  end
-  if count~=20 then return false end
-  local games = data.ports or data.games
-  if type(games)~="table" then return false end
-  for _,g in ipairs(games) do
-    if type(g)~="table" or g.section~="games" or
-       not ROM_SYSTEMS[g.category or g.system_id] then return false end
-  end
-  return true
-end
+-- Nao ha URL remota nem fallback para o provedor anterior.
+function Catalog.get_remote_url() return nil end
 
 function Catalog.load_local()
-  Catalog.remote_url=nil
-  if Catalog.provider()=="r36s_own" then
-    local payload,source_or_err=require("core.own_source").read()
-    if payload then
-      local res,err=Catalog.parse(payload)
-      if res then
-        apply(res,source_or_err)
-        Catalog.remote_state="ok"
-        Catalog.remote_error=""
-        return true
+  Catalog.remote_url = nil
+  local own = require("core.own_source")
+  local payload, origin_or_err, bytes = own.read()
+  if payload then
+    local res, err = Catalog.parse(payload)
+    if res and #res.ports == #payload.ports then
+      -- Aprova a copia apenas depois de validar e normalizar 100% dos itens.
+      if origin_or_err == "own-local" then
+        if not own.remember(bytes) then
+          U.log("catalogo proprio: nao foi possivel gravar backup (leitura continua)")
+        end
+      elseif origin_or_err == "own-backup" then
+        if not own.restore(bytes) then
+          U.log("catalogo proprio: backup carregado, mas sem permissao para restaurar original")
+        end
+      elseif origin_or_err == "own-embedded" then
+        if own.restore(bytes) then own.remember(bytes) end
       end
-      source_or_err=err
+      apply(res, origin_or_err)
+      Catalog.remote_state, Catalog.remote_error = "ok", ""
+      return true
     end
-    U.log("catalogo proprio: falha:",tostring(source_or_err))
-    Catalog.remote_error=tostring(source_or_err)
-    -- Nunca deixar a loja sem catalogo se o arquivo proprio nao estiver instalado.
-    Prefs.set(PROVIDER_KEY,"gamestorebr")
+    origin_or_err = err or "Registros rejeitados ao normalizar"
   end
-  local tries={
-    {"local-roms",function() return U.read_file(C.APP_DIR .. "/catalog.json") end},
-    {"cache-roms",function() return love.filesystem.read(cache_file()) end},
-    {"roms-embutido",function() return love.filesystem.read("catalog/catalog.json") end},
-  }
-  for _,item in ipairs(tries) do
-    local ok,text=pcall(item[2])
-    if ok and only_roms(text) then
-      local res,err=Catalog.parse(text)
-      if res then apply(res,item[1]); return true end
-      U.log("catalogo ROMs",item[1],"invalido",err)
-    elseif ok and text then
-      U.log("catalogo ignorado (nao e fonte de ROMs)",item[1])
-    end
+  Catalog.remote_state = "failed"
+  Catalog.remote_error = tostring(origin_or_err or "Catalogo proprio indisponivel")
+  U.log("catalogo proprio:", Catalog.remote_error)
+  -- Se uma atualizacao falhou durante a sessao, preservar a lista em memoria.
+  if #Catalog.ports == 0 then
+    Catalog.ports, Catalog.by_id, Catalog.categories = {}, {}, {}
+    Catalog.source = "none"
   end
-  Catalog.ports,Catalog.by_id,Catalog.categories={}, {}, {}
-  Catalog.source="none"
   return false
 end
 
--- Respostas do GameStoreBR sao tratadas exclusivamente por core.rom_source.
--- Mantemos esta API publica por compatibilidade com componentes antigos.
-function Catalog.on_remote(ok, path, reason)
+-- API de compatibilidade mantida sem fazer consultas remotas.
+function Catalog.on_remote(ok, path)
   if path then os.remove(path) end
-  return false, "Use a consulta de ROMs por sistema"
+  return false, "Edicao Experimental usa somente catalogo proprio"
 end
 
 function Catalog.source_label()
-  local s = Catalog.source
-  if s=="own-local" or s=="own-embedded" then
-    return "R36S ROMS STORE — Experimental (local)"
-  end
-  if s == "online" then return L("Online") .. " — " .. Catalog.catalog_source_label() end
-  if s == "cache" then return L("Cache (último baixado)") .. " — " .. Catalog.catalog_source_label() end
-  if s == "local-roms" then return L("Catálogo local") end
-  if s == "cache-roms" then return L("Cache (último baixado)") end
-  if s == "roms-embutido" then return L("Catálogo embutido") end
-  return L("Sem catálogo")
+  if Catalog.source == "own-local" then return "Catálogo próprio (SD)" end
+  if Catalog.source == "own-backup" then return "Catálogo próprio (cópia recuperada)" end
+  if Catalog.source == "own-embedded" then return "Catálogo próprio (embutido)" end
+  return "Catálogo próprio indisponível"
 end
 
--- Troca de provedor preservando favoritos, manifestos e cartoes SD.
--- Em caso de arquivo proprio ausente ou invalido, retorna ao provedor anterior.
 function Catalog.set_provider(provider)
-  if provider~="gamestorebr" and provider~="r36s_own" then
-    return false,"Provedor desconhecido"
+  if provider ~= "r36s_own" then
+    return false, "Fonte indisponivel nesta edicao: somente catalogo proprio"
   end
-  local old=Catalog.provider()
-  if old==provider then return true end
-  if provider=="r36s_own" then
-    local payload,err=require("core.own_source").read()
-    if not payload then return false,err end
-  end
-  Prefs.set(PROVIDER_KEY,provider)
-  if not Catalog.load_local() or Catalog.provider()~=provider then
-    Prefs.set(PROVIDER_KEY,old)
-    Catalog.load_local()
-    return false,Catalog.remote_error~="" and Catalog.remote_error or "Falha na troca do catalogo"
-  end
-  require("core.rom_source").reset()
   return true
 end
 
