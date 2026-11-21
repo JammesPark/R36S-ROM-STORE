@@ -21,7 +21,7 @@ O ZIP do catálogo é entregue separadamente ao usuário e **não está commitad
 4. Na loja, abrir **Configurações → Catálogo de ROMs → Fonte do catálogo → R36S ROMS STORE — Experimental**.
 5. Para retornar ao original, selecionar **GameStoreBR**. Os catálogos não são mesclados.
 
-O catálogo próprio é descompactado e validado localmente. Limites: 2 MiB compactado, 8 MiB em JSON e 50.000 entradas. O arquivo validado contém 15.652 registros e 48 categorias. Quando escolhido, todas as entradas aparecem de imediato, sem paginação da API GameStoreBR; a busca funciona localmente.
+O catálogo próprio é descompactado e validado localmente. Limites atuais da edicao experimental: 4 MiB compactado, 16 MiB em JSON e 50.000 entradas. A memoria e o desempenho ainda precisam de testes no console. O arquivo validado contém 15.652 registros e 48 categorias. Quando escolhido, todas as entradas aparecem de imediato, sem paginação da API GameStoreBR; a busca funciona localmente.
 
 ## Compatibilidade de instalação
 
@@ -39,3 +39,7 @@ A validação do arquivo é feita antes de aceitar as entradas. Os jogos, capas,
 ## Testes
 
 `tests/test_own_catalog.lua` simula um catálogo válido, registros duplicados, URL não HTTP(S), JSON descompactado excessivo e arquivo ausente. O GitHub Actions da branch experimental executa esse teste e a compilação LuaJIT; não publica uma Release oficial.
+
+## Preparacao de capas e sinopses (etapa posterior)
+
+Foi preparado um utilitario externo `enriquecer_catalogo_r36s.py` para localizar capas por nome, sistema e regiao no indice Libretro e para incorporar sinopses reais vindas de CSV revisado. O utilitario ainda e entregue em ZIP separado, nao integrado ao pipeline automatizado do GitHub. Nenhuma consulta em massa foi executada no ambiente de edicao: 10 URLs de capas vieram do cache original 0.6.7-beta e nao foram verificadas individualmente; 0 imagens baixadas e 0 sinopses reais obtidas nesta etapa. Os campos restantes ficam vazios ate enriquecimento verificado.
