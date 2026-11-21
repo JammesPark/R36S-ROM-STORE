@@ -226,54 +226,39 @@ end
 
 function X.catalog_category()
   local Catalog = require("core.catalog")
+  local Own = require("core.own_source")
   return {
     id = "catalog", icon = "set_catalog", color = "yellow",
     name = L("Catálogo de ROMs"),
-    desc = L("Fonte independente, atualização e ordenação das listas."),
-    status = function() return string.format("%d ROMs",#Catalog.ports) .. "  •  " .. Catalog.source_label() end,
+    desc = L("Catálogo próprio independente e recuperação offline."),
+    status = function()
+      return string.format("%d ROMs", #Catalog.ports) .. "  •  " .. Catalog.source_label()
+    end,
     rows = {
-      choice(L("Fonte do catálogo"),L("GameStoreBR usa a API paginada. R36S ROMS STORE — Experimental usa somente o arquivo local catalogo_proprio.zlib."),
-        { {id="gamestorebr",label="GameStoreBR"}, {id="r36s_own",label="R36S ROMS STORE — Experimental"} },
-        function() return Catalog.provider() end,
-        function(provider)
-          local ok,err=Catalog.set_provider(provider)
-          if not ok then
-            App.toast("Falha ao mudar fonte: "..tostring(err),"warn")
-            return
-          end
-          App.on_catalog_changed()
-          App.toast("Fonte selecionada: "..Catalog.catalog_source_label(),"ok")
-        end),
-      { kind = "action", label = L("Atualizar catálogo agora"),
+      { kind = "info", label = L("Fonte do catálogo"),
+        desc = L("Fonte única desta edição: catálogo próprio instalado no cartão. Sem API GameStoreBR."),
+        value = function() return "R36S ROMS STORE — Experimental" end },
+      { kind = "action", label = L("Recarregar catálogo do cartão"),
         desc = function()
-          if Catalog.provider()=="r36s_own" then
-            return L("Recarrega o catálogo próprio instalado no cartão, sem consultar a internet. Arquivo: ")
-              .. require("core.own_source").path
-          end
-          return L("Atualiza as ROMs disponíveis consultando o GameStoreBR.\nFonte: ")
-            .. require("core.rom_source").source_label()
+          return L("Valida e lê o arquivo local, sem acessar a internet: ") .. Own.path
         end,
-        value = function() return Catalog.remote_state == "loading" and L("Atualizando catálogo...") or Catalog.source_label() end,
+        value = function() return Catalog.source_label() end,
         on_a = function()
-          if Catalog.remote_state == "loading" then return end
           App.update_free_space()
           App.refresh_catalog(true, function(okc, msg)
-            App.show_dialog({ title = okc and L("Catálogo") or L("Falha ao atualizar"), kind = okc and "ok" or "error", body = msg })
+            App.show_dialog({
+              title = okc and L("Catálogo") or L("Falha ao atualizar"),
+              kind = okc and "ok" or "error", body = msg
+            })
           end)
         end },
-      { kind = "toggle", label = L("Atualizar ao abrir o hub"),
-        desc = function()
-          return Catalog.provider()=="r36s_own"
-            and L("O catálogo próprio é carregado integralmente do cartão ao abrir; não usa atualização automática da API.")
-            or L("Busca as ROMs do GameStoreBR ao abrir. Desligado, usa o cache até atualizar manualmente.")
-        end,
-        get = function() return pref_on("cat_auto") end, set = function(v) Prefs.set("cat_auto", v and "1" or "0") end },
-      { kind = "info", label = L("Última atualização online"), desc = L("Quando o catálogo foi baixado com sucesso pela última vez."),
+      { kind = "info", label = L("Recuperação automática"),
+        desc = L("Guarda a última versão válida no SD; se o arquivo principal falhar, recupera essa cópia. Não usa rede."),
         value = function()
-          local t = tonumber(Prefs.get("cat_last") or "")
-          return t and Clock.datetime(t, true) or L("ainda não registrada")
+          return U.file_size(Own.backup_path) and L("Cópia disponível") or L("Aguardando primeira leitura válida")
         end },
-      { kind = "info", label = L("Conteúdo"), desc = L("Ports e categorias do catálogo carregado agora."),
+      { kind = "info", label = L("Conteúdo"),
+        desc = L("ROMs e sistemas carregados a partir do catálogo próprio."),
         value = function()
           return string.format(I18N.tr(L("%d ports  •  %d categorias")), #Catalog.ports, #Catalog.categories)
             .. (Catalog.updated ~= "" and ("  •  v" .. Catalog.updated) or "")
