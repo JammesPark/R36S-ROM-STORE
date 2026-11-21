@@ -1,118 +1,96 @@
-# Catálogo próprio — R36S ROMS STORE — Experimental
+# Catálogo próprio Experimental — Etapa 1 concluída
 
-**Etapa 1 — catálogo próprio offline (2026-11-21).** Apenas na branch
-`experimental/0.6.7-beta-20261121`. A `main` permanece em **0.6.7-beta**
-(`f9f7d2b9caa87ca3f6e8242641a3b483d1f29f50`).
+Branch: `experimental/0.6.7-beta-20261121` — código LÖVE 11.5,
+sem API GameStoreBR e sem OTA oficial. A `main` permanece intacta.
 
-## Dados e auditoria do filtro
+## Catálogo atual: **15.652 ROMs / 48 sistemas**
 
-| Medida | Resultado |
+| Evolução do catálogo | Quantidade |
 | --- | ---: |
-| Links inspecionados nos CSVs originais | 15.727 |
-| Arquivos auxiliares descartados | 75 |
-| Jogos no catálogo inicial | 15.652 |
-| Jogos excluídos no filtro anterior | 3.177 |
-| Versões multilíngues/traduzidas reintegradas na revisão | **13** |
-| Jogos excluídos após a revisão | **3.164** |
-| Exclusões por região JP/CN/TW/HK sem idioma comprovado | **3.162** |
-| Exclusões por idioma explícito JA/CH | **2** |
-| **Jogos do catálogo próprio final** | **12.488** |
-| Sistemas | **48** |
+| Importação dos arquivos originais | 15.652 |
+| Filtragem preliminar JP/CN | 12.475 |
+| Reintegração prévia de versões explicitamente traduzidas/multilíngues | +13 |
+| Total da versão intermediária | 12.488 |
+| **Reintegração agora, com siglas** | **+3.164** |
+| **Total atual** | **15.652** |
 
-**Atenção:** `(Japan)`, `(JP)`, `(China)`, `(CN)`,
-`(Taiwan)` e `(HK)` são marcadores de **região** e não provam,
-isoladamente, que o jogo não ofereça inglês ou outro idioma. Para respeitar
-o pedido de excluir essas versões, as 3.162 entradas continuam de fora,
-**com relatório individual para eventual verificação manual posterior**.
-Não estão classificadas como idioma confirmado.
+As 3.164 entradas restauradas foram identificadas a partir de marcadores
+no `file_name` original, sem inferir idioma a partir de palavras do título.
 
-A revisão reintegrou jogos com indicação explícita de tradução `[T-En ...]`,
-`[T-Fr ...]`, `[T-Fre ...]`, `[tr en]` ou idiomas `(en-ja)`.
-Nenhum jogo foi reintegrado com base em palpite sobre seu conteúdo.
+| Sigla exibida ao fim do nome | Referência do arquivo | Quantidade |
+| --- | --- | ---: |
+| `[JP]` | Japan / JP / japonês declarado | 3.122 |
+| `[CN]` | China / CN / chinês declarado | 1 |
+| `[TW]` | Taiwan / TW | 41 |
+| `[HK]` | Hong Kong / HK | 0 |
 
-Os pacotes de dados, separados do código no repositório, incluem:
-- `catalogo_proprio.json`, `catalogo_proprio.zlib`;
-- `r36sromsstore/catalogo_proprio.zlib`;
-- `r36sromsstore/catalogo_proprio_ultimo_valido.zlib` (cópia inicial validada);
-- `auditoria_regiao_sem_idioma_comprovado.csv` (3.162 itens);
-- `exclusoes_idioma_explicito.csv` (2 itens);
-- `restauradas_multilingue_traduzidas.csv` (13 itens);
-- `resumo_por_sistema.csv` (originais, removidas, restantes);
-- `filtrar_regioes_roms_etapa1.py` (filtro reproduzível).
+Por exemplo, `Auto Bahn Tokio (Japan)` será exibido como
+`Auto Bahn Tokio (Japan) [JP]`. **Região não comprova idioma.**
+As 12.488 entradas anteriormente mantidas não tiveram os nomes alterados.
+Nenhum jogo foi duplicado e as ROMs não estão dentro do pacote: são links.
 
-As URLs de download originais foram preservadas. Não se verificou a
-disponibilidade de cada link ou autorização de distribuição dos jogos.
+Para as 3.164 entradas reintegradas, o catálogo inclui os metadados
+`original_name`, `region_tag`, `region_tag_basis`,
+`region_source_tags` e `reintegrated`. O campo `name` tem a sigla
+visível; `id`, `file_name` e `download_url` mantêm o valor original.
+Os metadados próprios são preservados no JSON para futuras buscas de
+capas por nome original. O motor de busca atual utiliza `name` e mantém
+a sigla visível nas listas.
 
-## Independência da API GameStoreBR
+## Arquivos gerados separadamente do código
 
-Na edição Experimental:
-1. `game/core/catalog.lua` usa exclusivamente `core.own_source`.
-   `Catalog.provider()` devolve somente `r36s_own`;
-2. `game/main.lua` carrega e recarrega somente o ZLIB instalado, sem consultas
-   ao serviço de jogos anterior;
-3. `game/core/rom_source.lua` mantém apenas uma interface inerte de compatibilidade,
-   sem HTTP;
-4. as telas de loja, pesquisa e configurações não fazem busca paginada;
-5. se o ZLIB próprio falhar, **não existe retorno automático para GameStoreBR,
-   catálogo legado ou outra fonte remota**;
-6. as URLs diretas de ROM presentes no catálogo continuam externas e
-   independentes da API usada para listar jogos.
+- **`R36S_ROMSTORE_INSTALAR_SD_15652_SIGLAS.zip`**:
+  `r36sromsstore/catalogo_proprio.zlib` e
+  `r36sromsstore/catalogo_proprio_ultimo_valido.zlib`;
+- **`R36S_ROMSTORE_CATALOGO_COMPLETO_15652_SIGLAS.zip`**:
+  os dois ZLIBs, JSON legível, manifesto SHA-256, relatório de
+  ROMs reintegradas `roms_reintegradas_siglas.csv`, resumo com totais por
+  sistema e o script `reintegrar_regioes_roms.py`.
 
-O projeto continua com outros recursos de rede (como ROMs, capas,
-atualizações de temas); não confundir a retirada de **uma API de catálogo**
-com funcionamento integralmente offline de todas as ferramentas.
+**Estes arquivos de dados foram entregues separadamente ao usuário e não
+estão commitados no GitHub.** O ZIP de instalação publicado na branch
+`experimental-downloads` contém somente o aplicativo. Instalar apenas
+o executável não coloca as 15.652 ROMs no catálogo.
 
-## Cópia de recuperação e comportamento em falhas
+## Instalação e backup
 
-O arquivo principal fica em `<pasta da loja>/catalogo_proprio.zlib`.
-O backup fica no mesmo diretório com o nome
-`catalogo_proprio_ultimo_valido.zlib`.
+1. Instale a edição Experimental da Etapa 1 compilada com sucesso.
+2. Faça backup dos dois ZLIBs de catálogo já instalados.
+3. Extraia `R36S_ROMSTORE_INSTALAR_SD_15652_SIGLAS.zip` diretamente
+   na partição de ROMs em `/roms/ports/`, ou na pasta real do aplicativo
+   quando instalado no SD2.
+4. Confira `/roms/ports/r36sromsstore/catalogo_proprio.zlib` e
+   `/roms/ports/r36sromsstore/catalogo_proprio_ultimo_valido.zlib`.
+5. Reinicie a loja e confira **15.652 ROMs / 48 sistemas**.
 
-- Após validar estrutura, URLs, IDs e normalizar **100%** dos registros,
-  a loja grava a cópia válida por arquivo temporário + renomeação;
-- se o principal faltar ou estiver inválido, tenta a cópia validada;
-- quando o backup é utilizado, tenta restaurar automaticamente o principal;
-- sem ambos, avisa o erro, sem consultar APIs nem carregar dados falsos;
-- se uma atualização falhar durante a mesma sessão, preserva a lista
-  anteriormente carregada na memória.
+O `game.love` existente na edição Experimental Etapa 1 já suporta
+até 50.000 entradas e não precisa de alteração para exibir as siglas.
+Não há motivo para instalar novamente o executável somente para trocar
+o catálogo.
 
-Limites do leitor: **4 MiB ZLIB, 16 MiB JSON, 50.000 jogos, 100 categorias**.
-O backup é do catálogo, não das ROMs baixadas. Não apaga favoritos,
-jogos instalados ou histórico.
+## Validação e recuperação offline
 
-## Instalação da etapa 1
+- Arquivo ZLIB: **652.613 bytes**, abaixo do limite de 4 MiB.
+- JSON descompactado: **5.490.288 bytes**, abaixo do limite de 16 MiB.
+- IDs únicos: **15.652**; URLs de download únicas: **15.652**.
+- Sistemas: **48**, sem modificação da ordem.
+- URLs modificadas: **0**; nomes de arquivos originais modificados: **0**.
+- Backup compactado idêntico à versão nova.
+- Os dois pacotes passaram no teste local de integridade ZIP e ZLIB.
 
-1. Faça backup da pasta atual da loja Experimental.
-2. Instale o código da branch Experimental (não a versão oficial `main`).
-3. Extraia o pacote `R36S_ROMSTORE_Etapa1_INSTALAR_SD.zip` na raiz de
-   `/roms/ports/`, preservando:
-   - `r36sromsstore/catalogo_proprio.zlib`;
-   - `r36sromsstore/catalogo_proprio_ultimo_valido.zlib`.
-4. Se o aplicativo estiver no SD2 ou em pasta diferente, copie esses dois
-   arquivos para a pasta **real do aplicativo** (`C.APP_DIR`).
-5. Na loja: **Configurações → Catálogo de ROMs**. A fonte é fixa e
-   `Recarregar catálogo do cartão` faz somente leitura local.
-6. Verifique que a loja mostra **12.488 ROMs**. O catálogo não inclui capas
-   nem descrições: isto pertence às etapas seguintes.
+O aplicativo lê somente o catálogo próprio local. Se o arquivo principal
+faltar/corromper, tenta a cópia válida ao lado. Não retorna à API GameStoreBR.
+O canal de atualização OTA oficial permanece desativado nesta edição.
+Testes reais de desempenho e abertura no console para a nova contagem ainda
+precisam ser feitos.
 
-**Os arquivos de dados não foram commitados no GitHub**. O ZIP da build
-gerado apenas pelo GitHub Actions não carrega automaticamente as 12.488 ROMs;
-é necessário instalar o ZIP de dados separado. Os links não foram alterados.
+## Etapas seguintes — ainda não iniciadas
 
-## Testes e limites
+A próxima etapa prevista é a **associação e otimização de capas**
+para o catálogo completo, usando o `file_name` e/ou `original_name`
+sem as novas siglas para não prejudicar o reconhecimento dos títulos.
+Libretro é a primeira fonte de capas, ScreenScraper é complementar;
+a consulta deve ser feita no PC, não durante a navegação do console.
 
-- `tests/test_own_catalog.lua`: validação do ZLIB, IDs, URLs, backup,
-  recuperação e ausência sem fallback;
-- `tests/test_catalog_offline.py`: garante que o runtime não contém o
-  endpoint anterior, a fonte é única, a busca da loja é local e o OTA da
-  Experimental segue desligado;
-- `.github/workflows/build.yml`: compila LuaJIT, executa testes e constrói
-  o pacote apenas no CI. Não distribui esta edição pelo canal oficial.
-
-Testes no console real (memória, desempenho e instalação dos 48 sistemas)
-não fazem parte desta verificação de código. Apenas 20 plataformas tinham
-instalação automática implementada na base 0.6.7-beta; as demais exigem
-compatibilidade específica antes de serem habilitadas.
-
-A **Etapa 1 não inclui** migração de acervos Archive.org, CPS1/CPS3,
-ScreenScraper, download de capas ou otimização de downloads.
+Migração de links para Archive.org, inclusão de CPS1/CPS3, novas instalações
+por sistema e otimizações de velocidade não fazem parte desta alteração.
