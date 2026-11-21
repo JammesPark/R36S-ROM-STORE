@@ -69,8 +69,9 @@ end
 
 -- So chamar depois que o parser normalizado aprovou todos os registros.
 function Own.remember(bytes)
-  if not decode(bytes) then return false end
+  -- Na abertura normal nao descompactar 12 mil registros uma segunda vez.
   if U.read_file(Own.backup_path) == bytes then return true end
+  if not decode(bytes) then return false end
   return save_atomic(Own.backup_path, bytes)
 end
 
