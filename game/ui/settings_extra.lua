@@ -263,6 +263,13 @@ function X.catalog_category()
           return string.format(I18N.tr(L("%d ports  •  %d categorias")), #Catalog.ports, #Catalog.categories)
             .. (Catalog.updated ~= "" and ("  •  v" .. Catalog.updated) or "")
         end },
+      pref_choice(L("Visualização de ROMs (Padrão)"),
+        L("L2/R2 na tela de ROMs alternam entre Lista, Grade Jedi e Vitrine Pastel. Neon mantém o próprio modo."),
+        "rom_view_default", {
+          { id = "list", label = L("Lista") },
+          { id = "grid", label = L("Grade de capas (Jedi)") },
+          { id = "showcase", label = L("Vitrine vertical (Pastel)") },
+        }, "list"),
       pref_choice(L("Ordenação das listas"), L("Ordem dos jogos nas listas de ROMs. A pesquisa continua por nome."),
         "list_sort", X.SORTS, "catalog", function() App.on_catalog_changed() end),
       pref_choice(L("Ordenar favoritos"), L("Ordem da lista de Favoritos."), "fav_sort", FAV_SORTS, "catalog"),
