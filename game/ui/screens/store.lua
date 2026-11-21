@@ -421,8 +421,6 @@ function S:switch_tab(d)
 end
 
 function S:action(act)
-  -- L2 e R2 sao desativados nesta listagem de ROMs; nao mudam abas ou jogos.
-  if act == "l2" or act == "r2" then return end
   local n = #self.items
   if CG.active() and n > 0 and (act == "up" or act == "down" or act == "left" or act == "right") then
     -- grade de capas: esquerda/direita andam 1, cima/baixo uma fileira
@@ -450,8 +448,15 @@ function S:action(act)
     local on = Favorites.toggle(p)
     App.toast(on and (p.name .. L(" adicionado aos favoritos")) or (p.name .. L(" removido dos favoritos")), "info")
     if self.favs then self:refresh() end
-  elseif act == "x" then
-    App.push("search", { from = "store" })
+  elseif act == "x" and self.filter == "installed" and n > 0 and not self.items[self.sel].builtin then
+    App.ask_uninstall(self.items[self.sel])
+  elseif act == "x" and not self.favs and self.filter ~= "installed" then
+    local SX = require("ui.settings_extra")
+    local mode = SX.cycle_view_sort()
+    self:refresh()
+    self.sel, self.scroll = 1, 0
+    self:clamp()
+    App.toast(L("Ordem: ") .. SX.sort_label(mode), "info")
   elseif act == "y" and self.section=="games" and not self.mine and not self.favs then
     local cat = self.filter=="all" and "all" or self.filter:match("^cat:(.+)$")
     if cat then
