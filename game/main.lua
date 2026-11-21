@@ -171,41 +171,13 @@ end
 --- Atualiza o catalogo. on_done(ok, mensagem) e opcional (usado pelas Configuracoes).
 --- Os ports instalados sao preservados: o registro de instalados nao e tocado.
 function App.refresh_catalog(user_initiated, on_done)
-  if Catalog.provider()=="r36s_own" then
-    -- O arquivo proprio ja contem todos os jogos. Nao chama a API GameStoreBR.
-    local ok=Catalog.load_local() and Catalog.provider()=="r36s_own"
-    local msg=ok and string.format("Catalogo proprio carregado: %d ROMs.",#Catalog.ports)
-      or ("Arquivo proprio indisponivel: "..(Catalog.remote_error or ""))
-    Catalog.remote_state=ok and "ok" or "failed"
-    if ok then App.on_catalog_changed() end
-    if on_done then on_done(ok,msg)
-    elseif user_initiated then App.toast(msg,ok and "ok" or "warn") end
-    return
-  end
-  local ROMs = require("core.rom_source")
-  local ok = ROMs.refresh("all", function(success, added, reason)
-    -- Respostas atrasadas do GameStoreBR nao alteram o estado do provedor local.
-    if Catalog.provider()=="r36s_own" then return end
-    Catalog.remote_state = success and "ok" or "failed"
-    Catalog.remote_error = success and "" or tostring(reason or "Fonte de ROMs indisponível")
-    if success then
-      Prefs.set("cat_last", tostring(os.time()))
-      local msg = string.format("Catálogo de ROMs consultado. %d jogo(s) novos nesta página; %d no cache.",
-        added or 0, #Catalog.ports)
-      if on_done then on_done(true,msg)
-      elseif user_initiated then App.toast(msg,"ok") end
-    else
-      local msg = "Não foi possível consultar as ROMs. Fonte: " .. ROMs.source_label()
-        .. ". Detalhe: " .. Catalog.remote_error
-      if on_done then on_done(false,msg)
-      elseif user_initiated then App.toast(msg,"warn") end
-    end
-  end)
-  if ok then
-    Catalog.remote_state="loading"
-  elseif on_done then
-    on_done(false,"A consulta de ROMs já está em andamento.")
-  end
+  -- Atualizacao nesta etapa significa RELER o ZLIB do cartao, nunca rede.
+  local ok = Catalog.load_local()
+  local msg = ok and string.format("Catálogo próprio carregado: %d ROMs.", #Catalog.ports)
+    or ("Catálogo próprio indisponível: " .. tostring(Catalog.remote_error))
+  if ok then App.on_catalog_changed() end
+  if on_done then on_done(ok, msg)
+  elseif user_initiated then App.toast(msg, ok and "ok" or "warn") end
 end
 
 function App.on_catalog_changed()
@@ -833,10 +805,13 @@ function love.load(args)
     { L("Carregando catálogo..."), function()
       U.log("R36S ROMS STORE", C.VERSION, "| ports:", C.PORTS_DIR, "| app:", C.APP_DIR)
       U.log("dados:", love.filesystem.getSaveDirectory())
-      Catalog.load_local()
-      -- Configuracoes > Catalogo > Atualizar ao abrir o hub (ligado por padrao)
-      if Prefs.get("cat_auto") ~= "0" and Catalog.provider()~="r36s_own" then App.refresh_catalog(false)
-      else U.log("catalogo: atualizacao automatica desligada; usando", Catalog.source_label()) end
+      if not Catalog.load_local() then
+        App.catalog_load_error = Catalog.remote_error
+        U.log("catalogo offline: nenhum arquivo valido; fonte remota nao sera consultada")
+      else
+        App.catalog_load_error = nil
+        U.log("catalogo offline:", Catalog.source_label(), #Catalog.ports, "ROMs")
+      end
     end },
     { L("Verificando espaço livre..."), function() App.update_free_space() end },
   }
@@ -844,6 +819,9 @@ function love.load(args)
     App.after_boot()
     -- avisos da abertura: so depois do aviso importante (nao cobrem o botao dele)
     App.boot_toasts = {}
+    if App.catalog_load_error then
+      App.boot_toasts[#App.boot_toasts + 1] = { "Catálogo próprio indisponível: " .. tostring(App.catalog_load_error), "warn" }
+    end
     -- aviso de versao nova no alto da tela inicial (consulta leve em segundo plano)
     require("core.updnotice").start()
     -- atualizacao: confirma a versao nova (o app abriu) ou conclui uma recuperacao
