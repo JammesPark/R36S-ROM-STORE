@@ -6,7 +6,18 @@ Edição **R36S ROMS STORE — Experimental**, criada a partir da versão oficia
 
 Aplicativo para consoles R36S/R36H, com interface Lua e LÖVE 11.5. Inclui catálogo de ROMs por sistema, gerenciamento de downloads, instalação em SD1/SD2, favoritos, BIOS, temas e gerenciamento seguro dos arquivos instalados.
 
-**Esta revisão** usa a versão com **Configurações em lista**, com o `game.love` correspondente e as fontes Lua da mesma compilação.
+**Esta revisão** inclui só os temas **Padrão e Neon Grid**. O tema Padrão
+tem **Lista**, **Grade Jedi** e **Vitrine Pastel**; na tela de ROMs,
+**L2** e **R2** trocam a visualização e salvam a escolha. Como alternativa,
+use **Configurações > Catálogo de ROMs > Visualização de ROMs (Padrão)**.
+O tema Neon continua com a sua grade independente.
+
+As regiões são identificadas por etiquetas separadas e coloridas:
+**JP** rosa-coral, **CN** laranja, **TW** verde, **HK** lilás.
+O sistema mantém a etiqueta ciano. Os sufixos regionais são escondidos
+somente no nome mostrado, preservando IDs, arquivos e URLs originais.
+Temas antigos permanecem no cartão do usuário, caso já existam, mas não
+aparecem mais na seleção e não integram o instalador novo.
 
 Atenção: esta edição utiliza o mesmo launcher e diretório de instalação da versão oficial. Antes de testar no console, faça backup da instalação atual. Esta branch não publica OTA nem substitui a versão oficial.
 
@@ -37,6 +48,10 @@ necessário. **Testes no hardware real ainda não foram realizados.**
 - `game/core/own_source.lua`: validação, backup e recuperação offline;
 - `tests/test_own_catalog.lua`: teste do leitor e cópia válida;
 - `tests/test_catalog_offline.py`: teste de ausência da API de jogos antiga;
+- `tests/test_region_view.lua`: valida L2/R2 como botão/eixo, etiquetas e
+  preservação dos nomes originais;
+- `tests/test_theme_layouts_experimental.py`: verifica que só dois temas
+  integram o pacote e que a troca Lista/Grade/Vitrine está disponível;
 - `tools/build.sh`: gera o instalador e recompila o `game.love`;
 - `.github/workflows/build.yml`: valida LuaJIT, testa e empacota, publicando
   o ZIP somente na branch `experimental-downloads` (sem Release oficial nem OTA).
@@ -50,7 +65,7 @@ sh tools/build.sh
 Documentação e auditoria: [Catálogo próprio Experimental](docs/CATALOGO_PROPRIO_EXPERIMENTAL.md).
 A revisão anterior reintegrou 13 versões traduzidas/multilíngues, e a
 revisão atual recolocou as **3.164 ROMs restantes**, com os marcadores
-`[JP]` (3.122), `[CN]` (1) e `[TW]` (41) nos nomes exibidos.
+`[JP]` (3.122), `[CN]` (1) e `[TW]` (41) nos nomes do catálogo.
 São códigos identificados no arquivo, e não comprovação do idioma do jogo.
 IDs, `file_name` e links de download permaneceram inalterados.
 O instalador de código não inclui estes dados: instale o ZIP separado
