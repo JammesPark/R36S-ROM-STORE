@@ -91,7 +91,7 @@ jobs:
             printf '%s\n' '# Instalação R36S ROMS STORE Experimental' '' \
               'Esta branch publica somente o instalador gerado de uma build testada da Experimental.' \
               'Nao e a branch main nem o canal OTA oficial.' '' \
-              'Instale também R36S_ROMSTORE_Etapa1_INSTALAR_SD.zip (catalogo .zlib, fornecido separadamente).' \
+              'Instale também R36S_ROMSTORE_INSTALAR_SD_15652_SIGLAS.zip (catálogo .zlib com 15.652 ROMs, fornecido separadamente).' \
               "Commit do codigo: $GITHUB_SHA" > README.md
             git add -A
             if git diff --cached --quiet; then
