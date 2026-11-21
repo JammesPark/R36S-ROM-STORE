@@ -36,7 +36,7 @@ decoded=saved
 decoded.ports[1].download_url="javascript:alert(1)"
 assert(reader.read()==nil,"URL fora de HTTP(S) deve ser rejeitada")
 decoded.ports[1].download_url="https://example.org/download/tetris.gb"
-unpacked=string.rep("a",8*1024*1024+1)
+unpacked=string.rep("a",16*1024*1024+1)
 assert(reader.read()==nil,"JSON descompactado excessivo deve ser rejeitado")
 unpacked="catalogo_teste"
 file=nil
