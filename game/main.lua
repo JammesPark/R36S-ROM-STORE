@@ -184,6 +184,8 @@ function App.refresh_catalog(user_initiated, on_done)
   end
   local ROMs = require("core.rom_source")
   local ok = ROMs.refresh("all", function(success, added, reason)
+    -- Respostas atrasadas do GameStoreBR nao alteram o estado do provedor local.
+    if Catalog.provider()=="r36s_own" then return end
     Catalog.remote_state = success and "ok" or "failed"
     Catalog.remote_error = success and "" or tostring(reason or "Fonte de ROMs indisponível")
     if success then
