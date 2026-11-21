@@ -692,10 +692,8 @@ local function on_action(act)
     take_screenshot()
     return
   end
-  -- L2/R2 nao tem funcao ao navegar por ROMs. Outras telas seguem intactas.
-  local current = App.current()
-  if current and current.name == "store" and current.section == "games"
-      and (act == "l2" or act == "r2") then return end
+  -- L2/R2 sao enviados a tela de ROMs, que alterna o modo de exibicao.
+  -- Em outras telas, permanecem com as funcoes ja existentes.
   Sfx.on_action(act)
   -- START: abre a Central de Downloads em Segundo Plano (unica funcao).
   -- Nao cancela, nao reinicia e nao interrompe nada; nunca duplica a central.
