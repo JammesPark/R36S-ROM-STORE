@@ -9,7 +9,8 @@
 local L = require("lib.i18n").L
 local C = {}
 
-C.APP_NAME = L("R36S ROMS STORE")
+C.APP_NAME = "R36S ROMS STORE — Experimental"
+C.EDITION = "Experimental"  -- identificacao visual; numero de versao inalterado
 C.VERSION = L("0.6.7-beta")       -- texto exibido
 C.VERSION_NUM = "0.6.7-beta"        -- numero usado para comparar com a atualizacao
 -- R36 Hub OS: o hub e a interface principal do sistema (supervisor exporta R36HUBOS=1)
