@@ -4,7 +4,12 @@ local json = require("lib.json")
 local U = require("lib.util")
 local Fetcher = require("core.fetcher")
 local Catalog = require("core.catalog")
-local R = { pages = {}, serial = 0, error = nil }
+local R = { pages = {}, serial = 0, generation = 0, error = nil }
+function R.reset()
+  R.generation=R.generation+1
+  R.pages={}
+  R.error=nil
+end
 local HOST = "r36swiki.com"
 local BASE = "https://" .. HOST .. "/getgames.php?"
 local LIMIT = 10
@@ -74,8 +79,14 @@ local function entry(cat)
   if not e then e={page=0,total_pages=nil,loading=false,failed=false}; R.pages[cat]=e end
   return e
 end
-function R.state(cat) return R.pages[cat] end
+function R.state(cat)
+  if Catalog.provider()=="r36s_own" then
+    return {page=1,total_pages=1,loading=false,failed=false}
+  end
+  return R.pages[cat]
+end
 function R.is_supported(cat)
+  if Catalog.provider()=="r36s_own" then return false end
   if cat=="all" then return true end
   for _,c in ipairs(Catalog.categories or {}) do
     if c.section=="games" and c.id==cat then return VALID[cat] == true end
@@ -99,6 +110,7 @@ local function cache_name(cat,page)
   return "roms_pages/" .. cat .. "_" .. tostring(page) .. ".json"
 end
 local function fetch_page(cat, page, retry_http, on_done)
+  local generation=R.generation
   local e=entry(cat)
   if e.loading then return end
   e.loading=true
@@ -108,6 +120,11 @@ local function fetch_page(cat, page, retry_http, on_done)
   local url=(retry_http and "http://" .. HOST .. "/getgames.php?" or BASE)..qs
   local out=love.filesystem.getSaveDirectory() .. "/roms_page_download_" .. R.serial .. ".json"
   Fetcher.get("catalog",url,out,function(ok, path, reason)
+    if generation~=R.generation or Catalog.provider()=="r36s_own" then
+      if path then os.remove(path) end
+      if on_done then on_done(false,0,"Fonte do catalogo alterada") end
+      return
+    end
     local body = ok and read_response(path) or nil
     if path then os.remove(path) end
     local applied, added = body and apply_page(cat,page,body,true)
@@ -136,6 +153,7 @@ end
 function R.source_label() return BASE:match("^https?://[^/]+") or HOST end
 
 function R.ensure(cat)
+  if Catalog.provider()=="r36s_own" then return false end
   cat=category(cat)
   if not cat or not R.is_supported(cat) then return false end
   local e=entry(cat)
@@ -151,6 +169,7 @@ end
 
 -- Recarrega a primeira pagina pela rede, sem apagar ROMs/cache existentes.
 function R.refresh(cat,on_done)
+  if Catalog.provider()=="r36s_own" then return false end
   cat=category(cat)
   if not cat or not R.is_supported(cat) then return false end
   local e=entry(cat)
@@ -161,6 +180,7 @@ function R.refresh(cat,on_done)
 end
 
 function R.retry(cat)
+  if Catalog.provider()=="r36s_own" then return end
   cat=category(cat)
   if not cat or not R.is_supported(cat) then return end
   local e=entry(cat)
@@ -171,6 +191,11 @@ end
 
 -- Pesquisa paginada por todos os sistemas; não exige baixar o catálogo inteiro.
 function R.search(query, page, callback)
+  if Catalog.provider()=="r36s_own" then
+    if callback then callback(false,nil,"Busca local: catalogo completo ja carregado") end
+    return
+  end
+  local generation=R.generation
   local q=tostring(query or ""):sub(1,80)
   if #q<2 or q:find("[%c]") then return end
   page=math.floor(tonumber(page) or 1)
@@ -181,6 +206,11 @@ function R.search(query, page, callback)
     local url=(http and "http://"..HOST.."/getgames.php?" or BASE)..baseqs
     local out=love.filesystem.getSaveDirectory().."/roms_search_"..seq..".json"
     Fetcher.get("catalog",url,out,function(ok,path,reason)
+      if generation~=R.generation or Catalog.provider()=="r36s_own" then
+        if path then os.remove(path) end
+        if callback then callback(false,nil,"Fonte alterada") end
+        return
+      end
       local body=ok and read_response(path) or nil
       if path then os.remove(path) end
       local payload=decode(body)
