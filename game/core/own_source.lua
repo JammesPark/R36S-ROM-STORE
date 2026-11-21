@@ -4,8 +4,8 @@ local json=require("lib.json")
 local U=require("lib.util")
 local C=require("config")
 local Own={}
-local MAX_ZLIB=2*1024*1024
-local MAX_JSON=8*1024*1024
+local MAX_ZLIB=4*1024*1024
+local MAX_JSON=16*1024*1024 -- permite metadados de capa e sinopses verificadas
 local FILE="catalogo_proprio.zlib"
 Own.path=C.APP_DIR.."/"..FILE
 
