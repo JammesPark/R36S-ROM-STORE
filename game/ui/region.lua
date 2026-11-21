@@ -25,8 +25,20 @@ function R.display_name(p)
   local name = p and p.name or ""
   local tag = R.code(p)
   if tag then
-    -- Tira apenas o ultimo [JP]/[CN]/[TW]/[HK] da tela; nao altera p.name.
-    return (name:gsub("%s+%[" .. tag .. "%]$", ""))
+    -- Limpa apenas a APRESENTACAO, nunca altera p.name, original_name ou URLs.
+    name = (name:gsub("%s+%[" .. tag .. "%]$", ""))
+    local names = {
+      JP = { "(Japan)", "(JP)", "(Japanese)" },
+      CN = { "(China)", "(CN)", "(Chinese)" },
+      TW = { "(Taiwan)", "(TW)" },
+      HK = { "(Hong Kong)", "(HK)" },
+    }
+    for _, ending in ipairs(names[tag] or {}) do
+      if name:sub(-#ending) == ending then
+        return (name:sub(1, #name - #ending):gsub("%s+$", ""))
+      end
+    end
+    return name
   end
   return name
 end
