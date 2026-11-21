@@ -36,7 +36,6 @@ function S:enter()
   self.kr, self.kc = 1, 1
   self.focus = "keys"
   self.sel, self.scroll = 1, 0
-  self.remote_t,self.remote_query,self.remote_page,self.remote_pages,self.remote_busy=0,nil,0,0,false
   self:search()
 end
 
@@ -160,49 +159,7 @@ function S:press_key(k)
   elseif #self.query < 24 then
     self.query = self.query .. k
   end
-  self.remote_t=0.55
-  self.remote_query=nil
-  self.remote_page=0
-  self.remote_pages=0
   self:search()
-end
-
-function S:update(dt)
-  if self.remote_t then
-    self.remote_t=self.remote_t-dt
-    if self.remote_t<=0 then
-      self.remote_t=nil
-      self:remote_next(true)
-    end
-  end
-  if self.focus=="results" and self.sel>=math.max(1,#self.results-2) then
-    self:remote_next(false)
-  end
-end
-
-function S:remote_next(reset)
-  -- O catalogo proprio ja possui todos os jogos em memoria: a busca acima
-  -- funciona localmente e nao deve misturar resultados da API GameStoreBR.
-  if Catalog.provider()=="r36s_own" then return end
-  if self.remote_busy or #self.query<2 then return end
-  local q=self.query
-  if reset or self.remote_query~=q then
-    self.remote_query=q
-    self.remote_page=0
-    self.remote_pages=1
-  end
-  if self.remote_page>=self.remote_pages then return end
-  local page=self.remote_page+1
-  self.remote_busy=true
-  require("core.rom_source").search(q,page,function(ok,_,data)
-    if self.remote_query~=q then self.remote_busy=false;return end
-    self.remote_busy=false
-    if ok then
-      self.remote_page=page
-      self.remote_pages=math.max(page,math.min(10000,tonumber(data.total_pages) or page))
-      self:search(true)
-    end
-  end)
 end
 
 function S:action(act)
@@ -213,8 +170,8 @@ function S:action(act)
     elseif act == "right" then self.kc = self.kc % 10 + 1
     elseif act == "a" then self:press_key(KEYS[self.kr][self.kc])
     elseif act == "b" then
-      if self.query == "" then App.pop() else self.query = self.query:sub(1, -2); self:search();self.remote_t=0.55;self.remote_query=nil end
-    elseif act == "x" then self.query = ""; self:search();self.remote_t=nil;self.remote_query=nil
+      if self.query == "" then App.pop() else self.query = self.query:sub(1, -2); self:search() end
+    elseif act == "x" then self.query = ""; self:search()
     elseif act == "y" then self:press_key("ESPAÇO")
     elseif act == "r1" and #self.results > 0 then self.focus = "results"
     end
