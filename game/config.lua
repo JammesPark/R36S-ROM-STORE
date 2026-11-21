@@ -24,7 +24,9 @@ C.OS_VERSION = os.getenv("R36HUBOS_VERSION") or ""
 -- https://github.com/USUARIO/REPO, usa a ultima Release) ou de um JSON
 -- { "version", "url", "sha256", "notes" }.
 -- Tambem pode ser definido em <pasta do app>/update_url.txt (sobrescreve este).
-C.UPDATE_URL = "https://raw.githubusercontent.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/main/ota/update.json"
+-- A edicao Experimental NAO deve buscar a atualizacao publica da loja oficial.
+-- O canal OTA oficial permanece intacto. Testes usam instalacao manual.
+C.UPDATE_URL = ""
 
 -- Catalogo de temas (Configuracoes > Temas > Baixar novos temas). Vazio ate o
 -- repositorio de temas ser publicado. Tambem pode ser definido em
