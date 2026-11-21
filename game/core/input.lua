@@ -5,7 +5,7 @@
 --
 --  Acoes: up down left right a b x y l1 r1 l2 r2 start select
 -- =============================================================================
-local Input = { handler = nil, held = {}, rep = nil, last = {}, axis = { x = 0, y = 0 } }
+local Input = { handler = nil, held = {}, source_down = {}, rep = nil, last = {}, axis = { x = 0, y = 0 } }
 
 local PAD = {
   dpup = "up", dpdown = "down", dpleft = "left", dpright = "right",
@@ -28,40 +28,57 @@ local KEYS = {
 
 local REPEATABLE = { up = true, down = true, left = true, right = true, l1 = true, r1 = true }
 local DELAY, RATE = 0.32, 0.075
+-- Eventos SDL e gptokeyb chegam em momentos diferentes para o mesmo toque.
+-- A/B e demais acoes de clique exigem soltura e uma janela curta contra ecos.
 local DEDUP = 0.06
+local CLICK_GUARD = 0.20
 
 local function fire(act)
   local now = love.timer.getTime()
-  if Input.last[act] and now - Input.last[act] < DEDUP then return end
+  local guard = REPEATABLE[act] and DEDUP or CLICK_GUARD
+  if Input.last[act] and now - Input.last[act] < guard then return end
   Input.last[act] = now
   if Input.handler then Input.handler(act) end
 end
 
+-- Um botao pode ser enviado por SDL e tambem pelo gptokeyb. A primeira
+-- origem aciona a funcao; as demais apenas acompanham o estado ate a soltura.
+-- Input.reset() nao apaga os botoes fisicamente pressionados entre telas.
 local function press(act, src)
   if not act then return end
-  Input.held[act] = (Input.held[act] or 0) + 1
-  fire(act)
+  local sources = Input.source_down[act]
+  if not sources then sources = {}; Input.source_down[act] = sources end
+  if sources[src] then return end -- mesmo evento repetido pela origem
+  sources[src] = true
+  local n = Input.held[act] or 0
+  Input.held[act] = n + 1
+  if n > 0 then return end -- ja pressionado por SDL/teclado, nao clicar de novo
   if REPEATABLE[act] then Input.rep = { act = act, src = src, t = DELAY } end
+  fire(act)
 end
 
 local function release(act, src)
   if not act then return end
+  local sources = Input.source_down[act]
+  if not sources or not sources[src] then return end
+  sources[src] = nil
+  if not next(sources) then Input.source_down[act] = nil end
   local n = (Input.held[act] or 1) - 1
   Input.held[act] = n > 0 and n or nil
-  if Input.rep and Input.rep.act == act then Input.rep = nil end
+  if not Input.held[act] and Input.rep and Input.rep.act == act then Input.rep = nil end
 end
 
 function Input.gamepadpressed(_, button)
   if not PAD[button] then print("[r36sbr] botao sem funcao: " .. tostring(button)) end
-  press(PAD[button], "pad")
+  press(PAD[button], "pad:" .. tostring(button))
 end
-function Input.gamepadreleased(_, button) release(PAD[button], "pad") end
+function Input.gamepadreleased(_, button) release(PAD[button], "pad:" .. tostring(button)) end
 
 function Input.keypressed(key, _, isrepeat)
   if isrepeat then return end
-  press(KEYS[key], "key")
+  press(KEYS[key], "key:" .. tostring(key))
 end
-function Input.keyreleased(key) release(KEYS[key], "key") end
+function Input.keyreleased(key) release(KEYS[key], "key:" .. tostring(key)) end
 
 -- Analogico esquerdo funciona como direcional
 function Input.gamepadaxis(_, axis, value)
@@ -106,7 +123,8 @@ end
 function Input.is_held(act) return Input.held[act] ~= nil end
 
 function Input.reset()
-  Input.held = {}
+  -- Mantem held/source_down: o mesmo toque nao pode confirmar outra tela
+  -- logo apos App.push(), App.pop() ou a abertura de um dialogo.
   Input.rep = nil
 end
 
