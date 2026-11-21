@@ -403,6 +403,9 @@ end
 
 function S:draw()
   local right = string.format(L("%d de %d"), #self.items > 0 and self.sel or 0, #self.items)
+  if Themes.current == "default" and self.section == "games" then
+    right = right .. " · L2/R2 " .. VIEW_NAMES[active_view()]
+  end
   G.header(self:title(), right)
   self:draw_tabs()
   if active_view() == "grid" and #self.items > 0 then
