@@ -2,7 +2,7 @@
 
 Edição **R36S ROMS STORE — Experimental**, criada a partir da versão oficial **0.6.7-beta**, commit `f9f7d2b`, sem reutilizar as modificações descartadas. O código experimental fica exclusivamente na branch `experimental/0.6.7-beta-20261121`; o projeto oficial permanece na `main`.
 
-**Status:** versão 0.6.7-beta — Experimental, Etapa 1 do catálogo próprio (12.488 ROMs / 48 sistemas). Dados em pacote separado, mantendo o número de versão para compatibilidade.
+**Status:** versão 0.6.7-beta — Experimental, Etapa 1 do catálogo próprio (15.652 ROMs / 48 sistemas). Dados em pacote separado, mantendo o número de versão para compatibilidade.
 
 Aplicativo para consoles R36S/R36H, com interface Lua e LÖVE 11.5. Inclui catálogo de ROMs por sistema, gerenciamento de downloads, instalação em SD1/SD2, favoritos, BIOS, temas e gerenciamento seguro dos arquivos instalados.
 
@@ -19,9 +19,9 @@ destinadas à `main`, preservada em 0.6.7-beta.
    baixe o ZIP na [branch de downloads experimentais](https://github.com/JammesPark/R36S-ROMS-HUB-STORE/tree/experimental-downloads/distribution):
    `R36S_ROMSTORE_Experimental_Etapa1.zip`.
 2. Faça backup da loja instalada e extraia o ZIP do aplicativo em `/roms/ports/`.
-3. Extraia, em seguida, o pacote de **dados** `R36S_ROMSTORE_Etapa1_INSTALAR_SD.zip`,
+3. Extraia, em seguida, o pacote de **dados** `R36S_ROMSTORE_INSTALAR_SD_15652_SIGLAS.zip`,
    distribuído separadamente, no mesmo local. Ele contém o catálogo e a cópia válida.
-4. Abra **Configurações > Catálogo de ROMs** e confirme **12.488 ROMs**.
+4. Abra **Configurações > Catálogo de ROMs** e confirme **15.652 ROMs**.
    O aplicativo não usa a API GameStoreBR.
 
 Em instalação personalizada/SD2, coloque os dois ZLIBs na pasta real da loja
@@ -48,9 +48,13 @@ sh tools/build.sh
 ```
 
 Documentação e auditoria: [Catálogo próprio Experimental](docs/CATALOGO_PROPRIO_EXPERIMENTAL.md).
-Foram reintegradas 13 ROMs com traduções/multilíngues explícitas; outras 3.162
-foram excluídas por *região*, não por comprovação de idioma. Os casos ficam
-registrados em CSV para revisão posterior.
+A revisão anterior reintegrou 13 versões traduzidas/multilíngues, e a
+revisão atual recolocou as **3.164 ROMs restantes**, com os marcadores
+`[JP]` (3.122), `[CN]` (1) e `[TW]` (41) nos nomes exibidos.
+São códigos identificados no arquivo, e não comprovação do idioma do jogo.
+IDs, `file_name` e links de download permaneceram inalterados.
+O instalador de código não inclui estes dados: instale o ZIP separado
+`R36S_ROMSTORE_INSTALAR_SD_15652_SIGLAS.zip` para obter a nova contagem.
 
 Os links diretos de ROM continuam no acervo original (Axiom/Archive.org);
 retirar uma API de catálogo não significa hospedar ou alterar ROMs. Capas,
