@@ -43,3 +43,23 @@ A validação do arquivo é feita antes de aceitar as entradas. Os jogos, capas,
 ## Preparacao de capas e sinopses (etapa posterior)
 
 Foi preparado um utilitario externo `enriquecer_catalogo_r36s.py` para localizar capas por nome, sistema e regiao no indice Libretro e para incorporar sinopses reais vindas de CSV revisado. O utilitario ainda e entregue em ZIP separado, nao integrado ao pipeline automatizado do GitHub. Nenhuma consulta em massa foi executada no ambiente de edicao: 10 URLs de capas vieram do cache original 0.6.7-beta e nao foram verificadas individualmente; 0 imagens baixadas e 0 sinopses reais obtidas nesta etapa. Os campos restantes ficam vazios ate enriquecimento verificado.
+
+## Filtro de versoes japonesas e chinesas — 2026-11-21
+
+O catalogo fornecido com 15.652 registros foi filtrado separadamente, **sem alterar os links da API GameStoreBR e sem alterar a `main`**:
+
+- 3.177 ROMs removidas por marcadores de idioma japones/chines ou regiao exclusiva Japan/JP/China/CN/Taiwan/TW/Hong Kong/HK;
+- **12.475 ROMs restantes**, nas 48 categorias;
+- conservadas versoes explicitamente multilingues, como `(En,Ja)`, ou lancamentos `(Japan, USA)`/`(Japan, Europe)`;
+- nomes de jogos contendo palavras como `China` nao bastam para remove-los;
+- **o local de lancamento nao prova o idioma**: exclusoes baseadas apenas na regiao podem exigir revisao manual.
+
+O arquivo gerado fora do GitHub `R36S_ROMS_STORE_Experimental_Catalogo_Sem_Japones_Chines.zip` contem:
+
+- `catalogo_proprio.json`, `catalogo_proprio.zlib`, `r36sromsstore/catalogo_proprio.zlib`;
+- `roms_excluidas_japones_chines.csv` (auditoria), `sistemas.csv`, `manifest.json`;
+- `filtrar_regioes_roms.py`, para aplicar novamente o filtro apos a busca de capas/descricoes.
+
+Para usar no console, extrair **somente a copia filtrada** de `r36sromsstore/catalogo_proprio.zlib` na pasta da loja, com copia de seguranca do arquivo anterior. O script de filtragem tambem aceita ZIPs enriquecidos posteriormente e preserva `cover`, `description` e demais metadados ja presentes.
+
+O arquivo compactado nao esta commitado no repositorio. O pacote de catalogo e distribuido separadamente.
