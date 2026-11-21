@@ -181,6 +181,9 @@ function S:update(dt)
 end
 
 function S:remote_next(reset)
+  -- O catalogo proprio ja possui todos os jogos em memoria: a busca acima
+  -- funciona localmente e nao deve misturar resultados da API GameStoreBR.
+  if Catalog.provider()=="r36s_own" then return end
   if self.remote_busy or #self.query<2 then return end
   local q=self.query
   if reset or self.remote_query~=q then
