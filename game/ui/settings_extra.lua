@@ -228,14 +228,29 @@ function X.catalog_category()
   local Catalog = require("core.catalog")
   return {
     id = "catalog", icon = "set_catalog", color = "yellow",
-    name = L("Catálogo de ports"),
-    desc = L("Atualização, conteúdo e ordenação das listas."),
-    status = function() return string.format(I18N.tr(L("%d ports")), #Catalog.ports) .. "  •  " .. Catalog.source_label() end,
+    name = L("Catálogo de ROMs"),
+    desc = L("Fonte independente, atualização e ordenação das listas."),
+    status = function() return string.format("%d ROMs",#Catalog.ports) .. "  •  " .. Catalog.source_label() end,
     rows = {
+      choice(L("Fonte do catálogo"),L("GameStoreBR usa a API paginada. R36S ROMS STORE — Experimental usa somente o arquivo local catalogo_proprio.zlib."),
+        { {id="gamestorebr",label="GameStoreBR"}, {id="r36s_own",label="R36S ROMS STORE — Experimental"} },
+        function() return Catalog.provider() end,
+        function(provider)
+          local ok,err=Catalog.set_provider(provider)
+          if not ok then
+            App.toast("Falha ao mudar fonte: "..tostring(err),"warn")
+            return
+          end
+          App.on_catalog_changed()
+          App.toast("Fonte selecionada: "..Catalog.catalog_source_label(),"ok")
+        end),
       { kind = "action", label = L("Atualizar catálogo agora"),
         desc = function()
-          local url = Catalog.get_remote_url()
-          return L("Atualiza as ROMs disponíveis consultando a fonte GameStoreBR.\nFonte: ")
+          if Catalog.provider()=="r36s_own" then
+            return L("Recarrega o catálogo próprio instalado no cartão, sem consultar a internet. Arquivo: ")
+              .. require("core.own_source").path
+          end
+          return L("Atualiza as ROMs disponíveis consultando o GameStoreBR.\nFonte: ")
             .. require("core.rom_source").source_label()
         end,
         value = function() return Catalog.remote_state == "loading" and L("Atualizando catálogo...") or Catalog.source_label() end,
@@ -247,7 +262,11 @@ function X.catalog_category()
           end)
         end },
       { kind = "toggle", label = L("Atualizar ao abrir o hub"),
-        desc = L("Busca o catálogo online toda vez que o hub abre. Desligado, o hub usa o último catálogo baixado até você atualizar à mão."),
+        desc = function()
+          return Catalog.provider()=="r36s_own"
+            and L("O catálogo próprio é carregado integralmente do cartão ao abrir; não usa atualização automática da API.")
+            or L("Busca as ROMs do GameStoreBR ao abrir. Desligado, usa o cache até atualizar manualmente.")
+        end,
         get = function() return pref_on("cat_auto") end, set = function(v) Prefs.set("cat_auto", v and "1" or "0") end },
       { kind = "info", label = L("Última atualização online"), desc = L("Quando o catálogo foi baixado com sucesso pela última vez."),
         value = function()
