@@ -2,7 +2,7 @@
 
 Edição **R36S ROMS STORE — Experimental**, criada a partir da versão oficial **0.6.7-beta**, commit `f9f7d2b`, sem reutilizar as modificações descartadas. O código experimental fica exclusivamente na branch `experimental/0.6.7-beta-20261121`; o projeto oficial permanece na `main`.
 
-**Status:** edição Experimental, base 0.6.7-beta (mesmo número de versão para preservar compatibilidade).
+**Status:** Etapa 1 concluída no código. Catálogo próprio offline: **12.488 ROMs / 48 sistemas**, entregue em ZIP de dados separado. Mesmo número de versão apenas para preservar compatibilidade.
 
 Aplicativo para consoles R36S/R36H, com interface Lua e LÖVE 11.5. Inclui catálogo de ROMs por sistema, gerenciamento de downloads, instalação em SD1/SD2, favoritos, BIOS, temas e gerenciamento seguro dos arquivos instalados.
 
@@ -10,20 +10,48 @@ Aplicativo para consoles R36S/R36H, com interface Lua e LÖVE 11.5. Inclui catá
 
 Atenção: esta edição utiliza o mesmo launcher e diretório de instalação da versão oficial. Antes de testar no console, faça backup da instalação atual. Esta branch não publica OTA nem substitui a versão oficial.
 
-## Instalação
+## Instalação da Experimental (Etapa 1)
 
-Baixe o instalador ZIP em **[Releases](https://github.com/JammesPark/R36S-ROMS-HUB-STORE/releases)** e extraia seu conteúdo na pasta `/roms/ports/` do cartão do console e execute `R36S ROMS STORE.sh` no EmulationStation. É necessário ter o runtime LÖVE apropriado. Para uma atualização manual, faça cópia de segurança do `game.love` anterior.
+**Não use as Releases oficiais para obter esta edição.** Elas continuam
+destinadas à `main`, preservada em 0.6.7-beta.
 
-## Código-fonte e compilação
+1. Entre na aba **Actions** da branch `experimental/0.6.7-beta-20261121`.
+2. Baixe o artifact `R36S_ROMSTORE_Experimental_Etapa1` da execução validada.
+3. Faça backup da loja instalada e extraia o instalador para `/roms/ports/`.
+4. Extraia, em seguida, o pacote de **dados** `R36S_ROMSTORE_Etapa1_INSTALAR_SD.zip`
+   no mesmo local. É ele que contém o catálogo próprio e sua cópia de segurança.
+5. Abra o aplicativo, em **Configurações > Catálogo de ROMs**, e confirme
+   que são exibidas **12.488 ROMs**. O catálogo não depende da API GameStoreBR.
 
-- `game/`: fonte Lua usada para gerar o `game.love`.
-- `r36sromsstore/`: arquivos de suporte e um `game.love` já empacotado, correspondente à fonte.
-- `tools/build.sh`: gerador do instalador ZIP.
-- `.github/workflows/build.yml`: valida a sintaxe LuaJIT e publica o ZIP da main como pré-release para download manual.
+Em instalação personalizada/SD2, coloque os dois ZLIBs na pasta real da loja
+(`R36SBR_DIR` / `C.APP_DIR`). O aplicativo não faz fallback automático
+para outra API, nem contém um catálogo fictício.
 
-Executar manualmente no Linux: `sh tools/build.sh`.
+A compilação exige o runtime LÖVE 11.5 do console e o pacote de suporte
+necessário. **Testes no hardware real ainda não foram realizados.**
 
-A loja verifica o canal público ao abrir. Quando encontra uma versão nova, oferece o download e a instalação com confirmação. Consulte [o canal OTA](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES).
+## Código-fonte, build e verificações
+
+- `game/`: código Lua da edição Experimental, fonte única de catálogo local;
+- `game/core/own_source.lua`: validação, backup e recuperação offline;
+- `tests/test_own_catalog.lua`: teste do leitor e cópia válida;
+- `tests/test_catalog_offline.py`: teste de ausência da API de jogos antiga;
+- `tools/build.sh`: gera o instalador e recompila o `game.love`;
+- `.github/workflows/build.yml`: valida LuaJIT, testes, empacota e fornece
+  um **artifact de teste** somente para a Experimental (sem Release oficial e sem OTA).
+
+```sh
+sh tools/build.sh
+```
+
+Documentação e auditoria: [Catálogo próprio Experimental](docs/CATALOGO_PROPRIO_EXPERIMENTAL.md).
+Foram reintegradas 13 ROMs com traduções/multilíngues explícitas; outras 3.162
+foram excluídas por *região*, não por comprovação de idioma. Os casos ficam
+registrados em CSV para revisão posterior.
+
+Os links diretos de ROM continuam no acervo original (Axiom/Archive.org);
+retirar uma API de catálogo não significa hospedar ou alterar ROMs. Capas,
+ScreenScraper, substituição de links e otimização de downloads são etapas futuras.
 
 ## Autoria, licenças e conteúdo
 
