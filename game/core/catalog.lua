@@ -22,11 +22,19 @@ local Catalog = {
   news = {},
 }
 
--- A fonte de jogos e exclusivamente ROMs. Mantemos o ID historico "r36sbr"
--- para preservar avaliacoes de ROMs ja feitas, nunca para carregar outra fonte.
-local function current_source() return "r36sbr" end
-function Catalog.catalog_source() return current_source() end
-function Catalog.catalog_source_label() return "R36S ROMS STORE" end
+-- Provedores independentes: a fonte original GameStoreBR nunca se mescla com o
+-- arquivo compactado da R36S ROMS STORE — Experimental.
+local Prefs=require("core.prefs")
+local PROVIDER_KEY="roms_catalog_provider"
+function Catalog.provider()
+  return Prefs.get(PROVIDER_KEY)=="r36s_own" and "r36s_own" or "gamestorebr"
+end
+function Catalog.catalog_source()
+  return Catalog.provider()=="r36s_own" and "r36s_own" or "r36sbr"
+end
+function Catalog.catalog_source_label()
+  return Catalog.provider()=="r36s_own" and "R36S ROMS STORE — Experimental" or "GameStoreBR"
+end
 local function cache_file() return "catalog_cache_roms.json" end
 
 --- texto do port no idioma atual (description/short); sem traducao, usa o original
@@ -167,7 +175,10 @@ end
 
 --- Interpreta o texto JSON. Devolve (dados normalizados) ou (nil, erro)
 function Catalog.parse(text)
-  local data, err = json.decode(text)
+  -- Aceita tabela previamente decodificada pelo leitor ZLIB para evitar
+  -- deserializar duas vezes 15 mil registros num console ARM.
+  local data,err
+  if type(text)=="table" then data=text else data,err=json.decode(text) end
   if data == nil then return nil, L("JSON inválido: ") .. tostring(err) end
   local list, meta = nil, {}
   if type(data) == "table" and data[1] ~= nil then
@@ -326,6 +337,7 @@ end
 -- de troca/atualizacao de catalogos JSON de ports. Ignora catalog_url.txt
 -- antigo mesmo que o usuario ja tenha selecionado Lira ou PORTS STORE.
 function Catalog.get_remote_url()
+  if Catalog.provider()=="r36s_own" then return "" end
   return "https://r36swiki.com/getgames.php?action=categories"
 end
 
@@ -357,6 +369,23 @@ end
 
 function Catalog.load_local()
   Catalog.remote_url=nil
+  if Catalog.provider()=="r36s_own" then
+    local payload,source_or_err=require("core.own_source").read()
+    if payload then
+      local res,err=Catalog.parse(payload)
+      if res then
+        apply(res,source_or_err)
+        Catalog.remote_state="ok"
+        Catalog.remote_error=""
+        return true
+      end
+      source_or_err=err
+    end
+    U.log("catalogo proprio: falha:",tostring(source_or_err))
+    Catalog.remote_error=tostring(source_or_err)
+    -- Nunca deixar a loja sem catalogo se o arquivo proprio nao estiver instalado.
+    Prefs.set(PROVIDER_KEY,"gamestorebr")
+  end
   local tries={
     {"local-roms",function() return U.read_file(C.APP_DIR .. "/catalog.json") end},
     {"cache-roms",function() return love.filesystem.read(cache_file()) end},
@@ -386,12 +415,37 @@ end
 
 function Catalog.source_label()
   local s = Catalog.source
+  if s=="own-local" or s=="own-embedded" then
+    return "R36S ROMS STORE — Experimental (local)"
+  end
   if s == "online" then return L("Online") .. " — " .. Catalog.catalog_source_label() end
   if s == "cache" then return L("Cache (último baixado)") .. " — " .. Catalog.catalog_source_label() end
   if s == "local-roms" then return L("Catálogo local") end
   if s == "cache-roms" then return L("Cache (último baixado)") end
   if s == "roms-embutido" then return L("Catálogo embutido") end
   return L("Sem catálogo")
+end
+
+-- Troca de provedor preservando favoritos, manifestos e cartoes SD.
+-- Em caso de arquivo proprio ausente ou invalido, retorna ao provedor anterior.
+function Catalog.set_provider(provider)
+  if provider~="gamestorebr" and provider~="r36s_own" then
+    return false,"Provedor desconhecido"
+  end
+  local old=Catalog.provider()
+  if old==provider then return true end
+  if provider=="r36s_own" then
+    local payload,err=require("core.own_source").read()
+    if not payload then return false,err end
+  end
+  Prefs.set(PROVIDER_KEY,provider)
+  if not Catalog.load_local() or Catalog.provider()~=provider then
+    Prefs.set(PROVIDER_KEY,old)
+    Catalog.load_local()
+    return false,Catalog.remote_error~="" and Catalog.remote_error or "Falha na troca do catalogo"
+  end
+  require("core.rom_source").reset()
+  return true
 end
 
 --- Filtra ports. filter = "all" | "installed" | "cat:<id>"
