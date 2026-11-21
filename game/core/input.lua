@@ -51,37 +51,6 @@ local function release(act, src)
   if Input.rep and Input.rep.act == act then Input.rep = nil end
 end
 
--- Reconhece START/SELECT tambem por indice bruto SDL (0-based no mapeamento).
--- Consulta primeiro o mapeamento do proprio joystick; o padrao b6/b7 so e
--- usado se nao ha entrada especifica, permitindo compatibilidade com R36H/R36S.
-function Input.raw_start_select(joy)
-  local map = nil
-  if joy and joy.getGamepadMapping then
-    local ok, value = pcall(joy.getGamepadMapping, joy)
-    if ok and type(value) == "string" then map = value end
-  end
-  if not map or map == "" then map = os.getenv("SDL_GAMECONTROLLERCONFIG") or "" end
-  local back = tonumber(map:match("back:b(%d+)"))
-  local start = tonumber(map:match("start:b(%d+)"))
-  -- Indices Lua/LOVE comecam em 1; os do SDL, em 0.
-  if back == nil and start == nil then
-    local ok, count = pcall(joy.getButtonCount, joy)
-    if ok and count and count >= 8 then back, start = 6, 7 end
-  end
-  return back and back + 1 or nil, start and start + 1 or nil
-end
-
-function Input.joystickpressed(joy, index)
-  local back, start = Input.raw_start_select(joy)
-  if index == back then press("select", "raw")
-  elseif index == start then press("start", "raw") end
-end
-function Input.joystickreleased(joy, index)
-  local back, start = Input.raw_start_select(joy)
-  if index == back then release("select", "raw")
-  elseif index == start then release("start", "raw") end
-end
-
 function Input.gamepadpressed(_, button)
   if not PAD[button] then print("[r36sbr] botao sem funcao: " .. tostring(button)) end
   press(PAD[button], "pad")
