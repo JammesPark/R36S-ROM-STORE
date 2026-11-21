@@ -10,11 +10,10 @@ local RH, GAP, TOP, VISIBLE=58,6,50,5
 
 function S:enter()
   Themes.scan()
-  -- O atualizador/loja de temas permanece sempre como primeira opcao
-  -- em qualquer tema selecionado ou quantidade de temas instalados.
-  self.items={{download=true}}
+  -- Edicao Experimental: apenas Neon e Padrao, sem acesso a catalogo de
+  -- temas descontinuados. Os arquivos antigos do usuario nao sao apagados.
+  self.items={}
   for _,th in ipairs(Themes.list) do self.items[#self.items+1]={theme=th} end
-  -- Ao abrir ou voltar da loja, o atalho permanece visivel e selecionado.
   self.sel=1
   self.scroll=0
   self.preview,self.preview_for=nil,nil
@@ -115,19 +114,18 @@ function S:draw()
     G.text(T.f.small,string.format("%d/%d",self.sel,#self.items),lx+8,TOP+VISIBLE*(RH+GAP)+2,T.c.faint)
   end
   local hints={{"dpad",L("Escolher")}}
-  if it and it.download then hints[#hints+1]={"a",L("Ver catálogo")}
-  elseif it and it.theme and it.theme.id~=Themes.current then hints[#hints+1]={"a",L("Aplicar tema")} end
+  if it and it.theme and it.theme.id~=Themes.current then hints[#hints+1]={"a",L("Aplicar tema")} end
   hints[#hints+1]={"b",L("Voltar")};G.hints(hints)
 end
 function S:action(act)
   local n=#self.items
+  if n == 0 then if act == "b" then App.pop() end; return end
   if act=="up" then self.sel=(self.sel-2)%n+1
   elseif act=="down" then self.sel=self.sel%n+1
   elseif act=="b" then App.pop()
   elseif act=="a" then
     local it=self.items[self.sel]
-    if it.download then App.push("theme_store"); return end
-    if it.theme.id==Themes.current then App.toast("Este tema já está em uso.","info");return end
+     if it.theme.id==Themes.current then App.toast("Este tema já está em uso.","info");return end
     local ok,why=Themes.apply(it.theme.id,true)
     if ok then App.toast(it.theme.name.." aplicado.","ok")
     else App.toast("Não foi possível aplicar o tema: "..tostring(why),"error") end
