@@ -281,12 +281,11 @@ local function draw_item(p, px, py, pw, ox, a, glow)
   local slide_x, slide_y = px+10+ox, py+27
   local slide_w, slide_h = pw-20, 274
   G.rect(slide_x,slide_y,slide_w,slide_h,T.c.bg0,8,a)
-  G.frame(slide_x,slide_y,slide_w,slide_h,type_color(p),8,1,a*.60)
   -- A imagem ocupa o maior retangulo possivel na area do slide,
   -- preservando a proporcao real (retrato/paisagem/quadrada), sem cortar.
   local img=Covers.get(p)
-  local maxw,maxh=slide_w-12,230
-  local cw,ch=184,230  -- tamanho seguro ate a capa estar disponivel
+  local maxw,maxh=slide_w-6,232
+  local cw,ch=184,232  -- usa melhor a altura livre sem cortar ou distorcer a capa
   if img then
     local iw,ih=img:getDimensions()
     if iw>0 and ih>0 then
@@ -298,8 +297,6 @@ local function draw_item(p, px, py, pw, ox, a, glow)
   local cy=slide_y+3+(maxh-ch)/2
   G.cover(img,p,cx,cy,cw,ch,Covers.is_loading(p),App.t)
   if a<1 then G.rect(cx,cy,cw,ch,T.c.bg0,4,1-a)
-  elseif glow then
-    G.frame(cx-1,cy-1,cw+2,ch+2,type_color(p),4,2,App.pulse(.55,.25,2.2))
   end
   local tx=slide_x+10
   G.text_fit(T.f.bodyb,p.name,tx,slide_y+237,slide_w-20,with_alpha(T.c.text,a))
