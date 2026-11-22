@@ -10,7 +10,7 @@ function M.items()
     { id="tools", label=L("Utilidades e Ferramentas"), sub=L("Ferramentas do sistema"), icon="roms_tools_kit", classic_icon="tools" },
     { id="favorites", label=L("Favoritos"), sub=L("Itens marcados como favoritos"), icon="set_favorites", classic_icon="library" },
     { id="downloads", label=L("Downloads"), sub=L("Progresso e histórico (START)"), icon="download", classic_icon="download" },
-    { id="installed", label=L("Instalados"), sub=L("ROMs instaladas no console"), icon="set_grid", classic_icon="mine" },
+    { id="installed", label=L("Instalados"), sub=L("ROMs instaladas pela loja"), icon="set_grid", classic_icon="mine" },
     { id="library", label=L("Biblioteca de jogos"), sub=L("Jogos dos emuladores do console"), icon="games", classic_icon="library" },
     { id="settings", label=L("Configurações"), sub=L("Música, catálogo e sistema"), icon="settings", classic_icon="settings" },
     { id="esthemes", label=L("Temas do EmulationStation"), sub=L("Temas da interface do console"), icon="roms_es_monitor", classic_icon="es_themes" },
