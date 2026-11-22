@@ -1,26 +1,21 @@
--- Configuracoes: categorias em lista vertical, no mesmo estilo do menu principal.
--- Somente esta tela muda; as opcoes internas continuam em settings_cat.lua.
+-- Configuracoes: lista de categorias a esquerda e opcoes na mesma tela a direita.
+-- Tema Padrao 640x480. Mantem as acoes originais de settings_cat.lua.
 local L = require("lib.i18n").L
 local T = require("ui.theme")
 local G = require("ui.gfx")
 local Icons = require("ui.icons")
 local Defs = require("ui.settings_defs")
+local Inner = require("ui.screens.settings_cat")
 local lg = love.graphics
 
 local S = {}
-
--- Mesma largura, linha e margem da lista do menu principal.
--- A coluna direita detalha a categoria selecionada, sem criar novas acoes.
-local X, Y, W, ROW_H, VISIBLE = 20, 54, 300, 44, 8
-local DX, DY, DW, DH = 340, 54, 280, 372
-
-local function category_color(cat)
-  return T.c[cat.color] or T.c.accent
-end
+local X, Y, W, ROW, VIS = 12, 52, 204, 36, 10
+local RX, RY, RW, RH = 226, 52, 402, 378
 
 function S:enter(p)
   self.sel = math.max(1, math.min(self.sel or 1, #Defs.LIST))
   self.top = self.top or 0
+  self.focus, self.inner = "categories", nil
   if p and p.cat then
     for i, cat in ipairs(Defs.LIST) do
       if cat.id == p.cat then self.sel = i; break end
@@ -29,92 +24,122 @@ function S:enter(p)
   self:follow()
 end
 
--- Primeira opcao visivel: indice 0-based, como no menu principal.
 function S:follow()
   local n = #Defs.LIST
-  self.top = math.max(0, math.min(self.top or 0, math.max(0, n - VISIBLE)))
+  self.top = math.max(0, math.min(self.top or 0, math.max(0, n - VIS)))
   if self.sel <= self.top then self.top = self.sel - 1 end
-  if self.sel > self.top + VISIBLE then self.top = self.sel - VISIBLE end
-  self.top = math.max(0, math.min(self.top, math.max(0, n - VISIBLE)))
+  if self.sel > self.top + VIS then self.top = self.sel - VIS end
 end
 
-local function draw_lines(font, s, x, y, w, max_h, ink)
-  local f, lines, line_h = G.fit_lines(font, s or "", w, max_h, true)
-  for i, line in ipairs(lines) do
-    if (i - 1) * line_h + f:getHeight() > max_h then break end
-    G.text(f, line, x, y + (i - 1) * line_h, ink)
+function S:open_category()
+  local cat = Defs.LIST[self.sel]
+  if not cat then return end
+  if not self.inner or not self.inner.cat or self.inner.cat.id ~= cat.id then
+    self.inner = setmetatable({}, { __index = Inner })
+    self.inner:enter({ id = cat.id })
+  end
+  self.focus = "options"
+end
+
+function S:resume()
+  if self.inner and self.inner.resume then self.inner:resume() end
+end
+
+function S:on_language()
+  if self.inner and self.inner.on_language then self.inner:on_language() end
+end
+
+function S:update(dt)
+  if self.inner and self.focus == "options" then self.inner:update(dt) end
+end
+
+local function lines(font, str, x, y, w, h, ink)
+  local fit, txts, lh = G.fit_lines(font, str or "", w, h, true)
+  for i, line in ipairs(txts) do
+    if (i - 1) * lh + fit:getHeight() > h then break end
+    G.text(fit, line, x, y + (i - 1) * lh, ink)
   end
 end
 
 function S:draw()
   G.header(L("Configurações"))
   self:follow()
-  local n = #Defs.LIST
-  -- Lista de categorias: mesma selecao com fundo, contorno e barra lateral
-  -- usada na coluna esquerda do menu principal (640x480).
-  G.clip(14, Y, 314, VISIBLE * ROW_H)
-  for i = self.top + 1, math.min(n, self.top + VISIBLE) do
+  G.clip(X - 2, Y, W + 4, VIS * ROW)
+  for i = self.top + 1, math.min(#Defs.LIST, self.top + VIS) do
     local cat = Defs.LIST[i]
-    local y = Y + (i - self.top - 1) * ROW_H
-    local on = (i == self.sel)
+    local y = Y + (i - self.top - 1) * ROW
+    local on = i == self.sel
+    local c = T.c[cat.color] or T.c.accent
     if on then
-      G.rect(X, y, W, ROW_H - 3, T.c.bg2, 8)
-      G.frame(X, y, W, ROW_H - 3, T.c.accent, 8, 2)
-      G.rect(X, y + 7, 4, ROW_H - 17, T.c.accent, 2)
+      G.rect(X, y, W, ROW - 3, T.c.bg2, 7)
+      G.frame(X, y, W, ROW - 3, self.focus == "categories" and T.c.accent or T.c.line, 7, self.focus == "categories" and 2 or 1)
+      G.rect(X, y + 6, 4, ROW - 15, c, 2)
     end
-    Icons.draw(cat.icon, X + 16, y + 10, on and T.c.accent or T.c.dim, 1)
-    G.text_fit(T.f.bodyb, cat.name, X + 48, y + 3, W - 60, on and T.c.text or T.c.dim)
-    G.text_fit(T.f.small, cat.desc or "", X + 48, y + 23, W - 60, on and T.c.dim or T.c.faint)
+    Icons.draw(cat.icon, X + 13, y + 7, on and c or T.c.dim, 0.84)
+    -- Descricoes apenas no painel direito; a lista lateral mostra so o nome.
+    G.text_fit(T.f.bodyb, cat.name, X + 41, y + 8, W - 50, on and T.c.text or T.c.dim)
   end
   G.unclip()
-
-  if n > VISIBLE then
-    G.color(T.c.accent2)
-    local x = X + W + 7
-    if self.top > 0 then
-      lg.polygon("fill", x, Y + 4, x - 5, Y + 12, x + 5, Y + 12)
-    end
-    if self.top + VISIBLE < n then
-      local bottom = Y + VISIBLE * ROW_H - 4
-      lg.polygon("fill", x, bottom, x - 5, bottom - 8, x + 5, bottom - 8)
-    end
+  if #Defs.LIST > VIS then
+    local track = VIS * ROW
+    local size = track * VIS / #Defs.LIST
+    G.rect(X + W + 2, Y + (track - size) * (self.top / (#Defs.LIST - VIS)), 3, size, T.c.accent2, 2, 0.7)
   end
 
   local cat = Defs.LIST[self.sel]
-  if cat then
-    local c = category_color(cat)
-    -- Painel direito: resumo da selecao, semelhante ao painel de destaque.
-    G.panel(DX, DY, DW, DH, { bg = T.c.bg1 })
-    G.rect(DX + 12, DY + 16, 4, 39, c, 2)
-    Icons.draw(cat.icon, DX + 28, DY + 17, c, 1.6)
-    local count = string.format("%d/%d", self.sel, n)
-    G.text(T.f.small, count, DX + DW - 14 - T.f.small:getWidth(count), DY + 20, T.c.faint)
-
-    draw_lines(T.f.h3, cat.name, DX + 18, DY + 83, DW - 36, 52, T.c.text)
-    G.rect(DX + 18, DY + 144, DW - 36, 1, T.c.line)
-    draw_lines(T.f.body, cat.desc, DX + 18, DY + 158, DW - 36, 106, T.c.dim)
-
-    G.rect(DX + 18, DY + 279, DW - 36, 1, T.c.line)
+  if self.inner and self.inner.cat and cat and self.inner.cat.id == cat.id then
+    self.inner:draw_embedded(RX, RY, RW, RH, self.focus == "options")
+  elseif cat then
+    local c = T.c[cat.color] or T.c.accent
+    G.panel(RX, RY, RW, RH, { bg = T.c.bg1 })
+    G.rect(RX + 14, RY + 16, 4, 42, c, 2)
+    Icons.draw(cat.icon, RX + 31, RY + 21, c, 1.4)
+    G.text_fit(T.f.h3, cat.name, RX + 20, RY + 87, RW - 40, T.c.text)
+    G.rect(RX + 20, RY + 126, RW - 40, 1, T.c.line)
+    lines(T.f.body, cat.desc, RX + 20, RY + 145, RW - 40, 100, T.c.dim)
+    G.rect(RX + 20, RY + 267, RW - 40, 1, T.c.line)
     local ok, status = pcall(cat.status)
     if ok and status and tostring(status) ~= "" then
-      draw_lines(T.f.bodyb, tostring(status), DX + 18, DY + 294, DW - 36, 60, c)
+      lines(T.f.bodyb, tostring(status), RX + 20, RY + 280, RW - 40, 42, c)
     end
+    G.text(T.f.small, L("Pressione A para abrir as opções neste painel."), RX + 20, RY + RH - 29, T.c.faint)
   end
 
-  local hints = { { "dpad", L("Navegar") }, { "a", L("Abrir") }, { "b", L("Voltar") } }
+  local hints
+  if self.focus == "options" then
+    local r = self.inner and self.inner.rows and self.inner.rows[self.inner.sel]
+    local label = r and r.kind == "toggle" and L("Alternar") or (r and r.kind == "info" and L("Navegar") or L("Selecionar"))
+    hints = { { "dpad", L("Navegar / ajustar") }, { "a", label }, { "b", L("Categorias") } }
+  else
+    hints = { { "dpad", L("Navegar") }, { "a", L("Abrir opções") }, { "b", L("Voltar") } }
+  end
   G.hints(hints)
 end
 
 function S:action(act)
   local n = #Defs.LIST
+  if self.focus == "options" then
+    if act == "b" then self.focus = "categories"; return end
+    if self.inner then
+      if act == "l1" or act == "r1" then
+        local delta = act == "l1" and -5 or 5
+        self.inner.sel = math.max(1, math.min(#self.inner.rows, self.inner.sel + delta))
+      else
+        self.inner:action(act)
+      end
+    end
+    return
+  end
   if act == "b" then App.pop(); return end
   if n == 0 then return end
+  local old = self.sel
   if act == "up" then self.sel = (self.sel - 2) % n + 1
   elseif act == "down" then self.sel = self.sel % n + 1
-  elseif act == "l1" then self.sel = math.max(1, self.sel - VISIBLE)
-  elseif act == "r1" then self.sel = math.min(n, self.sel + VISIBLE)
-  elseif act == "a" then App.push("settings_cat", { id = Defs.LIST[self.sel].id }); return
+  elseif act == "l1" then self.sel = math.max(1, self.sel - VIS)
+  elseif act == "r1" then self.sel = math.min(n, self.sel + VIS)
+  elseif act == "a" or act == "right" then self:open_category(); return
   else return end
+  if old ~= self.sel then self.inner = nil end
   self:follow()
 end
 

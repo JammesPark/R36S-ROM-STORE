@@ -188,6 +188,76 @@ function S:draw()
   G.hints(hints)
 end
 
+
+-- Opcoes da categoria dentro da tela principal de Configuracoes.
+-- Reutiliza a mesma instancia S e a mesma S:action, sem duplicar controles.
+function S:draw_embedded(x, y, w, h, focused)
+  local cat = self.cat
+  if not cat then return end
+  local ccol = color(cat.color)
+  G.panel(x, y, w, h, { bg = T.c.bg1 })
+  G.rect(x + 12, y + 11, 4, 26, ccol, 2)
+  G.text_fit(T.f.h3, cat.name, x + 25, y + 10, w - 90, T.c.text)
+  G.text(T.f.small, tostring(self.sel) .. "/" .. tostring(#self.rows), x + w - 65, y + 16, T.c.faint, "right", 52)
+  local rowY, rh, step = y + 51, 34, 36
+  local descY = y + h - 108
+  local vis = math.max(1, math.floor((descY - rowY - 3) / step))
+  local n = #self.rows
+  self.sel = math.max(1, math.min(self.sel, math.max(1, n)))
+  if self.sel <= self.top then self.top = self.sel - 1 end
+  if self.sel > self.top + vis then self.top = self.sel - vis end
+  self.top = math.max(0, math.min(self.top, math.max(0, n - vis)))
+  G.clip(x + 8, rowY, w - 16, descY - rowY - 2)
+  for i = self.top + 1, math.min(n, self.top + vis) do
+    local r = self.rows[i]
+    local ry = rowY + (i - self.top - 1) * step
+    local on = i == self.sel
+    local dim = r.enabled and not r.enabled(self)
+    G.rect(x + 8, ry, w - 16, rh, on and T.c.bg3 or T.c.bg2, 5)
+    if on and focused then G.frame(x + 8, ry, w - 16, rh, ccol, 5, 2) end
+    if on then G.rect(x + 8, ry + 6, 3, rh - 12, ccol, 2) end
+    local lx = x + 19
+    if r.icon then
+      Icons.draw(r.icon, lx, ry + 7, dim and T.c.faint or (on and ccol or T.c.dim), 0.8)
+      lx = lx + 25
+    end
+    local value = ""
+    local vc = on and ccol or T.c.dim
+    if r.kind == "toggle" then
+      value = r.get(self) and L("LIGADO") or L("DESLIGADO")
+      vc = r.get(self) and T.c.green or T.c.faint
+    elseif r.kind == "slider" then
+      value = (r.available and not r.available()) and L("INDISPONÍVEL") or (tostring(r.get(self) or 0) .. "%")
+    elseif r.kind == "value" or r.kind == "info" then
+      value = tostring(txt(r.value, self) or "")
+      if r.color then vc = r.color(self) end
+    elseif r.kind == "action" then
+      value = r.value and tostring(txt(r.value, self) or "") or "›"
+    end
+    local vw = (value ~= "" and 118 or 0)
+    G.text_fit(T.f.bodyb, tostring(txt(r.label, self) or ""), lx, ry + 8,
+      x + w - 17 - vw - lx, dim and T.c.faint or (on and T.c.text or T.c.dim))
+    if vw > 0 then
+      G.text_fit(T.f.small, value, x + w - 135, ry + 10, 116, dim and T.c.faint or vc)
+    end
+  end
+  G.unclip()
+  if n > vis then
+    local bh = math.max(14, (descY - rowY) * vis / n)
+    G.rect(x + w - 7, rowY + (descY - rowY - bh) * (self.top / (n - vis)), 2, bh, ccol, 1)
+  end
+  G.rect(x + 15, descY - 8, w - 30, 1, T.c.line)
+  local r = self.rows[self.sel]
+  if r then
+    G.text_fit(T.f.bodyb, tostring(txt(r.label, self) or ""), x + 17, descY + 1, w - 34, T.c.text)
+    local text = tostring(txt(r.desc, self) or "")
+    local fit, lines, lh = G.fit_lines(T.f.small, text, w - 34, h - (descY - y) - 30, true)
+    for i, line in ipairs(lines) do
+      G.text(fit, line, x + 17, descY + 25 + (i - 1) * lh, T.c.dim)
+    end
+  end
+end
+
 function S:action(act)
   local n = #self.rows
   local r = self.rows[self.sel]
