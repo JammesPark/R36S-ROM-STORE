@@ -164,7 +164,7 @@ end
 function S:draw()
   if neon() then return self:draw_neon() end
   local p = self.port
-  G.header(L("Detalhes do port"))
+  G.header(L("Detalhes da ROM"))
 
   -- capa
   G.cover(Covers.get(p), p, 20, 56, 200, 267, Covers.is_loading(p), App.t)
@@ -324,7 +324,7 @@ end
 
 function S:draw_neon()
   local p = self.port
-  G.header(L("Detalhes do port"))
+  G.header(L("Detalhes da ROM"))
   local acc = p.section == "tools" and T.c.green or T.c.accent
   -- capa em destaque com moldura neon
   local cx, cy, cw, ch = 16, 52, 150, 200
