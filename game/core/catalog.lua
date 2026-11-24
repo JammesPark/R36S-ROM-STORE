@@ -7,6 +7,7 @@ local json = require("lib.json")
 local U = require("lib.util")
 local C = require("config")
 local Cats = require("core.categories")
+local Presentation = require("core.catalog_presentation")
 
 local Catalog = {
   ports = {},          -- lista normalizada
@@ -150,6 +151,13 @@ local function normalize_port(raw, idx, cat_names)
   p.size_exact = type(raw.size_bytes or raw.sizeBytes or raw.size) == "number"
 
   p.download_url = build_url(raw, { "download_url", "downloadUrl", "url", "download", "rip_url" })
+  if p.section == "games" then
+    local clean = Presentation.title(p.name, p.download_url)
+    if clean ~= p.name then
+      if p.original_name == "" then p.original_name = p.name end
+      p.name = clean
+    end
+  end
   -- informacoes extras opcionais (exibidas nos detalhes)
   p.platform = str(raw.platform or raw.plataforma)
   p.origin = str(raw.source or raw.origem)
@@ -252,11 +260,7 @@ function Catalog.parse(text)
   end
   table.sort(extra, function(a,b) return a.name:lower()<b.name:lower() end)
   for _, c in ipairs(extra) do cats[#cats+1]=c end
-  table.sort(cats, function(a, b)
-    local an, bn = a.name:lower(), b.name:lower()
-    if an == bn then return a.id < b.id end
-    return an < bn
-  end)
+  table.sort(cats, Presentation.less)
   for _, c in ipairs(Cats.LIST) do
     if c.section == "tools" then
       local k = "tools|" .. c.id
@@ -295,6 +299,8 @@ end
 
 -- Apenas o canal proprio experimental; nunca a API legada.
 function Catalog.get_remote_url() return C.OWN_CATALOG_URL end
+-- As telas recebem lista ordenada mesmo se o SD tiver a ordem antiga.
+function Catalog.systems() return Presentation.systems(Catalog.categories) end
 
 function Catalog.load_local()
   Catalog.remote_url = Catalog.get_remote_url()

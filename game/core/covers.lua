@@ -137,8 +137,19 @@ end
 
 --- Ao trocar de catalogo/tela: libera pedidos pendentes
 function Covers.reset_pending()
+  Covers.focus_owner, Covers.focus_token = nil, nil
   Fetcher.drop_covers()
   -- Os callbacks dos pedidos cancelados limpam o estado; manter o download ativo.
+end
+
+-- A fila de tela deve seguir a posicao atual, nao as paginas ja abandonadas.
+-- Preserva o download em andamento e o cache; cancela apenas pedidos visuais na fila.
+function Covers.focus_view(owner, token, selected)
+  if Covers.focus_owner == owner and Covers.focus_token == token then return false end
+  Fetcher.drop_covers()
+  Covers.focus_owner, Covers.focus_token = owner, token
+  if selected and not selected.builtin then Covers.get(selected) end
+  return true
 end
 
 --- Apaga as capas baixadas (serao baixadas de novo quando aparecerem)

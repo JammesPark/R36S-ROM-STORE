@@ -28,7 +28,9 @@ local STEP = 116
 --- anima a posicao da coluna (chamar no update da tela)
 function CV.update(st, sel, dt)
   st.cv_pos = st.cv_pos or sel
-  if App.animations() then
+  if math.abs(st.cv_pos - sel) > 7 then
+    st.cv_pos = sel -- salto longo: nao solicitar capas de paginas intermediarias
+  elseif App.animations() then
     st.cv_pos = st.cv_pos + (sel - st.cv_pos) * math.min(1, dt * 12)
     if math.abs(st.cv_pos - sel) < 0.01 then st.cv_pos = sel end
   else

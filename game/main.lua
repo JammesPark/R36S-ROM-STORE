@@ -1131,6 +1131,12 @@ function love.update(dt)
   Clock.tick()   -- diferenca para UTC do sistema (fuso/horario de verao), a cada 10 min
   Input.update(dt)
   Fetcher.update()
+  -- O observador de rede ja roda em background; ao reconectar, liberar retry.
+  local network = require("core.net").current()
+  if network then
+    if App.cover_net_connected == false and network.connected then Covers.retry_failed() end
+    App.cover_net_connected = network.connected
+  end
   require("core.theme_store").update()
   local was_busy = Installer.job and not Installer.job.finished
   Installer.update()

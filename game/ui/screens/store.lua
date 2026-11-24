@@ -81,7 +81,8 @@ function S:build_tabs()
     end
   else
     tabs[1] = { id = "all", section = self.section, label = L("Todos") }
-    for _, c in ipairs(Catalog.categories) do
+    local categories = self.section == "games" and Catalog.systems() or Catalog.categories
+    for _, c in ipairs(categories) do
       if c.section == self.section then
         tabs[#tabs + 1] = { id = "cat:" .. c.id, section = self.section, label = c.name }
       end
@@ -99,6 +100,7 @@ end
 
 function S:refresh()
   local cur = self.items and self.items[self.sel]
+  Covers.reset_pending()
   self.items = {}
   -- ferramentas integradas (Manutencao) primeiro; depois os ports do catalogo
   if not self.mine and not self.favs then
@@ -402,15 +404,19 @@ function S:draw_grid()
 end
 
 function S:draw()
+  local view = active_view()
+  -- A lista baixa a capa selecionada; grade/vitrine priorizam a regiao visivel.
+  local page = view == "grid" and math.floor((self.sel - 1) / CG.COLS) or self.sel
+  Covers.focus_view(self, tostring(self.filter) .. ":" .. view .. ":" .. page, self.items[self.sel])
   local right = string.format(L("%d de %d"), #self.items > 0 and self.sel or 0, #self.items)
   if Themes.current == "default" and self.section == "games" then
     right = right .. " · L2/R2 " .. VIEW_NAMES[active_view()]
   end
   G.header(self:title(), right)
   self:draw_tabs()
-  if active_view() == "grid" and #self.items > 0 then
+  if view == "grid" and #self.items > 0 then
     self:draw_grid()
-  elseif active_view() == "showcase" and #self.items > 0 then
+  elseif view == "showcase" and #self.items > 0 then
     self:draw_showcase()
   else
     self:draw_list()

@@ -30,7 +30,7 @@ function S:on_catalog()
     heads[#heads + 1] = { y = y, section = sec }
     y = y + HEADER_H
     local i = 0
-    for _, c in ipairs(Catalog.categories) do
+    for _, c in ipairs(Catalog.systems()) do
       if c.section == sec.id then
         local col = i % COLS
         local row = math.floor(i / COLS)
