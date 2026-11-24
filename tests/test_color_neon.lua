@@ -29,11 +29,23 @@ local self={featured={{id="test"}},feat_i=1}
 XD.action(S,self,"a");assert(opened=="roms")
 XD.action(S,self,"left");assert(self.xd_zone=="left" and self.xd_left==1)
 XD.action(S,self,"a");assert(opened=="details")
-XD.action(S,self,"down");XD.action(S,self,"a");assert(opened=="installed")
+-- Destaque e painel de catalogo nao tem atalhos selecionaveis.
+XD.action(S,self,"down");assert(self.xd_zone=="left" and self.xd_left==1)
+XD.action(S,self,"right");assert(self.xd_zone=="right" and self.xd_right==1)
+XD.action(S,self,"down");XD.action(S,self,"a");assert(opened=="esthemes")
+XD.action(S,self,"down");assert(self.xd_right==7 and self.xd_shortcut==1)
+XD.action(S,self,"a");assert(opened=="installed")
 XD.action(S,self,"down");XD.action(S,self,"a");assert(opened=="favorites")
 XD.action(S,self,"down");XD.action(S,self,"a");assert(opened=="downloads")
+XD.action(S,self,"down");assert(self.xd_shortcut==3)
 XD.action(S,self,"r1");assert(self.delta==1)
-XD.action(S,self,"right");assert(self.xd_zone=="right")
-local found=false;for _,it in ipairs(self.xd_tiles) do assert(it.id~="installed");if it.id=="esthemes" then found=true end end
-assert(found and #self.xd_tiles==8)
-print("COLOR NEON: OK - paletas independentes, menu e atalhos")
+XD.action(S,self,"right");XD.action(S,self,"a");assert(opened=="about")
+XD.action(S,self,"right");XD.action(S,self,"a");assert(opened=="exit")
+XD.action(S,self,"left");XD.action(S,self,"left");assert(self.xd_right==7)
+XD.action(S,self,"up");XD.action(S,self,"a");assert(opened=="favorites")
+XD.action(S,self,"up");XD.action(S,self,"a");assert(opened=="installed")
+XD.action(S,self,"up");XD.action(S,self,"a");assert(opened=="esthemes")
+local expected={"roms","bios","tools","esthemes","library","settings","shortcuts","about","exit"}
+assert(#self.xd_tiles==#expected)
+for i,id in ipairs(expected) do assert(self.xd_tiles[i].id==id) end
+print("COLOR NEON: OK - paletas independentes, menu e atalhos Matrix")
