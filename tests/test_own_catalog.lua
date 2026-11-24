@@ -87,6 +87,12 @@ assert(Own.decode_remote(raw) == nil, "host de capa nao autorizado deve falhar")
 ports[1].cover = "https://r36s-roms-covers.james-spanico.workers.dev/covers/sys2/test.jpg"
 assert(Own.decode_remote(raw) == nil, "capa de outro sistema deve falhar")
 ports[1].cover = ""
+-- IDs de sistemas do catalogo nao sao renomeados para os aliases de midia.
+systems[1].id = "fbneo"
+for i = 1, #ports, 50 do ports[i].system_id = "fbneo"; ports[i].category = "fbneo" end
+ports[1].cover = "https://r36s-roms-covers.james-spanico.workers.dev/covers/fba/test.jpg"
+assert(Own.decode_remote(raw) == decoded, "alias FBA de FBNeo deve ser aceito")
+ports[1].cover = ""
 local last_port = table.remove(ports)
 assert(Own.decode_remote(raw) == nil, "catalogo remoto parcial deve falhar")
 ports[#ports+1] = last_port

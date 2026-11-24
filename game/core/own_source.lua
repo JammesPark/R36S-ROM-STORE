@@ -83,7 +83,12 @@ function Own.decode_remote(bytes)
         return nil, "URL de capa remota invalida"
       end
       local sys = cover:match("/covers/([^/]+)/")
-      if sys ~= g.system_id then return nil, "Capa de outro sistema" end
+      -- O catalogo preserva os IDs originais; as pastas de midia usam aliases do ES.
+      local aliases = {fbneo = "fba", neocd = "neogeocd", sgfx = "supergrafx",
+        wonderswancol = "wonderswancolor"}
+      if sys ~= g.system_id and sys ~= aliases[g.system_id] then
+        return nil, "Capa de outro sistema"
+      end
     end
   end
   return data
