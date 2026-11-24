@@ -52,7 +52,7 @@ local App = {
 }
 _G.App = App
 
-local SCREEN_NAMES = { "disclaimer", "menu", "store", "categories", "details", "rating", "about", "settings", "files", "search", "downloads", "news", "theme_store", "console", "textinput", "sdanalyzer", "integrity", "netdiag", "update", "themes", "sdcheck", "esthemes", "splash", "language", "settings_cat", "tester", "consoleid", "wifi", "wifi_connect", "r36control", "sdmaint", "sdmaint_run", "compat", "datetime", "tzpicker", "datetime_edit", "pmmanager", "streamrec", "recordings", "updmgr", "upd_local", "upd_pkg", "upd_history", "upd_backups", "upd_notes", "bios", "bios_list", "bios_pkg", "bios_hist", "folderpick", "battery", "infolist", "licenses", "library", "library_games", "textview", "padtest", "pendports" }
+local SCREEN_NAMES = { "disclaimer", "menu", "store", "categories", "utilities", "details", "rating", "about", "settings", "files", "search", "downloads", "news", "theme_store", "console", "textinput", "sdanalyzer", "integrity", "netdiag", "update", "themes", "sdcheck", "esthemes", "splash", "language", "settings_cat", "tester", "consoleid", "wifi", "wifi_connect", "r36control", "sdmaint", "sdmaint_run", "compat", "datetime", "tzpicker", "datetime_edit", "pmmanager", "streamrec", "recordings", "updmgr", "upd_local", "upd_pkg", "upd_history", "upd_backups", "upd_notes", "bios", "bios_list", "bios_pkg", "bios_hist", "folderpick", "battery", "infolist", "licenses", "library", "library_games", "textview", "padtest", "pendports" }
 
 ---------------------------------------------------------------------------
 -- Navegacao
@@ -171,27 +171,21 @@ end
 --- Atualiza o catalogo. on_done(ok, mensagem) e opcional (usado pelas Configuracoes).
 --- Os ports instalados sao preservados: o registro de instalados nao e tocado.
 function App.refresh_catalog(user_initiated, on_done)
-  local ROMs = require("core.rom_source")
-  local ok = ROMs.refresh("all", function(success, added, reason)
-    Catalog.remote_state = success and "ok" or "failed"
-    Catalog.remote_error = success and "" or tostring(reason or "Fonte de ROMs indisponível")
-    if success then
-      Prefs.set("cat_last", tostring(os.time()))
-      local msg = string.format("Catálogo de ROMs consultado. %d jogo(s) novos nesta página; %d no cache.",
-        added or 0, #Catalog.ports)
-      if on_done then on_done(true,msg)
-      elseif user_initiated then App.toast(msg,"ok") end
-    else
-      local msg = "Não foi possível consultar as ROMs. Fonte: " .. ROMs.source_label()
-        .. ". Detalhe: " .. Catalog.remote_error
-      if on_done then on_done(false,msg)
-      elseif user_initiated then App.toast(msg,"warn") end
+  local started = Catalog.refresh_remote(function(ok, msg, changed)
+    if changed then App.on_catalog_changed() end
+    if not ok and #Catalog.ports > 0 then
+      msg = "Sem atualização online; catálogo local preservado."
     end
+    if ok then Covers.retry_failed() end
+    if on_done then on_done(ok, msg)
+    elseif user_initiated then App.toast(msg, ok and "ok" or "warn") end
   end)
-  if ok then
-    Catalog.remote_state="loading"
-  elseif on_done then
-    on_done(false,"A consulta de ROMs já está em andamento.")
+  if not started then
+    local msg = "Catálogo já está sendo verificado."
+    if on_done then on_done(false, msg)
+    elseif user_initiated then App.toast(msg, "info") end
+  elseif user_initiated and not on_done then
+    App.toast("Verificando catálogo online...", "info")
   end
 end
 
@@ -707,10 +701,8 @@ local function on_action(act)
     take_screenshot()
     return
   end
-  -- L2/R2 nao tem funcao ao navegar por ROMs. Outras telas seguem intactas.
-  local current = App.current()
-  if current and current.name == "store" and current.section == "games"
-      and (act == "l2" or act == "r2") then return end
+  -- L2/R2 sao enviados a tela de ROMs, que alterna o modo de exibicao.
+  -- Em outras telas, permanecem com as funcoes ja existentes.
   Sfx.on_action(act)
   -- START: abre a Central de Downloads em Segundo Plano (unica funcao).
   -- Nao cancela, nao reinicia e nao interrompe nada; nunca duplica a central.
@@ -820,10 +812,13 @@ function love.load(args)
     { L("Carregando catálogo..."), function()
       U.log("R36S ROMS STORE", C.VERSION, "| ports:", C.PORTS_DIR, "| app:", C.APP_DIR)
       U.log("dados:", love.filesystem.getSaveDirectory())
-      Catalog.load_local()
-      -- Configuracoes > Catalogo > Atualizar ao abrir o hub (ligado por padrao)
-      if Prefs.get("cat_auto") ~= "0" then App.refresh_catalog(false)
-      else U.log("catalogo: atualizacao automatica desligada; usando", Catalog.source_label()) end
+      if not Catalog.load_local() then
+        App.catalog_load_error = Catalog.remote_error
+        U.log("catalogo offline: nenhum arquivo valido; tentativa online apos a abertura")
+      else
+        App.catalog_load_error = nil
+        U.log("catalogo offline:", Catalog.source_label(), #Catalog.ports, "ROMs")
+      end
     end },
     { L("Verificando espaço livre..."), function() App.update_free_space() end },
   }
@@ -831,8 +826,15 @@ function love.load(args)
     App.after_boot()
     -- avisos da abertura: so depois do aviso importante (nao cobrem o botao dele)
     App.boot_toasts = {}
+    if App.catalog_load_error then
+      App.boot_toasts[#App.boot_toasts + 1] = { "Catálogo próprio indisponível: " .. tostring(App.catalog_load_error), "warn" }
+    end
     -- aviso de versao nova no alto da tela inicial (consulta leve em segundo plano)
     require("core.updnotice").start()
+    -- Atualizacao do catalogo proprio em segundo plano; nao e OTA do sistema.
+    if not os.getenv("R36SBR_AUTOTEST") and not os.getenv("R36SBR_INSTALLTEST") then
+      App.refresh_catalog(false)
+    end
     -- atualizacao: confirma a versao nova (o app abriu) ou conclui uma recuperacao
     local okn, notice = pcall(UpdMgr.on_boot)
     if okn and notice then App.boot_toasts[#App.boot_toasts + 1] = notice
@@ -1055,7 +1057,7 @@ function App.apply_restored(done)
     tid = okr and tid and U.trim(tid) or nil
     -- backup/exportacao antiga com o id antigo do tema (ex.: xbox): aplica e grava o id novo
     if tid and Themes.ALIASES[tid] then tid = Themes.resolve(tid); pcall(love.filesystem.write, "theme.txt", tid) end
-    if tid and tid ~= "" and tid ~= Themes.current then Themes.apply(tid, false) end
+    Themes.apply(tid and tid~="" and tid or Themes.current,false)
     Music.init()
     Music.set_enabled(Music.enabled)
     Sfx.load()
@@ -1129,6 +1131,16 @@ function love.update(dt)
   Clock.tick()   -- diferenca para UTC do sistema (fuso/horario de verao), a cada 10 min
   Input.update(dt)
   Fetcher.update()
+  -- O observador de rede ja roda em background; ao reconectar, liberar retry.
+  if not App.cover_net_next or App.t>=App.cover_net_next then
+    App.cover_net_next=App.t+1
+    local network = require("core.net").current()
+    if network then
+      if App.cover_net_connected == false and network.connected then Covers.retry_failed() end
+      App.cover_net_connected = network.connected
+      Covers.set_online(network.connected)
+    end
+  end
   require("core.theme_store").update()
   local was_busy = Installer.job and not Installer.job.finished
   Installer.update()
@@ -1266,6 +1278,7 @@ local function draw_live_badges()
 end
 
 function love.draw()
+  Covers.begin_frame()
   G.clip_reset()
   -- Alguns firmwares atualizam a resolucao sem enviar love.resize.
   -- Conferir apenas os dois inteiros reais, sem reabrir a janela.

@@ -32,11 +32,13 @@ ALLOWED = {
     "nes": {"nes", "zip"},
     "pcengine": {"pce", "zip"},
     "psp": {"iso", "cso", "chd", "pbp"},
+    "psp-minis": {"iso", "cso", "chd", "pbp"},
+    "cps1": {"zip"}, "cps2": {"zip"}, "cps3": {"zip"},
     "psx": {"cue", "bin", "iso", "chd", "pbp", "ccd", "img", "sub", "m3u"},
     "saturn": {"cue", "bin", "iso", "chd", "ccd", "img", "mds", "mdf", "m3u"},
     "snes": {"sfc", "smc", "zip"},
 }
-DIRECT_ZIP = {"mame", "neogeo"}
+DIRECT_ZIP = {"mame", "neogeo", "cps1", "cps2", "cps3"}
 MAX_ENTRIES = 30000
 MAX_NAME = 1024
 CHUNK = 1024 * 1024
@@ -222,7 +224,8 @@ def validate_root(dest, system):
     if system not in ALLOWED:
         raise RomError("invalid_system", system)
     root = Path("/roms2" if str(dest).startswith("/roms2/") else "/roms")
-    allowed = (str(root) + "/" + system)
+    folder = "psp" if system == "psp-minis" else system
+    allowed = (str(root) + "/" + folder)
     aliases = {"megadrive": "genesis", "mastersystem": "sms", "mame": "mame2003"}
     if system in aliases:
         valid = {allowed, str(root) + "/" + aliases[system]}
@@ -303,16 +306,43 @@ def run(a):
             raise RomError("unsafe_zip", "Executável ou script dentro do pacote de ROMs")
         if not files:
             raise RomError("empty_pkg", "Arquivo compactado sem ROM")
-        # Pelo menos um arquivo precisa corresponder ao sistema selecionado.
-        if not any(x.suffix.lower().lstrip(".") in allowed and
-                   (x.suffix.lower() != ".zip" or a.system in DIRECT_ZIP) for x in files):
-            raise RomError("unsupported_rom", f"Nenhum arquivo compatível com {a.system}")
-        if len(files) == 1 and files[0].parent == extracted:
-            target_name = files[0].name
-            staged = files[0]
+        # CPS: o .7z individual e um romset arcade. Em vez de instalar
+        # chips soltos, conservar o nome do conjunto em um ZIP compativel.
+        if a.system in {"cps1", "cps2", "cps3"} and fmt == "7z" and suffix == "7z":
+            target_name = Path(a.filename).stem + ".zip"
+            staged = stage / "arcade_romset.zip"
+            if len(files) == 1 and files[0].suffix.lower() == ".zip":
+                with zipfile.ZipFile(files[0]) as archive:
+                    if not archive.infolist() or archive.testzip() is not None:
+                        raise RomError("bad_zip", "ROMset ZIP inválido")
+                staged = files[0]
+            else:
+                if any(x.suffix.lower() in {".zip", ".7z", ".rar"} for x in files):
+                    raise RomError("unsupported_rom", "Pacote de múltiplos ROMsets")
+                check_space(root, sum(x.stat().st_size for x in files) + 128 * len(files) + 65536, a.margin)
+                with zipfile.ZipFile(staged, "x", compression=zipfile.ZIP_DEFLATED, compresslevel=1) as archive:
+                    for item in sorted(files):
+                        check_cancel(a.cancel)
+                        rel = item.relative_to(extracted).as_posix()
+                        name_ok(rel)
+                        with item.open("rb") as reader, archive.open(rel, "w") as writer:
+                            while True:
+                                check_cancel(a.cancel)
+                                block = reader.read(CHUNK)
+                                if not block:
+                                    break
+                                writer.write(block)
         else:
-            target_name = a.slug[:100]
-            staged = extracted
+            # Pelo menos um arquivo precisa corresponder ao sistema selecionado.
+            if not any(x.suffix.lower().lstrip(".") in allowed and
+                       (x.suffix.lower() != ".zip" or a.system in DIRECT_ZIP) for x in files):
+                raise RomError("unsupported_rom", f"Nenhum arquivo compatível com {a.system}")
+            if len(files) == 1 and files[0].parent == extracted:
+                target_name = files[0].name
+                staged = files[0]
+            else:
+                target_name = a.slug[:100]
+                staged = extracted
     if not name_ok(target_name) or target_name in (".", ".."):
         raise RomError("unsafe_zip", "Nome final inválido")
     target = dest / target_name

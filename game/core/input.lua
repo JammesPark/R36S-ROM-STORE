@@ -11,6 +11,7 @@ local PAD = {
   dpup = "up", dpdown = "down", dpleft = "left", dpright = "right",
   a = "a", b = "b", x = "x", y = "y",
   leftshoulder = "l1", rightshoulder = "r1",
+  lefttrigger = "l2", righttrigger = "r2",
   start = "start", back = "select",
   guide = "shot",   -- botao FN do R36S: tira um print da tela
 }

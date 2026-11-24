@@ -14,6 +14,7 @@ local Downloads = require("core.downloads")
 local RomInstalled = require("core.rom_installed")
 local Cats = require("core.categories")
 local Icons = require("ui.icons")
+local Region = require("ui.region")
 
 local S = {}
 
@@ -23,8 +24,8 @@ local NX, NY, NW, NH = 180, 204, 448, 182 -- caixa da descricao no NEON GRID
 local function neon() return T.style.layout ~= nil end   -- dashboard, channels ou carousel
 
 function S:enter(params)
-  Manifest.rescan()
   self.port = params.port
+  if self.port.section~="games" then Manifest.rescan() end
   self.btn = 1
   self.scroll = 0
   self:layout()
@@ -164,13 +165,13 @@ end
 function S:draw()
   if neon() then return self:draw_neon() end
   local p = self.port
-  G.header(L("Detalhes da ROM"))
+  G.header(p.section == "games" and L("Detalhes da ROM") or L("Detalhes do utilitário"))
 
   -- capa
   G.cover(Covers.get(p), p, 20, 56, 200, 267, Covers.is_loading(p), App.t)
 
   -- titulo
-  local tl = G.wrap(T.f.h2, p.name, 386)
+  local tl = G.wrap(T.f.h2, Region.display_name(p), 386)
   local y = 52
   for i = 1, math.min(2, #tl) do
     G.text(T.f.h2, tl[i], DX, y, T.c.text)
@@ -179,7 +180,10 @@ function S:draw()
   y = y + 4
   local x = DX
   x = x + G.tag(p.section == "tools" and L("UTILITÁRIO") or L("JOGO"), x, y, p.section == "tools" and T.c.green or T.c.accent, T.c.bg0, T.f.bodyb) + 6
-  x = x + G.tag(U.upper(p.category), x, y, T.c.accent2, T.c.bg0) + 6
+  local reg = Region.code(p)
+  local room = math.max(52, T.W - 14 - x - (reg and Region.pill_width(reg) + 12 or 0))
+  x = x + Region.draw_system(p, x, y, room) + 6
+  if reg then x = x + Region.draw_region(p, x, y) + 6 end
   if p.test_type and Cats.TEST_TYPE_BY_ID[p.test_type] then
     x = x + G.tag(Cats.TEST_TYPE_BY_ID[p.test_type].short, x, y, T.c.bg3, T.c.text, T.f.bodyb) + 6
   end
@@ -324,7 +328,7 @@ end
 
 function S:draw_neon()
   local p = self.port
-  G.header(L("Detalhes da ROM"))
+  G.header(p.section == "games" and L("Detalhes da ROM") or L("Detalhes do utilitário"))
   local acc = p.section == "tools" and T.c.green or T.c.accent
   -- capa em destaque com moldura neon
   local cx, cy, cw, ch = 16, 52, 150, 200
@@ -334,13 +338,17 @@ function S:draw_neon()
   if Favorites.is(p) then Icons.draw("set_favorites", cx + cw - 26, cy + 6, T.c.yellow, 0.85) end
   -- nome e etiquetas
   local tx, tw = NX, NW
-  local tl = G.wrap(T.f.h2, p.name, tw)
+  local tl = G.wrap(T.f.h2, Region.display_name(p), tw)
   local y = 48
   for i = 1, math.min(2, #tl) do G.text(T.f.h2, tl[i], tx, y, T.c.text); y = y + 24 end
   y = y + 2
   local x = tx
   x = x + G.tag(p.section == "tools" and L("UTILITÁRIO") or L("JOGO"), x, y, acc, T.c.bg0, T.f.bodyb) + 6
-  if self.compat then
+  local reg = Region.code(p)
+  local room = math.max(52, T.W - 16 - x - (reg and Region.pill_width(reg) + 12 or 0))
+  x = x + Region.draw_system(p, x, y, math.min(room, 175)) + 6
+  if reg then x = x + Region.draw_region(p, x, y) + 6 end
+  if self.compat and x < T.W - 100 then
     local col = T.c[Compat.COLOR[self.compat.status]] or T.c.dim
     x = x + G.tag(Compat.LABEL[self.compat.status], x, y, col, T.c.bg0) + 6
   end

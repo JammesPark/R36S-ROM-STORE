@@ -2,16 +2,16 @@
 -- Base: R36S PORT HUB, por Lag do Lira (creditos em NOTICE.md).
 -- =============================================================================
 --  R36S ROMS STORE - configuracao
---  Para trocar o catalogo NAO e preciso mexer no codigo do app: basta publicar
---  um catalog.json em qualquer endereco (ex.: um arquivo "raw" do GitHub).
---  Veja docs/CATALOGO.md.
+--  Edicao Experimental: catalogo proprio remoto com copia local.
+--  Uma ultima copia valida e salva no SD para recuperacao offline.
 -- =============================================================================
 local L = require("lib.i18n").L
 local C = {}
 
-C.APP_NAME = L("R36S ROMS STORE")
-C.VERSION = L("0.6.7-beta")       -- texto exibido
-C.VERSION_NUM = "0.6.7-beta"        -- numero usado para comparar com a atualizacao
+C.APP_NAME = "R36S ROM HUB STORE"
+C.EDITION = "Official"  -- canal publico beta
+C.VERSION = L("0.7.0-beta")       -- texto exibido
+C.VERSION_NUM = "0.7.0-beta"        -- numero usado para comparar com a atualizacao
 -- R36 Hub OS: o hub e a interface principal do sistema (supervisor exporta R36HUBOS=1)
 C.OS_MODE = os.getenv("R36HUBOS") == "1"
 C.OS_NAME = "R36 Hub OS"
@@ -23,6 +23,7 @@ C.OS_VERSION = os.getenv("R36HUBOS_VERSION") or ""
 -- https://github.com/USUARIO/REPO, usa a ultima Release) ou de um JSON
 -- { "version", "url", "sha256", "notes" }.
 -- Tambem pode ser definido em <pasta do app>/update_url.txt (sobrescreve este).
+-- Canal oficial OTA; o feed so muda depois da verificacao do pacote publicado.
 C.UPDATE_URL = "https://raw.githubusercontent.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/main/ota/update.json"
 
 -- Catalogo de temas (Configuracoes > Temas > Baixar novos temas). Vazio ate o
@@ -36,17 +37,17 @@ C.THEMES_CATALOG_URL = "https://raw.githubusercontent.com/JammesPark/R36SPORTSBR
 C.ES_THEMES_URL = ""
 C.TAGLINE = L("Ports de jogos e utilitários para o console R36S, criados por fãs e para fãs.")
 
--- Jogos: somente API de ROMs em core/rom_source.lua e cache local.
--- URLs legadas de catalogos do Lira/PORTS STORE nao sao utilizadas.
+-- Jogos: canal proprio separado do OTA. A copia valida permanece no SD.
+C.OWN_CATALOG_URL = "https://raw.githubusercontent.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/catalogo-experimental/catalogo/catalogo_proprio.zlib"
+-- Arquivo: C.APP_DIR/catalogo_proprio.zlib.
 
 -- Central de Conteudo > BIOS do Sistema: pacote de BIOS (link direto do arquivo).
 -- Link oficial do projeto. Pode ser trocado em <pasta do app>/bios_url.txt
 -- (uma linha; sobrescreve este). Vazio = a tela avisa que a fonte nao foi configurada.
 C.BIOS_URL = "https://archive.org/download/bios-r-36s/Bios%20r36s.rar"
 
--- Fonte unica: ROMs da API GameStoreBR (core/rom_source.lua).
--- Ao ficar offline: catalog.json local valido, cache proprio de ROMs
--- ou catalogo embutido. As fontes legadas de ports nao sao usadas.
+-- Nao existe fallback para APIs ou catalogos legados nesta edicao.
+-- Quando o principal falha, usar apenas a copia local previamente validada.
 
 -- Pastas (definidas pelo launcher .sh; os valores padrao servem para o R36S)
 C.PORTS_DIR = os.getenv("R36SBR_PORTS_DIR") or "/roms/ports"

@@ -12,11 +12,15 @@ local C = require("config")
 local U = require("lib.util")
 local json = require("lib.json")
 local T = require("ui.theme")
+local Prefs=require("core.prefs")
+local Schemes=require("ui.color_schemes")
 
 local M = { list = {}, current = "default", DEFAULT = "default" }
--- Os Force Nexus Jedi e Sith sao os unicos temas incluidos por padrao.
--- Jedi inicia a loja e funciona como reserva caso outro tema falhe.
+-- Edicao Experimental: somente Tema Padrao e Neon Grid sao permitidos.
+-- Os outros temas nao sao mais carregados nem exibidos no seletor.
 M.FIRST = "default"
+M.ALLOWED = { default = true, neongrid = true }
+M.ORDER = { "default", "neongrid" }
 -- ids antigos -> ids atuais (quem usava o tema antigo continua com ele, ja renomeado)
 M.ALIASES = { xbox = "neongrid" }
 local function resolve(id) return M.ALIASES[id] or id end
@@ -37,8 +41,9 @@ local function load_def(dir, builtin)
   if type(d) ~= "table" then return nil, L("theme.json inválido") end
   if type(d.id) ~= "string" or not d.id:match("^[%w_%-]+$") then return nil, L("id inválido") end
   if type(d.colors) ~= "table" then return nil, L("sem cores") end
-  local th = { id = d.id, name = tostring(d.name or d.id), description = tostring(d.description or ""),
-    version = tostring(d.version or ""), author = tostring(d.author or ""), dir = dir, builtin = builtin,
+  local display_names={default="Pulse Edition",neongrid="Matrix Edition"}
+  local th = { id = d.id, name = display_names[d.id] or tostring(d.name or d.id), description = tostring(d.description or ""),
+    version = tostring(d.version or ""), author = display_names[d.id] and "Lag do Lira (tema original)" or tostring(d.author or ""), dir = dir, builtin = builtin,
     colors = {}, buttons = {}, style = {} }
   -- todas as cores sao obrigatorias: um tema incompleto nao e aplicado
   for _, k in ipairs(COLOR_KEYS) do
@@ -115,7 +120,7 @@ local function sync_bundled_installed_themes()
   local srcroot = "theme_updates"
   if not love.filesystem.getInfo(srcroot, "directory") then return end
   for _, id in ipairs(love.filesystem.getDirectoryItems(srcroot)) do
-    if id:match("^[%w_%-]+$") then
+    if M.ALLOWED[id] and id:match("^[%w_%-]+$") then
       local src = srcroot .. "/" .. id
       local dst = M.USER_DIR .. "/" .. id
       -- So atualizar um tema opcional ja instalado pelo usuario.
@@ -154,7 +159,7 @@ end
 -- que JA ESTAVA SELECIONADO continua aplicado, mesmo sem internet.
 -- O bundle "theme_updates/<id>" e um pacote de migracao, nao tema de fabrica.
 -- Nao toca em outras pastas nem instala automaticamente os quatro legados.
-local LEGACY = { default=true, neongrid=true, wiiblue=true, pastel=true }
+local LEGACY = { default=true, neongrid=true }
 local function migrate_selected_legacy()
   local ok, wanted = pcall(love.filesystem.read, PREF)
   wanted = ok and wanted and resolve(U.trim(wanted)) or nil
@@ -198,6 +203,7 @@ function M.scan()
   M.list, M.by_id, M.errors = {}, {}, {}
   local function add(dir, builtin)
     local th, err = load_def(dir, builtin)
+    if th and not M.ALLOWED[th.id] then return end
     if th and not M.by_id[th.id] then
       M.list[#M.list + 1] = th
       M.by_id[th.id] = th
@@ -213,42 +219,62 @@ function M.scan()
       U.log("tema ignorado:", dir, err)
     end
   end
-  -- Apenas os dois Force fazem parte da instalacao inicial.
-  local FIXED = { "forcejedi", "forcesith" }
-  local fixed = {}
-  for _, n in ipairs(FIXED) do
-    fixed[n] = true
-    if love.filesystem.getInfo(BUILTIN_DIR .. "/" .. n, "directory") then add(BUILTIN_DIR .. "/" .. n, true) end
+  -- Os temas removidos podem persistir na pasta do cartao apos atualizar
+  -- o app; nao apagamos dados privados, mas nunca listamos ou aplicamos.
+  for _, id in ipairs(M.ORDER) do
+    local dir = BUILTIN_DIR .. "/" .. id
+    if love.filesystem.getInfo(dir, "directory") then add(dir, true) end
   end
-  for _, n in ipairs(love.filesystem.getDirectoryItems(BUILTIN_DIR)) do
-    if not fixed[n] then add(BUILTIN_DIR .. "/" .. n, true) end
-  end
-  -- instalados (futuro: baixados do catalogo de temas)
+  -- Caso o utilizador tenha substituido um dos dois temas, manter o
+  -- comportamento de sobreposicao ja existente somente nesses IDs.
   if love.filesystem.getInfo(M.USER_DIR, "directory") then
-    for _, n in ipairs(love.filesystem.getDirectoryItems(M.USER_DIR)) do add(M.USER_DIR .. "/" .. n, false) end
+    for _, id in ipairs(M.ORDER) do
+      local dir = M.USER_DIR .. "/" .. id
+      if love.filesystem.getInfo(dir, "directory") then add(dir, false) end
+    end
   end
-  -- Force Nexus — Sith fica imediatamente abaixo de Force Nexus — Jedi.
-  -- Apenas ordem de exibicao; os arquivos e a escolha atual nao mudam.
-  local jedi,sith
-  for i,th in ipairs(M.list) do
-    if th.id=="forcejedi" then jedi=i elseif th.id=="forcesith" then sith=i end
+end
+
+-- Preferencias de cor isoladas por ID estavel do tema.
+local function color_key(id) return "ui_color_" .. resolve(id) end
+local function color_for(id)
+  local value=Prefs.get(color_key(id))
+  return Schemes.valid(value) and value or "original"
+end
+local function migrate_color(id)
+  local legacy=Prefs.get("ui_color")
+  if legacy==nil then return end
+  if not M.ALLOWED[id] or not M.by_id[id] then id=M.DEFAULT end
+  -- A ultima cor global pertencia ao tema que estava ativo.
+  if Prefs.get(color_key(id))==nil and Schemes.valid(legacy) then
+    Prefs.set(color_key(id),legacy)
   end
-  if jedi and sith and sith~=jedi+1 then
-    local th=table.remove(M.list,sith)
-    if sith<jedi then jedi=jedi-1 end
-    table.insert(M.list,jedi+1,th)
-  end
+  Prefs.set("ui_color",nil)
 end
 
 --- aplica um tema (sem reiniciar). Devolve true ou false, motivo
 function M.apply(id, save)
   id = resolve(id)
   local th = M.by_id and M.by_id[id]
-  if not th then return false, L("tema não encontrado") end
-  T.apply_palette(th.colors, th.buttons, th.style)
+  if not th or not M.ALLOWED[id] then return false, L("tema não encontrado") end
+  local colors,style=Schemes.resolve(th.colors,th.style,color_for(id))
+  T.apply_palette(colors,th.buttons,style)
   require("ui.gfx").build_background()
   M.current = id
   if save then pcall(love.filesystem.write, PREF, id) end
+  return true
+end
+
+function M.color_id()
+  return color_for(M.current)
+end
+function M.set_color(id)
+  if not Schemes.valid(id) then return false end
+  local key=color_key(M.current)
+  local before=Prefs.get(key)
+  Prefs.set(key,id)
+  local ok=M.apply(M.current,false)
+  if not ok then Prefs.set(key,before);return false end
   return true
 end
 
@@ -265,12 +291,13 @@ function M.init()
     saved = resolve(saved)
     pcall(love.filesystem.write, PREF, saved)
   end
+  migrate_color(saved)
   if saved ~= M.DEFAULT then
     local applied = M.apply(saved, false)
     if applied then return nil end
     U.log("tema salvo indisponivel:", saved)
     M.apply(M.DEFAULT, true)
-    return L("O tema escolhido não pôde ser carregado. Usando Wii Blue.")
+    return L("O tema escolhido não pôde ser carregado. Usando Tema Padrão.")
   end
   if not M.apply(M.DEFAULT, false) then
     -- sem o theme.json padrao: continua com as cores embutidas em ui/theme.lua

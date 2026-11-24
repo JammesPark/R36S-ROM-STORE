@@ -5,13 +5,15 @@ local T = require("ui.theme")
 local G = require("ui.gfx")
 local Icons = require("ui.icons")
 local Defs = require("ui.settings_defs")
+local U = require("lib.util")
+local I18N = require("lib.i18n")
 local lg = love.graphics
 
 local S = {}
 
-local X, W = 16, 640 - 32
-local LIST_Y, ROW_H, GAP, VISIBLE = 50, 42, 4, 6
-local FOOT_Y = LIST_Y + VISIBLE * (ROW_H + GAP) + 4
+local P=require("ui.side_panel")
+local X,W=P.DX,P.DW
+local LIST_Y,ROW_H,GAP,VISIBLE=P.LIST_Y,P.ROW_H,P.GAP,P.VISIBLE
 
 local function txt(v, scr)
   if type(v) == "function" then return v(scr) end
@@ -20,6 +22,8 @@ end
 
 function S:enter(p)
   self.cat = Defs.BY_ID[p.id]
+  self.cat_index=require("ui.screens.settings").index(p.id)
+  self.sidebar_top=p.sidebar_top or 0
   self.sel, self.top = 1, 0
   if self.cat.enter then self.cat.enter(self) end
   self:rebuild()
@@ -28,7 +32,7 @@ end
 function S:rebuild()
   local r = self.cat.rows
   self.rows = type(r) == "function" and r(self) or r
-  if self.sel > #self.rows then self.sel = #self.rows end
+  self.sel=math.max(1,math.min(self.sel,#self.rows))
 end
 
 function S:resume()
@@ -70,7 +74,7 @@ local function slider(xr, y, v, minv, dim, c)
   local pct = string.format("%d%%", v)
   local pw = 46
   G.text(T.f.bodyb, pct, xr - pw, y + 2, dim and T.c.faint or T.c.text, "right", pw)
-  local tw = 150
+  local tw = 88
   local tx = xr - pw - 12 - tw
   local f = (v - minv) / (100 - minv)
   f = math.max(0, math.min(1, f))
@@ -84,8 +88,10 @@ end
 
 function S:draw()
   local cat = self.cat
-  G.header(cat.name, L("Configurações"))
+  G.header(L("Configurações"))
+  self.sidebar_top=require("ui.screens.settings").sidebar(self.cat_index,self.sidebar_top,false)
   local ccol = color(cat.color)
+  P.heading(cat,ccol)
 
   if self.sel > self.top + VISIBLE then self.top = self.sel - VISIBLE end
   if self.sel <= self.top then self.top = self.sel - 1 end
@@ -95,8 +101,7 @@ function S:draw()
     local r = self.rows[i]
     local on = i == self.sel
     local dim = r.enabled and not r.enabled(self)
-    G.panel(X, y, W, ROW_H, { bg = on and T.c.bg3 or T.c.bg1, border = on and ccol or T.c.line, lw = on and 2 or 1 })
-    if on then G.rect(X, y + 8, 4, ROW_H - 16, ccol, 2) end
+    P.row(y,on,ccol)
     local xr = X + W - 14
     local left = xr      -- onde comeca o controle (para o rotulo nao encostar)
     local cy = y + (ROW_H - 22) / 2
@@ -113,8 +118,8 @@ function S:draw()
       end
     elseif r.kind == "value" and r.nudge then
       -- escolha com esquerda/direita:  < VALOR >
-      local v = txt(r.value, self) or ""
-      local tw = T.f.pix8:getWidth(require("lib.i18n").tr(v)) + 12
+      local v = U.ellipsize(T.f.pix8,I18N.tr(txt(r.value,self) or ""),130)
+      local tw = T.f.pix8:getWidth(v) + 12
       local ac = on and ccol or T.c.faint
       G.color(ac)
       lg.polygon("fill", xr, cy + 11, xr - 6, cy + 6, xr - 6, cy + 16)
@@ -124,8 +129,8 @@ function S:draw()
       left = xr - 28 - tw
     elseif r.kind == "value" then
       chevron(xr - 6, cy + 6, on and ccol or T.c.faint)
-      local v = txt(r.value, self) or ""
-      local tw = T.f.pix8:getWidth(require("lib.i18n").tr(v)) + 12
+      local v = U.ellipsize(T.f.pix8,I18N.tr(txt(r.value,self) or ""),130)
+      local tw = T.f.pix8:getWidth(v) + 12
       G.tag(v, xr - 16 - tw, cy + 2, on and ccol or T.c.accent2, T.c.bg0, T.f.pix8)
       left = xr - 16 - tw
     elseif r.kind == "action" then
@@ -133,7 +138,7 @@ function S:draw()
       left = xr - 16
       local v = r.value and txt(r.value, self)
       if v and v ~= "" then
-        local maxw = 220
+        local maxw = 118
         local vw = math.min(maxw, T.f.small:getWidth(v))
         G.text_fit(T.f.small, v, left - 6 - vw, cy + 4, maxw, T.c.dim)
         left = left - 6 - vw
@@ -141,43 +146,24 @@ function S:draw()
     elseif r.kind == "info" then
       local v = txt(r.value, self) or ""
       local lw = T.f.bodyb:getWidth(txt(r.label, self))
-      local maxw = W - 28 - lw - 24
+      local maxw = math.max(44,math.min(142,W - 28 - lw - 24))
       local vw = math.min(maxw, T.f.bodyb:getWidth(v))
       G.text_fit(T.f.bodyb, v, xr - vw, cy + 2, maxw, r.color and r.color(self) or T.c.text)
       left = xr - vw
     end
-    local lx = X + 16
+    local lx = X + 12
     if r.icon then
       Icons.draw(r.icon, lx, cy - 1, on and ccol or T.c.dim, 1)
       lx = lx + 32
     end
-    G.text_fit(T.f.bodyb, txt(r.label, self), lx, cy + 2, left - lx - 12,
+    G.text_fit(T.f.bodyb, txt(r.label, self), lx, cy + 2, math.max(25,left - lx - 8),
       dim and T.c.faint or (on and T.c.text or T.c.dim))
     y = y + ROW_H + GAP
   end
 
-  -- barra de rolagem
-  if #self.rows > VISIBLE then
-    local track = VISIBLE * (ROW_H + GAP) - GAP
-    local hh = track * VISIBLE / #self.rows
-    G.rect(T.W - 8, LIST_Y + (track - hh) * (self.top / (#self.rows - VISIBLE)), 3, hh, ccol, 1, 0.7)
-  end
-
-  -- descricao da opcao selecionada
-  local r = self.rows[self.sel]
-  local fh = 436 - FOOT_Y
-  G.panel(X, FOOT_Y, W, fh, { bg = T.c.bg1 })
-  G.rect(X, FOOT_Y, 4, fh, ccol, 2)
-  Icons.draw(cat.icon, X + 16, FOOT_Y + 12, ccol, 1)
-  if r then
-    G.text_fit(T.f.bodyb, txt(r.label, self), X + 52, FOOT_Y + 10, W - 70, T.c.text)
-    -- descricao: com texto maior, a fonte desce ate caber; se nao couber, encurta
-    local ty = FOOT_Y + 12 + math.max(20, T.f.bodyb:getHeight())
-    local df, lines, dlh = G.fit_lines(T.f.small, txt(r.desc, self) or "", W - 70, FOOT_Y + fh - 6 - ty, true)
-    for k = 1, #lines do
-      G.text(df, lines[k], X + 52, ty + (k - 1) * dlh, T.c.dim)
-    end
-  end
+  P.scrollbar(#self.rows,self.top,ccol)
+  local r=self.rows[self.sel]
+  P.description(cat,r and txt(r.label,self),r and txt(r.desc,self),ccol)
 
   local hints = { { "dpad", L("Navegar") } }
   if r and (r.kind == "slider" or (r.kind == "value" and r.nudge)) then hints[1] = { "dpad", L("Ajustar") } end
@@ -188,81 +174,11 @@ function S:draw()
   G.hints(hints)
 end
 
-
--- Opcoes da categoria dentro da tela principal de Configuracoes.
--- Reutiliza a mesma instancia S e a mesma S:action, sem duplicar controles.
-function S:draw_embedded(x, y, w, h, focused)
-  local cat = self.cat
-  if not cat then return end
-  local ccol = color(cat.color)
-  G.panel(x, y, w, h, { bg = T.c.bg1 })
-  G.rect(x + 12, y + 11, 4, 26, ccol, 2)
-  G.text_fit(T.f.h3, cat.name, x + 25, y + 10, w - 90, T.c.text)
-  G.text(T.f.small, tostring(self.sel) .. "/" .. tostring(#self.rows), x + w - 65, y + 16, T.c.faint, "right", 52)
-  local rowY, rh, step = y + 51, 34, 36
-  local descY = y + h - 108
-  local vis = math.max(1, math.floor((descY - rowY - 3) / step))
-  local n = #self.rows
-  self.sel = math.max(1, math.min(self.sel, math.max(1, n)))
-  if self.sel <= self.top then self.top = self.sel - 1 end
-  if self.sel > self.top + vis then self.top = self.sel - vis end
-  self.top = math.max(0, math.min(self.top, math.max(0, n - vis)))
-  G.clip(x + 8, rowY, w - 16, descY - rowY - 2)
-  for i = self.top + 1, math.min(n, self.top + vis) do
-    local r = self.rows[i]
-    local ry = rowY + (i - self.top - 1) * step
-    local on = i == self.sel
-    local dim = r.enabled and not r.enabled(self)
-    G.rect(x + 8, ry, w - 16, rh, on and T.c.bg3 or T.c.bg2, 5)
-    if on and focused then G.frame(x + 8, ry, w - 16, rh, ccol, 5, 2) end
-    if on then G.rect(x + 8, ry + 6, 3, rh - 12, ccol, 2) end
-    local lx = x + 19
-    if r.icon then
-      Icons.draw(r.icon, lx, ry + 7, dim and T.c.faint or (on and ccol or T.c.dim), 0.8)
-      lx = lx + 25
-    end
-    local value = ""
-    local vc = on and ccol or T.c.dim
-    if r.kind == "toggle" then
-      value = r.get(self) and L("LIGADO") or L("DESLIGADO")
-      vc = r.get(self) and T.c.green or T.c.faint
-    elseif r.kind == "slider" then
-      value = (r.available and not r.available()) and L("INDISPONÍVEL") or (tostring(r.get(self) or 0) .. "%")
-    elseif r.kind == "value" or r.kind == "info" then
-      value = tostring(txt(r.value, self) or "")
-      if r.color then vc = r.color(self) end
-    elseif r.kind == "action" then
-      value = r.value and tostring(txt(r.value, self) or "") or "›"
-    end
-    local vw = (value ~= "" and 118 or 0)
-    G.text_fit(T.f.bodyb, tostring(txt(r.label, self) or ""), lx, ry + 8,
-      x + w - 17 - vw - lx, dim and T.c.faint or (on and T.c.text or T.c.dim))
-    if vw > 0 then
-      G.text_fit(T.f.small, value, x + w - 135, ry + 10, 116, dim and T.c.faint or vc)
-    end
-  end
-  G.unclip()
-  if n > vis then
-    local bh = math.max(14, (descY - rowY) * vis / n)
-    G.rect(x + w - 7, rowY + (descY - rowY - bh) * (self.top / (n - vis)), 2, bh, ccol, 1)
-  end
-  G.rect(x + 15, descY - 8, w - 30, 1, T.c.line)
-  local r = self.rows[self.sel]
-  if r then
-    G.text_fit(T.f.bodyb, tostring(txt(r.label, self) or ""), x + 17, descY + 1, w - 34, T.c.text)
-    local text = tostring(txt(r.desc, self) or "")
-    local fit, lines, lh = G.fit_lines(T.f.small, text, w - 34, h - (descY - y) - 30, true)
-    for i, line in ipairs(lines) do
-      G.text(fit, line, x + 17, descY + 25 + (i - 1) * lh, T.c.dim)
-    end
-  end
-end
-
 function S:action(act)
   local n = #self.rows
   local r = self.rows[self.sel]
-  if act == "up" then self.sel = (self.sel - 2) % n + 1
-  elseif act == "down" then self.sel = self.sel % n + 1
+  if act == "up" and n>0 then self.sel = (self.sel - 2) % n + 1
+  elseif act == "down" and n>0 then self.sel = self.sel % n + 1
   elseif act == "b" then App.pop()
   elseif not r then return
   elseif r.kind == "toggle" and (act == "a" or act == "left" or act == "right") then

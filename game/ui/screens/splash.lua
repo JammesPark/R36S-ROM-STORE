@@ -44,11 +44,12 @@ function S:draw()
   local img_w, img_h = 252, 170
   local lx = (T.W - img_w) / 2
   G.logo(lx, 70, "splash")
-  G.text(T.f.pix16, "R36S ROMS STORE", 0, 258, T.c.text, "center", T.W)
-  G.text(T.f.body, SLOGAN, 0, 284, T.c.accent2, "center", T.W)
+  G.text(T.f.pix16, "R36S ROM HUB STORE", 0, 249, T.c.text, "center", T.W)
+  G.text(T.f.body, C.EDITION == "Experimental" and "— EXPERIMENTAL —" or "— BETA —", 0, 275, T.c.accent, "center", T.W)
+  G.text(T.f.body, SLOGAN, 0, 298, T.c.accent2, "center", T.W)
   local tag = C.VERSION
   local tw = T.f.pix8:getWidth(tag) + 12
-  G.tag(tag, (T.W - tw) / 2, 308, T.c.accent, T.c.bg0, T.f.pix8)
+  G.tag(tag, (T.W - tw) / 2, 322, T.c.accent, T.c.bg0, T.f.pix8)
   -- barra de carregamento (etapas concluidas / total)
   local n = math.max(1, #self.steps)
   local frac = math.min(1, math.max(0, self.i) / n)

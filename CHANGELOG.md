@@ -1,5 +1,26 @@
 # Histórico de versões
 
+## [0.7.0-beta] - 2026-11-24
+
+- Novo marco oficial do R36S ROM HUB STORE: consolidação das melhorias da versão Experimental aprovada e da distribuição 0.6.8-beta.
+- Pulse Edition e Matrix Edition com cores independentes, azul original do Pulse, novas logos e identidade visual revisada.
+- Matrix com cabeçalho reorganizado, informações do catálogo e atalhos Downloads, Favoritos e Instalados.
+- Pulse com logo centralizada; tela Sobre e título do Telegram ampliados; abertura com o nome R36S ROM HUB STORE.
+- Catálogo próprio online com validação e recuperação offline, modos Lista, Grade e Vitrine e identificação regional.
+- Configurações, Utilitários, Temas Store e gerenciamento de ROMs revisados.
+- Mantidos os créditos a Lag do Lira, a licença GPL-3.0 e as rotinas SD1/SD2 e OTA.
+- A análise de compatibilidade de tela em outros consoles e firmwares permanece pendente; nenhuma correção nova de resolução integra esta entrega.
+
+## [0.6.8-beta] - 2026-11-24
+
+- Nova identidade visual R36S ROM HUB STORE, com logos PNG atualizadas e título de abertura corrigido.
+- Pulse Edition e Matrix Edition: dois temas integrados, créditos a Lag do Lira, cores personalizadas independentes e azul como paleta original do Pulse.
+- Matrix: painel de catálogo, menu 3×3, atalhos Downloads, Favoritos e Instalados, logo ampliada à direita e indicadores à esquerda.
+- Pulse: logo centralizada com o menu. Sobre: logo e textos do Telegram ampliados.
+- Catálogo próprio remoto com validação e cópia local de segurança; modos Lista, Grade e Vitrine nos dois temas, seleção L2/R2 e etiquetas regionais.
+- Configurações e Utilitários em painel lateral; Temas Store, detalhes de ROM e instalados pela loja.
+- Preservados SD1/SD2, controles testados, licenças e créditos; atualização automática pelo canal oficial reativada.
+
 ## [0.6.7-beta] - 2026-11-19
 
 - Consulta automática do canal público de atualizações ao abrir a loja, com aviso no menu e instalação confirmada pelo usuário.

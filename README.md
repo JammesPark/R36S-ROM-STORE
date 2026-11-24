@@ -1,28 +1,32 @@
-# R36S ROMS STORE
+# R36S ROM HUB STORE
 
-Repositório do projeto **R36S ROMS STORE**, hospedado com o nome **R36S-ROMS-HUB-STORE**.
+**Status:** versão 0.7.0-beta — beta oficial.
 
-**Status:** versão 0.6.7-beta
+Aplicativo independente para consoles R36S/R36H, com interface Lua e LÖVE 11.5. Catálogo próprio de ROMs, instalação SD1/SD2, favoritos, BIOS, temas e ferramentas. Inclui os temas Pulse Edition e Matrix Edition, baseados no trabalho de Lag do Lira.
 
-Aplicativo para consoles R36S/R36H, com interface Lua e LÖVE 11.5. Inclui catálogo de ROMs por sistema, gerenciamento de downloads, instalação em SD1/SD2, favoritos, BIOS, temas e gerenciamento seguro dos arquivos instalados.
+## Instalação e atualização
 
-**Esta revisão** usa a versão com **Configurações em lista**, com o `game.love` correspondente e as fontes Lua da mesma compilação.
+- Instalação inicial: baixe o ZIP sem o sufixo OTA nas [Releases do canal oficial](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases), extraia na pasta ports do cartão e execute `R36S ROMS STORE.sh`.
+- Atualização: use o menu de atualização da loja, com conexão à internet e confirmação antes de instalar. Faça backup da instalação e das configurações.
+- O runtime LÖVE 11.5 do console é necessário. O catálogo próprio é obtido pelo canal dedicado, com validação e recuperação da última cópia válida no SD. Em uma instalação nova sem cópia local, a primeira sincronização exige conexão.
+- A versão aprovada em console foi a Experimental 0.6.7-beta; a publicação oficial altera a identificação, a versão e reativa o feed OTA. A compatibilidade com todos os firmwares, telas e consoles não está certificada.
 
-## Instalação
+## Novidades
 
-Baixe o instalador ZIP em **[Releases](https://github.com/JammesPark/R36S-ROMS-HUB-STORE/releases)** e extraia seu conteúdo na pasta `/roms/ports/` do cartão do console e execute `R36S ROMS STORE.sh` no EmulationStation. É necessário ter o runtime LÖVE apropriado. Para uma atualização manual, faça cópia de segurança do `game.love` anterior.
+- Nova identidade visual R36S ROM HUB STORE, com logos PNG atualizadas e título de abertura corrigido.
+- Pulse Edition e Matrix Edition: dois temas integrados, créditos a Lag do Lira, cores personalizadas independentes e azul como paleta original do Pulse.
+- Matrix: painel de catálogo, menu 3×3, atalhos Downloads, Favoritos e Instalados, logo ampliada à direita e indicadores à esquerda.
+- Pulse: logo centralizada com o menu. Sobre: logo e textos do Telegram ampliados.
+- Catálogo próprio remoto com validação e cópia local de segurança; modos Lista, Grade e Vitrine nos dois temas, seleção L2/R2 e etiquetas regionais.
+- Configurações e Utilitários em painel lateral; Temas Store, detalhes de ROM e instalados pela loja.
+- Preservados SD1/SD2, controles testados, licenças e créditos; atualização automática pelo canal oficial reativada.
 
-## Código-fonte e compilação
+Veja [CHANGELOG.md](CHANGELOG.md) e [documentação do catálogo](docs/CATALOGO_ONLINE_EXPERIMENTAL.md). O canal de dados continua separado do OTA, preservando a fonte já testada. A branch experimental permanece para futuras validações.
 
-- `game/`: fonte Lua usada para gerar o `game.love`.
-- `r36sromsstore/`: arquivos de suporte e um `game.love` já empacotado, correspondente à fonte.
-- `tools/build.sh`: gerador do instalador ZIP.
-- `.github/workflows/build.yml`: valida a sintaxe LuaJIT e publica o ZIP da main como pré-release para download manual.
+## Código-fonte
 
-Executar manualmente no Linux: `sh tools/build.sh`.
+Execute `sh tools/build.sh` para gerar o pacote. O GitHub Actions valida LuaJIT, os testes e a integridade dos ZIPs. A main publica o instalador; o canal de atualizações prepara e verifica o pacote OTA antes de ativar o feed.
 
-A loja verifica o canal público ao abrir. Quando encontra uma versão nova, oferece o download e a instalação com confirmação. Consulte [o canal OTA](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES).
+## Autoria e licença
 
-## Autoria, licenças e conteúdo
-
-Aplicativo derivado do **R36S PORT HUB**, por **Lag do Lira**, com modificações para a R36S ROMS STORE. Ver `LICENSE`, `NOTICE.md` e os avisos de terceiros. Código distribuído sob GPL-3.0, com as condições e os avisos de licença aplicáveis. As ROMs, artes e marcas de terceiros são responsabilidade de seus respectivos titulares; o aplicativo não concede licenças sobre elas.
+Baseado no **R36S PORT HUB, por [Lag do Lira](https://youtube.com/@lagdolira)**. Pulse Edition e Matrix Edition são adaptações de temas originais de Lag do Lira; autoria e créditos preservados. Código sob GNU GPL-3.0, conforme LICENSE, NOTICE.md e avisos de terceiros. Use somente conteúdos para os quais tenha direito de download e distribuição.

@@ -267,9 +267,4 @@ function W.forget(uuid)
   return code == 0, U.trim(out)
 end
 
-function W.radio(on)
-  local out, code = nmrun("radio wifi " .. (on and "on" or "off"))
-  return code == 0, U.trim(out)
-end
-
 return W

@@ -5,7 +5,20 @@ local C = require("config")
 local U = require("lib.util")
 local Fetcher = require("core.fetcher")
 
-local Covers = { mem = {}, order = {}, state = {}, dir = "covers" }
+local Covers = { mem = {}, order = {}, state = {}, retry_at = {}, failures = {}, dir = "covers" }
+local function failed(key, reason)
+  local n = math.min(4, (Covers.failures[key] or 0) + 1)
+  Covers.failures[key] = n
+  Covers.retry_at[key] = love.timer.getTime() + 10 * 2 ^ (n - 1)
+  Covers.state[key] = "failed"
+  U.log("capa: tentativa falhou", key, tostring(reason))
+end
+local function ready(key)
+  Covers.retry_at[key], Covers.failures[key] = nil, nil
+end
+
+function Covers.begin_frame() Covers.decode_budget=2 end
+function Covers.set_online(online) Covers.online=online end
 
 function Covers.init()
   love.filesystem.createDirectory(Covers.dir)
@@ -36,6 +49,7 @@ local function touch(key)
 end
 
 local function load_image(key, path_in_save, abs)
+  if Covers.decode_budget then Covers.decode_budget=Covers.decode_budget-1 end
   local ok, img = pcall(function()
     if abs then
       local data = U.read_file(abs)
@@ -49,43 +63,55 @@ local function load_image(key, path_in_save, abs)
     img:setFilter("linear", "linear")
     Covers.mem[key] = img
     Covers.state[key] = "ready"
+    ready(key)
     touch(key)
     return img
   end
   U.log("capa invalida:", key, tostring(img))
-  Covers.state[key] = "failed"
+  failed(key, "imagem invalida")
   return nil
 end
 
 --- Devolve a imagem (ou nil enquanto carrega/sem capa). Nunca bloqueia na rede.
 function Covers.get(p)
-  if not p or p.cover == "" then return nil end
-  local key = p.slug
+  if not p or type(p.cover) ~= "string" or p.cover == "" then return nil end
+  -- A imagem em memoria tambem depende da URL; atualizacoes de capa nao ficam presas ao slug.
+  local key = file_name(p)
   local img = Covers.mem[key]
   if img then touch(key); return img end
   local st = Covers.state[key]
-  if st == "failed" or st == "loading" then return nil end
+  if st == "loading" then return nil end
+  if st == "failed" and love.timer.getTime() < (Covers.retry_at[key] or 0) then return nil end
 
   -- capa local (caminho relativo a pasta do app)
   if not p.cover:match("^https?://") then
+    if Covers.decode_budget and Covers.decode_budget<=0 then return nil end
     local abs = p.cover:sub(1, 1) == "/" and p.cover or (C.APP_DIR .. "/" .. p.cover)
     if p.cover:sub(1, 1) ~= "/" and love.filesystem.getInfo(p.cover) then return load_image(key, p.cover) end
     if U.read_file(abs) then return load_image(key, nil, abs) end
-    Covers.state[key] = "failed"
+    failed(key, "arquivo local ausente")
     return nil
   end
 
   local f = file_for(p)
-  if love.filesystem.getInfo(f) then return load_image(key, f) end
+  if love.filesystem.getInfo(f) then
+    if Covers.decode_budget and Covers.decode_budget<=0 then return nil end
+    local cached = load_image(key, f)
+    if cached then return cached end
+    love.filesystem.remove(f)
+    return nil
+  end
 
+  if Covers.online==false then return nil end
   Covers.state[key] = "loading"
   Fetcher.get("cover", p.cover, Covers.abs_dir .. "/" .. file_name(p), function(ok, _, reason)
     if ok then
       Covers.state[key] = "disk"
+      ready(key)
     elseif reason == "cancelado" then
       Covers.state[key] = nil
     else
-      Covers.state[key] = "failed"
+      failed(key, reason)
     end
   end)
   return nil
@@ -107,21 +133,30 @@ function Covers.fetch_file(p, cb)
   local f = Covers.disk_file(p)
   if f or not p or not p.cover or not p.cover:match("^https?://") then cb(f); return end
   Fetcher.get("cover", p.cover, Covers.abs_dir .. "/" .. file_name(p), function(ok)
-    if ok then Covers.state[p.slug] = "disk" end
+    if ok then Covers.state[file_name(p)] = "disk" end
     cb(ok and Covers.disk_file(p) or nil)
   end)
 end
 
 function Covers.is_loading(p)
-  return p and Covers.state[p.slug] == "loading"
+  return p and p.cover and Covers.state[file_name(p)] == "loading"
 end
 
 --- Ao trocar de catalogo/tela: libera pedidos pendentes
 function Covers.reset_pending()
+  Covers.focus_owner, Covers.focus_token = nil, nil
   Fetcher.drop_covers()
-  for k, v in pairs(Covers.state) do
-    if v == "loading" then Covers.state[k] = nil end
-  end
+  -- Os callbacks dos pedidos cancelados limpam o estado; manter o download ativo.
+end
+
+-- A fila de tela deve seguir a posicao atual, nao as paginas ja abandonadas.
+-- Preserva o download em andamento e o cache; cancela apenas pedidos visuais na fila.
+function Covers.focus_view(owner, token, selected)
+  if Covers.focus_owner == owner and Covers.focus_token == token then return false end
+  Fetcher.drop_covers()
+  Covers.focus_owner, Covers.focus_token = owner, token
+  if selected and not selected.builtin then Covers.get(selected) end
+  return true
 end
 
 --- Apaga as capas baixadas (serao baixadas de novo quando aparecerem)
@@ -130,7 +165,7 @@ function Covers.clear_disk()
     love.filesystem.remove(Covers.dir .. "/" .. f)
   end
   for k, img in pairs(Covers.mem) do if img.release then img:release() end end
-  Covers.mem, Covers.order, Covers.state = {}, {}, {}
+  Covers.mem, Covers.order, Covers.state, Covers.retry_at, Covers.failures = {}, {}, {}, {}, {}
 end
 
 -- ---------------------------------------------------------------------------
@@ -170,7 +205,7 @@ function Covers.bulk_start(ports, on_done)
     Fetcher.get("cover_all", p.cover, Covers.abs_dir .. "/" .. file_name(p), function(ok)
       if ok then
         job.ok = job.ok + 1
-        if Covers.state[p.slug] ~= "ready" then Covers.state[p.slug] = "disk" end
+        if Covers.state[file_name(p)] ~= "ready" then Covers.state[file_name(p)] = "disk" end
       else
         job.failed = job.failed + 1
       end
@@ -188,7 +223,7 @@ end
 --- Tentar de novo capas que falharam (ex.: depois de reconectar)
 function Covers.retry_failed()
   for k, v in pairs(Covers.state) do
-    if v == "failed" then Covers.state[k] = nil end
+    if v == "failed" then Covers.state[k], Covers.retry_at[k], Covers.failures[k] = nil, nil, nil end
   end
 end
 

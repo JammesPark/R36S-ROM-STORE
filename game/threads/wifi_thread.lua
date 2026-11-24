@@ -1,7 +1,7 @@
 -- =============================================================================
 --  Wi-Fi (thread): executa um pedido ao NetworkManager sem travar a tela.
 --  job = { op = "status"|"scan"|"saved"|"connect"|"reconnect"|"disconnect"|
---          "forget"|"radio", ... }   resultado em { t = "done", op, ... }
+--          "forget", ... }   resultado em { t = "done", op, ... }
 --  A senha (job.psk) so existe na memoria desta thread e no pipe para o nmcli.
 -- =============================================================================
 require("love.filesystem")
@@ -35,10 +35,6 @@ local ok, err = pcall(function()
   elseif job.op == "forget" then
     r.ok, r.detail = W.forget(job.uuid)
     r.list = W.saved()
-    r.status = W.status()
-  elseif job.op == "radio" then
-    r.ok, r.detail = W.radio(job.on)
-    love.timer.sleep(1)
     r.status = W.status()
   end
 end)

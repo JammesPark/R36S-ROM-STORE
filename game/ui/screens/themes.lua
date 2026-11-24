@@ -10,11 +10,10 @@ local RH, GAP, TOP, VISIBLE=58,6,50,5
 
 function S:enter()
   Themes.scan()
-  -- O atualizador/loja de temas permanece sempre como primeira opcao
-  -- em qualquer tema selecionado ou quantidade de temas instalados.
-  self.items={{download=true}}
+  -- Edicao Experimental: apenas Neon e Padrao, sem acesso a catalogo de
+  -- temas descontinuados. Os arquivos antigos do usuario nao sao apagados.
+  self.items={}
   for _,th in ipairs(Themes.list) do self.items[#self.items+1]={theme=th} end
-  -- Ao abrir ou voltar da loja, o atalho permanece visivel e selecionado.
   self.sel=1
   self.scroll=0
   self.preview,self.preview_for=nil,nil
@@ -42,7 +41,7 @@ end
 function S:draw()
   clamp_scroll(self)
   local cur=Themes.by_id and Themes.by_id[Themes.current]
-  G.header(L("Temas"),L("Atual: ")..(cur and L(cur.name) or L("Tema Padrão")))
+  G.header(L("Temas"),L("Atual: ")..(cur and L(cur.name) or L("Pulse Edition")))
   local lx,lw=12,250
   for i=self.scroll+1,math.min(#self.items,self.scroll+VISIBLE) do
     local it=self.items[i]
@@ -88,6 +87,9 @@ function S:draw()
     local y=py+24+ih
     G.text_fit(T.f.h3,L(th.name),px+14,y,pw-28,T.c.text)
     y=y+24
+    -- Credito sempre visivel, inclusive em 640x480 e texto ampliado.
+    G.text_fit(T.base_font(T.f.small),L("Base visual: Lag do Lira"),px+14,y,pw-28,T.c.accent2)
+    y=y+19
     -- Proteger o rodape do painel: tema ativo exibe TEMA EM USO,
     -- que nao pode receber texto da descricao por baixo.
     local active=th.id==Themes.current
@@ -115,19 +117,18 @@ function S:draw()
     G.text(T.f.small,string.format("%d/%d",self.sel,#self.items),lx+8,TOP+VISIBLE*(RH+GAP)+2,T.c.faint)
   end
   local hints={{"dpad",L("Escolher")}}
-  if it and it.download then hints[#hints+1]={"a",L("Ver catálogo")}
-  elseif it and it.theme and it.theme.id~=Themes.current then hints[#hints+1]={"a",L("Aplicar tema")} end
+  if it and it.theme and it.theme.id~=Themes.current then hints[#hints+1]={"a",L("Aplicar tema")} end
   hints[#hints+1]={"b",L("Voltar")};G.hints(hints)
 end
 function S:action(act)
   local n=#self.items
+  if n == 0 then if act == "b" then App.pop() end; return end
   if act=="up" then self.sel=(self.sel-2)%n+1
   elseif act=="down" then self.sel=self.sel%n+1
   elseif act=="b" then App.pop()
   elseif act=="a" then
     local it=self.items[self.sel]
-    if it.download then App.push("theme_store"); return end
-    if it.theme.id==Themes.current then App.toast("Este tema já está em uso.","info");return end
+     if it.theme.id==Themes.current then App.toast("Este tema já está em uso.","info");return end
     local ok,why=Themes.apply(it.theme.id,true)
     if ok then App.toast(it.theme.name.." aplicado.","ok")
     else App.toast("Não foi possível aplicar o tema: "..tostring(why),"error") end
