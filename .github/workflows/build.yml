@@ -5,6 +5,12 @@ on:
     branches: [main, experimental/0.6.7-beta-20261121]
   pull_request:
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: 'Publicar versão oficial aprovada (inclui OTA)'
+        type: boolean
+        required: true
+        default: false
 
 permissions:
   contents: read
@@ -112,7 +118,11 @@ jobs:
           echo "Instalador disponivel na branch $branch; nao usa Actions artifacts."
   release:
     needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    # Publicacao oficial somente por aprovacao explicita; builds comuns apenas validam.
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      ((github.event_name == 'workflow_dispatch' && inputs.publish_release == true) ||
+       (github.event_name == 'push' && contains(github.event.head_commit.message, '[release approved]')))
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -120,20 +130,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Gerar instalador do commit validado
         run: sh tools/build.sh
-      - name: Publicar instalador para download manual
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          version=$(python3 tools/version.py get)
-          tag="build-${GITHUB_SHA}"
-          if ! gh release view "$tag" >/dev/null 2>&1; then
-            gh release create "$tag" --target "$GITHUB_SHA" --prerelease \
-              --title "R36S ROMS STORE $version (${GITHUB_SHA:0:7})" \
-              --notes "Instalador manual para R36S/R36H. Extraia o ZIP na pasta ports do cartão."
-          fi
-          gh release upload "$tag" "build/R36S_ROMS_STORE_${version}.zip" --clobber
-
       - name: Enviar versão nova ao canal público
         env:
           GH_TOKEN: ${{ secrets.ROMS_UPDATES_TOKEN }}
@@ -156,5 +152,5 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions[bot]@users.noreply.github.com
           git add distribution
-          git commit -m "Distribuir R36S ROMS STORE $version"
+          git commit -m "Distribuir R36S ROMS STORE $version" -m "Assisted-by: ChatGPT (OpenAI)"
           git push origin HEAD:main
