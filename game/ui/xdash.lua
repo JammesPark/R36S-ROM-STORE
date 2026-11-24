@@ -47,12 +47,8 @@ function XD.update(S,self,dt)
 end
 
 local function draw_top(S, self)
-  local lw = G.logo(14, 1, "header")
-  local Themes = require("core.themes")
-  local th = Themes.by_id and Themes.by_id[Themes.current]
-  local title_x = math.max(190, 14 + lw + 30)
-  G.text(T.f.bodyb, th and th.name or "", title_x, 9, T.c.text)
-  G.text(T.f.pix8, C.OS_MODE and (C.OS_NAME .. " " .. C.OS_VERSION) or C.VERSION, title_x, 27, T.c.faint)
+  -- O nome do tema e a versao agora ficam no rodape.
+  local lw=G.logo_box(14,2,268,48,"header")
   -- direita: hora, Wi-Fi e bateria
   local bw = S.draw_battery(self, 13, T.W - 16)
   local wx = T.W - 16 - bw - 26
@@ -62,7 +58,7 @@ local function draw_top(S, self)
   local cf = T.base_font(T.f.bodyb)
   local cx = wx - 12 - cf:getWidth(clock)
   G.text(cf, clock, cx, 11, T.c.text)
-  S.draw_update_notice(self, cx - 16, title_x + 120, 12)
+  S.draw_update_notice(self,cx-16,math.floor(14+lw+18),12)
 end
 
 local function focus_glow(x, y, w, h, r)
@@ -153,7 +149,10 @@ function XD.draw(S,self)
   end
   local hints={{"b",C.OS_MODE and L("Energia") or L("Sair")},{"a",L("Selecionar")},{"y",L("Pesquisar")},{"l1",""},{"r1",L("Destaque")}}
   if require("core.updnotice").pending() then hints[#hints+1]={"select",L("Atualizar")} end
-  G.hints(hints,nil,nil,true)
+  local Themes=require("core.themes")
+  local th=Themes.by_id and Themes.by_id[Themes.current]
+  G.hints(hints,nil,T.W-146,true)
+  G.menu_identity(th and th.name or "Matrix Edition",C.VERSION,T.W-12,nil,124)
 end
 
 function XD.action(S,self,act)

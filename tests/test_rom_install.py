@@ -28,6 +28,11 @@ def test(label,system,filename,fmt,content=None,existing=False,exp=None):
 test('GBA single ZIP','gba','Example.zip','zip',{'Example.gba':b'GBA-DATA'})
 test('PSX multi-track','psx','Example.zip','zip',{'example.cue':b'FILE "track.bin" BINARY','track.bin':b'BIN'})
 test('MAME zip kept','mame','galaga.zip','zip',{'1.bin':b'ROMSET'})
+for cps in ('cps1','cps2','cps3'):
+ test(cps+' zip kept',cps,'demo.zip','zip',{'1.bin':b'DUMMY-ROMSET'})
+test('PSP Minis PBP','psp-minis','Demo.pbp','rom_direct',b'FICTITIOUS PBP')
+test('PSP Minis ISO inside ZIP','psp-minis','Demo.zip','zip',{'Demo.iso':b'FICTITIOUS ISO'})
+test('PSP Minis rejects NES','psp-minis','Demo.nes','rom_direct',b'FICTITIOUS NES',exp='unsupported_rom')
 test('raw GBA','gba','Example.gba','rom_direct',b'GBA-DATA')
 test('refuse existing GBA','gba','Example.gba','rom_direct',b'NEW',existing=True,exp='exists')
 test('reject traversal','gba','evil.zip','zip',{'../escape.gba':b'XX'},exp='unsafe_zip')

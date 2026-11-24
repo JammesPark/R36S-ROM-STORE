@@ -3676,4 +3676,6 @@ return {
   ["Original"] = "Оригинал",
   ["Escolha uma paleta para os dois temas. A cor altera fundos, painéis e destaques, sem mudar o layout. A escolha fica salva."] = "Выберите палитру для обеих тем. Цвета меняют фон, панели и выделение без изменения расположения. Выбор сохраняется.",
   ["O hub volta ao Tema Padrão, às cores originais, ao tamanho de texto padrão e às animações ligadas."] = "Возвращает стандартную тему, исходные цвета, стандартный размер текста и анимацию.",
+  ["Volta ao Pulse Edition, ao tamanho de texto padrão e liga as animações. Brilho e idioma não mudam."] = "Возвращает Pulse Edition, стандартный размер текста и анимацию. Яркость и язык не меняются.",
+  ["O hub volta ao Pulse Edition, às cores originais, ao tamanho de texto padrão e às animações ligadas."] = "Возвращает Pulse Edition, исходные цвета, стандартный размер текста и анимацию.",
 }

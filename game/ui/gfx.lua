@@ -620,6 +620,31 @@ local function logo_img(variant)
   return LOGOS[key] or nil
 end
 
+--- Logo proporcional para a area livre do cabecalho Matrix.
+function G.logo_box(x,y,w,h,variant)
+  local img=logo_img(variant or "header")
+  if not img then
+    G.text_fit(T.f.bodyb,L("R36S ROMS STORE"),x,y+math.floor((h-T.f.bodyb:getHeight())/2),w,T.c.text)
+    return w
+  end
+  local iw,ih=img:getDimensions()
+  local scale=math.min(w/iw,h/ih)
+  lg.setColor(1,1,1,1)
+  lg.draw(img,math.floor(x),math.floor(y+(h-ih*scale)/2),0,scale,scale)
+  return iw*scale
+end
+
+--- Identidade no rodape do menu, com area separada das dicas.
+function G.menu_identity(name,version,right,y,width)
+  y=y or T.H-26
+  width=width or 128
+  local x=right-width
+  G.rect(x-5,y-1,1,19,T.c.line)
+  local font=T.base_font(T.f.small)
+  G.text_fit(font,name or "",x,y-2,width,T.c.text)
+  G.text_fit(font,version or "",x,y+11,width,T.c.faint)
+end
+
 --- Desenha o logo. variant: "menu" (padrao) | "about" | "header". Devolve largura, altura
 function G.logo(x, y, variant, scale)
   variant = variant or "menu"

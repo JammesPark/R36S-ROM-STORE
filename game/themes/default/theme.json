@@ -1,8 +1,8 @@
 {
   "id": "default",
-  "name": "Tema Padrão",
-  "description": "Tema original do Tema adaptado para R36S ROMS STORE: visual retrô gamer com rosa neon e ciano sobre fundo escuro. Revisado para atualizacao geral 0.0.27-beta: logo e cabecalho 640x480 validados.",
-  "version": "1.0.1",
+  "name": "Pulse Edition",
+  "description": "Interface clássica da R36S ROMS STORE, com menu em lista, destaque vertical e paletas personalizáveis.",
+  "version": "1.0.2",
   "author": "Lag do Lira (base visual adaptada)",
   "preview": "preview.png",
   "colors": {

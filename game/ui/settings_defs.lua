@@ -36,7 +36,7 @@ local D = {}
 
 local function theme_name()
   local cur = Themes.by_id and Themes.by_id[Themes.current]
-  return L(cur and cur.name or "Tema Padrão")
+  return L(cur and cur.name or "Pulse Edition")
 end
 
 local function lang_name()
@@ -123,10 +123,10 @@ local appearance = {
       get = function() return App.anim end,
       set = function(v) App.anim = v; Prefs.set("anim", v and "1" or "0") end },
     { kind = "action", label = L("Restaurar aparência original"),
-      desc = L("Volta ao Tema Padrão, ao tamanho de texto padrão e liga as animações. Brilho e idioma não mudam."),
+      desc = L("Volta ao Pulse Edition, ao tamanho de texto padrão e liga as animações. Brilho e idioma não mudam."),
       on_a = function()
         App.show_dialog({ title = L("Restaurar aparência?"), kind = "warn",
-          body = L("O hub volta ao Tema Padrão, às cores originais, ao tamanho de texto padrão e às animações ligadas."),
+          body = L("O hub volta ao Pulse Edition, às cores originais, ao tamanho de texto padrão e às animações ligadas."),
           buttons = { { label = L("RESTAURAR"), fn = function()
             local first = Themes.by_id and Themes.by_id[Themes.FIRST] and Themes.FIRST or Themes.DEFAULT
             Prefs.set("ui_color","original")

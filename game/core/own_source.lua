@@ -85,7 +85,7 @@ function Own.decode_remote(bytes)
       local sys = cover:match("/covers/([^/]+)/")
       -- O catalogo preserva os IDs originais; as pastas de midia usam aliases do ES.
       local aliases = {fbneo = "fba", neocd = "neogeocd", sgfx = "supergrafx",
-        wonderswancol = "wonderswancolor"}
+        wonderswancol = "wonderswancolor", ["psp-minis"]="psp"}
       if sys ~= g.system_id and sys ~= aliases[g.system_id] then
         return nil, "Capa de outro sistema"
       end

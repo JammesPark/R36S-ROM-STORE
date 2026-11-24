@@ -32,11 +32,13 @@ ALLOWED = {
     "nes": {"nes", "zip"},
     "pcengine": {"pce", "zip"},
     "psp": {"iso", "cso", "chd", "pbp"},
+    "psp-minis": {"iso", "cso", "chd", "pbp"},
+    "cps1": {"zip"}, "cps2": {"zip"}, "cps3": {"zip"},
     "psx": {"cue", "bin", "iso", "chd", "pbp", "ccd", "img", "sub", "m3u"},
     "saturn": {"cue", "bin", "iso", "chd", "ccd", "img", "mds", "mdf", "m3u"},
     "snes": {"sfc", "smc", "zip"},
 }
-DIRECT_ZIP = {"mame", "neogeo"}
+DIRECT_ZIP = {"mame", "neogeo", "cps1", "cps2", "cps3"}
 MAX_ENTRIES = 30000
 MAX_NAME = 1024
 CHUNK = 1024 * 1024
@@ -222,7 +224,8 @@ def validate_root(dest, system):
     if system not in ALLOWED:
         raise RomError("invalid_system", system)
     root = Path("/roms2" if str(dest).startswith("/roms2/") else "/roms")
-    allowed = (str(root) + "/" + system)
+    folder = "psp" if system == "psp-minis" else system
+    allowed = (str(root) + "/" + folder)
     aliases = {"megadrive": "genesis", "mastersystem": "sms", "mame": "mame2003"}
     if system in aliases:
         valid = {allowed, str(root) + "/" + aliases[system]}

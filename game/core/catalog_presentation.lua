@@ -2,7 +2,7 @@
 local P = {}
 local extensions = {mgw=true, rom=true, mx2=true, unf=true, pak=true, sc=true, sap=true,
   zip=true, ["7z"]=true, rar=true, nes=true, gba=true, gbc=true, gb=true,
-  sfc=true, smc=true, bin=true, iso=true, chd=true, cue=true, cso=true,
+  sfc=true, smc=true, bin=true, iso=true, chd=true, cue=true, cso=true, pbp=true,
   a26=true, a52=true, lnx=true, lha=true, nds=true, n64=true, z64=true,
   v64=true, pce=true, wsc=true, ws=true, ngp=true, ngc=true, gg=true,
   sms=true, md=true, gen=true, col=true, dsk=true, cas=true}

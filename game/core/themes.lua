@@ -41,7 +41,8 @@ local function load_def(dir, builtin)
   if type(d) ~= "table" then return nil, L("theme.json inválido") end
   if type(d.id) ~= "string" or not d.id:match("^[%w_%-]+$") then return nil, L("id inválido") end
   if type(d.colors) ~= "table" then return nil, L("sem cores") end
-  local th = { id = d.id, name = tostring(d.name or d.id), description = tostring(d.description or ""),
+  local display_names={default="Pulse Edition",neongrid="Matrix Edition"}
+  local th = { id = d.id, name = display_names[d.id] or tostring(d.name or d.id), description = tostring(d.description or ""),
     version = tostring(d.version or ""), author = tostring(d.author or ""), dir = dir, builtin = builtin,
     colors = {}, buttons = {}, style = {} }
   -- todas as cores sao obrigatorias: um tema incompleto nao e aplicado

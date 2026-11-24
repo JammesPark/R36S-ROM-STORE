@@ -1,8 +1,8 @@
 {
   "id": "neongrid",
-  "name": "Neon Grid Edition",
-  "description": "Painel gamer escuro em verde: Guia Rápido com os ports recentes, cartão de destaque com brilho verde, blocos grandes e listas de ports em grade de capas. Revisado para atualizacao geral 0.0.27-beta: logo e cabecalho 640x480 validados.",
-  "version": "4.0.1",
+  "name": "Matrix Edition",
+  "description": "Interface em blocos, destaque vertical, atalhos e paletas personalizáveis da R36S ROMS STORE.",
+  "version": "4.0.2",
   "author": "Lag do Lira (base visual adaptada)",
   "preview": "preview.png",
   "colors": {

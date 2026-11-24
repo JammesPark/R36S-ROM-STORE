@@ -196,7 +196,7 @@ function S:draw()
   if d then return d.draw(S, self) end
   -- coluna esquerda: logo + menu
   G.logo(24, 6, "menu")
-  G.text(T.f.pix8, C.OS_MODE and (C.OS_NAME .. " " .. C.OS_VERSION .. "  •  " .. C.VERSION) or C.VERSION, 28, 86, T.c.faint)
+  -- Nome e versao reservados no rodape, sem competir com a logo.
 
   -- A lista principal agora oferece os sete acessos da antiga Central.
   -- Mantem a geometria de cada linha e rola a coluna sem invadir o rodape.
@@ -262,12 +262,14 @@ function S:draw()
   local hints = { { "dpad", L("Navegar") }, { "a", L("Selecionar") }, { "b", C.OS_MODE and L("Energia") or L("Sair") } }
   if require("core.updnotice").pending() then hints[#hints + 1] = { "select", L("Atualizar") } end
   -- texto maior: se dicas + rede + bateria nao couberem no rodape, ele usa o tamanho padrao
-  if G.hints_width(hints, T.f.small) + 24 > self:wifi_left() then
-    T.with_base_fonts(function() G.hints(hints); self:draw_wifi() end)
-  else
-    G.hints(hints)
+  T.with_base_fonts(function()
+    local Themes=require("core.themes")
+    local th=Themes.by_id and Themes.by_id[Themes.current]
+    local right=self:wifi_left()-10
+    G.hints(hints,nil,right-134,true)
+    G.menu_identity(th and th.name or "Pulse Edition",C.VERSION,right,nil,124)
     self:draw_wifi()
-  end
+  end)
 end
 
 -- ---------------------------------------------------------------------------
