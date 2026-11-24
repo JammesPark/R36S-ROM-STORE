@@ -195,7 +195,8 @@ function S:draw()
   local d = dash()
   if d then return d.draw(S, self) end
   -- coluna esquerda: logo + menu
-  G.logo(24, 6, "menu")
+  -- Menu x20..320, centro x170; canvas da marca tem 218 px.
+  G.logo(61, 6, "menu", 1)
   -- Nome e versao reservados no rodape, sem competir com a logo.
 
   -- A lista principal agora oferece os sete acessos da antiga Central.
@@ -230,7 +231,7 @@ function S:draw()
   G.text(T.f.bodyb, clock, 620 - T.f.bodyb:getWidth(clock), 4, T.c.text)
 
   -- aviso de versao nova (texto deslizante entre a logo e a data)
-  self:draw_update_notice(620 - T.f.bodyb:getWidth(clock) - 8 - T.f.small:getWidth(datestr) - 10)
+  self:draw_update_notice(620 - T.f.bodyb:getWidth(clock) - 8 - T.f.small:getWidth(datestr) - 10, 284)
 
   -- coluna direita: destaque + status
   local px, py, pw, ph = 340, 24, 280, 330
@@ -471,7 +472,7 @@ local function battery_icon(x, y, frac, c, charging, unknown)
 end
 
 --- desenha a bateria no rodape e devolve a largura usada
-function S:draw_battery(y, right)
+function S:draw_battery(y, right, left)
   local b = Battery.get()
   local text, c, frac, charging, unknown
   if not b.ok then
@@ -487,7 +488,7 @@ function S:draw_battery(y, right)
     if lv == "critical" and not charging and math.floor(App.t * 2) % 2 == 0 then c = T.c.orange end
   end
   local tw = T.f.small:getWidth(text)
-  local x = (right or (T.W - 14)) - tw
+  local x = left and (left + 28) or ((right or (T.W - 14)) - tw)
   G.text(T.f.small, text, x, y + 1, c)
   battery_icon(x - 28, y - 1, frac or 0, c, charging, unknown)
   return tw + 28

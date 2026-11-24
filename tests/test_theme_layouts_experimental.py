@@ -31,3 +31,23 @@ for code, color in {"JP": "#FF738A", "CN": "#FFC065", "TW": "#58E0A6", "HK": "#B
 for name in ("store.lua", "details.lua"):
     assert 'require("ui.region")' in (root / "ui/screens" / name).read_text(encoding="utf-8")
 print("EXPERIMENTAL LAYOUTS: OK (2 temas, 3 vistas, L2/R2, selos regionais)")
+
+# Cabecalhos aprovados e geometria 640x480 das marcas.
+menu = (root / "ui/screens/menu.lua").read_text(encoding="utf-8")
+xdash = (root / "ui/xdash.lua").read_text(encoding="utf-8")
+about = (root / "ui/screens/about.lua").read_text(encoding="utf-8")
+assert 'G.logo(61, 6, "menu", 1)' in menu
+assert 61 + 218 / 2 == 20 + 300 / 2
+assert 'function S:draw_battery(y, right, left)' in menu
+assert 'left and (left + 28)' in menu
+assert 'G.logo_box(logo_x, 4, 120, 78, "splash")' in xdash
+assert 'S.draw_battery(self, 20, nil, left)' in xdash
+assert 4 + 78 < 88
+assert 640 - 128 + 120 <= 640
+assert 'G.logo_box(28, 57, 140, 82, "splash")' in about
+assert 28 + 252 * min(140 / 252, 82 / 170) < 168
+assert 57 + 82 < 146
+assert 'G.text_fit(T.f.h3, L("Siga nosso canal no Telegram")' in about
+assert 'G.fit_lines(T.base_font(T.f.h2),title,w-94,42,true)' in about
+assert 15 + 42 < 66  # fim do titulo antes do QR
+print("HEADERS: OK - Matrix, Pulse, Sobre e titulo Telegram")

@@ -49,18 +49,20 @@ function XD.update(S,self,dt)
 end
 
 local function draw_top(S, self)
-  -- O nome do tema e a versao agora ficam no rodape.
-  local lw=G.logo_box(14,2,268,48,"header")
-  -- direita: hora, Wi-Fi e bateria
-  local bw = S.draw_battery(self, 13, T.W - 16)
-  local wx = T.W - 16 - bw - 26
+  -- Cabecalho aprovado: bateria, Wi-Fi e hora a esquerda; marca maior a direita.
+  -- Splash PNG tem mais pixels que header/menu, com a mesma marca proporcional.
+  local logo_x = T.W - 128
+  G.logo_box(logo_x, 4, 120, 78, "splash")
+  local left = 14
+  local bw = S.draw_battery(self, 20, nil, left)
+  local wx = left + bw + 12
   local _, wc, off = S.wifi_state()
-  S.wifi_icon(wx, 12, wc, off)
+  S.wifi_icon(wx, 19, wc, off)
   local clock = require("core.clock").time()
   local cf = T.base_font(T.f.bodyb)
-  local cx = wx - 12 - cf:getWidth(clock)
-  G.text(cf, clock, cx, 11, T.c.text)
-  S.draw_update_notice(self,cx-16,math.floor(14+lw+18),12)
+  local cx = wx + 26
+  G.text(cf, clock, cx, 17, T.c.text)
+  S.draw_update_notice(self, logo_x - 12, cx + cf:getWidth(clock) + 12, 16)
 end
 
 local function focus_glow(x, y, w, h, r)
