@@ -224,7 +224,7 @@ function Catalog.parse(text)
     end
   end
 
-  -- A ordem de sistemas vem do catalogo, mesmo os que ainda estao vazios.
+  -- Sistemas em ordem alfabetica pelo nome exibido, inclusive vazios.
   -- As categorias de ferramentas continuam como no projeto original.
   local counts = {}
   for _, p in ipairs(res.ports) do
@@ -252,6 +252,11 @@ function Catalog.parse(text)
   end
   table.sort(extra, function(a,b) return a.name:lower()<b.name:lower() end)
   for _, c in ipairs(extra) do cats[#cats+1]=c end
+  table.sort(cats, function(a, b)
+    local an, bn = a.name:lower(), b.name:lower()
+    if an == bn then return a.id < b.id end
+    return an < bn
+  end)
   for _, c in ipairs(Cats.LIST) do
     if c.section == "tools" then
       local k = "tools|" .. c.id
@@ -331,6 +336,7 @@ end
 function Catalog.on_remote(ok, path, reason)
   local function fail(msg)
     Catalog.remote_state, Catalog.remote_error = "failed", tostring(msg)
+    U.log("catalogo online:", Catalog.remote_error)
     return false, Catalog.remote_error, false
   end
   if not ok or not path then

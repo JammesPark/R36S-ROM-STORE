@@ -176,6 +176,7 @@ function App.refresh_catalog(user_initiated, on_done)
     if not ok and #Catalog.ports > 0 then
       msg = "Sem atualização online; catálogo local preservado."
     end
+    if ok then Covers.retry_failed() end
     if on_done then on_done(ok, msg)
     elseif user_initiated then App.toast(msg, ok and "ok" or "warn") end
   end)
