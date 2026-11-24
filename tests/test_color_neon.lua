@@ -59,7 +59,12 @@ local persisted="neongrid"
 love.filesystem={read=function()return persisted end,write=function(_,v)persisted=v;return true end}
 package.loaded["core.themes"]=nil
 local Themes=require("core.themes")
-local pulse={colors={accent=T.hex("#FF4F8B")},buttons={},style={}}
+local f=assert(io.open("game/themes/default/theme.json","r"))
+local pulse_meta=require("lib.json").decode(f:read("*a"));f:close()
+assert(pulse_meta.colors.accent:upper()=="#60A5FA")
+assert(pulse_meta.colors.bg0:upper()=="#080F1D")
+assert(pulse_meta.style.glow:upper()=="#60A5FA")
+local pulse={colors={accent=T.hex(pulse_meta.colors.accent)},buttons={},style={}}
 local matrix={colors={accent=T.hex("#4CD964")},buttons={},style={layout="xdash"}}
 Themes.by_id={default=pulse,neongrid=matrix}
 Themes.scan=function()end
@@ -77,6 +82,8 @@ assert(Themes.set_color("original"))
 assert(applied.accent[2]==matrix.colors.accent[2])
 assert(Themes.apply("default",true) and Themes.color_id()=="blue")
 assert(not Themes.set_color("bad") and Themes.color_id()=="blue")
+assert(Themes.set_color("original") and applied.accent[1]==pulse.colors.accent[1])
+assert(Themes.set_color("blue"))
 Themes.init()
 assert(Themes.current=="default" and Themes.color_id()=="blue")
 print("THEME COLORS: OK - migracao, isolamento, persistencia e paletas originais")

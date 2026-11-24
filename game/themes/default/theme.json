@@ -6,16 +6,16 @@
   "author": "Lag do Lira (tema original)",
   "preview": "preview.png",
   "colors": {
-    "bg0": "#0a0c16",
-    "bg1": "#11142a",
-    "bg2": "#191d3a",
-    "bg3": "#232852",
-    "line": "#2c3263",
-    "text": "#eef0ff",
-    "dim": "#9aa0cc",
-    "faint": "#5d638f",
-    "accent": "#ff4f8b",
-    "accent2": "#38d6ff",
+    "bg0": "#080f1d",
+    "bg1": "#111e33",
+    "bg2": "#1b2c48",
+    "bg3": "#243d60",
+    "line": "#36557b",
+    "text": "#f1f5f9",
+    "dim": "#bac7d6",
+    "faint": "#8999ac",
+    "accent": "#60a5fa",
+    "accent2": "#67e8f9",
     "yellow": "#ffd447",
     "green": "#3ddc84",
     "red": "#ff5c6c",
@@ -37,7 +37,8 @@
   "style": {
     "background": "retro",
     "round": 1,
-    "glow": "#381f66",
-    "scanlines": true
+    "glow": "#60a5fa",
+    "scanlines": true,
+    "focus": "#60a5fa"
   }
 }
