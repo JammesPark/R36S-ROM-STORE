@@ -19,7 +19,7 @@
   <img alt="Español" src="https://img.shields.io/badge/ES-Español-eab308?style=flat-square">
   <img alt="Русский" src="https://img.shields.io/badge/RU-Русский-dc2626?style=flat-square">
 </p>
-<p align="center">🇧🇷 Português (Brasil) &nbsp; · &nbsp; 🇺🇸 English &nbsp; · &nbsp; 🇪🇸 Español &nbsp; · &nbsp; 🇷🇺 Русский</p>
+
 
 **Status:** versão 0.7.0-beta — beta oficial.
 
