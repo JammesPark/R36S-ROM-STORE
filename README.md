@@ -64,6 +64,16 @@ Para uma instalação nova, use o pacote completo, sem o sufixo OTA. Para atuali
 
 Ambos são integrados à loja, com cores personalizáveis de forma independente. São adaptações de temas originais de Lag do Lira.
 
+| Menu principal — Pulse | Menu principal — Matrix |
+|:---:|:---:|
+| <img src="docs/images/atual/pulse-menu.png" width="320" alt="Menu Pulse Edition"> | <img src="docs/images/atual/matrix-menu.png" width="320" alt="Menu Matrix Edition"> |
+
+| Configurações — Pulse | Configurações — Matrix |
+|:---:|:---:|
+| <img src="docs/images/atual/pulse-configuracoes.png" width="320" alt="Configurações Pulse Edition"> | <img src="docs/images/atual/matrix-configuracoes.png" width="320" alt="Configurações Matrix Edition"> |
+
+<sub>Capturas do aplicativo real 0.7.0-beta executado em simulador LÖVE, com janela 640×480 e ambiente isolado sem acervo sincronizado. Não representam a contagem de jogos nem as informações de hardware de um console físico.</sub>
+
 ---
 
 ## ✨ Funcionalidades
