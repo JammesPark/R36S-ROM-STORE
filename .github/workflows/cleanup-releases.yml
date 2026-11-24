@@ -1,0 +1,35 @@
+name: Limpeza autorizada de releases antigas
+on:
+  push:
+    branches: ['maintenance/cleanup-releases-20261124']
+    paths: ['.github/workflows/cleanup-releases.yml']
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    if: github.repository == 'JammesPark/R36S-ROMS-HUB-STORE' && github.ref == 'refs/heads/maintenance/cleanup-releases-20261124'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remover apenas releases identificadas
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import os, json, subprocess
+          repo = os.environ["GITHUB_REPOSITORY"]
+          assert repo == "JammesPark/R36S-ROMS-HUB-STORE"
+          targets = [[453407682,"teste-80be7a6788ee72eec86bb17421001c7f5f283111"],[453390407,"teste-66f44ddbef7109a269c98b242a6782771c8ded7f"],[453382953,"teste-57f81c1aa5d5fab084e93042705729f239c019e3"],[453414888,"teste-43139517a52711adc08cc0d405e4167f1f451565"],[453388932,"teste-4228c8963db348e644f4d66146ae57034c707840"],[453395537,"teste-36ba4eef1595697a1b2dd633ba6715d3e119b7e1"],[453370656,"teste-11d567638bedb45b5ebfb7454cce6f89ce2d1e93"],[453401912,"teste-030b99409c39391d62670c1130836eb0023a04b0"],[457214946,"build-d2fe9672290b4560f414a3190af3b215b5d402f2"],[457211134,"build-3fcf979d5f57b9e021077e81d1675fcb7de945a8"],[454102441,"build-246368bace178e5aca834021755def70e9626cdd"],[453418709,"build-a8986241bed55535e9727dd3d515c0c421126193"],[453422655,"build-48435fdc03da70c7dd9de8f978e1591419b7fcc1"],[452088843,"build-f9f7d2b9caa87ca3f6e8242641a3b483d1f29f50"],[452083049,"build-91c0f2ca2c6f4447d466a1b21d3e6b43003b6d78"]]
+          protected = []
+          def api(path, method="GET"):
+              return subprocess.check_output(["gh","api","--method",method,path], text=True)
+          def release(rid):
+              return json.loads(api(f"repos/{repo}/releases/{rid}"))
+          for rid, tag in targets + protected:
+              assert release(rid)["tag_name"] == tag, (rid, tag)
+          for rid, tag in targets:
+              print(f"Removing release {rid}: {tag}", flush=True)
+              api(f"repos/{repo}/releases/{rid}", "DELETE")
+          for rid, tag in protected:
+              assert release(rid)["tag_name"] == tag
+          print(f"Removed {len(targets)} releases; protected {len(protected)}. No tags deleted.", flush=True)
+          PY
