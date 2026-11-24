@@ -276,7 +276,7 @@ function O.draw_install(app, j)
 
   -- rodape
   local hint = j.pausing and L("Salvando progresso...") or (j.cancelling and L("Cancelando...") or
-    (Installer.can_pause(j) and L("X: Pausar download") or L("Não desligue o console durante a instalação.")))
+    (Installer.can_pause(j) and L("R2: Pausar download") or L("Não desligue o console durante a instalação.")))
   G.text(T.f.small, hint, x + 24, y + h - 30, j.cancelling and T.c.yellow or T.c.faint)
   if not j.cancelling then
     local bx = x + w - 24
@@ -351,7 +351,7 @@ function O.install_action(app, act)
     end
     return
   end
-  if act=="x" and Installer.can_pause(j) then Installer.pause()
+  if act=="r2" and Installer.can_pause(j) then Installer.pause()
   elseif act == "b" and not j.cancelling and not j.pausing and j.phase ~= "install" then
     j.ask_cancel = true
     j.ask_cancel_sel = 2
