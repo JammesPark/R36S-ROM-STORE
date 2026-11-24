@@ -1312,4 +1312,6 @@ return {
   ["Visualização de ROMs (Pulse)"] = "Vista de ROMs (Pulse)",
   ["Visualização de ROMs (Matrix)"] = "Vista de ROMs (Matrix)",
   ["L2/R2 alternam entre Lista, Grade Jedi e Vitrine Pastel. A escolha fica salva por tema."] = "L2/R2 alternan entre Lista, Cuadrícula Jedi y Vitrina Pastel. La elección se guarda por tema.",
+  ["Temas Store"] = "Tienda de temas",
+  ["Base visual: Lag do Lira"] = "Base visual: Lag do Lira",
 }

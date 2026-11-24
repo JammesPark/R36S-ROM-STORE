@@ -43,7 +43,7 @@ local function load_def(dir, builtin)
   if type(d.colors) ~= "table" then return nil, L("sem cores") end
   local display_names={default="Pulse Edition",neongrid="Matrix Edition"}
   local th = { id = d.id, name = display_names[d.id] or tostring(d.name or d.id), description = tostring(d.description or ""),
-    version = tostring(d.version or ""), author = tostring(d.author or ""), dir = dir, builtin = builtin,
+    version = tostring(d.version or ""), author = display_names[d.id] and "Lag do Lira (tema original)" or tostring(d.author or ""), dir = dir, builtin = builtin,
     colors = {}, buttons = {}, style = {} }
   -- todas as cores sao obrigatorias: um tema incompleto nao e aplicado
   for _, k in ipairs(COLOR_KEYS) do

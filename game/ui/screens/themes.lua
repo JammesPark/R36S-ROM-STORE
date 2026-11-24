@@ -41,7 +41,7 @@ end
 function S:draw()
   clamp_scroll(self)
   local cur=Themes.by_id and Themes.by_id[Themes.current]
-  G.header(L("Temas"),L("Atual: ")..(cur and L(cur.name) or L("Tema Padrão")))
+  G.header(L("Temas"),L("Atual: ")..(cur and L(cur.name) or L("Pulse Edition")))
   local lx,lw=12,250
   for i=self.scroll+1,math.min(#self.items,self.scroll+VISIBLE) do
     local it=self.items[i]
@@ -87,6 +87,9 @@ function S:draw()
     local y=py+24+ih
     G.text_fit(T.f.h3,L(th.name),px+14,y,pw-28,T.c.text)
     y=y+24
+    -- Credito sempre visivel, inclusive em 640x480 e texto ampliado.
+    G.text_fit(T.base_font(T.f.small),L("Base visual: Lag do Lira"),px+14,y,pw-28,T.c.accent2)
+    y=y+19
     -- Proteger o rodape do painel: tema ativo exibe TEMA EM USO,
     -- que nao pode receber texto da descricao por baixo.
     local active=th.id==Themes.current

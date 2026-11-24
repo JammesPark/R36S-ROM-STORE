@@ -78,3 +78,5 @@ ScreenScraper, substituição de links e otimização de downloads são etapas f
 ## Autoria, licenças e conteúdo
 
 Aplicativo derivado do **R36S PORT HUB**, por **Lag do Lira**, com modificações para a R36S ROMS STORE. Ver `LICENSE`, `NOTICE.md` e os avisos de terceiros. Código distribuído sob GPL-3.0, com as condições e os avisos de licença aplicáveis. As ROMs, artes e marcas de terceiros são responsabilidade de seus respectivos titulares; o aplicativo não concede licenças sobre elas.
+
+**Créditos dos temas:** Pulse Edition e Matrix Edition são adaptações de temas originais de [Lag do Lira](https://youtube.com/@lagdolira). A autoria da base visual é preservada; as modificações são da R36S ROMS STORE.
