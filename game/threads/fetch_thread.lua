@@ -37,7 +37,12 @@ while true do
     os.remove(tmp); os.remove(rcf)
     local maxt = req.kind == "catalog" and 25 or 30
     local rc
-    if req.kind == "ota_feed" then
+    if req.kind == "own_catalog" then
+      -- HTTPS obrigatorio e limite de 4 MiB para o ZLIB do catalogo proprio.
+      local ok = os.execute("curl --proto '=https' --proto-redir '=https' -fsSL --connect-timeout 8 --max-time 30 --max-filesize 4194304 -o "
+        .. shq(tmp) .. " " .. shq(req.url))
+      rc = (ok == 0 or ok == true) and 0 or 1
+    elseif req.kind == "ota_feed" then
       local ok = os.execute("curl --proto '=https' --proto-redir '=https' -fsSL --max-time 30 --max-filesize 262144 -o "
         .. shq(tmp) .. " " .. shq(req.url))
       rc = (ok == 0 or ok == true) and 0 or 1

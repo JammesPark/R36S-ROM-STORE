@@ -60,7 +60,8 @@ end
 --- Devolve a imagem (ou nil enquanto carrega/sem capa). Nunca bloqueia na rede.
 function Covers.get(p)
   if not p or p.cover == "" then return nil end
-  local key = p.slug
+  -- A imagem em memoria tambem depende da URL; atualizacoes de capa nao ficam presas ao slug.
+  local key = file_name(p)
   local img = Covers.mem[key]
   if img then touch(key); return img end
   local st = Covers.state[key]
@@ -107,13 +108,13 @@ function Covers.fetch_file(p, cb)
   local f = Covers.disk_file(p)
   if f or not p or not p.cover or not p.cover:match("^https?://") then cb(f); return end
   Fetcher.get("cover", p.cover, Covers.abs_dir .. "/" .. file_name(p), function(ok)
-    if ok then Covers.state[p.slug] = "disk" end
+    if ok then Covers.state[file_name(p)] = "disk" end
     cb(ok and Covers.disk_file(p) or nil)
   end)
 end
 
 function Covers.is_loading(p)
-  return p and Covers.state[p.slug] == "loading"
+  return p and p.cover and Covers.state[file_name(p)] == "loading"
 end
 
 --- Ao trocar de catalogo/tela: libera pedidos pendentes
@@ -170,7 +171,7 @@ function Covers.bulk_start(ports, on_done)
     Fetcher.get("cover_all", p.cover, Covers.abs_dir .. "/" .. file_name(p), function(ok)
       if ok then
         job.ok = job.ok + 1
-        if Covers.state[p.slug] ~= "ready" then Covers.state[p.slug] = "disk" end
+        if Covers.state[file_name(p)] ~= "ready" then Covers.state[file_name(p)] = "disk" end
       else
         job.failed = job.failed + 1
       end

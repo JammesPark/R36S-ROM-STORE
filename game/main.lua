@@ -171,13 +171,21 @@ end
 --- Atualiza o catalogo. on_done(ok, mensagem) e opcional (usado pelas Configuracoes).
 --- Os ports instalados sao preservados: o registro de instalados nao e tocado.
 function App.refresh_catalog(user_initiated, on_done)
-  -- Atualizacao nesta etapa significa RELER o ZLIB do cartao, nunca rede.
-  local ok = Catalog.load_local()
-  local msg = ok and string.format("Catálogo próprio carregado: %d ROMs.", #Catalog.ports)
-    or ("Catálogo próprio indisponível: " .. tostring(Catalog.remote_error))
-  if ok then App.on_catalog_changed() end
-  if on_done then on_done(ok, msg)
-  elseif user_initiated then App.toast(msg, ok and "ok" or "warn") end
+  local started = Catalog.refresh_remote(function(ok, msg, changed)
+    if changed then App.on_catalog_changed() end
+    if not ok and #Catalog.ports > 0 then
+      msg = "Sem atualização online; catálogo local preservado."
+    end
+    if on_done then on_done(ok, msg)
+    elseif user_initiated then App.toast(msg, ok and "ok" or "warn") end
+  end)
+  if not started then
+    local msg = "Catálogo já está sendo verificado."
+    if on_done then on_done(false, msg)
+    elseif user_initiated then App.toast(msg, "info") end
+  elseif user_initiated and not on_done then
+    App.toast("Verificando catálogo online...", "info")
+  end
 end
 
 function App.on_catalog_changed()
@@ -805,7 +813,7 @@ function love.load(args)
       U.log("dados:", love.filesystem.getSaveDirectory())
       if not Catalog.load_local() then
         App.catalog_load_error = Catalog.remote_error
-        U.log("catalogo offline: nenhum arquivo valido; fonte remota nao sera consultada")
+        U.log("catalogo offline: nenhum arquivo valido; tentativa online apos a abertura")
       else
         App.catalog_load_error = nil
         U.log("catalogo offline:", Catalog.source_label(), #Catalog.ports, "ROMs")
@@ -822,6 +830,10 @@ function love.load(args)
     end
     -- aviso de versao nova no alto da tela inicial (consulta leve em segundo plano)
     require("core.updnotice").start()
+    -- Atualizacao do catalogo proprio em segundo plano; nao e OTA do sistema.
+    if not os.getenv("R36SBR_AUTOTEST") and not os.getenv("R36SBR_INSTALLTEST") then
+      App.refresh_catalog(false)
+    end
     -- atualizacao: confirma a versao nova (o app abriu) ou conclui uma recuperacao
     local okn, notice = pcall(UpdMgr.on_boot)
     if okn and notice then App.boot_toasts[#App.boot_toasts + 1] = notice

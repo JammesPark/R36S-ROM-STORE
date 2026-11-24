@@ -2,7 +2,7 @@
 -- Base: R36S PORT HUB, por Lag do Lira (creditos em NOTICE.md).
 -- =============================================================================
 --  R36S ROMS STORE - configuracao
---  Edicao Experimental: ROMs exclusivamente no catalogo_proprio.zlib local.
+--  Edicao Experimental: catalogo proprio remoto com copia local.
 --  Uma ultima copia valida e salva no SD para recuperacao offline.
 -- =============================================================================
 local L = require("lib.i18n").L
@@ -38,7 +38,8 @@ C.THEMES_CATALOG_URL = "https://raw.githubusercontent.com/JammesPark/R36SPORTSBR
 C.ES_THEMES_URL = ""
 C.TAGLINE = L("Ports de jogos e utilitários para o console R36S, criados por fãs e para fãs.")
 
--- Jogos: somente catalogo proprio local; nao consulta API de jogos.
+-- Jogos: canal proprio separado do OTA. A copia valida permanece no SD.
+C.OWN_CATALOG_URL = "https://raw.githubusercontent.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/catalogo-experimental/catalogo/catalogo_proprio.zlib"
 -- Arquivo: C.APP_DIR/catalogo_proprio.zlib.
 
 -- Central de Conteudo > BIOS do Sistema: pacote de BIOS (link direto do arquivo).

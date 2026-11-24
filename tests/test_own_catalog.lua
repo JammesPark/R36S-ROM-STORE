@@ -69,5 +69,34 @@ disk[main_path] = nil
 local absent, why = Own.read()
 assert(not absent and why:find("nenhuma copia valida"), "ausencia sem backup deve informar erro")
 assert(disk[main_path] == nil, "nao recriar catalogo ficticio")
+-- A atualizacao online rejeita amostras, mesmo se a estrutura local for valida.
+local systems, ports = {}, {}
+for i = 1, 50 do systems[i] = {id = "sys" .. i, name = "Sistema " .. i} end
+for i = 1, 15652 do
+  local sys = systems[(i - 1) % 50 + 1].id
+  ports[i] = {id = "rom-" .. i, name = "Jogo " .. i, section = "games",
+    category = sys, system_id = sys, download_url = "https://example.org/" .. i,
+    cover = ""}
+end
+decoded = {catalog_id = "r36s_own", categories = systems, ports = ports}
+assert(Own.decode_remote(raw) == decoded, "catalogo completo deve ser aceito")
+ports[1].cover = "https://r36s-roms-covers.james-spanico.workers.dev/covers/sys1/test.jpg"
+assert(Own.decode_remote(raw) == decoded, "capa do Worker deve ser aceita")
+ports[1].cover = "https://example.org/test.jpg"
+assert(Own.decode_remote(raw) == nil, "host de capa nao autorizado deve falhar")
+ports[1].cover = "https://r36s-roms-covers.james-spanico.workers.dev/covers/sys2/test.jpg"
+assert(Own.decode_remote(raw) == nil, "capa de outro sistema deve falhar")
+ports[1].cover = ""
+local last_port = table.remove(ports)
+assert(Own.decode_remote(raw) == nil, "catalogo remoto parcial deve falhar")
+ports[#ports+1] = last_port
+assert(Own.commit_remote(raw), "copia validada deve ser gravada")
+assert(disk[main_path] == raw and disk[backup_path] == raw)
+local rename_before = os.rename
+os.rename = function(src, dst) if dst == main_path then return nil, "falha simulada" end return rename_before(src, dst) end
+assert(not Own.commit_remote(string.rep("X", 128)), "falha de gravacao deve ser informada")
+assert(disk[main_path] == raw and disk[backup_path] == raw, "falha nao apaga copias validas")
+os.rename = rename_before
+print("OWN REMOTE: OK - integridade, limites, origem das capas e falha de gravacao")
 os.rename, os.remove = original_rename, original_remove
 print("OWN CATALOG: OK - validacao, backup, recuperacao e ausencia sem API")

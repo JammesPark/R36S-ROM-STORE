@@ -22,7 +22,7 @@ local Catalog = {
   news = {},
 }
 
--- A edicao Experimental utiliza exclusivamente catalogo proprio local.
+-- A edicao Experimental utiliza exclusivamente catalogo proprio (rede e copia local).
 function Catalog.provider() return "r36s_own" end
 function Catalog.catalog_source() return "r36s_own" end
 function Catalog.catalog_source_label() return "R36S ROMS STORE — Experimental" end
@@ -288,11 +288,11 @@ local function apply(res, source)
   U.log(string.format("catalogo carregado (%s): %d ports, %d categorias", source, #res.ports, #res.categories))
 end
 
--- Nao ha URL remota nem fallback para o provedor anterior.
-function Catalog.get_remote_url() return nil end
+-- Apenas o canal proprio experimental; nunca a API legada.
+function Catalog.get_remote_url() return C.OWN_CATALOG_URL end
 
 function Catalog.load_local()
-  Catalog.remote_url = nil
+  Catalog.remote_url = Catalog.get_remote_url()
   local own = require("core.own_source")
   local payload, origin_or_err, bytes = own.read()
   if payload then
@@ -327,13 +327,60 @@ function Catalog.load_local()
   return false
 end
 
--- API de compatibilidade mantida sem fazer consultas remotas.
-function Catalog.on_remote(ok, path)
-  if path then os.remove(path) end
-  return false, "Edicao Experimental usa somente catalogo proprio"
+-- Recebe exclusivamente o temporario baixado do canal proprio.
+function Catalog.on_remote(ok, path, reason)
+  local function fail(msg)
+    Catalog.remote_state, Catalog.remote_error = "failed", tostring(msg)
+    return false, Catalog.remote_error, false
+  end
+  if not ok or not path then
+    if path then os.remove(path) end
+    return fail(reason or "Catalogo online indisponivel")
+  end
+  local size = U.file_size(path)
+  local bytes = size and size >= 100 and size <= 4 * 1024 * 1024 and U.read_file(path) or nil
+  os.remove(path)
+  if not bytes then return fail("Tamanho invalido do catalogo remoto") end
+  local own = require("core.own_source")
+  if #Catalog.ports > 0 and U.read_file(own.path) == bytes and Catalog.source ~= "own-embedded" then
+    Catalog.remote_state, Catalog.remote_error = "ok", ""
+    return true, "Catálogo já atualizado.", false
+  end
+  local payload, err = own.decode_remote(bytes)
+  if not payload then return fail(err) end
+  local res, parse_err = Catalog.parse(payload)
+  if not res or #res.ports ~= #payload.ports then
+    return fail(parse_err or "Registros rejeitados ao normalizar")
+  end
+  if not own.commit_remote(bytes) then return fail("Nao foi possivel salvar no SD") end
+  apply(res, "own-online")
+  Catalog.remote_state, Catalog.remote_error = "ok", ""
+  return true, string.format("Catálogo atualizado: %d ROMs.", #res.ports), true
+end
+
+-- Uma requisicao por vez; nao bloqueia a interface nem descarta o catalogo local.
+function Catalog.refresh_remote(cb)
+  if Catalog.remote_state == "loading" then return false end
+  local url = Catalog.get_remote_url()
+  if not url or url == "" then return false end
+  Catalog.remote_url, Catalog.remote_state, Catalog.remote_error = url, "loading", ""
+  local out = C.APP_DIR .. "/catalogo_proprio_download.zlib"
+  local function finished(ok, path, reason)
+    local success, applied, msg, changed = pcall(Catalog.on_remote, ok, path, reason)
+    if not success then
+      os.remove(out)
+      Catalog.remote_state, Catalog.remote_error = "failed", tostring(applied)
+      applied, msg, changed = false, Catalog.remote_error, false
+    end
+    if cb then cb(applied, msg, changed) end
+  end
+  local started, err = pcall(require("core.fetcher").get, "own_catalog", url, out, finished, true)
+  if not started then finished(false, out, tostring(err)) end
+  return true
 end
 
 function Catalog.source_label()
+  if Catalog.source == "own-online" then return "Catálogo próprio (online)" end
   if Catalog.source == "own-local" then return "Catálogo próprio (SD)" end
   if Catalog.source == "own-backup" then return "Catálogo próprio (cópia recuperada)" end
   if Catalog.source == "own-embedded" then return "Catálogo próprio (embutido)" end

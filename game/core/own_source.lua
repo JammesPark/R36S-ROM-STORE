@@ -1,5 +1,5 @@
 -- R36S ROMS STORE Experimental: catalogo proprio e recuperacao offline.
--- Nenhum provedor remoto e consultado. Copia valida fica ao lado do arquivo.
+-- Fonte propria local/remota; copia valida fica ao lado do arquivo.
 local json = require("lib.json")
 local U = require("lib.util")
 local C = require("config")
@@ -65,6 +65,38 @@ local function save_atomic(path, bytes)
   local ok = os.rename(tmp, path)
   if not ok then os.remove(tmp) end
   return ok and true or false
+end
+
+-- A rede nunca pode substituir o catalogo por uma amostra incompleta.
+-- Os limites minimos correspondem a primeira colecao experimental aprovada.
+function Own.decode_remote(bytes)
+  local data, err = decode(bytes)
+  if not data then return nil, err end
+  if #data.categories < 50 or #data.ports < 15652 then
+    return nil, "Catalogo remoto incompleto (minimo: 50 sistemas e 15652 registros)"
+  end
+  for _, g in ipairs(data.ports) do
+    local cover = g.cover
+    if cover ~= nil and cover ~= "" then
+      if type(cover) ~= "string" or #cover > 512 or cover:find("..", 1, true)
+          or not cover:match("^https://r36s%-roms%-covers%.james%-spanico%.workers%.dev/covers/[a-z0-9_%-]+/[a-z0-9_%.%-]+%.jpg$") then
+        return nil, "URL de capa remota invalida"
+      end
+      local sys = cover:match("/covers/([^/]+)/")
+      if sys ~= g.system_id then return nil, "Capa de outro sistema" end
+    end
+  end
+  return data
+end
+
+-- So chamar apos decode_remote e normalizacao integral pelo Catalog.
+-- O principal so muda apos gravacao e verificacao da copia temporaria.
+function Own.commit_remote(bytes)
+  if not save_atomic(Own.path, bytes) then return false end
+  if not save_atomic(Own.backup_path, bytes) then
+    U.log("catalogo proprio: backup anterior preservado; falha ao gravar novo backup")
+  end
+  return true
 end
 
 -- So chamar depois que o parser normalizado aprovou todos os registros.
