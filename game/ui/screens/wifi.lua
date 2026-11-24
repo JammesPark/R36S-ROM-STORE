@@ -80,6 +80,9 @@ function W.guard(fn)
   if Installer.busy() and Installer.job.pausing then
     App.toast(L("Aguarde a pausa terminar."),"info");return
   end
+  if e and e.opts and e.opts.mode=="rom" and Installer.busy() then
+    App.toast(L("Aguarde o início do download ou o fim da instalação antes de alterar a rede."),"warn");return
+  end
   if Installer.busy() or Downloads.active() then
     App.show_dialog({ title = L("Download em andamento"), kind = "warn",
       body = L("Trocar ou desligar a rede pode interromper o download atual. Ele não é cancelado pelo hub, mas a conexão pode cair durante a troca.\n\nContinuar?"),

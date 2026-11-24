@@ -594,6 +594,9 @@ function App.quit(force)
   if Installer.busy() and Installer.job.pausing then
     App.toast(L("Aguarde o download salvar o progresso."),"info"); return
   end
+  if Installer.busy() and Installer.job.opts and Installer.job.opts.mode=="rom" then
+    App.toast(L("Aguarde a etapa atual terminar antes de sair."),"warn");return
+  end
   if not Installer.busy() and Downloads.only_saved_queue() and (Downloads.has_paused() or Downloads.waiting_count()>0) then
     if not Downloads.persist() then App.toast(L("Falha ao salvar a fila; não foi possível sair."),"error"); return end
   -- downloads/instalacoes nao pausaveis mantem a protecao anterior.

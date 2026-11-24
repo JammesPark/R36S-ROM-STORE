@@ -371,14 +371,16 @@ local function run()
   got = fsize(PART) or 0
   send({ t = "progress", phase = "download", done = got, total = expected })
   if cancelled then return cancel_done() end
-  if paused then
+  -- Tambem preservar bytes quando a rede cair antes de uma pausa manual.
+  local net_failure=resumable and got>0 and (rc==5 or rc==6 or rc==7 or rc==18 or rc==28 or rc==35 or rc==52 or rc==55 or rc==56 or rc==60 or rc==92)
+  if paused or net_failure then
     local f=io.open(MARK,"wb")
     if not f then return fail("no_write",WORK) end
     local written=f:write(job.url .. "\n" .. job.ports_dir)
     local closed=f:close()
     if not written or not closed then return fail("no_write",WORK) end
     os.remove(STOP); os.remove(PIDF); os.remove(RCF)
-    send({t="paused",done=got,total=expected})
+    send({t="paused",done=got,total=expected,network=net_failure and not paused})
     return
   end
   if rc ~= 0 then

@@ -33,8 +33,9 @@ local function persist()
     end
   end
   local path=C.APP_DIR.."/"..QUEUE_FILE
-  local ok=U.write_file(path..".tmp",json.encode(list))
-  if ok and os.rename(path..".tmp",path) then return true end
+  local bytes=json.encode(list)
+  local ok=U.write_file(path..".tmp",bytes)
+  if ok and U.read_file(path..".tmp")==bytes and os.rename(path..".tmp",path) then return true end
   os.remove(path..".tmp"); U.log("falha ao salvar fila de ROMs"); return false
 end
 D.persist=persist
@@ -304,8 +305,8 @@ function D.pause(e)
 end
 function D.resume(e)
   if not e or e.state~="paused" then return false end
-  e.state="waiting"; e.resume_requested=true
-  persist()
+  e.state="waiting"; e.resume_requested=true; e.error=nil
+  if not persist() then e.state="paused";e.resume_requested=nil;return false end
   return true
 end
 function D.has_paused()
