@@ -15,10 +15,37 @@ local Favorites = require("core.favorites")
 local Tools = require("core.tools")
 local Icons = require("ui.icons")
 local CV = require("ui.coverview")
-local ToolPanel = require("ui.toolspanel")
-local RomInstalled = require("core.rom_installed")
+local Region = require("ui.region")
+local Prefs = require("core.prefs")
+local Themes = require("core.themes")
 
 local S = {}
+-- Pulse e Matrix oferecem as mesmas tres vistas, com preferencias independentes.
+local VIEWS = { "list", "grid", "showcase" }
+local VIEW_NAMES = { list = "Lista", grid = "Grade Jedi", showcase = "Vitrine Pastel" }
+
+local function view_key()
+  return Themes.current=="neongrid" and "rom_view_matrix" or "rom_view_default"
+end
+local function active_view(section)
+  if section=="tools" then return T.style.list=="grid" and "grid" or "list" end
+  local id=Prefs.get(view_key())
+  if id=="grid" or id=="showcase" or id=="list" then return id end
+  return Themes.current=="neongrid" and "grid" or "list"
+end
+
+local function change_view(direction)
+  local current = active_view()
+  for i, value in ipairs(VIEWS) do
+    if value == current then
+      local next_mode = VIEWS[(i - 1 + direction + #VIEWS) % #VIEWS + 1]
+      Prefs.set(view_key(), next_mode)
+      return next_mode
+    end
+  end
+  Prefs.set(view_key(), "list")
+  return "list"
+end
 
 local ROW_H, LIST_Y, LIST_X, LIST_W = 50, 84, 12, 356
 local VISIBLE = 7
@@ -33,42 +60,39 @@ local BADGE = {
 --   Meus Ports (params.mine = true): abas Jogos | Utilitarios & Ferramentas (so instalados)
 -- As duas areas nunca aparecem na mesma listagem.
 function S:enter(params)
+  self.installed_only=params.installed_only==true
   self.mine = params.mine and true or false
-  self.installed_store = params.installed_store and true or false
   self.favs = params.favs and true or false
-  self.tool_focus, self.tool_tab_top, self.tool_item_top = "categories", 0, 0
   self.section = params.section or "games"
-  self.filter = params.filter or ((self.mine or self.installed_store) and "installed" or (self.favs and "favs" or "all"))
+  self.filter = params.filter or (self.mine and "installed" or (self.favs and "favs" or "all"))
   self.sel, self.scroll, self.tab_scroll = 1, 0, 0
-  Manifest.rescan()
-  if self.mine then Manifest.refresh_locations() end
+  if self.section=="tools" then
+    Manifest.rescan()
+    if self.mine then Manifest.refresh_locations() end
+  end
   self:build_tabs()
   self:refresh()
 end
 
 function S:build_tabs()
   local tabs = {}
-  if self.installed_store then
-    -- Apenas ROMs registradas e verificadas pela própria loja, por sistema.
-    tabs[1] = { id = "installed", section = "games", label = L("Todas") }
-    local system_tabs, seen = {}, {}
-    for _, p in ipairs(RomInstalled.list(Catalog)) do
-      local id = tostring(p.category_id or "roms")
-      if not seen[id] then
-        seen[id] = true
-        system_tabs[#system_tabs + 1] = { id = "installed_cat:" .. id,
-          section = "games", label = p.category or id }
-      end
-    end
-    table.sort(system_tabs, function(a, b) return tostring(a.label) < tostring(b.label) end)
-    for _, t in ipairs(system_tabs) do tabs[#tabs + 1] = t end
+  if self.installed_only then
+    self.installed_rows=require("core.rom_installed").list(Catalog)
+    tabs[1]={id="installed",section="games",label=L("Todos")}
+    local seen={}
+    for _,q in ipairs(self.installed_rows) do seen[q.category_id]=q.category or q.category_id end
+    local ordered={}
+    for id,name in pairs(seen) do ordered[#ordered+1]={id=id,name=name} end
+    table.sort(ordered,require("core.catalog_presentation").less)
+    for _,c in ipairs(ordered) do tabs[#tabs+1]={id="cat:"..c.id,section="games",label=c.name} end
   elseif self.mine or self.favs then
     for _, sec in ipairs(Cats.SECTIONS) do
       tabs[#tabs + 1] = { id = self.mine and "installed" or "favs", section = sec.id, label = sec.name }
     end
   else
     tabs[1] = { id = "all", section = self.section, label = L("Todos") }
-    for _, c in ipairs(Catalog.categories) do
+    local categories = self.section == "games" and Catalog.systems() or Catalog.categories
+    for _, c in ipairs(categories) do
       if c.section == self.section then
         tabs[#tabs + 1] = { id = "cat:" .. c.id, section = self.section, label = c.name }
       end
@@ -86,24 +110,16 @@ end
 
 function S:refresh()
   local cur = self.items and self.items[self.sel]
+  Covers.reset_pending()
   self.items = {}
-  if self.installed_store then
-    -- Nunca usa a varredura geral de ROMs do console (PortMaster/manual).
-    for _, p in ipairs(RomInstalled.list(Catalog)) do
-      if self.filter == "installed" or self.filter == "installed_cat:" .. tostring(p.category_id or "roms") then
-        self.items[#self.items + 1] = p
-      end
+  if self.installed_only then
+    for _,p in ipairs(self.installed_rows or {}) do
+      if self.filter=="installed" or self.filter=="cat:"..p.category_id then self.items[#self.items+1]=p end
     end
-    self.sel = 1
-    if cur then
-      for i, p in ipairs(self.items) do if p.id == cur.id then self.sel = i; break end end
-    end
+    self.sel=1
+    if cur then for i,p in ipairs(self.items) do if p.id==cur.id then self.sel=i;break end end end
     self:clamp()
     return
-  end
-  if not self.mine and not self.favs and self.section=="games" then
-    local cat = self.filter=="all" and "all" or self.filter:match("^cat:(.+)$")
-    if cat then require("core.rom_source").ensure(cat) end
   end
   -- ferramentas integradas (Manutencao) primeiro; depois os ports do catalogo
   if not self.mine and not self.favs then
@@ -143,13 +159,14 @@ function S:refresh()
 end
 
 function S:on_catalog()
-  if self.mine then Manifest.refresh_locations() end
+  if self.mine and self.section=="tools" then Manifest.refresh_locations() end
   self:build_tabs()
   self:refresh()
 end
 
 function S:resume()
-  if self.mine then Manifest.refresh_locations() end
+  if self.installed_only then self:build_tabs() end
+  if self.mine and self.section=="tools" then Manifest.refresh_locations() end
   self:refresh()
 end
 
@@ -164,7 +181,7 @@ function S:clamp()
 end
 
 function S:title()
-  if self.installed_store then return L("Instalados") end
+  if self.installed_only then return L("Instalados") end
   if self.mine then return L("Meus Ports") end
   if self.favs then return L("Favoritos") end
   return Cats.SECTION_BY_ID[self.section].name
@@ -214,20 +231,12 @@ function S:draw_list()
     local area = Cats.SECTION_BY_ID[self.section].name
     if self.filter == "favs" then
       msg, sub = L("Lista vazia"), L("Nenhum favorito em ") .. area .. L(".\nNa loja, pressione SELECT sobre um port para marcar com a estrela.")
-    elseif (self.filter == "installed" or self.installed_store) and self.section=="games" then
+    elseif self.installed_only or (self.filter == "installed" and self.section=="games") then
       msg,sub=L("Nada instalado"),L("Nenhuma ROM baixada por este aplicativo até agora.")
     elseif self.filter == "installed" then
       msg, sub = L("Nada instalado"), L("Nenhum port de ") .. area .. L(" instalado no console.")
     elseif self.section=="games" and (self.filter=="all" or self.filter:sub(1,4)=="cat:") then
-      local cat=self.filter=="all" and "all" or self.filter:sub(5)
-      local state=require("core.rom_source").state(cat)
-      if state and state.loading then
-        msg,sub=L("Carregando ROMs"),L("Consultando jogos deste sistema...")
-      elseif state and state.failed then
-        msg,sub=L("Sem conexão"),L("Não foi possível carregar as ROMs. Pressione Y para tentar novamente.")
-      else
-        msg,sub=L("Categoria vazia"),L("Não há ROMs em cache para este sistema.")
-      end
+      msg,sub=L("Categoria vazia"),L("Não há ROMs neste sistema do catálogo próprio.")
     elseif self.filter:sub(1, 4) == "cat:" then
       msg, sub = L("Categoria vazia"), L("Não existem ports disponíveis nesta categoria.")
     else
@@ -242,7 +251,7 @@ function S:draw_list()
     local p = self.items[i]
     local y = LIST_Y + 4 + (i - self.scroll - 1) * ROW_H
     PortRow.draw(p, LIST_X + 4, y, LIST_W - 8, ROW_H - 4, i == self.sel, T.c.accent,
-      self.installed_store and { location = p.rom_download_card } or (self.mine and { location = Manifest.location_label(p) } or nil))
+      self.mine and { location = Manifest.location_label(p) } or nil)
   end
   -- barra de rolagem
   if n > VISIBLE then
@@ -269,13 +278,15 @@ function S:draw_preview()
     G.cover(Covers.get(p), p, px + (pw - cw) / 2, py + 12, cw, ch, Covers.is_loading(p), App.t)
   end
   local y = py + ch + 22
-  G.text_fit(T.f.h3, p.name, px + 14, y, pw - 28, T.c.text)
+  G.text_fit(T.f.h3, Region.display_name(p), px + 14, y, pw - 28, T.c.text)
   y = y + 24
-  local tw = G.tag(U.upper(p.category), px + 14, y, T.c.accent2, T.c.bg0)
-  if p.version ~= "" then G.tag("v" .. p.version, px + 20 + tw, y, T.c.bg3, T.c.dim) end
+  local tw = Region.draw_system(p, px + 14, y, pw - 28)
+  local rx = px + 20 + tw
+  if Region.code(p) then rx = rx + Region.draw_region(p, rx, y) + 6 end
+  if p.version ~= "" and rx < px + pw - 52 then G.tag("v" .. p.version, rx, y, T.c.bg3, T.c.dim) end
   y = y + 26
-  if self.mine or self.installed_store then
-    local loc = self.installed_store and p.rom_download_card or Manifest.location_label(p)
+  if self.mine then
+    local loc = Manifest.location_label(p)
     if loc then G.tag(loc, px + 14, y - 2, T.c.green, T.c.bg0); y = y + 22 end
   end
   local short = Catalog.text(p, "short")
@@ -297,13 +308,7 @@ function S:draw_preview()
 end
 
 function S:update(dt)
-  if CV.active() then CV.update(self, self.sel, dt) end
-  if self.section=="games" and not self.mine and not self.favs then
-    local cat = self.filter=="all" and "all" or self.filter:match("^cat:(.+)$")
-    if cat and self.sel>=math.max(1,#self.items-3) then
-      require("core.rom_source").ensure(cat)
-    end
-  end
+  if active_view(self.section) == "showcase" then CV.update(self, self.sel, dt) end
 end
 
 -- Pastel Pop: vitrine de capas (ui/coverview.lua) no lugar da lista + previa
@@ -322,12 +327,13 @@ function S:draw_showcase()
   end
   local p = items[self.sel]
   local pills, tags = {}, {}
-  pills[#pills + 1] = { PortRow.subtitle(p):match("^(.-)  •") or p.category, T.c.accent2 }
+  pills[#pills + 1] = { p.category, Region.SYSTEM_COLOR }
+  if Region.code(p) then pills[#pills + 1] = { Region.code(p), Region.color(Region.code(p)) } end
   if not p.builtin then
     if p.size_label and p.size_label ~= "?" then pills[#pills + 1] = { p.size_label, T.c.line } end
     if (p.version or "") ~= "" then pills[#pills + 1] = { "v" .. p.version, T.c.line } end
     local b = PortRow.BADGE[App.status(p)]
-    if b then tags[#tags + 1] = { (self.installed_store and p.rom_download_card) or (self.mine and Manifest.location_label(p)) or b[1], b[2] }
+    if b then tags[#tags + 1] = { (self.mine and Manifest.location_label(p)) or b[1], b[2] }
     elseif Catalog.is_new(p) then tags[#tags + 1] = { PortRow.NEW[1], PortRow.NEW[2] } end
     if Favorites.is(p) then tags[#tags + 1] = { L("FAVORITO"), T.c.yellow } end
   else
@@ -346,7 +352,7 @@ function S:draw_showcase()
       { L("Tamanho"), (p.size_label and p.size_label ~= "?") and p.size_label or none },
       { L("Desenvolvedor"), (p.author or "") ~= "" and p.author or none },
       { L("Estado"), stt, st == "installed" and T.c.green or (st == "update" and T.c.yellow or nil) },
-      { L("Cartão"), (self.installed_store and p.rom_download_card) or (self.mine and Manifest.location_label(p)) or "—", T.c.green },
+      { L("Cartão"), (self.mine and Manifest.location_label(p)) or "—", T.c.green },
     } }
     local short = Catalog.text(p, "short")
     sections[#sections + 1] = { title = L("Descrição"), text = short ~= "" and short or L("Sem descrição.") }
@@ -362,7 +368,7 @@ function S:draw_showcase()
   CV.draw(self, {
     top = 82, n = #items, sel = self.sel, draw_cover = cover,
     bg_cover = (not p.builtin) and function(x, y, w, h) G.cover(Covers.get(p), p, x, y, w, h, false, App.t) end or nil,
-    name = p.name, pills = pills, tags = tags, sections = sections,
+    name = Region.display_name(p), pills = pills, tags = tags, sections = sections,
   })
 end
 
@@ -378,8 +384,12 @@ function S:draw_grid()
     else
       G.cover(Covers.get(p), p, x, y, w, h, Covers.is_loading(p), App.t)
     end
-    if self.mine or self.installed_store then
-      local loc = self.installed_store and p.rom_download_card or Manifest.location_label(p)
+    if w >= 80 and h >= 105 and Region.code(p) then
+      local code = Region.code(p)
+      Region.draw_region(p, x + w - Region.pill_width(code) - 3, y + 3)
+    end
+    if self.mine then
+      local loc = Manifest.location_label(p)
       if loc then
         local short = loc == "SD1 + SD2" and "SD1+2" or loc
         G.tag(short, x + 3, y + 3, T.c.green, T.c.bg0, T.f.pix8)
@@ -388,12 +398,13 @@ function S:draw_grid()
   end
   local p = items[self.sel]
   local pills, tags = {}, {}
-  pills[#pills + 1] = { PortRow.subtitle(p):match("^(.-)  •") or p.category, T.c.accent2 }
+  pills[#pills + 1] = { p.category, Region.SYSTEM_COLOR }
+  if Region.code(p) then pills[#pills + 1] = { Region.code(p), Region.color(Region.code(p)) } end
   if not p.builtin then
     if p.size_label and p.size_label ~= "?" then pills[#pills + 1] = { p.size_label, T.c.line } end
     if (p.version or "") ~= "" then pills[#pills + 1] = { "v" .. p.version, T.c.line } end
     local b = PortRow.BADGE[App.status(p)]
-    if b then tags[#tags + 1] = { (self.installed_store and p.rom_download_card) or (self.mine and Manifest.location_label(p)) or b[1], b[2] }
+    if b then tags[#tags + 1] = { (self.mine and Manifest.location_label(p)) or b[1], b[2] }
     elseif Catalog.is_new(p) then tags[#tags + 1] = { PortRow.NEW[1], PortRow.NEW[2] } end
     if Favorites.is(p) then tags[#tags + 1] = { L("FAVORITO"), T.c.yellow } end
   else
@@ -402,7 +413,7 @@ function S:draw_grid()
   local short = p.builtin and (p.short or "") or Catalog.text(p, "short")
   CG.draw(self, {
     top = 82, n = #items, sel = self.sel, draw_cover = cover,
-    name = p.name, pills = pills, tags = tags, desc = short ~= "" and short or I18N.tr(L("Sem descrição.")),
+    name = Region.display_name(p), pills = pills, tags = tags, desc = short ~= "" and short or I18N.tr(L("Sem descrição.")),
     is_new = function(i) return Catalog.is_new(items[i]) and App.status(items[i]) == "none" end,
     badge = function(i)
       local q = items[i]
@@ -414,34 +425,45 @@ function S:draw_grid()
 end
 
 function S:draw()
+  local view = active_view(self.section)
+  -- A lista baixa a capa selecionada; grade/vitrine priorizam a regiao visivel.
+  local page = view == "grid" and math.floor((self.sel - 1) / CG.COLS) or self.sel
+  Covers.focus_view(self, tostring(self.filter) .. ":" .. view .. ":" .. page, self.items[self.sel])
   local right = string.format(L("%d de %d"), #self.items > 0 and self.sel or 0, #self.items)
+  if self.section == "games" then
+    right = right .. " · L2/R2 " .. VIEW_NAMES[active_view(self.section)]
+  end
   G.header(self:title(), right)
-  if ToolPanel.active(self) then ToolPanel.draw(self); return end
   self:draw_tabs()
-  if CG.active() and #self.items > 0 then
+  if view == "grid" and #self.items > 0 then
     self:draw_grid()
-  elseif CV.active() and #self.items > 0 then
+  elseif view == "showcase" and #self.items > 0 then
     self:draw_showcase()
   else
     self:draw_list()
     self:draw_preview()
   end
-  local tabword = self.installed_store and L("Sistema") or ((self.mine or self.favs) and L("Área") or L("Categoria"))
-  if self.filter == "installed" or self.installed_store then
+  local tabword = (self.mine or self.favs) and L("Área") or L("Categoria")
+  -- Rodape: L2/R2 mudam a visualizacao; as abas continuam L1/R1 no topo.
+  local left_key,right_key,footer_label="l1","r1",tabword
+  if self.section=="games" then
+    left_key,right_key,footer_label="l2","r2",L("Visualização")
+  end
+  if self.filter == "installed" or self.installed_only then
     local current = self.items[self.sel]
     local fav_text = (current and not current.builtin)
       and (Favorites.is(current) and L("Desfavoritar") or L("Favoritar")) or L("Favoritos")
     G.hints({ { "a", (current and current.builtin) and L("Abrir") or L("Detalhes") },
       { "x", L("Pesquisar") }, { "select", fav_text }, { "b", L("Voltar") },
-      { "l2", "" }, { "r2", tabword } })
+      { left_key, "" }, { right_key, footer_label } },nil,nil,true)
   else
     local cur = self.items[self.sel]
     local fav_text = (cur and not cur.builtin)
       and (Favorites.is(cur) and L("Desfavoritar") or L("Favoritar")) or L("Favoritos")
     local hints = { { "a", (cur and cur.builtin) and L("Abrir") or L("Ver detalhes") },
       { "x", L("Pesquisar") }, { "select", fav_text }, { "b", L("Voltar") },
-      { "l2", "" }, { "r2", tabword }, { "y", L("Atualizar") } }
-    G.hints(hints)
+      { left_key, "" }, { right_key, footer_label }, { "y", L("Atualizar") } }
+    G.hints(hints,nil,nil,true)
   end
 end
 
@@ -455,11 +477,19 @@ function S:switch_tab(d)
 end
 
 function S:action(act)
-  if ToolPanel.active(self) then return ToolPanel.action(self, act) end
-  -- Apenas os textos do rodape mudaram de L1/R1 para L2/R2; mapeamento preservado.
-  if act == "l2" or act == "r2" then return end
+  -- L2/R2 alternam as vistas de ROMs nos dois temas.
+  if act == "l2" or act == "r2" then
+    if self.section == "games" then
+      local mode = change_view(act == "l2" and -1 or 1)
+      self.cg_scroll, self.cv_pos = nil, self.sel
+      Covers.reset_pending()
+      self:clamp()
+      App.toast("Visualização: " .. VIEW_NAMES[mode], "info")
+    end
+    return
+  end
   local n = #self.items
-  if CG.active() and n > 0 and (act == "up" or act == "down" or act == "left" or act == "right") then
+  if active_view(self.section) == "grid" and n > 0 and (act == "up" or act == "down" or act == "left" or act == "right") then
     -- grade de capas: esquerda/direita andam 1, cima/baixo uma fileira
     local c = CG.COLS
     if act == "left" then self.sel = math.max(1, self.sel - 1)
@@ -486,15 +516,9 @@ function S:action(act)
     App.toast(on and (p.name .. L(" adicionado aos favoritos")) or (p.name .. L(" removido dos favoritos")), "info")
     if self.favs then self:refresh() end
   elseif act == "x" then
-    App.push("search", { from = "store" })
-  elseif act == "y" and self.section=="games" and not self.mine and not self.favs then
-    local cat = self.filter=="all" and "all" or self.filter:match("^cat:(.+)$")
-    if cat then
-      require("core.rom_source").retry(cat)
-      App.toast(L("Atualizando catálogo..."),"info")
-    end
+    App.push("search", { from = "store", installed_only=self.installed_only,
+      system=self.installed_only and self.filter:match("^cat:(.+)$") or nil })
   elseif act == "y" then
-    App.toast(L("Atualizando catálogo..."), "info")
     App.refresh_catalog(true)
   end
 end

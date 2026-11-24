@@ -11,11 +11,16 @@ package.loaded['core.portstorage']={get=function(card)
 end}
 local r=require('core.romstorage')
 assert(r.get('sd1','gba').path=='/roms/gba')
+assert(r.get('sd1','cps1').path=='/roms/cps1')
+assert(r.get('sd2','cps2').path=='/roms2/cps2')
+assert(r.get('sd2','cps3').path=='/roms2/cps3')
+assert(r.get('sd1','psp-minis').path=='/roms/psp')
+assert(r.get('sd2','psp-minis').path=='/roms2/psp')
 assert(r.get('sd2','snes').path=='/roms2/snes')
 assert(r.get('sd1','invalid').available==false)
 assert(r.filename({download_url='https://archive.org/download/test/Game%20Name%20%28USA%29.zip'})=='Game Name (USA).zip')
 assert(r.filename({download_url='https://a.example/test/%2E%2E%2Fbad.gba'})=='.._bad.gba')
 assert(#r.FOLDERS==0) -- mapa, nao array
 local c=0 for _ in pairs(r.FOLDERS) do c=c+1 end
-assert(c==20, 'expected 20 systems, got '..c)
+assert(c==24, 'expected 24 systems, got '..c)
 print('ROM STORAGE PATHS: OK',c,'systems')

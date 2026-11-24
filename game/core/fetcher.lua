@@ -4,7 +4,7 @@
 local C = require("config")
 local U = require("lib.util")
 
-local F = { thread = nil, handlers = {}, pending = 0, seq = 0 }
+local F = { thread = nil, handlers = {}, pending = 0, seq = 0, catalog = {} }
 
 function F.start()
   if F.thread then return end
@@ -15,8 +15,29 @@ function F.start()
   F.thread:start(C.FETCH_SH)
 end
 
+-- Catalogo proprio usa canal independente para nao bloquear a fila de capas.
+local function start_catalog()
+  local q = F.catalog
+  if q.thread then return q end
+  q.req = love.thread.getChannel("hub_own_catalog_req")
+  q.res = love.thread.getChannel("hub_own_catalog_res")
+  q.req:clear(); q.res:clear()
+  q.thread = love.thread.newThread("threads/fetch_thread.lua")
+  q.thread:start(C.FETCH_SH, "hub_own_catalog")
+  return q
+end
+
 --- Agenda um download. cb(ok, out_path, reason)
 function F.get(kind, url, out, cb, priority)
+  if kind == "own_catalog" then
+    local q = start_catalog()
+    F.seq = F.seq + 1
+    local id = kind .. ":" .. F.seq
+    q.id, q.cb = id, cb
+    F.pending = F.pending + 1
+    q.req:push({id = id, kind = kind, url = url, out = out})
+    return id
+  end
   F.start()
   F.seq = F.seq + 1
   local id = kind .. ":" .. F.seq
@@ -36,6 +57,21 @@ function F.get(kind, url, out, cb, priority)
 end
 
 function F.update()
+  local q = F.catalog
+  if q.thread then
+    local err = q.thread:getError()
+    local msg = not err and q.res:pop() or nil
+    if err or msg then
+      local cb = q.cb
+      q.cb, q.id = nil, nil
+      if err then q.thread = nil end
+      if cb then
+        F.pending = math.max(0, F.pending - 1)
+        local ok, e = pcall(cb, msg and msg.ok or false, msg and msg.out, err or (msg and msg.reason))
+        if not ok then U.log("erro no retorno do catalogo:", e) end
+      end
+    end
+  end
   if not F.thread then return end
   local err = F.thread:getError()
   if err then
@@ -44,7 +80,7 @@ function F.update()
     -- avisa todos os pendentes
     for id, cb in pairs(F.handlers) do pcall(cb, false, nil, "erro interno") end
     F.handlers = {}
-    F.pending = 0
+    F.pending = F.catalog.cb and 1 or 0
     return
   end
   local m = F.res:pop()
@@ -96,6 +132,7 @@ end
 
 function F.stop()
   if F.req then F.req:clear(); F.req:push({ t = "quit" }) end
+  if F.catalog.req then F.catalog.req:clear(); F.catalog.req:push({ t = "quit" }) end
 end
 
 return F

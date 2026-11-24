@@ -10,6 +10,7 @@ local Covers = require("core.covers")
 local Favorites = require("core.favorites")
 local Cats = require("core.categories")
 local Icons = require("ui.icons")
+local Region = require("ui.region")
 
 local R = {}
 
@@ -61,12 +62,30 @@ function R.draw(p, x, y, w, h, on, accent, extra)
   end
   local tw = w - (nx - x) - 12 - (rightw > 0 and rightw + 8 or 0)
   local ft, fs, ty, sy = G.row_fonts(h, 5, h - 22)
-  G.text_fit(ft, p.name, nx, y + ty, tw, on and T.c.text or T.c.dim)
+  G.text_fit(ft, Region.display_name(p), nx, y + ty, tw, on and T.c.text or T.c.dim)
   local sub = R.subtitle(p)
   if extra.area then
     sub = (p.section == "tools" and L("Utilitário") or L("Jogo")) .. "  •  " .. sub
   end
-  G.text_fit(fs, sub, x + 46, y + sy, w - 58 - (rightw > 0 and rightw + 8 or 0), T.c.faint)
+  local sub_x = x + 46
+  local sub_w = w - 58 - (rightw > 0 and rightw + 8 or 0)
+  if p.section == "games" and not p.builtin then
+    local code = Region.code(p)
+    local region_w = code and (Region.pill_width(code) + 6) or 0
+    local size = (p.size_label or "?")
+    local size_w = size ~= "?" and math.min(54, fs:getWidth(size) + 6) or 0
+    local sys_w = math.max(42, sub_w - region_w - size_w - 4)
+    local dx = Region.draw_system(p, sub_x, y + h - 23, sys_w)
+    if code then
+      dx = dx + 6
+      dx = dx + Region.draw_region(p, sub_x + dx, y + h - 23)
+    end
+    if size_w > 0 and dx + size_w + 5 <= sub_w then
+      G.text_fit(fs, size, sub_x + dx + 8, y + sy, size_w, T.c.faint)
+    end
+  else
+    G.text_fit(fs, sub, sub_x, y + sy, sub_w, T.c.faint)
+  end
 end
 
 return R

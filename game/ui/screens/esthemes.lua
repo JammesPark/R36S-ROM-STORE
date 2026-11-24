@@ -274,7 +274,7 @@ function S:draw_preview(th, x, y, w, h)
 end
 
 function S:draw()
-  G.header(L("Loja de Temas"))
+  G.header(L("Temas Store"))
   -- sistema
   G.panel(12, 46, T.W - 24, 30, { bg = T.c.bg1 })
   local sys

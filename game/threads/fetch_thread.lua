@@ -5,9 +5,10 @@
 -- =============================================================================
 require("love.timer")
 
-local fetch_sh = ...
-local REQ = love.thread.getChannel("hub_fetch_req")
-local RES = love.thread.getChannel("hub_fetch_res")
+local fetch_sh, channel = ...
+channel = channel or "hub_fetch"
+local REQ = love.thread.getChannel(channel .. "_req")
+local RES = love.thread.getChannel(channel .. "_res")
 
 local function shq(s) return "'" .. tostring(s or ""):gsub("'", "'\\''") .. "'" end
 
@@ -37,7 +38,18 @@ while true do
     os.remove(tmp); os.remove(rcf)
     local maxt = req.kind == "catalog" and 25 or 30
     local rc
-    if req.kind == "ota_feed" then
+    if req.kind == "own_catalog" then
+      -- HTTPS obrigatorio e limite de 4 MiB para o ZLIB do catalogo proprio.
+      local ok = os.execute("curl --proto '=https' --proto-redir '=https' -fsSL --connect-timeout 8 --max-time 30 --max-filesize 4194304 -o "
+        .. shq(tmp) .. " " .. shq(req.url))
+      rc = (ok == 0 or ok == true) and 0 or 1
+    elseif (req.kind == "cover" or req.kind == "cover_all")
+        and req.url:match("^https://r36s%-roms%-covers%.james%-spanico%.workers%.dev/") then
+      -- Uma tentativa curta por capa; retry com intervalo no cache.
+      local status = os.execute("curl --proto '=https' --proto-redir '=https' -fsSL --connect-timeout 5 --max-time 12 --max-filesize 2097152 -o "
+        .. shq(tmp) .. " " .. shq(req.url))
+      rc = (status == 0 or status == true) and 0 or (type(status) == "number" and math.max(1, math.floor(status / 256)) or 1)
+    elseif req.kind == "ota_feed" then
       local ok = os.execute("curl --proto '=https' --proto-redir '=https' -fsSL --max-time 30 --max-filesize 262144 -o "
         .. shq(tmp) .. " " .. shq(req.url))
       rc = (ok == 0 or ok == true) and 0 or 1

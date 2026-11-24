@@ -228,18 +228,21 @@ end
 
 --- largura que as dicas ocupam com a fonte `font`
 local HINT_LABEL = { l1 = "L1", r1 = "R1", l2 = "L2", r2 = "R2", start = "START", select = "SELECT" }
-function G.hints_width(list, font)
+function G.hints_width(list, font, compact)
   local tw = 14
   for _, h in ipairs(list) do
     local bw = (h[1] == "a" or h[1] == "b" or h[1] == "x" or h[1] == "y" or h[1] == "dpad") and 16
       or (T.f.pix8:getWidth(HINT_LABEL[h[1]] or h[1]) + 10)
-    tw = tw + bw + 6 + font:getWidth(h[2]) + 16
+    local gap=compact and (h[2]=="" and 3 or 8) or 16
+    local inset=compact and (h[2]=="" and 0 or 4) or 6
+    tw=tw+bw+inset+font:getWidth(h[2])+gap
   end
-  return tw - 16
+  local last=list[#list]
+  return tw-(compact and (last and last[2]=="" and 3 or 8) or 16)
 end
 
 --- Barra de dicas de botoes no rodape (maxx: onde as dicas precisam terminar)
-function G.hints(list, y, maxx)
+function G.hints(list, y, maxx, compact)
   y = y or (T.H - 26)
   maxx = maxx or (T.W - 10)
   if T.style.chrome == "pill" then
@@ -254,16 +257,28 @@ function G.hints(list, y, maxx)
   local font
   for _, f in ipairs(T.shrink_chain(T.f.small)) do
     font = f
-    if G.hints_width(list, f) <= maxx then break end
+    if G.hints_width(list, f, compact) <= maxx then break end
   end
-  local x = 14
+  -- No catalogo, garantir espaco para Y, inclusive com texto maior.
+  if compact and G.hints_width(list,font,true)>maxx then
+    for size=11,9,-1 do
+      font=T.text_font("small",size)
+      if G.hints_width(list,font,true)<=maxx then break end
+    end
+  end
+  local x,lastgap=14,0
   for _, h in ipairs(list) do
-    local w = G.button_icon(h[1], x, y)
-    x = x + w + 6
-    G.text(font, h[2], x, y + 1 + math.floor((T.f.small:getHeight() - font:getHeight()) / 2), T.c.dim)
-    x = x + font:getWidth(h[2]) + 16
+    local w=G.button_icon(h[1],x,y)
+    local gap=compact and (h[2]=="" and 3 or 8) or 16
+    local inset=compact and (h[2]=="" and 0 or 4) or 6
+    x=x+w+inset
+    if h[2]~="" then
+      G.text(font,h[2],x,y+1+math.floor((T.f.small:getHeight()-font:getHeight())/2),T.c.dim)
+    end
+    x=x+font:getWidth(h[2])+gap
+    lastgap=gap
   end
-  return x - 16
+  return x-lastgap
 end
 
 function G.progress(x, y, w, h, frac, c)
@@ -305,17 +320,19 @@ local function initials(name)
 end
 
 --- Desenha a capa (imagem com ajuste "cover") ou uma capa gerada
-function G.cover(img, p, x, y, w, h, loading, t)
-  G.rect(x + 2, y + 3, w, h, T.c.shadow, 6)
+function G.cover(img, p, x, y, w, h, loading, t, options)
+  options=options or {}
+  if not options.borderless then G.rect(x + 2, y + 3, w, h, T.c.shadow, 6) end
   if img then
     local iw, ih = img:getDimensions()
     local s = math.max(w / iw, h / ih)
     local dw, dh = iw * s, ih * s
     G.clip(x, y, w, h)
     lg.setColor(1, 1, 1, 1)
-    lg.draw(img, x + (w - dw) / 2, y + (h - dh) / 2, 0, s, s)
+    if options.stretch then lg.draw(img,x,y,0,w/iw,h/ih)
+    else lg.draw(img, x + (w - dw) / 2, y + (h - dh) / 2, 0, s, s) end
     G.unclip()
-    G.frame(x, y, w, h, T.c.line, 4)
+    if not options.borderless then G.frame(x, y, w, h, T.c.line, 4) end
     return
   end
   G.clip(x, y, w, h)
@@ -351,7 +368,7 @@ function G.cover(img, p, x, y, w, h, loading, t)
     G.rect(x + w / 2 - 12, y + h - 12, 24, 4, T.c.text, 2, 0.3 + 0.5 * a)
   end
   G.unclip()
-  G.frame(x, y, w, h, T.c.line, 4)
+  if not options.borderless then G.frame(x, y, w, h, T.c.line, 4) end
 end
 
 --- Fundo com grade e linhas de varredura (pre-renderizado uma vez)
@@ -601,6 +618,31 @@ local function logo_img(variant)
     LOGOS[key] = img or false
   end
   return LOGOS[key] or nil
+end
+
+--- Logo proporcional para a area livre do cabecalho Matrix.
+function G.logo_box(x,y,w,h,variant)
+  local img=logo_img(variant or "header")
+  if not img then
+    G.text_fit(T.f.bodyb,L("R36S ROMS STORE"),x,y+math.floor((h-T.f.bodyb:getHeight())/2),w,T.c.text)
+    return w
+  end
+  local iw,ih=img:getDimensions()
+  local scale=math.min(w/iw,h/ih)
+  lg.setColor(1,1,1,1)
+  lg.draw(img,math.floor(x),math.floor(y+(h-ih*scale)/2),0,scale,scale)
+  return iw*scale
+end
+
+--- Identidade no rodape do menu, com area separada das dicas.
+function G.menu_identity(name,version,right,y,width)
+  y=y or T.H-26
+  width=width or 128
+  local x=right-width
+  G.rect(x-5,y-1,1,19,T.c.line)
+  local font=T.base_font(T.f.small)
+  G.text_fit(font,name or "",x,y-2,width,T.c.text)
+  G.text_fit(font,version or "",x,y+11,width,T.c.faint)
 end
 
 --- Desenha o logo. variant: "menu" (padrao) | "about" | "header". Devolve largura, altura

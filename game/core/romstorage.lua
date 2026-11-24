@@ -10,6 +10,7 @@ local FOLDERS = {
   mame="mame", mastersystem="mastersystem", megadrive="megadrive", n64="n64",
   nds="nds", neogeo="neogeo", nes="nes", pcengine="pcengine", psp="psp",
   psx="psx", saturn="saturn", snes="snes",
+  cps1="cps1", cps2="cps2", cps3="cps3", ["psp-minis"]="psp",
 }
 local ALIASES = { megadrive="genesis", mastersystem="sms", mame="mame2003" }
 R.FOLDERS = FOLDERS

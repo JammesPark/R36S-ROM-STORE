@@ -2,7 +2,7 @@ name: Validar e empacotar R36S ROMS STORE
 
 on:
   push:
-    branches: [main]
+    branches: [main, experimental/0.6.7-beta-20261121]
   pull_request:
   workflow_dispatch:
 
@@ -12,6 +12,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # somente para enviar ZIP a branch experimental-downloads
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -20,6 +22,9 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y luajit zip unzip
+
+      - name: Conferir versao e documentacao
+        run: python3 tools/version.py check
 
       - name: Conferir estrutura e LuaJIT
         shell: bash
@@ -38,6 +43,18 @@ jobs:
 
       - name: Testar armazenamento e instalação de ROMs
         run: |
+          luajit tests/test_own_catalog.lua
+          luajit tests/test_cover_recovery.lua
+          luajit tests/test_category_order.lua
+          luajit tests/test_catalog_presentation.lua
+          luajit tests/test_cover_focus.lua
+          luajit tests/test_rom_status_cache.lua
+          luajit tests/test_original_download_controls.lua
+          luajit tests/test_visual_revision.lua
+          luajit tests/test_color_neon.lua
+          luajit tests/test_region_view.lua
+          PYTHONDONTWRITEBYTECODE=1 python3 tests/test_catalog_offline.py
+          PYTHONDONTWRITEBYTECODE=1 python3 tests/test_theme_layouts_experimental.py
           luajit tests/test_rom_storage.lua
           PYTHONDONTWRITEBYTECODE=1 python3 tests/test_rom_install.py
 
@@ -49,6 +66,50 @@ jobs:
           sh tools/build.sh
           for pkg in build/*.zip; do unzip -tq "$pkg"; done
 
+      # upload-artifact nao e usado: a cota de artifacts deste repositorio
+      # esta esgotada, embora o build e os testes estejam funcionando.
+      - name: Publicar instalador na branch experimental-downloads (sem Release ou OTA)
+        if: github.ref == 'refs/heads/experimental/0.6.7-beta-20261121' && github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = 'refs/heads/experimental/0.6.7-beta-20261121'
+          pkg="build/R36S_ROMS_STORE_$(python3 tools/version.py get).zip"
+          test -s "$pkg"
+          # Limite de arquivo individual permitido pelo GitHub.
+          test "$(stat -c%s "$pkg")" -lt 100000000 || {
+            echo "::error::ZIP acima de 100 MB; GitHub nao permite arquivo desse tamanho em Git."
+            exit 1
+          }
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          branch="experimental-downloads"
+          pub="$RUNNER_TEMP/romstore-exp-downloads"
+          if git fetch --depth=1 origin "$branch:refs/remotes/origin/$branch"; then
+            git worktree add -B "$branch" "$pub" "refs/remotes/origin/$branch"
+          else
+            git worktree add --detach "$pub" HEAD
+            git -C "$pub" switch --orphan "$branch"
+            git -C "$pub" rm -rf . || true
+          fi
+          mkdir -p "$pub/distribution"
+          cp "$pkg" "$pub/distribution/R36S_ROMSTORE_Experimental_Etapa1.zip"
+          (
+            cd "$pub"
+            printf '%s\n' '# Instalação R36S ROMS STORE Experimental' '' \
+              'Esta branch publica somente o instalador gerado de uma build testada da Experimental.' \
+              'Nao e a branch main nem o canal OTA oficial.' '' \
+              'Instale também R36S_ROMSTORE_INSTALAR_SD_15652_SIGLAS.zip (catálogo .zlib com 15.652 ROMs, fornecido separadamente).' \
+              "Commit do codigo: $GITHUB_SHA" > README.md
+            git add -A
+            if git diff --cached --quiet; then
+              echo "O ZIP publicado ja esta atualizado."
+            else
+              git commit -m "build(experimental): disponibilizar ZIP validado de $GITHUB_SHA"
+              git push origin "HEAD:refs/heads/$branch"
+            fi
+          )
+          echo "Instalador disponivel na branch $branch; nao usa Actions artifacts."
   release:
     needs: build
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'

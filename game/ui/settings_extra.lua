@@ -226,39 +226,57 @@ end
 
 function X.catalog_category()
   local Catalog = require("core.catalog")
+  local Own = require("core.own_source")
   return {
     id = "catalog", icon = "set_catalog", color = "yellow",
-    name = L("Catálogo de ports"),
-    desc = L("Atualização, conteúdo e ordenação das listas."),
-    status = function() return string.format(I18N.tr(L("%d ports")), #Catalog.ports) .. "  •  " .. Catalog.source_label() end,
+    name = L("Catálogo de ROMs"),
+    desc = L("Catálogo próprio independente e recuperação offline."),
+    status = function()
+      return string.format("%d ROMs", #Catalog.ports) .. "  •  " .. Catalog.source_label()
+    end,
     rows = {
-      { kind = "action", label = L("Atualizar catálogo agora"),
+      { kind = "info", label = L("Fonte do catálogo"),
+        desc = L("Fonte única desta edição: catálogo próprio instalado no cartão. Sem API GameStoreBR."),
+        value = function() return C.APP_NAME end },
+      { kind = "action", label = L("Recarregar catálogo do cartão"),
         desc = function()
-          local url = Catalog.get_remote_url()
-          return L("Atualiza as ROMs disponíveis consultando a fonte GameStoreBR.\nFonte: ")
-            .. require("core.rom_source").source_label()
+          return L("Valida e lê o arquivo local, sem acessar a internet: ") .. Own.path
         end,
-        value = function() return Catalog.remote_state == "loading" and L("Atualizando catálogo...") or Catalog.source_label() end,
+        value = function() return Catalog.source_label() end,
         on_a = function()
-          if Catalog.remote_state == "loading" then return end
           App.update_free_space()
           App.refresh_catalog(true, function(okc, msg)
-            App.show_dialog({ title = okc and L("Catálogo") or L("Falha ao atualizar"), kind = okc and "ok" or "error", body = msg })
+            App.show_dialog({
+              title = okc and L("Catálogo") or L("Falha ao atualizar"),
+              kind = okc and "ok" or "error", body = msg
+            })
           end)
         end },
-      { kind = "toggle", label = L("Atualizar ao abrir o hub"),
-        desc = L("Busca o catálogo online toda vez que o hub abre. Desligado, o hub usa o último catálogo baixado até você atualizar à mão."),
-        get = function() return pref_on("cat_auto") end, set = function(v) Prefs.set("cat_auto", v and "1" or "0") end },
-      { kind = "info", label = L("Última atualização online"), desc = L("Quando o catálogo foi baixado com sucesso pela última vez."),
+      { kind = "info", label = L("Recuperação automática"),
+        desc = L("Guarda a última versão válida no SD; se o arquivo principal falhar, recupera essa cópia. Não usa rede."),
         value = function()
-          local t = tonumber(Prefs.get("cat_last") or "")
-          return t and Clock.datetime(t, true) or L("ainda não registrada")
+          return U.file_size(Own.backup_path) and L("Cópia disponível") or L("Aguardando primeira leitura válida")
         end },
-      { kind = "info", label = L("Conteúdo"), desc = L("Ports e categorias do catálogo carregado agora."),
+      { kind = "info", label = L("Conteúdo"),
+        desc = L("ROMs e sistemas carregados a partir do catálogo próprio."),
         value = function()
           return string.format(I18N.tr(L("%d ports  •  %d categorias")), #Catalog.ports, #Catalog.categories)
             .. (Catalog.updated ~= "" and ("  •  v" .. Catalog.updated) or "")
         end },
+      pref_choice(L("Visualização de ROMs (Pulse)"),
+        L("L2/R2 alternam entre Lista, Grade Jedi e Vitrine Pastel. A escolha fica salva por tema."),
+        "rom_view_default", {
+          { id = "list", label = L("Lista") },
+          { id = "grid", label = L("Grade de capas (Jedi)") },
+          { id = "showcase", label = L("Vitrine vertical (Pastel)") },
+        }, "list"),
+      pref_choice(L("Visualização de ROMs (Matrix)"),
+        L("L2/R2 alternam entre Lista, Grade Jedi e Vitrine Pastel. A escolha fica salva por tema."),
+        "rom_view_matrix", {
+          { id = "list", label = L("Lista") },
+          { id = "grid", label = L("Grade de capas (Jedi)") },
+          { id = "showcase", label = L("Vitrine vertical (Pastel)") },
+        }, "grid"),
       pref_choice(L("Ordenação das listas"), L("Ordem dos jogos nas listas de ROMs. A pesquisa continua por nome."),
         "list_sort", X.SORTS, "catalog", function() App.on_catalog_changed() end),
       pref_choice(L("Ordenar favoritos"), L("Ordem da lista de Favoritos."), "fav_sort", FAV_SORTS, "catalog"),

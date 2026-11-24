@@ -49,6 +49,9 @@ end
 --- Usa o registro do hub e, se nao houver, a varredura de /roms/ports
 --- (reconhece ports instalados pelo PortMaster, KMP ou copia manual).
 function M.status(p)
+  if p.section=="games" and not p.is_local and not p.builtin then
+    return require("core.rom_installed").get(p) and "installed" or "none"
+  end
   if p.is_local then
     M.cache[p.id] = M.cache[p.id] or { st = "installed", found = p.local_items, by = "console" }
     return "installed"
@@ -144,6 +147,10 @@ function M.refresh_locations()
 end
 
 function M.location_cards(p)
+  if p.section=="games" and not p.is_local and not p.builtin then
+    local r=require("core.rom_installed").get(p)
+    return r and {[r.card=="SD2" and "sd2" or "sd1"]=true} or {}
+  end
   if p.is_local then return p.local_cards or {} end
   if not M.storage_scans then return {} end
   M.location_cache = M.location_cache or {}

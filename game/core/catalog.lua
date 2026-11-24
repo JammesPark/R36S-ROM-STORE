@@ -7,6 +7,7 @@ local json = require("lib.json")
 local U = require("lib.util")
 local C = require("config")
 local Cats = require("core.categories")
+local Presentation = require("core.catalog_presentation")
 
 local Catalog = {
   ports = {},          -- lista normalizada
@@ -22,12 +23,10 @@ local Catalog = {
   news = {},
 }
 
--- A fonte de jogos e exclusivamente ROMs. Mantemos o ID historico "r36sbr"
--- para preservar avaliacoes de ROMs ja feitas, nunca para carregar outra fonte.
-local function current_source() return "r36sbr" end
-function Catalog.catalog_source() return current_source() end
-function Catalog.catalog_source_label() return "R36S ROMS STORE" end
-local function cache_file() return "catalog_cache_roms.json" end
+-- A edicao Experimental utiliza exclusivamente catalogo proprio (rede e copia local).
+function Catalog.provider() return "r36s_own" end
+function Catalog.catalog_source() return "r36s_own" end
+function Catalog.catalog_source_label() return C.APP_NAME end
 
 --- texto do port no idioma atual (description/short); sem traducao, usa o original
 function Catalog.text(p, field)
@@ -72,6 +71,13 @@ local function normalize_port(raw, idx, cat_names)
   local p = {}
   p.name = str(raw.name or raw.nome or raw.title)
   if p.name == "" then return nil, L("item ") .. idx .. L(" sem nome") end
+  -- Manter titulo original para associar capas; selo visual e tratado na UI.
+  p.original_name = str(raw.original_name)
+  p.region_tag = str(raw.region_tag):upper()
+  if p.region_tag ~= "JP" and p.region_tag ~= "CN"
+      and p.region_tag ~= "TW" and p.region_tag ~= "HK" then
+    p.region_tag = p.name:match("%s+%[([A-Z][A-Z])%]$") or ""
+  end
   p.id = str(raw.id or raw.identificador)
   if p.id == "" then p.id = U.slug(p.name) end
   p.slug = U.slug(p.id)
@@ -145,6 +151,13 @@ local function normalize_port(raw, idx, cat_names)
   p.size_exact = type(raw.size_bytes or raw.sizeBytes or raw.size) == "number"
 
   p.download_url = build_url(raw, { "download_url", "downloadUrl", "url", "download", "rip_url" })
+  if p.section == "games" then
+    local clean = Presentation.title(p.name, p.download_url)
+    if clean ~= p.name then
+      if p.original_name == "" then p.original_name = p.name end
+      p.name = clean
+    end
+  end
   -- informacoes extras opcionais (exibidas nos detalhes)
   p.platform = str(raw.platform or raw.plataforma)
   p.origin = str(raw.source or raw.origem)
@@ -167,7 +180,10 @@ end
 
 --- Interpreta o texto JSON. Devolve (dados normalizados) ou (nil, erro)
 function Catalog.parse(text)
-  local data, err = json.decode(text)
+  -- Aceita tabela previamente decodificada pelo leitor ZLIB para evitar
+  -- deserializar duas vezes 15 mil registros num console ARM.
+  local data,err
+  if type(text)=="table" then data=text else data,err=json.decode(text) end
   if data == nil then return nil, L("JSON inválido: ") .. tostring(err) end
   local list, meta = nil, {}
   if type(data) == "table" and data[1] ~= nil then
@@ -216,7 +232,7 @@ function Catalog.parse(text)
     end
   end
 
-  -- A ordem de sistemas vem do catalogo, mesmo os que ainda estao vazios.
+  -- Sistemas em ordem alfabetica pelo nome exibido, inclusive vazios.
   -- As categorias de ferramentas continuam como no projeto original.
   local counts = {}
   for _, p in ipairs(res.ports) do
@@ -244,6 +260,7 @@ function Catalog.parse(text)
   end
   table.sort(extra, function(a,b) return a.name:lower()<b.name:lower() end)
   for _, c in ipairs(extra) do cats[#cats+1]=c end
+  table.sort(cats, Presentation.less)
   for _, c in ipairs(Cats.LIST) do
     if c.section == "tools" then
       local k = "tools|" .. c.id
@@ -267,52 +284,23 @@ function Catalog.parse(text)
   return res
 end
 
--- Incrementa as ROMs fornecidas pela API paginada, sem apagar o cache local.
--- A deduplicacao pela URL evita repetir os itens do cache Dreamcast.
-function Catalog.add_rom_games(raws)
-  if type(raws) ~= "table" then return 0 end
-  local names = {}
-  for _,c in ipairs(Catalog.categories) do
-    if c.section == "games" then names[c.id] = c.name end
-  end
-  local by_url = {}
-  for _,p in ipairs(Catalog.ports) do
-    if p.section == "games" and p.download_url and p.download_url ~= "" then
-      by_url[p.download_url] = true
-    end
-  end
-  local added = 0
-  for _,raw in ipairs(raws) do
-    if type(raw)=="table" then
-      local p = normalize_port(raw,#Catalog.ports+1,names)
-      if p and p.section == "games" and p.download_url ~= ""
-          and not by_url[p.download_url] and not Catalog.by_id[p.id] then
-        Catalog.ports[#Catalog.ports+1]=p
-        Catalog.by_id[p.id]=p
-        by_url[p.download_url]=true
-        added=added+1
-        local exists=false
-        for _,c in ipairs(Catalog.categories) do
-          if c.section=="games" and c.id==p.category_id then
-            c.count=(c.count or 0)+1
-            exists=true
-            break
-          end
-        end
-        if not exists then
-          Catalog.categories[#Catalog.categories+1]={id=p.category_id,name=p.category,
-            section="games",icon="games",count=1}
-        end
-      end
-    end
-  end
-  return added
-end
-
 local function apply(res, source)
   Catalog.ports = res.ports
   Catalog.by_id = res.by_id
+  Catalog.by_section, Catalog.by_category = {}, {}
+  for _,p in ipairs(res.ports) do
+    local sec=p.section
+    local key=sec.."|"..p.category_id
+    local s=Catalog.by_section[sec] or {}; Catalog.by_section[sec]=s; s[#s+1]=p
+    local c=Catalog.by_category[key] or {}; Catalog.by_category[key]=c; c[#c+1]=p
+  end
   Catalog.categories = res.categories
+  Catalog.rom_total=#(Catalog.by_section.games or {})
+  Catalog.system_total=0
+  for _,c in ipairs(res.categories) do
+    if c.section=="games" then Catalog.system_total=Catalog.system_total+1 end
+  end
+  Catalog.online_verified=source=="own-online"
   Catalog.warnings = res.warnings
   Catalog.title = res.title
   Catalog.updated = res.updated
@@ -322,76 +310,117 @@ local function apply(res, source)
   U.log(string.format("catalogo carregado (%s): %d ports, %d categorias", source, #res.ports, #res.categories))
 end
 
--- A API de ROMs e consultada por core.rom_source, nunca pela rotina
--- de troca/atualizacao de catalogos JSON de ports. Ignora catalog_url.txt
--- antigo mesmo que o usuario ja tenha selecionado Lira ou PORTS STORE.
-function Catalog.get_remote_url()
-  return "https://r36swiki.com/getgames.php?action=categories"
-end
-
--- Apenas catálogos com os sistemas oficiais de ROMs podem entrar na loja.
--- Evita reusar acidentalmente catalog.json ou cache antigo de ports.
-local ROM_SYSTEMS = {
-  ["3do"]=true, amigacd32=true, atari2600=true, dreamcast=true,
-  gamegear=true, gb=true, gba=true, gbc=true, mame=true,
-  mastersystem=true, megadrive=true, n64=true, nds=true, neogeo=true,
-  nes=true, pcengine=true, psp=true, psx=true, saturn=true, snes=true,
-}
-local function only_roms(text)
-  local data = type(text)=="string" and json.decode(text) or nil
-  if type(data)~="table" or type(data.categories)~="table" then return false end
-  local count = 0
-  for _,c in ipairs(data.categories) do
-    if type(c)~="table" or not ROM_SYSTEMS[c.id] then return false end
-    count = count+1
-  end
-  if count~=20 then return false end
-  local games = data.ports or data.games
-  if type(games)~="table" then return false end
-  for _,g in ipairs(games) do
-    if type(g)~="table" or g.section~="games" or
-       not ROM_SYSTEMS[g.category or g.system_id] then return false end
-  end
-  return true
-end
+-- Apenas o canal proprio experimental; nunca a API legada.
+function Catalog.get_remote_url() return C.OWN_CATALOG_URL end
+-- As telas recebem lista ordenada mesmo se o SD tiver a ordem antiga.
+function Catalog.systems() return Presentation.systems(Catalog.categories) end
+function Catalog.totals() return Catalog.rom_total or 0,Catalog.system_total or 0 end
 
 function Catalog.load_local()
-  Catalog.remote_url=nil
-  local tries={
-    {"local-roms",function() return U.read_file(C.APP_DIR .. "/catalog.json") end},
-    {"cache-roms",function() return love.filesystem.read(cache_file()) end},
-    {"roms-embutido",function() return love.filesystem.read("catalog/catalog.json") end},
-  }
-  for _,item in ipairs(tries) do
-    local ok,text=pcall(item[2])
-    if ok and only_roms(text) then
-      local res,err=Catalog.parse(text)
-      if res then apply(res,item[1]); return true end
-      U.log("catalogo ROMs",item[1],"invalido",err)
-    elseif ok and text then
-      U.log("catalogo ignorado (nao e fonte de ROMs)",item[1])
+  Catalog.remote_url = Catalog.get_remote_url()
+  local own = require("core.own_source")
+  local payload, origin_or_err, bytes = own.read()
+  if payload then
+    local res, err = Catalog.parse(payload)
+    if res and #res.ports == #payload.ports then
+      -- Aprova a copia apenas depois de validar e normalizar 100% dos itens.
+      if origin_or_err == "own-local" then
+        if not own.remember(bytes) then
+          U.log("catalogo proprio: nao foi possivel gravar backup (leitura continua)")
+        end
+      elseif origin_or_err == "own-backup" then
+        if not own.restore(bytes) then
+          U.log("catalogo proprio: backup carregado, mas sem permissao para restaurar original")
+        end
+      elseif origin_or_err == "own-embedded" then
+        if own.restore(bytes) then own.remember(bytes) end
+      end
+      apply(res, origin_or_err)
+      Catalog.remote_state, Catalog.remote_error = "ok", ""
+      return true
     end
+    origin_or_err = err or "Registros rejeitados ao normalizar"
   end
-  Catalog.ports,Catalog.by_id,Catalog.categories={}, {}, {}
-  Catalog.source="none"
+  Catalog.remote_state = "failed"
+  Catalog.remote_error = tostring(origin_or_err or "Catalogo proprio indisponivel")
+  U.log("catalogo proprio:", Catalog.remote_error)
+  -- Se uma atualizacao falhou durante a sessao, preservar a lista em memoria.
+  if #Catalog.ports == 0 then
+    Catalog.ports, Catalog.by_id, Catalog.categories = {}, {}, {}
+    Catalog.source = "none"
+    Catalog.rom_total,Catalog.system_total=0,0
+    Catalog.online_verified=false
+  end
   return false
 end
 
--- Respostas do GameStoreBR sao tratadas exclusivamente por core.rom_source.
--- Mantemos esta API publica por compatibilidade com componentes antigos.
+-- Recebe exclusivamente o temporario baixado do canal proprio.
 function Catalog.on_remote(ok, path, reason)
-  if path then os.remove(path) end
-  return false, "Use a consulta de ROMs por sistema"
+  local function fail(msg)
+    Catalog.remote_state, Catalog.remote_error = "failed", tostring(msg)
+    U.log("catalogo online:", Catalog.remote_error)
+    return false, Catalog.remote_error, false
+  end
+  if not ok or not path then
+    if path then os.remove(path) end
+    return fail(reason or "Catalogo online indisponivel")
+  end
+  local size = U.file_size(path)
+  local bytes = size and size >= 100 and size <= 4 * 1024 * 1024 and U.read_file(path) or nil
+  os.remove(path)
+  if not bytes then return fail("Tamanho invalido do catalogo remoto") end
+  local own = require("core.own_source")
+  if #Catalog.ports > 0 and U.read_file(own.path) == bytes and Catalog.source ~= "own-embedded" then
+    Catalog.remote_state, Catalog.remote_error = "ok", ""
+    Catalog.online_verified=true
+    return true, "Catálogo já atualizado.", false
+  end
+  local payload, err = own.decode_remote(bytes)
+  if not payload then return fail(err) end
+  local res, parse_err = Catalog.parse(payload)
+  if not res or #res.ports ~= #payload.ports then
+    return fail(parse_err or "Registros rejeitados ao normalizar")
+  end
+  if not own.commit_remote(bytes) then return fail("Nao foi possivel salvar no SD") end
+  apply(res, "own-online")
+  Catalog.remote_state, Catalog.remote_error = "ok", ""
+  return true, string.format("Catálogo atualizado: %d ROMs.", #res.ports), true
+end
+
+-- Uma requisicao por vez; nao bloqueia a interface nem descarta o catalogo local.
+function Catalog.refresh_remote(cb)
+  if Catalog.remote_state == "loading" then return false end
+  local url = Catalog.get_remote_url()
+  if not url or url == "" then return false end
+  Catalog.remote_url, Catalog.remote_state, Catalog.remote_error = url, "loading", ""
+  local out = C.APP_DIR .. "/catalogo_proprio_download.zlib"
+  local function finished(ok, path, reason)
+    local success, applied, msg, changed = pcall(Catalog.on_remote, ok, path, reason)
+    if not success then
+      os.remove(out)
+      Catalog.remote_state, Catalog.remote_error = "failed", tostring(applied)
+      applied, msg, changed = false, Catalog.remote_error, false
+    end
+    if cb then cb(applied, msg, changed) end
+  end
+  local started, err = pcall(require("core.fetcher").get, "own_catalog", url, out, finished, true)
+  if not started then finished(false, out, tostring(err)) end
+  return true
 end
 
 function Catalog.source_label()
-  local s = Catalog.source
-  if s == "online" then return L("Online") .. " — " .. Catalog.catalog_source_label() end
-  if s == "cache" then return L("Cache (último baixado)") .. " — " .. Catalog.catalog_source_label() end
-  if s == "local-roms" then return L("Catálogo local") end
-  if s == "cache-roms" then return L("Cache (último baixado)") end
-  if s == "roms-embutido" then return L("Catálogo embutido") end
-  return L("Sem catálogo")
+  if Catalog.source == "own-online" then return "Catálogo próprio (online)" end
+  if Catalog.source == "own-local" then return "Catálogo próprio (SD)" end
+  if Catalog.source == "own-backup" then return "Catálogo próprio (cópia recuperada)" end
+  if Catalog.source == "own-embedded" then return "Catálogo próprio (embutido)" end
+  return "Catálogo próprio indisponível"
+end
+
+function Catalog.set_provider(provider)
+  if provider ~= "r36s_own" then
+    return false, "Fonte indisponivel nesta edicao: somente catalogo proprio"
+  end
+  return true
 end
 
 --- Filtra ports. filter = "all" | "installed" | "cat:<id>"
@@ -401,7 +430,14 @@ function Catalog.filter(filter, status_fn, section)
     return require("core.rom_installed").list(Catalog)
   end
   local out = {}
-  for _, p in ipairs(Catalog.ports) do
+  local source=Catalog.ports
+  if section and Catalog.by_section then
+    source=Catalog.by_section[section] or {}
+    if filter and filter:sub(1,4)=="cat:" then
+      source=Catalog.by_category[section.."|"..filter:sub(5)] or {}
+    end
+  end
+  for _, p in ipairs(source) do
     local keep = (section == nil) or (p.section == section)
     if keep and filter == "favs" then
       keep = require("core.favorites").is(p)
