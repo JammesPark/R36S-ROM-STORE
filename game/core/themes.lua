@@ -12,6 +12,8 @@ local C = require("config")
 local U = require("lib.util")
 local json = require("lib.json")
 local T = require("ui.theme")
+local Prefs=require("core.prefs")
+local Schemes=require("ui.color_schemes")
 
 local M = { list = {}, current = "default", DEFAULT = "default" }
 -- Edicao Experimental: somente Tema Padrao e Neon Grid sao permitidos.
@@ -237,10 +239,24 @@ function M.apply(id, save)
   id = resolve(id)
   local th = M.by_id and M.by_id[id]
   if not th or not M.ALLOWED[id] then return false, L("tema não encontrado") end
-  T.apply_palette(th.colors, th.buttons, th.style)
+  local colors,style=Schemes.resolve(th.colors,th.style,Prefs.get("ui_color"))
+  T.apply_palette(colors,th.buttons,style)
   require("ui.gfx").build_background()
   M.current = id
   if save then pcall(love.filesystem.write, PREF, id) end
+  return true
+end
+
+function M.color_id()
+  local id=Prefs.get("ui_color")
+  return Schemes.valid(id) and id or "original"
+end
+function M.set_color(id)
+  if not Schemes.valid(id) then return false end
+  local before=M.color_id()
+  Prefs.set("ui_color",id)
+  local ok=M.apply(M.current,false)
+  if not ok then Prefs.set("ui_color",before);return false end
   return true
 end
 

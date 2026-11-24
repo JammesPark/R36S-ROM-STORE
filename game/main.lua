@@ -1057,7 +1057,7 @@ function App.apply_restored(done)
     tid = okr and tid and U.trim(tid) or nil
     -- backup/exportacao antiga com o id antigo do tema (ex.: xbox): aplica e grava o id novo
     if tid and Themes.ALIASES[tid] then tid = Themes.resolve(tid); pcall(love.filesystem.write, "theme.txt", tid) end
-    if tid and tid ~= "" and tid ~= Themes.current then Themes.apply(tid, false) end
+    Themes.apply(tid and tid~="" and tid or Themes.current,false)
     Music.init()
     Music.set_enabled(Music.enabled)
     Sfx.load()

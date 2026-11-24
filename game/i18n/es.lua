@@ -1303,4 +1303,8 @@ return {
   ["Ferramentas desta categoria."] = "Herramientas de esta categoría.",
   ["Nenhuma ferramenta nesta categoria."] = "No hay herramientas en esta categoría.",
   ["Utilitários instalados no console."] = "Utilidades instaladas en la consola.",
+  ["Cores"] = "Colores",
+  ["Original"] = "Original",
+  ["Escolha uma paleta para os dois temas. A cor altera fundos, painéis e destaques, sem mudar o layout. A escolha fica salva."] = "Elige una paleta para ambos temas. Los colores cambian fondos, paneles y resaltados sin cambiar el diseño. La elección se guarda.",
+  ["O hub volta ao Tema Padrão, às cores originais, ao tamanho de texto padrão e às animações ligadas."] = "El hub vuelve al tema predeterminado, colores originales, texto estándar y animaciones activadas.",
 }

@@ -457,7 +457,7 @@ function S:draw()
       and (Favorites.is(current) and L("Desfavoritar") or L("Favoritar")) or L("Favoritos")
     G.hints({ { "a", (current and current.builtin) and L("Abrir") or L("Detalhes") },
       { "x", L("Pesquisar") }, { "select", fav_text }, { "b", L("Voltar") },
-      { left_key, "" }, { right_key, footer_label } })
+      { left_key, "" }, { right_key, footer_label } },nil,nil,true)
   else
     local cur = self.items[self.sel]
     local fav_text = (cur and not cur.builtin)
@@ -465,7 +465,7 @@ function S:draw()
     local hints = { { "a", (cur and cur.builtin) and L("Abrir") or L("Ver detalhes") },
       { "x", L("Pesquisar") }, { "select", fav_text }, { "b", L("Voltar") },
       { left_key, "" }, { right_key, footer_label }, { "y", L("Atualizar") } }
-    G.hints(hints)
+    G.hints(hints,nil,nil,true)
   end
 end
 

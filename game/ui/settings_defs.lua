@@ -65,6 +65,13 @@ local appearance = {
   rows = {
     { kind = "value", label = L("Tema"), desc = L("Escolha a aparência do R36S ROMS STORE. A mudança vale na hora."),
       value = theme_name, on_a = function() App.push("themes") end },
+    { kind = "value", label = L("Cores"), icon = "set_appearance",
+      desc = L("Escolha uma paleta para os dois temas. A cor altera fundos, painéis e destaques, sem mudar o layout. A escolha fica salva."),
+      value = function() return L(require("ui.color_schemes").label(Themes.color_id())) end,
+      nudge = function(dir,wrap)
+        local next_id=require("ui.color_schemes").step(Themes.color_id(),dir,wrap)
+        if next_id~=Themes.color_id() then Themes.set_color(next_id) end
+      end, on_a=function() end },
     { kind = "action", label = L("Temas do EmulationStation"), icon = "set_appearance",
       desc = L("Abre a Loja de Temas do EmulationStation (Ferramentas de sistema): temas compatíveis com o sistema do console, com prévia, tamanho de tela e compatibilidade."),
       on_a = function() App.push("esthemes", { from = "settings" }) end },
@@ -119,10 +126,11 @@ local appearance = {
       desc = L("Volta ao Tema Padrão, ao tamanho de texto padrão e liga as animações. Brilho e idioma não mudam."),
       on_a = function()
         App.show_dialog({ title = L("Restaurar aparência?"), kind = "warn",
-          body = L("O hub volta ao tema Pastel Pop Edition, com o tamanho de texto padrão e as animações ligadas."),
+          body = L("O hub volta ao Tema Padrão, às cores originais, ao tamanho de texto padrão e às animações ligadas."),
           buttons = { { label = L("RESTAURAR"), fn = function()
             local first = Themes.by_id and Themes.by_id[Themes.FIRST] and Themes.FIRST or Themes.DEFAULT
-            if Themes.current ~= first then Themes.apply(first, true) end
+            Prefs.set("ui_color","original")
+            Themes.apply(first,true)
             App.set_font_level("normal")
             App.anim = true; Prefs.set("anim", "1")
             App.toast(L("Aparência original restaurada."), "ok")

@@ -3672,4 +3672,8 @@ return {
   ["Ferramentas desta categoria."] = "Tools in this category.",
   ["Nenhuma ferramenta nesta categoria."] = "No tools in this category.",
   ["Utilitários instalados no console."] = "Utilities installed on the console.",
+  ["Cores"] = "Colors",
+  ["Original"] = "Original",
+  ["Escolha uma paleta para os dois temas. A cor altera fundos, painéis e destaques, sem mudar o layout. A escolha fica salva."] = "Choose a palette for both themes. Colors change backgrounds, panels and highlights without changing the layout. Your choice is saved.",
+  ["O hub volta ao Tema Padrão, às cores originais, ao tamanho de texto padrão e às animações ligadas."] = "The hub returns to the Default Theme, original colors, standard text size and enabled animations.",
 }
