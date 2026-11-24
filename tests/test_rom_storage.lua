@@ -22,5 +22,5 @@ assert(r.filename({download_url='https://archive.org/download/test/Game%20Name%2
 assert(r.filename({download_url='https://a.example/test/%2E%2E%2Fbad.gba'})=='.._bad.gba')
 assert(#r.FOLDERS==0) -- mapa, nao array
 local c=0 for _ in pairs(r.FOLDERS) do c=c+1 end
-assert(c==20, 'expected 20 systems, got '..c)
+assert(c==24, 'expected 24 systems, got '..c)
 print('ROM STORAGE PATHS: OK',c,'systems')
