@@ -30,3 +30,11 @@ Execute `sh tools/build.sh` para gerar o pacote. O GitHub Actions valida LuaJIT,
 ## Autoria e licença
 
 Baseado no **R36S PORT HUB, por [Lag do Lira](https://youtube.com/@lagdolira)**. Pulse Edition e Matrix Edition são adaptações de temas originais de Lag do Lira; autoria e créditos preservados. Código sob GNU GPL-3.0, conforme LICENSE, NOTICE.md e avisos de terceiros. Use somente conteúdos para os quais tenha direito de download e distribuição.
+
+## Contributors
+
+- **[JammesPark](https://github.com/JammesPark)** — criador e responsável pelo projeto.
+- **[ChatGPT (OpenAI)](https://chatgpt.com/)** — colaboração no desenvolvimento assistido por IA desde o início do projeto.
+- **[Lag do Lira](https://youtube.com/@lagdolira)** — autor do projeto-base e dos temas originais.
+
+Veja o [registro completo de contribuições](CONTRIBUTORS.md), incluindo a atribuição das contribuições anteriores e futuras.
