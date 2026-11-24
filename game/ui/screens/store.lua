@@ -20,20 +20,18 @@ local Prefs = require("core.prefs")
 local Themes = require("core.themes")
 
 local S = {}
--- Tema Padrao: lista original + Grade Jedi + Vitrine Pastel selecionaveis.
--- Neon Grid preserva sua grade; nunca depende da preferencia do Padrao.
+-- Pulse e Matrix oferecem as mesmas tres vistas, com preferencias independentes.
 local VIEWS = { "list", "grid", "showcase" }
 local VIEW_NAMES = { list = "Lista", grid = "Grade Jedi", showcase = "Vitrine Pastel" }
 
-local function active_view()
-  if Themes.current == "default" then
-    local id = Prefs.get("rom_view_default")
-    if id == "grid" or id == "showcase" then return id end
-    return "list"
-  end
-  if T.style.list == "grid" then return "grid" end
-  if T.style.layout == "carousel" then return "showcase" end
-  return "list"
+local function view_key()
+  return Themes.current=="neongrid" and "rom_view_matrix" or "rom_view_default"
+end
+local function active_view(section)
+  if section=="tools" then return T.style.list=="grid" and "grid" or "list" end
+  local id=Prefs.get(view_key())
+  if id=="grid" or id=="showcase" or id=="list" then return id end
+  return Themes.current=="neongrid" and "grid" or "list"
 end
 
 local function change_view(direction)
@@ -41,11 +39,11 @@ local function change_view(direction)
   for i, value in ipairs(VIEWS) do
     if value == current then
       local next_mode = VIEWS[(i - 1 + direction + #VIEWS) % #VIEWS + 1]
-      Prefs.set("rom_view_default", next_mode)
+      Prefs.set(view_key(), next_mode)
       return next_mode
     end
   end
-  Prefs.set("rom_view_default", "list")
+  Prefs.set(view_key(), "list")
   return "list"
 end
 
@@ -310,7 +308,7 @@ function S:draw_preview()
 end
 
 function S:update(dt)
-  if active_view() == "showcase" then CV.update(self, self.sel, dt) end
+  if active_view(self.section) == "showcase" then CV.update(self, self.sel, dt) end
 end
 
 -- Pastel Pop: vitrine de capas (ui/coverview.lua) no lugar da lista + previa
@@ -427,13 +425,13 @@ function S:draw_grid()
 end
 
 function S:draw()
-  local view = active_view()
+  local view = active_view(self.section)
   -- A lista baixa a capa selecionada; grade/vitrine priorizam a regiao visivel.
   local page = view == "grid" and math.floor((self.sel - 1) / CG.COLS) or self.sel
   Covers.focus_view(self, tostring(self.filter) .. ":" .. view .. ":" .. page, self.items[self.sel])
   local right = string.format(L("%d de %d"), #self.items > 0 and self.sel or 0, #self.items)
-  if Themes.current == "default" and self.section == "games" then
-    right = right .. " · L2/R2 " .. VIEW_NAMES[active_view()]
+  if self.section == "games" then
+    right = right .. " · L2/R2 " .. VIEW_NAMES[active_view(self.section)]
   end
   G.header(self:title(), right)
   self:draw_tabs()
@@ -448,7 +446,7 @@ function S:draw()
   local tabword = (self.mine or self.favs) and L("Área") or L("Categoria")
   -- Rodape: L2/R2 mudam a visualizacao; as abas continuam L1/R1 no topo.
   local left_key,right_key,footer_label="l1","r1",tabword
-  if self.section=="games" and Themes.current=="default" then
+  if self.section=="games" then
     left_key,right_key,footer_label="l2","r2",L("Visualização")
   end
   if self.filter == "installed" or self.installed_only then
@@ -479,17 +477,19 @@ function S:switch_tab(d)
 end
 
 function S:action(act)
-  -- Troca o modo SOMENTE na listagem de ROMs do Tema Padrao.
+  -- L2/R2 alternam as vistas de ROMs nos dois temas.
   if act == "l2" or act == "r2" then
-    if self.section == "games" and Themes.current == "default" then
+    if self.section == "games" then
       local mode = change_view(act == "l2" and -1 or 1)
       self.cg_scroll, self.cv_pos = nil, self.sel
+      Covers.reset_pending()
+      self:clamp()
       App.toast("Visualização: " .. VIEW_NAMES[mode], "info")
     end
     return
   end
   local n = #self.items
-  if active_view() == "grid" and n > 0 and (act == "up" or act == "down" or act == "left" or act == "right") then
+  if active_view(self.section) == "grid" and n > 0 and (act == "up" or act == "down" or act == "left" or act == "right") then
     -- grade de capas: esquerda/direita andam 1, cima/baixo uma fileira
     local c = CG.COLS
     if act == "left" then self.sel = math.max(1, self.sel - 1)

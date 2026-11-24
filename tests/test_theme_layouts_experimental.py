@@ -12,13 +12,15 @@ core = (root / "core/themes.lua").read_text(encoding="utf-8")
 assert 'M.ALLOWED = { default = true, neongrid = true }' in core
 assert 'M.ORDER = { "default", "neongrid" }' in core
 store = (root / "ui/screens/store.lua").read_text(encoding="utf-8")
-assert 'Prefs.get("rom_view_default")' in store
+assert 'Prefs.get(view_key())' in store
+assert '"rom_view_matrix"' in store and '"rom_view_default"' in store
 assert 'change_view(act == "l2" and -1 or 1)' in store
-assert 'Themes.current == "default"' in store
-assert 'active_view() == "showcase"' in store
-assert 'active_view() == "grid"' in store
+assert 'Themes.current=="neongrid"' in store
+assert 'active_view(self.section) == "showcase"' in store
+assert 'active_view(self.section) == "grid"' in store
+assert 'self.section == "games" and Themes.current == "default"' not in store
 settings = (root / "ui/settings_extra.lua").read_text(encoding="utf-8")
-assert '"rom_view_default"' in settings
+assert '"rom_view_default"' in settings and '"rom_view_matrix"' in settings
 inputsrc = (root / "core/input.lua").read_text(encoding="utf-8")
 assert 'lefttrigger = "l2", righttrigger = "r2"' in inputsrc
 mainsrc = (root / "main.lua").read_text(encoding="utf-8")

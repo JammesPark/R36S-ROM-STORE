@@ -3678,4 +3678,7 @@ return {
   ["O hub volta ao Tema Padrão, às cores originais, ao tamanho de texto padrão e às animações ligadas."] = "Возвращает стандартную тему, исходные цвета, стандартный размер текста и анимацию.",
   ["Volta ao Pulse Edition, ao tamanho de texto padrão e liga as animações. Brilho e idioma não mudam."] = "Возвращает Pulse Edition, стандартный размер текста и анимацию. Яркость и язык не меняются.",
   ["O hub volta ao Pulse Edition, às cores originais, ao tamanho de texto padrão e às animações ligadas."] = "Возвращает Pulse Edition, исходные цвета, стандартный размер текста и анимацию.",
+  ["Visualização de ROMs (Pulse)"] = "Вид ROM (Pulse)",
+  ["Visualização de ROMs (Matrix)"] = "Вид ROM (Matrix)",
+  ["L2/R2 alternam entre Lista, Grade Jedi e Vitrine Pastel. A escolha fica salva por tema."] = "L2/R2 переключают список, сетку Jedi и витрину Pastel. Выбор сохраняется для каждой темы.",
 }
