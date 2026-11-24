@@ -11,9 +11,9 @@ local lg = love.graphics
 
 local S = {}
 
-local X, W = 220, 406
-local LIST_Y, ROW_H, GAP, VISIBLE = 84, 42, 4, 5
-local FOOT_Y = LIST_Y + VISIBLE * (ROW_H + GAP) + 4
+local P=require("ui.side_panel")
+local X,W=P.DX,P.DW
+local LIST_Y,ROW_H,GAP,VISIBLE=P.LIST_Y,P.ROW_H,P.GAP,P.VISIBLE
 
 local function txt(v, scr)
   if type(v) == "function" then return v(scr) end
@@ -91,7 +91,7 @@ function S:draw()
   G.header(L("Configurações"))
   self.sidebar_top=require("ui.screens.settings").sidebar(self.cat_index,self.sidebar_top,false)
   local ccol = color(cat.color)
-  G.text_fit(T.f.bodyb,cat.name,X+8,55,W-16,ccol)
+  P.heading(cat,ccol)
 
   if self.sel > self.top + VISIBLE then self.top = self.sel - VISIBLE end
   if self.sel <= self.top then self.top = self.sel - 1 end
@@ -101,8 +101,7 @@ function S:draw()
     local r = self.rows[i]
     local on = i == self.sel
     local dim = r.enabled and not r.enabled(self)
-    G.panel(X, y, W, ROW_H, { bg = on and T.c.bg3 or T.c.bg1, border = on and ccol or T.c.line, lw = on and 2 or 1 })
-    if on then G.rect(X, y + 8, 4, ROW_H - 16, ccol, 2) end
+    P.row(y,on,ccol)
     local xr = X + W - 14
     local left = xr      -- onde comeca o controle (para o rotulo nao encostar)
     local cy = y + (ROW_H - 22) / 2
@@ -162,25 +161,9 @@ function S:draw()
     y = y + ROW_H + GAP
   end
 
-  -- barra de rolagem
-  if #self.rows > VISIBLE then
-    local track = VISIBLE * (ROW_H + GAP) - GAP
-    local hh = track * VISIBLE / #self.rows
-    G.rect(T.W - 8, LIST_Y + (track - hh) * (self.top / (#self.rows - VISIBLE)), 3, hh, ccol, 1, 0.7)
-  end
-
-  -- descricao da opcao selecionada
-  local r = self.rows[self.sel]
-  local fh = 436 - FOOT_Y
-  G.panel(X, FOOT_Y, W, fh, { bg = T.c.bg1 })
-  G.rect(X, FOOT_Y, 4, fh, ccol, 2)
-  G.text_fit(T.f.small,cat.desc or "",X+12,FOOT_Y+7,W-24,T.c.faint)
-  if r then
-    G.text_fit(T.f.bodyb,txt(r.label,self),X+12,FOOT_Y+26,W-24,T.c.text)
-    local ty=FOOT_Y+48
-    local df,lines,dlh=G.fit_lines(T.f.small,txt(r.desc,self) or "",W-24,FOOT_Y+fh-6-ty,true)
-    for k,line in ipairs(lines) do G.text(df,line,X+12,ty+(k-1)*dlh,T.c.dim) end
-  end
+  P.scrollbar(#self.rows,self.top,ccol)
+  local r=self.rows[self.sel]
+  P.description(cat,r and txt(r.label,self),r and txt(r.desc,self),ccol)
 
   local hints = { { "dpad", L("Navegar") } }
   if r and (r.kind == "slider" or (r.kind == "value" and r.nudge)) then hints[1] = { "dpad", L("Ajustar") } end

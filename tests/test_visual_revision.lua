@@ -21,4 +21,20 @@ U:action("a");assert(U.focus=="rows")
 U:action("a");assert(opened=="sdanalyzer")
 U:action("b");assert(U.focus=="categories")
 U:action("b");assert(opened=="back")
-print("VISUAL REVISION: OK - ordem menu e navegacao utilitarios")
+local P=require("ui.side_panel")
+assert(P.DX==220 and P.DW==406 and P.FOOT_Y==P.LIST_Y+P.VISIBLE*(P.ROW_H+P.GAP)+4)
+local calls={}
+P.sidebar=function(cats,sel,top,focused) calls.sidebar=focused;return top end
+P.summary=function(cat) calls.summary=cat.id end
+P.heading=function(cat) calls.heading=cat.id end
+P.row=function(y) calls.row=y end
+P.scrollbar=function() end
+P.description=function(cat,label) calls.description=label end
+package.loaded["ui.gfx"].header=function()end
+package.loaded["ui.gfx"].hints=function()end
+package.loaded["ui.gfx"].text_fit=function()end
+package.loaded["ui.theme"].f={}
+package.loaded["ui.icons"].draw=function()end
+U:enter();U:draw();assert(calls.sidebar==true and calls.summary=="all")
+U:action("a");U:draw();assert(calls.sidebar==false and calls.heading=="all" and calls.row==P.LIST_Y and calls.description=="SD")
+print("VISUAL REVISION: OK - ordem menu, navegacao e layout compartilhado")

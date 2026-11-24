@@ -178,7 +178,7 @@ function S:draw_channel()
   G.rect(bx, by, bw, bh, T.c.bg3, 10)
   G.frame(bx, by, bw, bh, T.c.accent, 10, 2)
   telegram_icon(bx + 12, by + 12, 46, 44)
-  G.text_fit(T.f.bodyb, L("Siga nosso canal no Telegram"), bx + 68, by + 7, bw - 76, T.c.text)
+  G.text_fit(T.f.small, L("Siga nosso canal no Telegram"), bx + 68, by + 7, bw - 76, T.c.text)
   G.text(T.f.bodyb, CHANNEL_NAME, bx + 68, by + 27, T.c.text)
   G.text_fit(T.f.small, CHANNEL_SHORT, bx + 68, by + 47, 142, T.c.accent2)
   G.button_icon("a", bx + 218, by + 45)
@@ -368,7 +368,13 @@ function S:draw_qr()
   G.panel(x, y, w, h, { bg = T.c.bg1, border = T.c.accent, lw = 2, r = 10 })
   G.rect(x, y, w, 6, T.c.accent, 3)
   telegram_icon(x + 20, y + 17, 38, 34)
-  G.text_fit(T.f.pix16, L("SIGA NOSSO CANAL NO TELEGRAM"), x + 66, y + 26, w - 94, T.c.text)
+  -- Fonte de corpo menor e ate duas linhas, sem cortar o titulo da janela.
+  local title=L("SIGA NOSSO CANAL NO TELEGRAM")
+  local tf,lines,lh=G.fit_lines(T.base_font(T.f.bodyb),title,w-94,38,true)
+  local ty=y+17+math.max(0,math.floor((38-#lines*lh)/2))
+  for i,line in ipairs(lines) do
+    G.text(tf,line,x+66,ty+(i-1)*lh,T.c.text)
+  end
   -- QR Code: modulos inteiros, com margem branca (zona de silencio)
   local qr = self.qr
   local has_qr = (self.qr_image ~= nil) or (qr ~= nil)
