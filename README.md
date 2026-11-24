@@ -65,7 +65,7 @@ As capturas atualizadas da interface serão adicionadas após conferência das t
 | BIOS | Área dedicada ao gerenciamento das BIOS. |
 | Temas Store | Área de temas do console. |
 | Configurações | Painéis de configuração e personalização da interface. |
-| Utilitários | Ferramentas de apoio e diagnóstico. |
+| Utilitários | Ferramentas de apoio e diagnóstico, incluindo recursos herdados do R36S PORT HUB, por Lag do Lira. |
 | Atualização online | Verificação do feed oficial, confirmação e validação antes da instalação. |
 | Catálogo offline | Recuperação da última cópia local válida após falha de rede ou validação. |
 
@@ -126,13 +126,13 @@ Para gerar o pacote, execute `sh tools/build.sh`. O GitHub Actions valida LuaJIT
 
 - **[JammesPark](https://github.com/JammesPark)** — criador, responsável pelo projeto, direção visual e testes no console.
 - **[ChatGPT (OpenAI)](https://chatgpt.com/)** — colaboração no desenvolvimento assistido por IA desde o início do projeto.
-- **[Lag do Lira](https://github.com/liralflsti-wq/r36s-port-hub)** — autor do projeto-base e dos temas originais.
+- **[Lag do Lira](https://github.com/liralflsti-wq/r36s-port-hub)** — autor do projeto-base, dos temas originais e de ferramentas herdadas do R36S PORT HUB.
 
 Veja o [registro completo das contribuições](CONTRIBUTORS.md).
 
 ## Autoria, licença e uso responsável
 
-Baseado no **R36S PORT HUB, por [Lag do Lira](https://youtube.com/@lagdolira)**. Pulse Edition e Matrix Edition são adaptações dos temas originais do autor, com créditos preservados.
+Baseado no **R36S PORT HUB, por [Lag do Lira](https://youtube.com/@lagdolira)**. Pulse Edition e Matrix Edition são adaptações dos temas originais do autor, com créditos preservados. Parte das ferramentas e dos utilitários também foi herdada ou adaptada do projeto-base; sua autoria original é de Lag do Lira, respeitados os créditos e as licenças de componentes de terceiros.
 
 Código sob GNU GPL-3.0, conforme [LICENSE](LICENSE), [NOTICE.md](NOTICE.md) e avisos de terceiros. A licença do aplicativo não concede direitos sobre ROMs, BIOS, capas ou outros conteúdos de terceiros. Utilize somente arquivos para os quais tenha direito de acesso, download e distribuição.
 

@@ -27,7 +27,7 @@ JammesPark orienta, aprova e testa as alterações; ChatGPT auxilia na implement
 
 [GitHub](https://github.com/liralflsti-wq/r36s-port-hub) · [YouTube](https://youtube.com/@lagdolira)
 
-Baseado no R36S PORT HUB, por Lag do Lira. Os temas Pulse Edition e Matrix Edition derivam de temas originais do autor. A autoria original, as licenças aplicáveis ao código de origem e os avisos dos componentes de terceiros são preservados.
+Baseado no R36S PORT HUB, por Lag do Lira. Os temas Pulse Edition e Matrix Edition derivam de temas originais do autor. Parte das ferramentas e dos utilitários da loja também foi herdada ou adaptada do R36S PORT HUB; o crédito pela criação original pertence a Lag do Lira, sem prejuízo da autoria dos componentes de terceiros. As contribuições posteriores de JammesPark e ChatGPT não substituem essa autoria. A autoria original, as licenças aplicáveis ao código de origem e os avisos dos componentes de terceiros são preservados.
 
 ## Registro de contribuições futuras
 
