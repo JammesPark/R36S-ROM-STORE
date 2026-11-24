@@ -14,35 +14,47 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases/latest"><strong>⬇ Baixar versão oficial</strong></a> ·
-  <a href="#instalação">Instalação</a> ·
-  <a href="#funcionalidades">Funcionalidades</a> ·
-  <a href="#contributors">Contributors</a>
+  <img alt="Português do Brasil" src="https://img.shields.io/badge/PT--BR-Português-16803c?style=flat-square">
+  <img alt="English" src="https://img.shields.io/badge/EN-English-2563eb?style=flat-square">
+  <img alt="Español" src="https://img.shields.io/badge/ES-Español-eab308?style=flat-square">
+  <img alt="Русский" src="https://img.shields.io/badge/RU-Русский-dc2626?style=flat-square">
 </p>
+<p align="center">🇧🇷 Português (Brasil) &nbsp; · &nbsp; 🇺🇸 English &nbsp; · &nbsp; 🇪🇸 Español &nbsp; · &nbsp; 🇷🇺 Русский</p>
 
 **Status:** versão 0.7.0-beta — beta oficial.
 
-> **BETA:** a loja está em desenvolvimento. A compatibilidade com todos os consoles, firmwares e resoluções ainda não está certificada. A edição experimental de tela é separada do canal oficial.
+---
+
+## 💡 Sobre o projeto
+
+O **R36S ROM HUB STORE** é um aplicativo independente para consoles portáteis R36S, com suporte ao R36H como alvo de compatibilidade. Desenvolvido em Lua e LÖVE 11.5, permite organizar jogos, baixar e instalar ROMs em SD1 ou SD2, gerenciar BIOS, temas e utilizar ferramentas do sistema diretamente com os controles físicos do console.
+
+A interface tem resolução lógica de 640×480, dois temas integrados (Pulse e Matrix) e quatro idiomas selecionáveis. O aplicativo tem origem no R36S PORT HUB, de Lag do Lira, e preserva a autoria de ferramentas e temas herdados.
 
 ---
 
-## ⬇ Downloads
+## ⚠️ Aviso importante
 
-| Pacote | Destino |
+Este é um projeto independente, em fase BETA, feito pela comunidade. Não somos autores, proprietários ou representantes dos jogos, ROMs, BIOS, temas e demais conteúdos de terceiros. A licença do aplicativo não autoriza automaticamente seu acesso ou redistribuição. Respeite os direitos autorais e utilize apenas arquivos para os quais tenha autorização.
+
+A compatibilidade varia conforme modelo, firmware e tela. Faça backup dos cartões e da instalação antes de alterações; ferramentas de manutenção podem modificar arquivos mediante confirmação. Relate falhas de funcionamento e não confunda versões experimentais com as oficiais.
+
+---
+
+## ⬇️ Downloads
+
+| Pacote | Download |
 |---|---|
-| Instalação completa | [Última versão oficial](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases/latest) — ZIP sem o sufixo OTA |
-| Atualização | Menu de atualização da própria loja, com conexão à internet |
-| Histórico | [Releases oficiais](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases) |
+| 📦 Instalação completa 0.7.0-beta | [Baixar ZIP](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta.zip) |
+| 🔄 Atualização 0.7.0-beta (OTA) | [Baixar ZIP de atualização](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta_OTA.zip) |
+| 🆕 Versão oficial mais recente | [Página permanente de download](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases/latest) |
+| 🗂️ Versões anteriores | [Histórico oficial](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases) |
 
-O endereço da última versão é permanente. Os nomes dos arquivos ZIP incluem o número da versão. A edição experimental não é publicada pelo canal OTA oficial.
+Para uma instalação nova, use o pacote completo, sem o sufixo OTA. Para atualizar uma instalação existente, prefira o menu de atualização online da loja. Os links de ZIP acima são da versão indicada; a página da última versão permanece fixa.
 
-## Sobre o projeto
+---
 
-O **R36S ROM HUB STORE** é um aplicativo independente para consoles portáteis R36S/R36H, desenvolvido em Lua e LÖVE 11.5, com interface para os botões físicos do console. Permite consultar um catálogo online, baixar e instalar ROMs em SD1 ou SD2, organizar favoritos, gerenciar BIOS e temas e utilizar ferramentas do sistema.
-
-O catálogo é separado das atualizações do aplicativo. Uma nova ROM ou capa pode ser adicionada sem instalar uma nova versão da loja. Uma cópia local válida é preservada se a sincronização falhar.
-
-## 🎨 Temas
+## 🎨 Temas e interface
 
 | Pulse Edition | Matrix Edition |
 |:---:|:---:|
@@ -50,30 +62,61 @@ O catálogo é separado das atualizações do aplicativo. Uma nova ROM ou capa p
 | Logo centralizada e menu principal | Painel de catálogo e menu 3×3 |
 | Lista, Grade e Vitrine | Lista, Grade e Vitrine |
 
-Os dois temas são integrados à loja, com personalização de cores independente. São adaptações de temas originais de Lag do Lira.
+Ambos são integrados à loja, com cores personalizáveis de forma independente. São adaptações de temas originais de Lag do Lira.
 
-As capturas atualizadas da interface serão adicionadas após conferência das telas da versão atual. Imagens antigas do projeto-base não são utilizadas nesta apresentação.
+---
 
-## Funcionalidades
+## ✨ Funcionalidades
 
-| Recurso | Descrição |
+| | Função | Descrição |
+|---|---|---|
+| 🎮 | **ROMs** | Jogos por sistema, detalhes, busca, favoritos e capas quando disponíveis. |
+| 🕹️ | **Biblioteca de jogos** | Consulta jogos presentes nos emuladores do console, com opção de iniciar o jogo. |
+| 📦 | **Instalados** | Gerenciamento das ROMs instaladas pela loja. |
+| ⭐ | **Favoritos** | Marcar e desmarcar jogos e consultar os itens favoritos. |
+| 💾 | **SD1/SD2** | Escolha do cartão de destino para instalação. |
+| 🖼️ | **Visualização** | Modos Lista, Grade e Vitrine em Pulse e Matrix. |
+| ⬇️ | **Downloads** | Fila, progresso, velocidade, histórico e operações em segundo plano. |
+| 🧩 | **BIOS do Sistema** | Área de verificação, download e instalação de BIOS, com gerenciamento de arquivos. |
+| 🎨 | **Temas Store** | Consulta e instalação de temas da interface do console. |
+| ⚙️ | **Configurações** | Aparência, cores, brilho, áudio, notificações e preferências. |
+| 🔄 | **Atualizações** | Consulta online, confirmação, verificação de pacote, histórico e recuperação. |
+| 🌐 | **Quatro idiomas** | 🇧🇷 PT-BR, 🇺🇸 EN, 🇪🇸 ES e 🇷🇺 RU. |
+
+---
+
+## 🛠️ Utilidades e ferramentas
+
+As ferramentas abaixo foram identificadas no código e nas telas da versão atual. Parte delas foi herdada ou adaptada do R36S PORT HUB, por Lag do Lira. A disponibilidade depende das permissões, dos componentes e do firmware do console.
+
+| Ferramenta | Função |
 |---|---|
-| Catálogo de ROMs | Sistemas, capas, detalhes, pesquisa e favoritos. |
-| Visualização | Modos Lista, Grade e Vitrine em Pulse e Matrix. |
-| Instalação SD1/SD2 | Seleção do cartão de destino e gerenciamento dos instalados pela loja. |
-| Downloads | Central de fila e progresso, com velocidade e controles de download. |
-| BIOS | Área dedicada ao gerenciamento das BIOS. |
-| Temas Store | Área de temas do console. |
-| Configurações | Painéis de configuração e personalização da interface. |
-| Utilitários | Ferramentas de apoio e diagnóstico, incluindo recursos herdados do R36S PORT HUB, por Lag do Lira. |
-| Atualização online | Verificação do feed oficial, confirmação e validação antes da instalação. |
-| Catálogo offline | Recuperação da última cópia local válida após falha de rede ou validação. |
+| **Analisador do cartão SD** | Espaço usado e livre, tamanho das pastas e maiores arquivos. |
+| **Verificador do cartão SD** | Identificação do cartão, indícios de capacidade falsa e teste rápido de velocidade. |
+| **Manutenção do cartão SD** | Operações de manutenção com confirmação. |
+| **Verificador de integridade dos ports** | Confere scripts, pastas e dependências do PortMaster. |
+| **R36S Analog Tester** | Teste de analógicos e botões, com relatório. Ferramenta de Lag do Lira. |
+| **Teste de controles** | Verifica as entradas reconhecidas pela interface. |
+| **Diagnóstico de rede** | Informações de rede, sinal, DNS e teste de conexão e velocidade. |
+| **Gerenciar Wi-Fi** | Consulta e conexão a redes disponíveis. |
+| **Servidor FTP** | Transferência de arquivos pela rede local. |
+| **Gerenciador de arquivos** | Navegação e operações nos arquivos do cartão. |
+| **PortMaster e runtimes** | Gerenciamento do PortMaster e dos runtimes necessários aos ports. |
+| **Analisador de console** | Identificação do aparelho e consulta de informações do sistema. |
+| **R36 Control** | Ajustes do console quando suportados pelo sistema. |
+| **Bateria e energia** | Consulta das informações de energia disponíveis. |
+| **Data e hora** | Configuração de horário e fuso. |
+| **Transmissão e gravação** | Recursos de transmissão pela rede local e gravação da interface. |
+| **Backup e restauração** | Backup, exportação e recuperação de configurações. |
+| **Diagnóstico e suporte** | Consulta dos registros de erros do aplicativo. |
 
-## Instalação
+---
 
-1. Baixe o ZIP completo (sem o sufixo OTA) nas [Releases oficiais](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases/latest).
-2. Extraia o conteúdo na pasta `ports` do cartão de destino.
-3. Confira se o launcher e a pasta do aplicativo estão juntos:
+## 🚀 Instalação no R36S
+
+1. Baixe o pacote completo na [página de download oficial](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases/latest).
+2. Extraia os arquivos na pasta `ports` do cartão de destino.
+3. Confira a estrutura:
 
    ```text
    ports/
@@ -81,46 +124,92 @@ As capturas atualizadas da interface serão adicionadas após conferência das t
    └── r36sromsstore/
    ```
 
-4. Reinicie o EmulationStation, se necessário, e execute a loja na seção Ports.
-5. Conecte o console à internet para a primeira sincronização do catálogo.
+4. Reinicie o EmulationStation, se necessário, e abra o aplicativo na seção Ports.
+5. Conecte o console à internet para a primeira sincronização.
 
-**Requisito:** runtime LÖVE 11.5 disponível no console. Faça backup da instalação e dos cartões antes de substituir arquivos.
+**Requisito:** runtime LÖVE 11.5 disponível no aparelho. O pacote oficial é preparado para os caminhos de instalação originais; a organização do código no GitHub não modifica esses caminhos.
 
-## Atualizações
+---
 
-Use o menu de atualização da loja e confirme a instalação após a verificação do pacote. O feed oficial está no [repositório de atualizações](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES).
+## 🎮 Controles
 
-Não instale uma edição experimental sobre a instalação oficial sem backup. As edições experimentais podem ter restrições de compatibilidade e não devem ser confundidas com o canal de produção.
+| Botão | Ação |
+|---|---|
+| Direcional / analógico esquerdo | Navegação, seleção e rolagem. |
+| **A** | Abrir, confirmar, selecionar ou executar a ação indicada. |
+| **B** | Voltar, cancelar ou abrir a saída no menu principal. |
+| **X** | Pesquisa na lista de ROMs; outras ações conforme a tela. |
+| **Y** | Atualiza a lista de ROMs; ações contextuais em outras telas. |
+| **L1 / R1** | Alternam categorias, abas ou páginas nas telas compatíveis. |
+| **L2 / R2** | Alternam os modos de visualização nas listas de ROMs compatíveis. |
+| **SELECT** | Marca ou desmarca favoritos; abre a atualização quando há aviso no menu. |
+| **START** | Abre a Central de Downloads; na tela Sobre, abre o apoio ao projeto. |
+| **FN** | Captura de tela quando reconhecido pelo sistema; no teste de controles, é testado sem capturar. |
+| Analógico direito / L3 / R3 | Sem atalho global definido no mapeamento geral; consultar o teste de controles. |
 
-## Controles
+As funções contextuais aparecem no rodapé das telas. O mapeamento físico pode variar conforme o firmware.
 
-Use o direcional para navegar, A para confirmar e B para voltar. As demais ações dependem da tela e são indicadas no rodapé da interface. No catálogo, Y solicita a atualização dos dados; L2/R2 alternam os modos de visualização nas telas que oferecem esse recurso.
+---
 
-## Documentação
+## 🖥️ Compatibilidade e testes
+
+| Aparelho / sistema | Situação |
+|---|---|
+| R36S | Funcionamento confirmado em console; versão 0.7.0-beta e sincronização dos dados testadas pelo responsável. |
+| dArkOSen | Testado em console; foram observadas diferenças no mapeamento de controles em relação a outro sistema. |
+| R36H | Alvo de compatibilidade; confirmação física específica pendente. |
+| ArkOS, dArkOS e dArkOSRE | Famílias de sistemas de referência; não há confirmação individual completa nesta versão. |
+| Outras telas e clones | Compatibilidade em validação; correções experimentais não integram automaticamente a versão oficial. |
+
+A documentação não certifica todos os firmwares ou aparelhos. Informe o modelo, o sistema e a versão ao relatar problemas.
+
+---
+
+## 🔄 Atualizações
+
+Use o menu de atualização online da loja. A publicação oficial exige aprovação e testes; versões experimentais permanecem em canal separado. Não instale pacotes experimentais sobre a versão oficial sem backup.
+
+---
+
+## 📖 Documentação
 
 | Documento | Conteúdo |
 |---|---|
-| [CHANGELOG.md](CHANGELOG.md) | Histórico de versões e mudanças |
-| [CONTRIBUTORS.md](CONTRIBUTORS.md) | Registro das contribuições anteriores e futuras |
+| [CHANGELOG.md](CHANGELOG.md) | Histórico de versões |
+| [CONTRIBUTORS.md](CONTRIBUTORS.md) | Registro de contribuições |
+| [PUBLICACAO_OFICIAL.md](docs/PUBLICACAO_OFICIAL.md) | Processo de publicação |
+| [REORGANIZACAO.md](docs/REORGANIZACAO.md) | Organização dos arquivos |
 | [NOTICE.md](NOTICE.md) | Autoria e avisos |
 | [LICENSE](LICENSE) | Licença GPL-3.0 |
 
-O manual e os documentos técnicos herdados estão em `docs/` e serão revisados para refletir a loja de ROMs; não devem ser interpretados como instruções atualizadas quando mencionarem o antigo PORT HUB.
+A pasta `docs/` preserva também documentos do projeto-base, que podem citar versões e caminhos antigos.
 
-## Estrutura do projeto
+---
+
+## 🗂️ Estrutura do projeto
 
 ```text
-src/              Código-fonte Lua/LÖVE, temas e recursos
-port/             Launcher e arquivos de instalação no console
-tools/            Build, ferramentas e serviços auxiliares
-tests/            Testes automatizados
-docs/             Documentação, protótipos e arquivos históricos
-.github/          GitHub Actions
+src/       Código-fonte Lua/LÖVE, temas e recursos
+port/      Launcher e arquivos de instalação no console
+tools/     Build, ferramentas e serviços auxiliares
+tests/     Testes automatizados
+docs/      Documentação, protótipos e arquivos históricos
+.github/   GitHub Actions
 ```
 
-Para gerar o pacote, execute `sh tools/build.sh`. O GitHub Actions valida LuaJIT, os testes e a integridade dos ZIPs.
+Para gerar o pacote: `sh tools/build.sh`. O GitHub Actions valida LuaJIT, testes e integridade dos ZIPs.
 
-## Contributors
+---
+
+## 💬 Comunidade
+
+Canal oficial: [Telegram — R36SPORTSBR](https://t.me/R36SPORTSBR).
+
+Relatos de bugs e sugestões: [GitHub Issues](https://github.com/JammesPark/R36S-ROMS-HUB-STORE/issues).
+
+---
+
+## 🤝 Contributors
 
 - **[JammesPark](https://github.com/JammesPark)** — criador, responsável pelo projeto, direção visual e testes no console.
 - **[ChatGPT (OpenAI)](https://chatgpt.com/)** — colaboração no desenvolvimento assistido por IA desde o início do projeto.
@@ -128,7 +217,9 @@ Para gerar o pacote, execute `sh tools/build.sh`. O GitHub Actions valida LuaJIT
 
 Veja o [registro completo das contribuições](CONTRIBUTORS.md).
 
-## Autoria, licença e uso responsável
+---
+
+## 🙏 Autoria, licença e uso responsável
 
 Baseado no **R36S PORT HUB, por [Lag do Lira](https://youtube.com/@lagdolira)**. Pulse Edition e Matrix Edition são adaptações dos temas originais do autor, com créditos preservados. Parte das ferramentas e dos utilitários também foi herdada ou adaptada do projeto-base; sua autoria original é de Lag do Lira, respeitados os créditos e as licenças de componentes de terceiros.
 
