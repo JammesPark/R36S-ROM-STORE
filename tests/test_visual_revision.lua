@@ -10,7 +10,7 @@ package.loaded["ui.gfx"]={}
 package.loaded["ui.icons"]={}
 package.loaded["core.favorites"]={}
 local cats={{id="manutencao",name="Manutenção",section="tools"}}
-local tool={id="sd",name="SD",category_id="manutencao",category="Manutenção",builtin=true,screen="sdanalyzer"}
+local tool={id="sd",name="SD",short="Análise do cartão",category_id="manutencao",category="Manutenção",builtin=true,screen="sdanalyzer"}
 package.loaded["core.catalog"]={categories=cats,filter=function()return {}end}
 package.loaded["core.tools"]={LIST={tool},for_filter=function()return {tool}end}
 local opened

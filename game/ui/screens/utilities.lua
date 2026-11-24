@@ -63,7 +63,7 @@ function S:draw()
       G.text_fit(T.f.bodyb,tool.name,P.DX+44,y+12,P.DW-74,on and T.c.text or T.c.dim)
     end
     P.scrollbar(#self.rows,self.rowtop,c)
-    local description=selected and (selected.builtin and selected.short or Catalog.text(selected,"short")) or ""
+    local description=selected and (selected.builtin and (selected.short or "") or Catalog.text(selected,"short")) or ""
     P.description(cat,selected and selected.name,description,c)
   end
   local hints={{"dpad",L("Navegar")},{"a",L("Abrir")},{"b",L("Voltar")},{"x",L("Pesquisar")},{"y",L("Atualizar")}}
