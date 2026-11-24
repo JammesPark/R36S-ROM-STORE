@@ -17,6 +17,9 @@ local function ready(key)
   Covers.retry_at[key], Covers.failures[key] = nil, nil
 end
 
+function Covers.begin_frame() Covers.decode_budget=2 end
+function Covers.set_online(online) Covers.online=online end
+
 function Covers.init()
   love.filesystem.createDirectory(Covers.dir)
   Covers.abs_dir = love.filesystem.getSaveDirectory() .. "/" .. Covers.dir
@@ -46,6 +49,7 @@ local function touch(key)
 end
 
 local function load_image(key, path_in_save, abs)
+  if Covers.decode_budget then Covers.decode_budget=Covers.decode_budget-1 end
   local ok, img = pcall(function()
     if abs then
       local data = U.read_file(abs)
@@ -81,6 +85,7 @@ function Covers.get(p)
 
   -- capa local (caminho relativo a pasta do app)
   if not p.cover:match("^https?://") then
+    if Covers.decode_budget and Covers.decode_budget<=0 then return nil end
     local abs = p.cover:sub(1, 1) == "/" and p.cover or (C.APP_DIR .. "/" .. p.cover)
     if p.cover:sub(1, 1) ~= "/" and love.filesystem.getInfo(p.cover) then return load_image(key, p.cover) end
     if U.read_file(abs) then return load_image(key, nil, abs) end
@@ -90,12 +95,14 @@ function Covers.get(p)
 
   local f = file_for(p)
   if love.filesystem.getInfo(f) then
+    if Covers.decode_budget and Covers.decode_budget<=0 then return nil end
     local cached = load_image(key, f)
     if cached then return cached end
     love.filesystem.remove(f)
     return nil
   end
 
+  if Covers.online==false then return nil end
   Covers.state[key] = "loading"
   Fetcher.get("cover", p.cover, Covers.abs_dir .. "/" .. file_name(p), function(ok, _, reason)
     if ok then

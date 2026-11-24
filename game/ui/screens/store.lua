@@ -67,8 +67,10 @@ function S:enter(params)
   self.section = params.section or "games"
   self.filter = params.filter or (self.mine and "installed" or (self.favs and "favs" or "all"))
   self.sel, self.scroll, self.tab_scroll = 1, 0, 0
-  Manifest.rescan()
-  if self.mine then Manifest.refresh_locations() end
+  if self.section=="tools" then
+    Manifest.rescan()
+    if self.mine then Manifest.refresh_locations() end
+  end
   self:build_tabs()
   self:refresh()
 end
@@ -140,13 +142,13 @@ function S:refresh()
 end
 
 function S:on_catalog()
-  if self.mine then Manifest.refresh_locations() end
+  if self.mine and self.section=="tools" then Manifest.refresh_locations() end
   self:build_tabs()
   self:refresh()
 end
 
 function S:resume()
-  if self.mine then Manifest.refresh_locations() end
+  if self.mine and self.section=="tools" then Manifest.refresh_locations() end
   self:refresh()
 end
 

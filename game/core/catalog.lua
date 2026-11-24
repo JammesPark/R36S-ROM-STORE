@@ -287,6 +287,13 @@ end
 local function apply(res, source)
   Catalog.ports = res.ports
   Catalog.by_id = res.by_id
+  Catalog.by_section, Catalog.by_category = {}, {}
+  for _,p in ipairs(res.ports) do
+    local sec=p.section
+    local key=sec.."|"..p.category_id
+    local s=Catalog.by_section[sec] or {}; Catalog.by_section[sec]=s; s[#s+1]=p
+    local c=Catalog.by_category[key] or {}; Catalog.by_category[key]=c; c[#c+1]=p
+  end
   Catalog.categories = res.categories
   Catalog.warnings = res.warnings
   Catalog.title = res.title
@@ -413,7 +420,14 @@ function Catalog.filter(filter, status_fn, section)
     return require("core.rom_installed").list(Catalog)
   end
   local out = {}
-  for _, p in ipairs(Catalog.ports) do
+  local source=Catalog.ports
+  if section and Catalog.by_section then
+    source=Catalog.by_section[section] or {}
+    if filter and filter:sub(1,4)=="cat:" then
+      source=Catalog.by_category[section.."|"..filter:sub(5)] or {}
+    end
+  end
+  for _, p in ipairs(source) do
     local keep = (section == nil) or (p.section == section)
     if keep and filter == "favs" then
       keep = require("core.favorites").is(p)

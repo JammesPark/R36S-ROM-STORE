@@ -5,12 +5,20 @@ local U=require("lib.util")
 local M={}
 local FILE="roms_installed.json"
 
-local function records()
+local record_cache, presence = nil, {}
+local function records(fresh)
+  if record_cache and not fresh then return record_cache end
   local ok,text=pcall(love.filesystem.read,FILE)
-  if not ok or not text then return {} end
-  local ok2,data=pcall(json.decode,text)
-  return ok2 and type(data)=="table" and data or {}
+  local data
+  if ok and text then
+    local good, decoded=pcall(json.decode,text)
+    if good and type(decoded)=="table" then data=decoded end
+  end
+  record_cache=data or {}
+  presence={}
+  return record_cache
 end
+function M.invalidate() record_cache=nil; presence={} end
 
 local function safe_entry(name)
   return type(name)=="string" and name~="" and name~="." and name~=".."
@@ -72,6 +80,7 @@ function M.record(p,opts,entries)
   local data=records()
   data[tostring(p.id)]=rec
   local ok,written=pcall(love.filesystem.write,FILE,json.encode(data))
+  M.invalidate()
   return ok and written==true
 end
 
@@ -109,9 +118,17 @@ end
 function M.get(p)
   local id=type(p)=="table" and p.id or p
   if id==nil then return nil end
-  local rec=records()[tostring(id)]
-  if type(rec)=="table" and is_present(rec) then return rec end
-  return nil
+  id=tostring(id)
+  local rec=records()[id]
+  -- Uma ROM nao registrada nunca exige comandos de disco nem varredura de ports.
+  if type(rec)~="table" then return nil end
+  local now=love.timer.getTime()
+  local hit=presence[id]
+  if not hit or now-hit.t>=5 then
+    hit={t=now,valid=is_present(rec)}
+    presence[id]=hit
+  end
+  return hit.valid and rec or nil
 end
 
 local function rel_ok(rel)
@@ -128,7 +145,7 @@ end
 -- se ficarem vazios, preservando saves e qualquer arquivo adicionado depois.
 function M.remove(p)
   local id=type(p)=="table" and p.id or p
-  local data=records()
+  local data=records(true)
   local rec=id and data[tostring(id)]
   if type(rec)~="table" or not is_present(rec) then
     return false,"Instalacao da ROM nao encontrada neste cartao. Nada foi apagado."
@@ -196,6 +213,7 @@ function M.remove(p)
   for _,d in ipairs(dirs_sorted) do os.remove(rec.dest_dir.."/"..d) end -- so vazias
   data[tostring(id)]=nil
   local ok,saved=pcall(love.filesystem.write,FILE,json.encode(data))
+  M.invalidate()
   if not ok or not saved then return false,"Arquivos removidos, mas falhou a atualizacao do registro." end
   return true,#files
 end

@@ -1132,10 +1132,14 @@ function love.update(dt)
   Input.update(dt)
   Fetcher.update()
   -- O observador de rede ja roda em background; ao reconectar, liberar retry.
-  local network = require("core.net").current()
-  if network then
-    if App.cover_net_connected == false and network.connected then Covers.retry_failed() end
-    App.cover_net_connected = network.connected
+  if not App.cover_net_next or App.t>=App.cover_net_next then
+    App.cover_net_next=App.t+1
+    local network = require("core.net").current()
+    if network then
+      if App.cover_net_connected == false and network.connected then Covers.retry_failed() end
+      App.cover_net_connected = network.connected
+      Covers.set_online(network.connected)
+    end
   end
   require("core.theme_store").update()
   local was_busy = Installer.job and not Installer.job.finished
@@ -1274,6 +1278,7 @@ local function draw_live_badges()
 end
 
 function love.draw()
+  Covers.begin_frame()
   G.clip_reset()
   -- Alguns firmwares atualizam a resolucao sem enviar love.resize.
   -- Conferir apenas os dois inteiros reais, sem reabrir a janela.
