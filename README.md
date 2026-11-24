@@ -26,14 +26,6 @@
 
 ---
 
-## 📊 Catálogo
-
-| Sistemas | ROMs | Capas associadas |
-|:---:|:---:|:---:|
-| **51** | **15.988** | **15.111** |
-
-<sub>Dados verificados em 24/11/2026. O catálogo online é atualizado independentemente da versão da loja. Estes números são uma fotografia da última validação, não um contador em tempo real.</sub>
-
 ## ⬇ Downloads
 
 | Pacote | Destino |
