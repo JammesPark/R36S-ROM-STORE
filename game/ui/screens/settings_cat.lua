@@ -5,6 +5,8 @@ local T = require("ui.theme")
 local G = require("ui.gfx")
 local Icons = require("ui.icons")
 local Defs = require("ui.settings_defs")
+local U = require("lib.util")
+local I18N = require("lib.i18n")
 local lg = love.graphics
 
 local S = {}
@@ -117,8 +119,8 @@ function S:draw()
       end
     elseif r.kind == "value" and r.nudge then
       -- escolha com esquerda/direita:  < VALOR >
-      local v = txt(r.value, self) or ""
-      local tw = T.f.pix8:getWidth(require("lib.i18n").tr(v)) + 12
+      local v = U.ellipsize(T.f.pix8,I18N.tr(txt(r.value,self) or ""),130)
+      local tw = T.f.pix8:getWidth(v) + 12
       local ac = on and ccol or T.c.faint
       G.color(ac)
       lg.polygon("fill", xr, cy + 11, xr - 6, cy + 6, xr - 6, cy + 16)
@@ -128,8 +130,8 @@ function S:draw()
       left = xr - 28 - tw
     elseif r.kind == "value" then
       chevron(xr - 6, cy + 6, on and ccol or T.c.faint)
-      local v = txt(r.value, self) or ""
-      local tw = T.f.pix8:getWidth(require("lib.i18n").tr(v)) + 12
+      local v = U.ellipsize(T.f.pix8,I18N.tr(txt(r.value,self) or ""),130)
+      local tw = T.f.pix8:getWidth(v) + 12
       G.tag(v, xr - 16 - tw, cy + 2, on and ccol or T.c.accent2, T.c.bg0, T.f.pix8)
       left = xr - 16 - tw
     elseif r.kind == "action" then

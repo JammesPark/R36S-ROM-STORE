@@ -5,7 +5,7 @@ local G=require("ui.gfx")
 local Icons=require("ui.icons")
 local Defs=require("ui.settings_defs")
 local S={}
-local X,Y,W,RH,VIS=14,52,194,43,9
+local X,Y,W,RH,VIS=14,52,194,42,9
 local DX,DY,DW,DH=220,52,406,384
 
 function S.index(id)

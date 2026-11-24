@@ -8,13 +8,14 @@ assert(table.concat(ids,",")=="roms,bios,library,installed,downloads,favorites,e
 package.loaded["ui.theme"]={c={}}
 package.loaded["ui.gfx"]={}
 package.loaded["ui.icons"]={}
+package.loaded["core.favorites"]={}
 local cats={{id="manutencao",name="Manutenção",section="tools"}}
 local tool={id="sd",name="SD",category_id="manutencao",category="Manutenção",builtin=true,screen="sdanalyzer"}
 package.loaded["core.catalog"]={categories=cats,filter=function()return {}end}
 package.loaded["core.tools"]={LIST={tool},for_filter=function()return {tool}end}
 local opened
 App={push=function(s,p)opened=s end,pop=function()opened="back"end}
-local U=require("ui.screens.utilities");U:enter();assert(#U.cats==2)
+local U=require("ui.screens.utilities");U:enter();assert(#U.cats==3 and U.cats[3].id=="installed")
 U:action("down");assert(U.sel==2 and U.focus=="categories")
 U:action("a");assert(U.focus=="rows")
 U:action("a");assert(opened=="sdanalyzer")

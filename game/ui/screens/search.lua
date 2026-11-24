@@ -34,6 +34,7 @@ end
 function S:enter(params)
   self.installed_only=params and params.installed_only==true
   self.system=params and params.system
+  self.section=params and params.section
   self.query = ""
   self.kr, self.kc = 1, 1
   self.focus = "keys"
@@ -53,7 +54,7 @@ function S:search(keep)
     for _, p in ipairs(source) do
       local n = norm(p.name)
       local pos = n:find(q, 1, true)
-      if pos and (not self.system or p.category_id==self.system) then
+      if pos and (not self.system or p.category_id==self.system) and (not self.section or p.section==self.section) then
         res[#res + 1] = { p = p, rank = (pos == 1 or n:sub(pos - 1, pos - 1) == " ") and 0 or 1 }
       end
     end

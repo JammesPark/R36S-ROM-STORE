@@ -5,8 +5,9 @@ local G=require("ui.gfx")
 local Icons=require("ui.icons")
 local Catalog=require("core.catalog")
 local Tools=require("core.tools")
+local Favorites=require("core.favorites")
 local S={}
-local X,Y,W,RH,VIS=14,52,194,43,9
+local X,Y,W,RH,VIS=14,52,194,42,9
 local DX,DY,DW,DH=220,52,406,384
 local desc={manutencao="Verificação, análise e manutenção do cartão e do sistema.",
  diagnostico_do_sistema="Diagnóstico de rede e informações do sistema.",
@@ -28,15 +29,16 @@ function S:on_catalog()
   end
   for _,c in ipairs(Catalog.categories) do if c.section=="tools" then add(c) end end
   for _,t in ipairs(Tools.LIST) do add({id=t.category_id,name=t.category,icon=t.icon}) end
+  cats[#cats+1]={id="installed",name=L("Instalados"),icon="set_grid",desc=L("Utilitários instalados no console.")}
   self.cats=cats;self.sel=1
   if old then for i,c in ipairs(cats) do if c.id==old.id then self.sel=i;break end end end
   self:rebuild()
 end
 function S:rebuild()
   local cat=self.cats[self.sel];local list={}
-  local filter=cat.id=="all" and "all" or "cat:"..cat.id
+  local filter=cat.id=="all" and "all" or (cat.id=="installed" and "installed" or "cat:"..cat.id)
   for _,t in ipairs(Tools.for_filter("tools",filter)) do list[#list+1]=t end
-  for _,p in ipairs(Catalog.filter(filter,nil,"tools")) do list[#list+1]=p end
+  for _,p in ipairs(Catalog.filter(filter,App.status,"tools")) do list[#list+1]=p end
   self.rows=list;self.row,self.rowtop=1,0
   if self.sel<=self.top then self.top=self.sel-1 end
   if self.sel>self.top+VIS then self.top=self.sel-VIS end
@@ -72,10 +74,13 @@ function S:draw()
   G.rect(DX+12,DY+284,DW-24,1,T.c.line)
   local df,dl,dh=G.fit_lines(T.f.small,description or "",DW-24,80,true)
   for i,line in ipairs(dl) do G.text(df,line,DX+12,DY+296+(i-1)*dh,T.c.dim) end
-  G.hints({{"dpad",L("Navegar")},{"a",self.focus=="rows" and L("Abrir") or L("Selecionar")},{"b",L("Voltar")},{"x",L("Pesquisar")}})
+  local hints={{"dpad",L("Navegar")},{"a",self.focus=="rows" and L("Abrir") or L("Selecionar")},{"b",L("Voltar")},{"x",L("Pesquisar")},{"y",L("Atualizar")}}
+  if self.focus=="rows" and selected and not selected.builtin then hints[#hints+1]={"select",L("Favorito")} end
+  G.hints(hints)
 end
 function S:action(act)
-  if act=="x" then App.push("search",{from="utilities"});return end
+  if act=="x" then App.push("search",{from="utilities",section="tools"});return end
+  if act=="y" then App.refresh_catalog(true);return end
   if self.focus=="categories" then
     if act=="b" then App.pop();return end
     if act=="up" then self.sel=(self.sel-2)%#self.cats+1;self:rebuild()
@@ -87,6 +92,12 @@ function S:action(act)
     if n==0 then self.focus="categories";return end
     if act=="up" then self.row=(self.row-2)%n+1
     elseif act=="down" then self.row=self.row%n+1
+    elseif act=="select" then
+      local p=self.rows[self.row]
+      if not p.builtin then
+        local on=Favorites.toggle(p)
+        App.toast(on and L("Adicionado aos favoritos") or L("Removido dos favoritos"),"info")
+      end
     elseif act=="a" then
       local p=self.rows[self.row]
       if p.builtin then App.push(p.screen,{from="store"}) else App.push("details",{port=p}) end
