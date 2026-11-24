@@ -68,21 +68,6 @@ end
 function W.guard(fn)
   local Installer = require("core.installer")
   local Downloads = require("core.downloads")
-  local e=Downloads.active()
-  if Downloads.can_pause(e) then
-    App.show_dialog({title=L("Download em andamento"),kind="warn",
-      body=L("Pausar a ROM e guardar o progresso antes de alterar o Wi-Fi?"),
-      buttons={{label=L("PAUSAR E CONTINUAR"),fn=function()
-        if Downloads.pause(e) then App.wifi_after_pause=fn end
-      end},{label=L("VOLTAR")}},sel=2})
-    return
-  end
-  if Installer.busy() and Installer.job.pausing then
-    App.toast(L("Aguarde a pausa terminar."),"info");return
-  end
-  if e and e.opts and e.opts.mode=="rom" and Installer.busy() then
-    App.toast(L("Aguarde o início do download ou o fim da instalação antes de alterar a rede."),"warn");return
-  end
   if Installer.busy() or Downloads.active() then
     App.show_dialog({ title = L("Download em andamento"), kind = "warn",
       body = L("Trocar ou desligar a rede pode interromper o download atual. Ele não é cancelado pelo hub, mas a conexão pode cair durante a troca.\n\nContinuar?"),
@@ -130,11 +115,6 @@ function S:update()
   elseif r.op == "saved" or r.op == "forget" then
     self.saved = r.list or self.saved
     if r.op == "forget" then App.toast(r.ok and L("Rede esquecida.") or (L("Falha: ") .. tostring(r.detail)), r.ok and "ok" or "error") end
-  elseif r.op == "radio" then
-    if not r.ok then App.toast(L("Não foi possível alterar o Wi-Fi: ") .. tostring(r.detail), "error")
-    elseif self.status and self.status.radio then self:request("scan")
-    elseif self.status and self.status.radio == false then self.nets = {} end
-    Net.invalidate()
   elseif r.op == "disconnect" then
     App.toast(r.ok and L("Desconectado.") or (L("Falha: ") .. tostring(r.detail)), r.ok and "ok" or "error")
     Net.invalidate()
@@ -153,7 +133,7 @@ end
 
 -- itens navegaveis da aba atual
 function S:items()
-  local t = { { kind = "switch" } }
+  local t = {}
   if self.tab == 1 then
     t[#t + 1] = { kind = "scan" }
     for _, n in ipairs(self.nets or {}) do t[#t + 1] = { kind = "net", net = n } end
@@ -185,13 +165,6 @@ function S:draw()
     G.hints({ { "b", L("Voltar") } })
     return
   end
-  if st.radio_backend=="rfkill" then
-    self:draw_unavailable(st.radio and L("WI-FI ATIVADO") or L("WI-FI DESATIVADO"),
-      L("Controle pelo rfkill do sistema. Pressione A para alterar o Wi-Fi. As redes salvas continuam sob controle do firmware.")
-      ..(st.hard_block and "\n"..L("Adaptador bloqueado fisicamente.") or ""))
-    G.hints({{"a",st.radio and L("Desativar") or L("Ativar")},{"y",L("Atualizar")},{"b",L("Voltar")}})
-    return
-  end
   if not st.nmcli then
     self:draw_unavailable(L("GERENCIADOR DE REDE NÃO ENCONTRADO"),
       L("O R36S ROMS STORE usa o gerenciador de rede do próprio sistema (NetworkManager, comando nmcli), que não foi encontrado neste console.\n\nNo dArkOSRE, use a opção \"Wifi Toggle\" do sistema para instalar e ativar o Wi-Fi. Depois volte aqui."))
@@ -206,31 +179,20 @@ function S:draw()
   end
 
   local items = self:items()
-  if self.sel > #items then self.sel = #items end
-  local cur = items[self.sel]
+  self.sel = math.max(1, math.min(self.sel, #items))
 
-  -- painel superior: interruptor do Wi-Fi + conexao atual
-  local on = cur and cur.kind == "switch"
-  G.panel(12, 50, 640 - 24, 68, { bg = on and T.c.bg3 or T.c.bg1, border = on and T.c.accent or T.c.line, lw = on and 2 or 1 })
+  -- Estado informativo: ativar/desativar o radio apenas pelo firmware.
+  G.panel(12, 50, 640 - 24, 68, { bg = T.c.bg1, border = T.c.line, lw = 1 })
   Icons.draw("set_network", 26, 62, st.connected and T.c.green or T.c.dim, 1)
   G.text(T.f.bodyb, "Wi-Fi", 60, 62, T.c.text)
   local radio = st.radio
   local lbl = (radio == nil) and L("INDISPONÍVEL") or (radio and L("ATIVADO") or L("DESATIVADO"))
-  -- interruptor
-  local sx, sy = 640 - 24 - 60, 60
-  if radio ~= nil then
-    G.rect(sx, sy, 46, 22, radio and T.c.green or T.c.bg0, 11)
-    G.frame(sx, sy, 46, 22, radio and T.c.green or T.c.line, 11)
-    G.color(radio and T.c.bg0 or T.c.faint)
-    lg.circle("fill", radio and (sx + 35) or (sx + 11), sy + 11, 8)
-    G.text(T.f.pix8, lbl, sx - 10 - T.f.pix8:getWidth(I18N.tr(lbl)), sy + 7, radio and T.c.green or T.c.dim)
-  else
-    G.text(T.f.pix8, lbl, sx - 30, sy + 7, T.c.red)
-  end
+  G.text(T.f.pix8, lbl, 640 - 30 - T.f.pix8:getWidth(I18N.tr(lbl)), 67,
+    radio == nil and T.c.red or (radio and T.c.green or T.c.dim))
   local line
   if not st.iface then line, lbl = L("Adaptador Wi-Fi não encontrado. Conecte o adaptador USB e ative-o pelo \"Wifi Toggle\" do sistema."), T.c.red
   elseif st.connected then
-    local sig = st.signal
+    local sig = Net.signal(st.iface)
     line = L("Conectado a ") .. (st.connection or "?") .. "  •  IP " .. st.ip
       .. (sig and ("  •  " .. L("sinal ") .. sig.quality .. "%") or "") .. "  •  " .. st.iface
     lbl = T.c.green
@@ -251,8 +213,8 @@ function S:draw()
 
   -- lista
   local list = {}
-  for i = 2, #items do list[#list + 1] = { i = i, it = items[i] } end
-  local selpos = self.sel - 1
+  for i = 1, #items do list[#list + 1] = { i = i, it = items[i] } end
+  local selpos = self.sel
   if selpos > self.top + VISIBLE then self.top = selpos - VISIBLE end
   if selpos >= 1 and selpos <= self.top then self.top = selpos - 1 end
   if self.top < 0 then self.top = 0 end
@@ -298,7 +260,7 @@ function S:draw()
   end
   if #list == 0 or (self.tab == 1 and #list == 1 and self.nets and #self.nets == 0 and not self.busy) then
     local msg = self.tab == 2 and (self.saved and L("Nenhuma rede Wi-Fi salva.") or L("Carregando..."))
-      or (st.radio == false and L("O Wi-Fi está desativado. Ative-o no interruptor acima.") or L("Nenhuma rede encontrada. Tente pesquisar de novo."))
+      or (st.radio == false and L("O Wi-Fi está desativado. Ative-o pelo sistema do console.") or L("Nenhuma rede encontrada. Tente pesquisar de novo."))
     G.text(T.f.small, msg, 12, y + 14, T.c.dim, "center", 640 - 24)
   end
   if self.err then G.text_fit(T.f.small, L("Erro: ") .. self.err, 24, 418, 600, T.c.red) end
@@ -339,34 +301,20 @@ end
 function S:action(act)
   local st = self.status
   if act == "b" then App.pop(); return end
-  if not st then return end
-  if st.radio_backend=="rfkill" then
-    if act=="a" and not self.busy and st.radio~=nil then
-      local want=not st.radio
-      local function go() self:request("radio",{on=want}) end
-      if want then go() else W.guard(go) end
-    elseif act=="y" and not self.busy then self:request("status") end
-    return
-  end
-  if not st.nmcli or st.nm_running==false then return end
+  if not st or not st.nmcli then return end
   local items = self:items()
   local n = #items
-  if act == "up" then self.sel = (self.sel - 2) % n + 1
-  elseif act == "down" then self.sel = self.sel % n + 1
+  if act == "up" and n > 0 then self.sel = (self.sel - 2) % n + 1
+  elseif act == "down" and n > 0 then self.sel = self.sel % n + 1
   elseif act == "l1" or act == "r1" then
     self.tab = self.tab == 1 and 2 or 1
-    self.sel, self.top = math.min(self.sel, 2), 0
+    self.sel, self.top = 1, 0
     if self.tab == 2 and not self.busy then self:request("saved") end
   elseif act == "y" and not self.busy then self:request(self.tab == 1 and "scan" or "saved")
   elseif act == "a" then
     local it = items[self.sel]
-    if not it or self.busy == "radio" then return end
-    if it.kind == "switch" then
-      if st.radio == nil then return end
-      local want = not st.radio
-      local function go() self:request("radio", { on = want }) end
-      if want then go() else W.guard(go) end
-    elseif it.kind == "scan" then
+    if not it then return end
+    if it.kind == "scan" then
       if not self.busy then self:request("scan") end
     elseif it.kind == "net" then
       if it.net.in_use then

@@ -48,24 +48,19 @@ local function read_all(p)
   return s
 end
 
--- O arquivo parcial pausado fica fora da limpeza job_* na abertura.
-local resumable = job.mode == "rom" and not job.local_file
-local WORK = job.tmp_dir .. (resumable and "/rom_resume_" or "/job_") .. job.slug
+local WORK = job.tmp_dir .. "/job_" .. job.slug
 local ZIP = WORK .. "/download.zip"
 local PART = ZIP .. ".part"
 local STAGE = WORK .. "/stage"
 local PIDF = WORK .. "/dl.pid"
 local RCF = WORK .. "/dl.rc"
-local STOP = WORK .. "/dl.stop"
-local MARK = WORK .. "/resume.url"
 
-local cancelled, paused = false, false
+local cancelled = false
 local extract_7z
 local function check_cancel()
   local m = IN:pop()
   while m do
     if m.t == "cancel" then cancelled = true end
-    if m.t == "pause" and resumable then paused = true end
     m = IN:pop()
   end
   return cancelled
@@ -303,9 +298,7 @@ local function run()
   if not sh("test -w " .. shq(job.ports_dir)) then
     return fail("no_write", job.ports_dir)
   end
-  local preserve = resumable and job.resume_download and read_all(MARK) == job.url .. "\n" .. job.ports_dir
-  if not preserve then cleanup() end
-  os.remove(MARK); os.remove(STOP)
+  cleanup()
   if not sh("mkdir -p " .. shq(STAGE)) then
     return fail("no_write", job.tmp_dir)
   end
@@ -334,33 +327,33 @@ local function run()
 
   -- 1) espaco para o ZIP ----------------------------------------------------
   local avail = free_bytes(job.ports_dir)
-  if expected and avail and avail < math.max(0, expected - (preserve and (fsize(PART) or 0) or 0)) + job.margin then
+  if expected and avail and avail < expected + job.margin then
     return fail("no_space", string.format("%d|%d", expected + job.margin, avail))
   end
   if check_cancel() then return cancel_done() end
 
   -- 2) download (em segundo plano, com acompanhamento) ---------------------
   send({ t = "phase", phase = "download", total = expected })
-  if not preserve then os.remove(PART) end
-  os.remove(RCF); os.remove(PIDF); os.remove(STOP)
+  os.remove(PART); os.remove(RCF); os.remove(PIDF)
   sh("sh " .. shq(job.fetch_sh) .. " get " .. shq(job.url) .. " " .. shq(PART) .. " "
-    .. shq(PIDF) .. " " .. shq(RCF) .. " 0 " .. shq(STOP) .. " >" .. shq(WORK .. "/fetch.log") .. " 2>&1 &")
+    .. shq(PIDF) .. " " .. shq(RCF) .. " >" .. shq(WORK .. "/fetch.log") .. " 2>&1 &")
 
   local last_push = -1
   local rc
   while true do
     love.timer.sleep(0.25)
-    check_cancel()
-    if cancelled or paused then
-      -- O fetch.sh verifica STOP antes de cada tentativa. Aguardar RC antes
-      -- de preservar/remover arquivos para nao deixar escritor ativo.
-      local flag=io.open(STOP,"wb")
-      if flag then flag:write("1"); flag:close() end
-      local pid=(read_all(PIDF) or ""):match("^%s*(%d+)%s*$")
-      if pid and tonumber(pid)>1 then sh("kill " .. pid .. " 2>/dev/null") end
+    local s = read_all(RCF)
+    if s and s:match("%d+") then rc = tonumber(s:match("%d+")); break end
+    if check_cancel() then
+      local pid = (read_all(PIDF) or ""):match("%d+")
+      if pid then sh("kill " .. pid .. " 2>/dev/null") end
+      -- espera o script terminar
+      for _ = 1, 40 do
+        love.timer.sleep(0.1)
+        if read_all(RCF) then break end
+      end
+      return cancel_done()
     end
-    local s=read_all(RCF)
-    if s and s:match("^%s*%d+%s*$") then rc=tonumber(s); break end
     local done = fsize(PART) or 0
     if done ~= last_push then
       send({ t = "progress", phase = "download", done = done, total = expected })
@@ -370,19 +363,6 @@ local function run()
 
   got = fsize(PART) or 0
   send({ t = "progress", phase = "download", done = got, total = expected })
-  if cancelled then return cancel_done() end
-  -- Tambem preservar bytes quando a rede cair antes de uma pausa manual.
-  local net_failure=resumable and got>0 and (rc==5 or rc==6 or rc==7 or rc==18 or rc==28 or rc==35 or rc==52 or rc==55 or rc==56 or rc==60 or rc==92)
-  if paused or net_failure then
-    local f=io.open(MARK,"wb")
-    if not f then return fail("no_write",WORK) end
-    local written=f:write(job.url .. "\n" .. job.ports_dir)
-    local closed=f:close()
-    if not written or not closed then return fail("no_write",WORK) end
-    os.remove(STOP); os.remove(PIDF); os.remove(RCF)
-    send({t="paused",done=got,total=expected,network=net_failure and not paused})
-    return
-  end
   if rc ~= 0 then
     local flog = read_all(WORK .. "/fetch.log") or ""
     log("fetch rc=", rc, flog)

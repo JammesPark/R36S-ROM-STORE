@@ -14,54 +14,10 @@ local Installer = require("core.installer")
 local D = { list = {}, seq = 0, loaded = false, background = false }
 local FILE = "downloads.json"
 local HISTORY_MAX = 30
-local QUEUE_FILE="rom_download_queue.json"
-local C=require("config")
-local function is_rom(e)
-  return e and e.port and e.opts and e.opts.mode=="rom" and not e.opts.local_file and not e.ext
-end
--- Apenas ROMs remotas; nao gravar senhas/opcoes de instalacao local.
-local function persist()
-  local list={}
-  for _,e in ipairs(D.list) do
-    if is_rom(e) and (e.state=="paused" or e.state=="waiting") then
-      local p=e.port
-      list[#list+1]={port={id=p.id,slug=p.slug,name=p.name,section=p.section,category_id=p.category_id,
-        category=p.category,download_url=p.download_url,cover=p.cover,size=p.size,size_exact=p.size_exact,
-        sha256=p.sha256,md5=p.md5,description=p.description,short=p.short,size_label=p.size_label},
-        opts={mode="rom",dest_dir=e.opts.dest_dir,rom_system=e.opts.rom_system,resume_download=e.opts.resume_download==true},
-        done=e.done,total=e.total,date=e.date,op=e.op}
-    end
-  end
-  local path=C.APP_DIR.."/"..QUEUE_FILE
-  local bytes=json.encode(list)
-  local ok=U.write_file(path..".tmp",bytes)
-  if ok and U.read_file(path..".tmp")==bytes and os.rename(path..".tmp",path) then return true end
-  os.remove(path..".tmp"); U.log("falha ao salvar fila de ROMs"); return false
-end
-D.persist=persist
-local function restore_queue()
-  local raw=U.read_file(C.APP_DIR.."/"..QUEUE_FILE)
-  if not raw then return end
-  local ok,rows=pcall(json.decode,raw)
-  if not ok or type(rows)~="table" then return end
-  for _,r in ipairs(rows) do
-    local p,o
-    if type(r)=="table" then p,o=r.port,r.opts end
-    if type(p)=="table" and type(o)=="table" and p.section=="games" and type(p.id)=="string"
-      and type(p.slug)=="string" and p.slug:match("^[%w%-]+$") and #p.slug<=200
-      and type(p.name)=="string" and type(p.download_url)=="string" and p.download_url:match("^https?://")
-      and o.mode=="rom" and o.rom_system==p.category_id and type(o.dest_dir)=="string"
-      and o.dest_dir:match("^/roms2?/[%w_%-]+$") then
-      D.seq=D.seq+1
-      D.list[#D.list+1]={key=D.seq,pid=p.id,port=p,opts=o,name=p.name,section="games",state="paused",
-        done=tonumber(r.done) or 0,total=tonumber(r.total),dl_total=tonumber(r.total),date=r.date,op=r.op,phase="download",stages={}}
-    end
-  end
-end
 
 -- estados exibidos
 D.LABEL = {
-  paused = L("Pausado"), waiting = L("Aguardando"), downloading = L("Baixando"), extracting = L("Extraindo"),
+  waiting = L("Aguardando"), downloading = L("Baixando"), extracting = L("Extraindo"),
   installing = L("Instalando"), done = L("Concluído"), error = L("Erro"), cancelled = L("Cancelado"),
 }
 -- fase do instalador -> estado
@@ -104,15 +60,14 @@ local function save()
   end
   while #hist > HISTORY_MAX do table.remove(hist) end
   pcall(love.filesystem.write, FILE, json.encode(hist))
-  return persist()
 end
 
 function D.load()
   D.loaded = true
   local ok, text = pcall(love.filesystem.read, FILE)
-  local d = ok and text and json.decode(text) or {}
-  if type(d) ~= "table" then d={} end
-  restore_queue()
+  if not (ok and text) then return end
+  local d = json.decode(text)
+  if type(d) ~= "table" then return end
   for _, h in ipairs(d) do
     if type(h) == "table" and h.name then
       D.seq = D.seq + 1
@@ -126,7 +81,7 @@ end
 --- entrada ativa ou aguardando para este port (evita duplicatas)
 function D.pending(pid)
   for _, e in ipairs(D.list) do
-    if e.pid == pid and (e.state == "paused" or e.state == "waiting" or e.state == "downloading" or e.state == "extracting"
+    if e.pid == pid and (e.state == "waiting" or e.state == "downloading" or e.state == "extracting"
         or e.state == "installing") then
       return e
     end
@@ -165,7 +120,6 @@ function D.enqueue(p, opts)
     if o.state == "waiting" or o.job then pos = i + 1 end
   end
   table.insert(D.list, pos, e)
-  persist()
   return true, nil
 end
 
@@ -174,23 +128,16 @@ end
 function D.pump(can_start)
   if Installer.busy() or D.active() then return end
   if can_start and not can_start() then return end
-  local held=false
-  for _,e in ipairs(D.list) do if e.state=="paused" then held=true end end
   for _, e in ipairs(D.list) do
-    if e.state == "waiting" and (not held or e.resume_requested) then
-      e.resume_requested=nil
+    if e.state == "waiting" then
       local ok, err = Installer.start(e.port, e.opts)
       if ok then
         e.job = Installer.job
         e.job.download_entry = e
         e.job.background = D.background
         e.state = "downloading"
-        -- A fila ativa nao sera restaurada como se tivesse sido pausada com seguranca.
-        persist()
       else
-        if is_rom(e) and e.opts.resume_download then
-          e.state,e.error="paused",err
-        else e.state,e.error="error",err end
+        e.state, e.error = "error", err
         save()
       end
       return e
@@ -247,12 +194,7 @@ function D.on_finished(j)
   e.speed, e.eta = nil, nil
   e.elapsed = e.started and (love.timer.getTime() - e.started) or nil
   e.stages = e.stages or {}
-  if j.result == "paused" then
-    e.state, e.phase, e.done, e.total = "paused","download",j.done,j.total
-    e.opts.resume_download=true
-    if not persist() then e.error="Não foi possível salvar a pausa no cartão." end
-    return
-  elseif j.result == "done" then
+  if j.result == "done" then
     e.state = "done"
     if e.port and e.port.section=="games" and e.opts and e.opts.mode=="rom" then
       local ok, saved = pcall(require("core.rom_installed").record, e.port, e.opts, j.entries)
@@ -296,44 +238,9 @@ function D.on_finished(j)
   save()
 end
 
-function D.can_pause(e)
-  return is_rom(e) and e.job and Installer.can_pause(e.job)
-end
-function D.pause(e)
-  if not D.can_pause(e) then return false end
-  return Installer.pause()
-end
-function D.resume(e)
-  if not e or e.state~="paused" then return false end
-  e.state="waiting"; e.resume_requested=true; e.error=nil
-  if not persist() then e.state="paused";e.resume_requested=nil;return false end
-  return true
-end
-function D.has_paused()
-  for _,e in ipairs(D.list) do if e.state=="paused" then return true end end
-  return false
-end
-function D.only_saved_queue()
-  for _,e in ipairs(D.list) do
-    if (e.state=="waiting" or e.state=="paused") and not is_rom(e) then return false end
-  end
-  return true
-end
---- Cancela: tira da fila ou interrompe a operacao ativa.
+--- Cancela: tira da fila (aguardando) ou interrompe o download ativo
 function D.cancel(e)
-  if e.state == "paused" then
-    -- Remover somente o arquivo parcial de uma pausa que pertence a esta ROM.
-    local o,p=e.opts,e.port
-    if is_rom(e) and o.resume_download and type(p.slug)=="string" and p.slug:match("^[%w%-]+$") then
-      local tmp=require("core.romstorage").tmp_dir(o.dest_dir,o.rom_system)
-      if not tmp then return false end
-      local dir=tmp.."/rom_resume_"..p.slug
-      if U.read_file(dir.."/resume.url")==p.download_url.."\n"..o.dest_dir then
-        os.remove(dir.."/download.zip.part"); os.remove(dir.."/resume.url")
-      end
-    end
-    e.state="cancelled"; save()
-  elseif e.state == "waiting" then
+  if e.state == "waiting" then
     e.state = "cancelled"
     e.date = os.date("%d/%m/%Y %H:%M")
     save()
@@ -406,7 +313,7 @@ end
 function D.history_count()
   local n = 0
   for _, e in ipairs(D.list) do
-    if not (e.state == "waiting" or e.state == "paused" or e.job) then n = n + 1 end
+    if not (e.state == "waiting" or e.job) then n = n + 1 end
   end
   return n
 end
@@ -416,7 +323,7 @@ end
 function D.clear_history()
   local keep = {}
   for _, e in ipairs(D.list) do
-    if e.state == "waiting" or e.state == "paused" or e.job then keep[#keep + 1] = e end
+    if e.state == "waiting" or e.job then keep[#keep + 1] = e end
   end
   D.list = keep
   save()
@@ -425,7 +332,7 @@ end
 --- porcentagem REAL (nil quando o total nao e conhecido ou a fase nao tem medida)
 function D.percent(e)
   if e.state == "done" then return 100 end
-  if not e.job and e.state~="paused" then return nil end
+  if not e.job then return nil end
   if e.total and e.total > 0 and (e.phase == "download" or e.phase == "extract" or e.phase == "install") then
     return math.floor(U.clamp(e.done / e.total, 0, 1) * 100)
   end

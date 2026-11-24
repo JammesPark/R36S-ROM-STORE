@@ -3,7 +3,7 @@
 --  Mostra a fila, o progresso real (download, extracao, instalacao) e o
 --  historico salvo. A mesma tela e os mesmos dados para os dois acessos.
 --  A: ver progresso (ativo) / tirar da fila (aguardando) | X: limpar historico
---  L2: acoes | R2: pausar/retomar ROM | B: voltar
+--  B: voltar
 -- =============================================================================
 local L = require("lib.i18n").L
 local T = require("ui.theme")
@@ -19,7 +19,7 @@ local S = {}
 local ROW_H, LIST_Y, VISIBLE = 92, 48, 4
 
 local STATE = {
-  paused = { L("PAUSADO"), T.c.yellow }, waiting = { "AGUARDANDO", T.c.dim }, downloading = { L("BAIXANDO"), T.c.accent2 },
+  waiting = { "AGUARDANDO", T.c.dim }, downloading = { L("BAIXANDO"), T.c.accent2 },
   extracting = { L("EXTRAINDO"), T.c.yellow }, installing = { L("INSTALANDO"), T.c.orange },
   done = { "CONCLUÍDO", T.c.green }, error = { "ERRO", T.c.red }, cancelled = { "CANCELADO", T.c.faint },
 }
@@ -45,8 +45,6 @@ local function detail_line(e)
   if e.state == "error" then return (e.error and (require("lib.i18n").tr(e.error):gsub("\n", " "))) or L("Erro desconhecido.") end
   if e.state == "cancelled" then return L("Cancelado") .. (e.date and (L(" em ") .. e.date) or "") end
   if e.state == "waiting" then return L("Na fila: começa quando a operação atual terminar.") end
-  if e.state=="paused" then return L("Pausado").." • "..U.format_bytes(e.done or 0)..L(" guardados • R2: Retomar")..(e.error and (" • "..tostring(e.error)) or "") end
-  if e.job and e.job.pausing then return L("Salvando progresso...") end
   if e.state == "done" then
     local parts = { L("Concluído") .. (e.date and (L(" em ") .. e.date) or "") }
     if e.dl_total and e.dl_total > 0 then parts[#parts + 1] = U.format_bytes(e.dl_total) end
@@ -136,7 +134,7 @@ function S:draw()
     G.text_fit(T.f.small, e.op or Downloads.op_label(nil, e.section), tx, y + 23, T.W - 230, T.c.faint)
     -- estado + porcentagem real
     local pct = Downloads.percent(e)
-    local lbl = pct and (e.job or e.state=="paused") and (st[1] .. " — " .. pct .. "%") or st[1]
+    local lbl = pct and e.job and (st[1] .. " — " .. pct .. "%") or st[1]
     G.text(T.f.pix8, lbl, T.W - 26 - T.f.pix8:getWidth(lbl), y + 9, c)
     -- selo INSTALADO so depois da instalacao concluida e validada
     if e.state == "done" and p and (e.op or ""):find("instala") and App.status(p) ~= "none" then
@@ -162,64 +160,10 @@ function S:draw()
   local sel = list[self.sel]
   local hints = { { "dpad", L("Navegar") } }
   if sel and sel.job then hints[#hints + 1] = { "a", L("Ver progresso") }
-  elseif sel and sel.state == "waiting" then hints[#hints + 1] = { "a", L("Tirar da fila") }
-  elseif sel and sel.state=="paused" then hints[#hints+1]={"a",L("Opções")} end
-  if sel then hints[#hints+1]={"l2",L("Ações")} end
-  if Downloads.can_pause(sel) then hints[#hints+1]={"r2",L("Pausar")}
-  elseif sel and sel.state=="paused" then hints[#hints+1]={"r2",L("Retomar")} end
+  elseif sel and sel.state == "waiting" then hints[#hints + 1] = { "a", L("Tirar da fila") } end
   if Downloads.history_count() > 0 then hints[#hints + 1] = { "x", L("Limpar histórico") } end
-  hints[#hints+1]={"select",L("Wi-Fi")}
   hints[#hints + 1] = { "b", L("Voltar") }
   G.hints(hints)
-end
-
-local function view_progress(e)
-  if e.job and not e.job.finished then
-    if e.ext then App.push(e.opts and e.opts.screen or "pmmanager")
-    else e.job.background=false; Downloads.background=false end
-  else
-    local pct=Downloads.percent(e)
-    App.show_dialog({title=L("Progresso"),kind="info",body=e.name.."\n\n"..detail_line(e)
-      ..(pct and ("\n"..pct.."%") or ""),buttons={{label=L("VOLTAR")}}})
-  end
-end
-local function toggle_pause(e)
-  if Downloads.can_pause(e) then
-    if not Downloads.pause(e) then App.toast(L("Não foi possível pausar."),"warn") end
-  elseif e.state=="paused" then
-    if not Downloads.resume(e) then App.toast(L("Não foi possível salvar a retomada."),"warn") end
-  else App.toast(L("Pausa indisponível nesta etapa."),"info") end
-end
-local function can_cancel(e)
-  if e.state=="waiting" or e.state=="paused" then return true end
-  local j=e.job
-  return j and not e.ext and not j.finished and not j.cancelling and not j.pausing
-    and not j.confirm and j.phase~="install"
-end
-local function ask_cancel(e)
-  if not can_cancel(e) then App.toast(L("Cancelamento indisponível nesta etapa."),"warn");return end
-  local waiting=e.state=="waiting" and not (e.opts and e.opts.resume_download)
-  App.show_dialog({title=L("Cancelar download?"),kind="warn",
-    body=e.name.."\n\n"..(waiting and L("O item será retirado da fila.") or L("O download será interrompido e o arquivo parcial será apagado.")),
-    buttons={{label=L("CANCELAR DOWNLOAD"),danger=true,fn=function()
-      if can_cancel(e) then
-        if Downloads.cancel(e)==false then App.toast(L("Não foi possível cancelar."),"warn") end
-      else App.toast(L("O estado do download mudou."),"info") end
-    end},{label=L("VOLTAR")}},sel=2})
-end
-function S:open_actions(e)
-  if not e then return end
-  local buttons={{label=L("Ver progresso"),fn=function()view_progress(e)end}}
-  if Downloads.can_pause(e) then
-    buttons[#buttons+1]={label=L("Pausar"),fn=function()toggle_pause(e)end}
-  elseif e.state=="paused" then
-    buttons[#buttons+1]={label=L("Retomar"),fn=function()toggle_pause(e)end}
-  end
-  if can_cancel(e) then buttons[#buttons+1]={label=L("Cancelar"),danger=true,fn=function()ask_cancel(e)end} end
-  buttons[#buttons+1]={label=L("Voltar")}
-  local state=STATE[e.state] and STATE[e.state][1] or e.state
-  App.show_dialog({title=L("Ações do download"),kind="info",body=e.name.."\n"..state,
-    list=true,buttons=buttons,sel=1})
 end
 
 function S:action(act)
@@ -229,10 +173,6 @@ function S:action(act)
   if act == "up" and n > 0 then self.sel = math.max(1, self.sel - 1)
   elseif act == "down" and n > 0 then self.sel = math.min(n, self.sel + 1)
   elseif act == "b" then App.pop()
-  elseif act=="select" then App.push("wifi")
-  elseif act=="l2" and e then self:open_actions(e)
-  elseif act=="r2" and e then toggle_pause(e)
-  elseif act=="a" and e and e.state=="paused" then self:open_actions(e)
   elseif act == "a" and e and e.job and e.ext then
     -- operacao externa (Gerenciador do PortMaster ou BIOS): abre a tela dela
     App.push(e.opts and e.opts.screen or "pmmanager")
