@@ -1,6 +1,6 @@
 -- =============================================================================
---  Tela inicial em PAINEL VERDE (layout "xdash": Neon Grid Edition)
---  Destaque vertical a esquerda, atalhos abaixo e menu de 3x3 a direita.
+--  Tela inicial Matrix Edition (layout "xdash")
+--  Destaque vertical e catalogo a esquerda, menu 3x3 com atalhos a direita.
 --    direcionais: navegar | A: abrir | X: detalhes do port | Y: pesquisar
 --    L1/R1: trocar o destaque | B: sair/energia | SELECT: atualizar o hub
 -- =============================================================================
@@ -17,13 +17,15 @@ local lg = love.graphics
 
 local XD = {}
 
--- blocos da direita (3 x 2) e atalhos do Guia Rapido
+-- Ordem exclusiva da Matrix, sem alterar o menu dos demais temas.
+local ORDER = {"roms","bios","tools","esthemes","library","settings","shortcuts","about","exit"}
 local function tiles()
-  local out = {}
-  for _, it in ipairs(require("ui.menu_entries").items()) do
-    if it.id ~= "installed" and it.id ~= "favorites" and it.id ~= "downloads" then
-      out[#out+1]=it
-    end
+  local by_id,out={},{}
+  for _,it in ipairs(require("ui.menu_entries").items()) do by_id[it.id]=it end
+  by_id.shortcuts={id="shortcuts",label=L("Atalhos")}
+  for _,id in ipairs(ORDER) do
+    assert(by_id[id],"Matrix: entrada ausente "..id)
+    out[#out+1]=by_id[id]
   end
   return out
 end
@@ -34,7 +36,7 @@ local LINKS = {
   { id = "downloads", label = L("Downloads"), icon = "download" },
 }
 
--- Destaque vertical e atalhos a esquerda; menu de 3x3 na direita.
+-- Destaque vertical e catalogo a esquerda; menu de 3x3 na direita.
 local PX,PY,PW,PH=14,54,182,382
 local RX,RW=208,418
 local TY,TW,TH,TG=88,134,108,8
@@ -88,21 +90,49 @@ local function draw_guide(S,self)
   if on_zone and self.xd_left==1 then
     G.frame(PX+4,PY+4,PW-8,276,T.style.focus or T.c.accent,6,2)
   end
+  -- Mesmo estado e totais reais usados pelo painel da Pulse Edition.
   local ay=PY+282
-  G.text_fit(T.f.bodyb,L("Atalhos"),x,ay,PW-20,T.c.text)
+  G.rect(x,ay-5,PW-20,1,T.c.line)
+  G.text_fit(T.f.bodyb,L("Catálogo"),x,ay,PW-20,T.c.text)
+  local online=Catalog.online_verified and Catalog.remote_state=="ok"
+  local loading=Catalog.remote_state=="loading"
+  local dot=loading and T.c.yellow or (online and T.c.green or T.c.orange)
+  local st=loading and L("Sincronizando catálogo...")
+    or (online and L("Catálogo (online)") or (#Catalog.ports>0 and L("Catálogo (SD)") or L("Catálogo indisponível")))
+  G.color(dot);lg.circle("fill",x+4,ay+23,3)
+  G.text_fit(T.f.small,st,x+12,ay+16,PW-32,T.c.dim)
+  local roms,systems=Catalog.totals()
+  local count=tostring(roms):reverse():gsub("(%d%d%d)","%1."):reverse():gsub("^%.","")
+  G.text_fit(T.f.small,string.format(L("%s ROMs no catálogo"),count),x,ay+34,PW-20,T.c.text)
+  G.text_fit(T.f.small,string.format(L("%d sistemas"),systems),x,ay+50,PW-20,T.c.dim)
+  local stats=require("core.rom_console_stats")
+  local cnt=stats.state=="done" and tostring(stats.total or 0)
+    or (stats.state=="error" and L("indisponível") or L("verificando..."))
+  local free=App.free and U.format_bytes(App.free) or "?"
+  G.text_fit(T.f.small,L("No console: ")..cnt,x,ay+66,PW-20,T.c.dim)
+  G.text_fit(T.f.small,L("SD1 livre: ")..free,x,ay+82,PW-20,T.c.dim)
+end
+
+local function draw_shortcuts(self,x,y,on)
+  local fc=T.style.focus or T.c.accent
+  G.rect(x+2,y+4,TW,TH,T.c.shadow,6)
+  G.rect(x,y,TW,TH,T.c.bg2,6,.95)
+  G.frame(x,y,TW,TH,on and fc or T.c.line,6,on and 2 or 1)
+  G.text_fit(T.f.bodyb,L("Atalhos"),x+9,y+5,TW-18,T.c.accent)
   for j,it in ipairs(LINKS) do
-    local on=on_zone and self.xd_left==j+1
-    local ly=ay+24+(j-1)*24
-    if on then G.rect(PX+4,ly-3,PW-8,23,T.style.focus or T.c.accent,4) end
-    local c=on and T.c.bg0 or T.c.dim
-    Icons.draw(it.icon,x,ly,c,18/24)
+    local selected=on and self.xd_shortcut==j
+    local ly=y+24+(j-1)*26
+    G.rect(x+6,ly,TW-12,24,selected and fc or T.c.bg1,4)
+    if not selected then G.frame(x+6,ly,TW-12,24,T.c.line,4,1) end
+    local c=selected and T.c.bg0 or T.c.dim
+    Icons.draw(it.icon,x+11,ly+4,c,16/24)
     local lab=I18N.tr(it.label)
     if it.id=="downloads" then
       local D=require("core.downloads")
       local n=(D.active() and 1 or 0)+D.waiting_count()
-      if n>0 then lab=lab.."  ("..n..")" end
+      if n>0 then lab=lab.." ("..n..")" end
     end
-    G.text_fit(T.f.body,lab,x+26,ly,PW-44,on and T.c.bg0 or T.c.text)
+    G.text_fit(T.f.small,lab,x+32,ly+5,TW-44,selected and T.c.bg0 or T.c.text)
   end
 end
 
@@ -118,6 +148,9 @@ local function draw_tiles(S, self)
     local y = TY + r * (TH + TG)
     local on = self.xd_zone == "right" and self.xd_right == i
     local fc = T.style.focus or T.c.accent
+    if it.id=="shortcuts" then
+      draw_shortcuts(self,x,y,on)
+    else
     G.rect(x + 2, y + 4, TW, TH, T.c.shadow, 6)
     if on then
       for g = 4, 1, -1 do G.frame(x - g * 1.5, y - g * 1.5, TW + g * 3, TH + g * 3, fc, 6 + g * 1.5, 2, 0.08) end
@@ -132,6 +165,7 @@ local function draw_tiles(S, self)
     local f, ls, lh = G.fit_lines(T.f.bodyb, lab, TW - 16, 2 * T.base_font(T.f.bodyb):getHeight())
     local ly = y + TH - 10 - #ls * lh
     for k, l in ipairs(ls) do G.text(f, l, x + 10, ly + (k - 1) * lh, ic) end
+    end
   end
 end
 
@@ -139,7 +173,8 @@ function XD.draw(S,self)
   self.xd_zone=self.xd_zone or "right"
   self.xd_tiles=self.xd_tiles or tiles()
   self.xd_right=math.max(1,math.min(#self.xd_tiles,self.xd_right or 1))
-  self.xd_left=math.max(1,math.min(4,self.xd_left or 1))
+  self.xd_left=1
+  self.xd_shortcut=math.max(1,math.min(#LINKS,self.xd_shortcut or 1))
   draw_top(S,self)
   draw_guide(S,self)
   G.text(T.f.h1,U.upper(I18N.tr(L("Início"))),RX,50,T.c.text)
@@ -158,9 +193,9 @@ end
 function XD.action(S,self,act)
   self.xd_zone=self.xd_zone or "right"
   self.xd_tiles=self.xd_tiles or tiles()
-  local n=#self.xd_tiles
-  self.xd_right=math.max(1,math.min(n,self.xd_right or 1))
-  self.xd_left=math.max(1,math.min(4,self.xd_left or 1))
+  self.xd_right=math.max(1,math.min(#self.xd_tiles,self.xd_right or 1))
+  self.xd_left=1
+  self.xd_shortcut=math.max(1,math.min(#LINKS,self.xd_shortcut or 1))
   if act=="b" then
     if require("core.prefs").get("exit_mode")=="quit" and not C.OS_MODE then App.quit() else S.exit_dialog() end
     return
@@ -168,29 +203,40 @@ function XD.action(S,self,act)
   elseif act=="y" then App.push("search");return
   elseif act=="l1" or act=="r1" then S.feat_go(self,act=="r1" and 1 or -1,true);return end
   local right=self.xd_zone=="right"
-  local i=right and self.xd_right or self.xd_left
+  local i=self.xd_right
+  local it=self.xd_tiles[i]
+  local shortcut=right and it.id=="shortcuts"
   if act=="a" then
-    if right then local it=self.xd_tiles[i];if it then S.open(it.id) end
-    elseif i==1 then local p=hero(S,self);if p then App.push("details",{port=p}) else S.open("store") end
-    else S.open(LINKS[i-1].id) end
+    if shortcut then S.open(LINKS[self.xd_shortcut].id)
+    elseif right then S.open(it.id)
+    else local p=hero(S,self);if p then App.push("details",{port=p}) else S.open("store") end end
     return
   elseif act=="x" then
-    if not right and i==1 then local p=hero(S,self);if p then App.push("details",{port=p}) end end
+    if not right then local p=hero(S,self);if p then App.push("details",{port=p}) end end
     return
   end
-  if right then
-    local col=(i-1)%3
-    if act=="up" and i>3 then self.xd_right=i-3
-    elseif act=="down" and i+3<=n then self.xd_right=i+3
-    elseif act=="left" then
-      if col==0 then self.xd_zone="left";self.xd_left=i>=7 and 2 or 1
-      else self.xd_right=i-1 end
-    elseif act=="right" and i<n then self.xd_right=i+1 end
-  else
-    if act=="up" then self.xd_left=math.max(1,i-1)
-    elseif act=="down" then self.xd_left=math.min(4,i+1)
-    elseif act=="right" then self.xd_zone="right";self.xd_right=i==1 and 1 or math.min(n,7) end
+  if not right then
+    if act=="right" then self.xd_zone="right" end
+    return
   end
+  if shortcut then
+    if act=="up" then
+      if self.xd_shortcut>1 then self.xd_shortcut=self.xd_shortcut-1
+      else self.xd_right=i-3 end
+    elseif act=="down" then self.xd_shortcut=math.min(#LINKS,self.xd_shortcut+1)
+    elseif act=="left" then self.xd_zone="left"
+    elseif act=="right" then self.xd_right=i+1 end
+    return
+  end
+  local col=(i-1)%3
+  if act=="up" and i>3 then self.xd_right=i-3
+  elseif act=="down" and i+3<=#self.xd_tiles then
+    self.xd_right=i+3
+    if self.xd_tiles[self.xd_right].id=="shortcuts" then self.xd_shortcut=1 end
+  elseif act=="left" then
+    if col==0 then self.xd_zone="left"
+    else self.xd_right=i-1 end
+  elseif act=="right" and col<2 and i<#self.xd_tiles then self.xd_right=i+1 end
 end
 
 return XD
