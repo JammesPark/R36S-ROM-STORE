@@ -80,3 +80,23 @@ with tempfile.TemporaryDirectory() as d:
 
 if failures:
  print('FAILURES:',failures);raise SystemExit(1)
+
+# Simula a extracao segura de um romset individual 7z; testa o ZIP resultante.
+with tempfile.TemporaryDirectory() as d:
+    root=pathlib.Path(d);src=root/'download.7z';src.write_bytes(b'FICTITIOUS')
+    dest=root/'cps1';dest.mkdir();stage=root/'stage'
+    a=argparse.Namespace(source=str(src),dest=str(dest),stage=str(stage),system='cps1',filename='demo.7z',slug='cps1-demo',format='7z',margin=0,cancel=str(root/'cancel'),sevenzip='')
+    def fake_extract(src,content,*args):
+        (content/'chip1.bin').write_bytes(b'CHIP1')
+        (content/'chip2.bin').write_bytes(b'CHIP2')
+    old_extract,old_validate=r.seven_extract,r.validate_root
+    try:
+        r.seven_extract=fake_extract;r.validate_root=lambda dest,sys:root
+        r.run(a)
+        with zipfile.ZipFile(dest/'demo.zip') as z:
+            assert sorted(z.namelist())==['chip1.bin','chip2.bin']
+            assert z.read('chip1.bin')==b'CHIP1' and z.testzip() is None
+        assert sorted(p.name for p in dest.iterdir())==['demo.zip']
+        print('PASS CPS 7z ROMset converted to intact ZIP')
+    finally:
+        r.seven_extract=old_extract;r.validate_root=old_validate
