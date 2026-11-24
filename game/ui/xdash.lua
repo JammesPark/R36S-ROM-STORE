@@ -31,9 +31,9 @@ local function tiles()
 end
 
 local LINKS = {
-  { id = "installed", label = L("Instalados"), icon = "set_grid" },
-  { id = "favorites", label = L("Favoritos"), icon = "set_favorites" },
   { id = "downloads", label = L("Downloads"), icon = "download" },
+  { id = "favorites", label = L("Favoritos"), icon = "set_favorites" },
+  { id = "installed", label = L("Instalados"), icon = "set_grid" },
 }
 
 -- Destaque vertical e catalogo a esquerda; menu de 3x3 na direita.
