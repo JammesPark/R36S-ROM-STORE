@@ -49,3 +49,34 @@ local expected={"roms","bios","tools","esthemes","library","settings","shortcuts
 assert(#self.xd_tiles==#expected)
 for i,id in ipairs(expected) do assert(self.xd_tiles[i].id==id) end
 print("COLOR NEON: OK - paletas independentes, menu e atalhos Matrix")
+
+-- Preferencias independentes: exercita o modulo real de temas com armazenamento simulado.
+local prefs={}
+package.loaded["core.prefs"]={get=function(k)return prefs[k] end,set=function(k,v)prefs[k]=v end}
+package.loaded["lib.util"]={trim=function(v)return v end,log=function()end}
+package.loaded["ui.gfx"]={build_background=function()end}
+local persisted="neongrid"
+love.filesystem={read=function()return persisted end,write=function(_,v)persisted=v;return true end}
+package.loaded["core.themes"]=nil
+local Themes=require("core.themes")
+local pulse={colors={accent=T.hex("#FF4F8B")},buttons={},style={}}
+local matrix={colors={accent=T.hex("#4CD964")},buttons={},style={layout="xdash"}}
+Themes.by_id={default=pulse,neongrid=matrix}
+Themes.scan=function()end
+local applied
+T.apply_palette=function(c)applied=c end
+prefs.ui_color="red"
+Themes.init()
+assert(Themes.current=="neongrid" and Themes.color_id()=="red")
+assert(prefs.ui_color==nil and prefs.ui_color_neongrid=="red")
+assert(Themes.apply("default",true) and Themes.color_id()=="original")
+assert(applied.accent[1]==pulse.colors.accent[1])
+assert(Themes.set_color("blue"))
+assert(Themes.apply("neongrid",true) and Themes.color_id()=="red")
+assert(Themes.set_color("original"))
+assert(applied.accent[2]==matrix.colors.accent[2])
+assert(Themes.apply("default",true) and Themes.color_id()=="blue")
+assert(not Themes.set_color("bad") and Themes.color_id()=="blue")
+Themes.init()
+assert(Themes.current=="default" and Themes.color_id()=="blue")
+print("THEME COLORS: OK - migracao, isolamento, persistencia e paletas originais")

@@ -235,12 +235,29 @@ function M.scan()
   end
 end
 
+-- Preferencias de cor isoladas por ID estavel do tema.
+local function color_key(id) return "ui_color_" .. resolve(id) end
+local function color_for(id)
+  local value=Prefs.get(color_key(id))
+  return Schemes.valid(value) and value or "original"
+end
+local function migrate_color(id)
+  local legacy=Prefs.get("ui_color")
+  if legacy==nil then return end
+  if not M.ALLOWED[id] or not M.by_id[id] then id=M.DEFAULT end
+  -- A ultima cor global pertencia ao tema que estava ativo.
+  if Prefs.get(color_key(id))==nil and Schemes.valid(legacy) then
+    Prefs.set(color_key(id),legacy)
+  end
+  Prefs.set("ui_color",nil)
+end
+
 --- aplica um tema (sem reiniciar). Devolve true ou false, motivo
 function M.apply(id, save)
   id = resolve(id)
   local th = M.by_id and M.by_id[id]
   if not th or not M.ALLOWED[id] then return false, L("tema não encontrado") end
-  local colors,style=Schemes.resolve(th.colors,th.style,Prefs.get("ui_color"))
+  local colors,style=Schemes.resolve(th.colors,th.style,color_for(id))
   T.apply_palette(colors,th.buttons,style)
   require("ui.gfx").build_background()
   M.current = id
@@ -249,15 +266,15 @@ function M.apply(id, save)
 end
 
 function M.color_id()
-  local id=Prefs.get("ui_color")
-  return Schemes.valid(id) and id or "original"
+  return color_for(M.current)
 end
 function M.set_color(id)
   if not Schemes.valid(id) then return false end
-  local before=M.color_id()
-  Prefs.set("ui_color",id)
+  local key=color_key(M.current)
+  local before=Prefs.get(key)
+  Prefs.set(key,id)
   local ok=M.apply(M.current,false)
-  if not ok then Prefs.set("ui_color",before);return false end
+  if not ok then Prefs.set(key,before);return false end
   return true
 end
 
@@ -274,6 +291,7 @@ function M.init()
     saved = resolve(saved)
     pcall(love.filesystem.write, PREF, saved)
   end
+  migrate_color(saved)
   if saved ~= M.DEFAULT then
     local applied = M.apply(saved, false)
     if applied then return nil end
