@@ -27,7 +27,7 @@
 
 ## 💡 Sobre o projeto
 
-O **R36S ROM HUB STORE** é um aplicativo independente para consoles portáteis R36S, com suporte ao R36H como alvo de compatibilidade. Desenvolvido em Lua e LÖVE 11.5, permite organizar jogos, baixar e instalar ROMs em SD1 ou SD2, gerenciar BIOS, temas e utilizar ferramentas do sistema diretamente com os controles físicos do console.
+O **R36S ROM HUB STORE** é um aplicativo independente para consoles portáteis R36S, com suporte ao R36H/R36S como alvo de compatibilidade. Desenvolvido em Lua e LÖVE 11.5, permite organizar jogos, baixar e instalar ROMs em SD1 ou SD2, gerenciar BIOS, temas e utilizar ferramentas do sistema diretamente com os controles físicos do console.
 
 A interface tem resolução lógica de 640×480, dois temas integrados (Pulse e Matrix) e quatro idiomas selecionáveis. O aplicativo tem origem no R36S PORT HUB, de Lag do Lira, e preserva a autoria de ferramentas e temas herdados.
 
