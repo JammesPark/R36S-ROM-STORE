@@ -275,7 +275,8 @@ function O.draw_install(app, j)
   G.text(T.f.small, detail, x + 24, by + 50, T.c.dim)
 
   -- rodape
-  local hint = j.cancelling and L("Cancelando...") or L("Não desligue o console durante a instalação.")
+  local hint = j.pausing and L("Salvando progresso...") or (j.cancelling and L("Cancelando...") or
+    (Installer.can_pause(j) and L("X: Pausar download") or L("Não desligue o console durante a instalação.")))
   G.text(T.f.small, hint, x + 24, y + h - 30, j.cancelling and T.c.yellow or T.c.faint)
   if not j.cancelling then
     local bx = x + w - 24
@@ -350,7 +351,8 @@ function O.install_action(app, act)
     end
     return
   end
-  if act == "b" and not j.cancelling and j.phase ~= "install" then
+  if act=="x" and Installer.can_pause(j) then Installer.pause()
+  elseif act == "b" and not j.cancelling and not j.pausing and j.phase ~= "install" then
     j.ask_cancel = true
     j.ask_cancel_sel = 2
   elseif act == "y" and not j.cancelling then
@@ -417,6 +419,11 @@ function O.on_install_finished(app, j)
   O._confirm = nil
   pcall(function() require("core.compat").invalidate() end)
   local p = j.port
+  if j.result=="paused" then
+    Installer.clear()
+    app.toast(L("Download pausado. Retome na Central de Downloads."),"info")
+    return
+  end
   app.update_free_space()
   app.on_catalog_changed()
   local jo0 = j.opts or {}

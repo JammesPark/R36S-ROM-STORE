@@ -582,8 +582,22 @@ function App.quit(force)
     App.toast(L("Aguarde a instalação do tema terminar."), "warn")
     return
   end
-  -- downloads/instalacoes ativos ou na fila: o app nao consegue continuar depois de fechado
-  if not force and (Installer.busy() or Downloads.waiting_count() > 0) then
+  -- Pausar ROM com seguranca antes de fechar. Outras fases nao podem ser pausadas.
+  if not force and Installer.busy() and Installer.can_pause() then
+    App.show_dialog({title=L("Download em andamento"),kind="warn",
+      body=L("Pause o download para guardar o arquivo parcial no cartão e retomar depois."),
+      buttons={{label=L("PAUSAR E SAIR"),fn=function()
+        if Installer.pause() then App.exit_after_pause={power=pending} end
+      end},{label=L("VOLTAR")}},sel=2})
+    return
+  end
+  if Installer.busy() and Installer.job.pausing then
+    App.toast(L("Aguarde o download salvar o progresso."),"info"); return
+  end
+  if not Installer.busy() and Downloads.only_saved_queue() and (Downloads.has_paused() or Downloads.waiting_count()>0) then
+    if not Downloads.persist() then App.toast(L("Falha ao salvar a fila; não foi possível sair."),"error"); return end
+  -- downloads/instalacoes nao pausaveis mantem a protecao anterior.
+  elseif not force and (Installer.busy() or Downloads.waiting_count() > 0) then
     local a = Downloads.active()
     local w = Downloads.waiting_count()
     App.show_dialog({
@@ -1149,10 +1163,17 @@ function love.update(dt)
     Installer.job.background = false   -- a confirmacao de sobrescrita sempre aparece
   end
   if was_busy and Installer.job and Installer.job.finished and not App.itest then
-    Downloads.on_finished(Installer.job)
-    Overlay.on_install_finished(App, Installer.job)
+    local ended=Installer.job
+    Downloads.on_finished(ended)
+    Overlay.on_install_finished(App, ended)
+    if App.exit_after_pause then
+      local req=App.exit_after_pause; App.exit_after_pause=nil
+      if ended.result=="paused" and Downloads.persist() then
+        App.power_pending=req.power; App.quit(false)
+      else App.toast(L("Não foi possível pausar para sair."),"warn") end
+    end
   end
-  if not App.itest then
+  if not App.itest and not App.quitting and not App.exit_after_pause then
     local nxt = Downloads.pump(can_start_download)
     if nxt and nxt.state == "error" then App.toast(L("Falha: ") .. nxt.name .. L(" - veja a Central de Downloads."), "error") end
   end

@@ -65,6 +65,8 @@ OUTFILE="$3"
 PIDFILE="$4"
 RCFILE="$5"
 MAXT="${6:-0}"
+STOPFILE="${7:-}"
+stopped() { [ -n "$STOPFILE" ] && [ -f "$STOPFILE" ]; }
 
 rm -f "$RCFILE"
 mkdir -p "$(dirname "$OUTFILE")" 2>/dev/null
@@ -72,6 +74,7 @@ mkdir -p "$(dirname "$OUTFILE")" 2>/dev/null
 trap 'echo 143 > "$RCFILE"; exit 143' TERM INT
 
 run_dl() {
+  stopped && return 143
   # $1 = extra flags (ex.: -k). Roda em segundo plano e espera, para que o PID
   # gravado seja o do curl/wget (assim o cancelamento interrompe de verdade).
   if have curl; then
@@ -91,8 +94,11 @@ run_dl() {
   fi
   CPID=$!
   echo "$CPID" > "$PIDFILE"
+  if stopped; then kill "$CPID" 2>/dev/null || true; fi
   wait "$CPID"
-  return $?
+  RC_CHILD=$?
+  rm -f "$PIDFILE"
+  return "$RC_CHILD"
 }
 
 ATTEMPT=0
@@ -102,6 +108,7 @@ while [ $ATTEMPT -lt 4 ]; do
   ATTEMPT=$((ATTEMPT + 1))
   run_dl "$FLAGS"
   RC=$?
+  if stopped; then RC=143; break; fi
   [ $RC -eq 0 ] && break
   # cancelado (SIGTERM/SIGKILL)
   if [ $RC -eq 143 ] || [ $RC -eq 137 ] || [ $RC -eq 130 ]; then break; fi

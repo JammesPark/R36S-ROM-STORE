@@ -119,6 +119,7 @@ function I.start(p, opts)
       or PortStorage.tmp_dir(dest_dir),
     local_file = opts.local_file, delete_source = opts.delete_source and true or false,
     mode = opts.mode or "port",
+    resume_download = opts.resume_download == true,
     rom_system = opts.rom_system,
     rom_filename = opts.mode == "rom" and RomStorage.filename(p) or nil,
     fetch_sh = C.FETCH_SH,
@@ -193,6 +194,9 @@ function I.update()
       if m.code == "encrypted" and j.opts and j.opts.password then
         j.error = L("Senha incorreta.")
       end
+    elseif m.t == "paused" then
+      j.done, j.total = m.done or j.done, m.total or j.total
+      j.finished, j.result, j.pausing = true, "paused", false
     elseif m.t == "cancelled" then
       j.finished, j.result = true, "cancelled"
     end
@@ -227,9 +231,21 @@ function I.apply_es_cover(j, entries, prev)
   if not ok then U.log("gamelist.xml: erro ao aplicar a capa:", tostring(err)) end
 end
 
+function I.can_pause(j)
+  j = j or I.job
+  return j and not j.finished and not j.cancelling and not j.pausing
+    and j.phase == "download" and j.opts and j.opts.mode == "rom" and not j.opts.local_file
+end
+function I.pause()
+  local j=I.job
+  if not I.can_pause(j) then return false end
+  j.pausing=true
+  j.in_ch:push({t="pause"})
+  return true
+end
 function I.cancel()
   local j = I.job
-  if not j or j.finished then return end
+  if not j or j.finished or j.pausing then return end
   j.cancelling = true
   j.in_ch:push({ t = "cancel" })
 end

@@ -19,7 +19,7 @@ local S = {}
 local ROW_H, LIST_Y, VISIBLE = 92, 48, 4
 
 local STATE = {
-  waiting = { "AGUARDANDO", T.c.dim }, downloading = { L("BAIXANDO"), T.c.accent2 },
+  paused = { L("PAUSADO"), T.c.yellow }, waiting = { "AGUARDANDO", T.c.dim }, downloading = { L("BAIXANDO"), T.c.accent2 },
   extracting = { L("EXTRAINDO"), T.c.yellow }, installing = { L("INSTALANDO"), T.c.orange },
   done = { "CONCLUÍDO", T.c.green }, error = { "ERRO", T.c.red }, cancelled = { "CANCELADO", T.c.faint },
 }
@@ -45,6 +45,8 @@ local function detail_line(e)
   if e.state == "error" then return (e.error and (require("lib.i18n").tr(e.error):gsub("\n", " "))) or L("Erro desconhecido.") end
   if e.state == "cancelled" then return L("Cancelado") .. (e.date and (L(" em ") .. e.date) or "") end
   if e.state == "waiting" then return L("Na fila: começa quando a operação atual terminar.") end
+  if e.state=="paused" then return L("Pausado").." • "..U.format_bytes(e.done or 0)..L(" guardados • Y: Retomar") end
+  if e.job and e.job.pausing then return L("Salvando progresso...") end
   if e.state == "done" then
     local parts = { L("Concluído") .. (e.date and (L(" em ") .. e.date) or "") }
     if e.dl_total and e.dl_total > 0 then parts[#parts + 1] = U.format_bytes(e.dl_total) end
@@ -134,7 +136,7 @@ function S:draw()
     G.text_fit(T.f.small, e.op or Downloads.op_label(nil, e.section), tx, y + 23, T.W - 230, T.c.faint)
     -- estado + porcentagem real
     local pct = Downloads.percent(e)
-    local lbl = pct and e.job and (st[1] .. " — " .. pct .. "%") or st[1]
+    local lbl = pct and (e.job or e.state=="paused") and (st[1] .. " — " .. pct .. "%") or st[1]
     G.text(T.f.pix8, lbl, T.W - 26 - T.f.pix8:getWidth(lbl), y + 9, c)
     -- selo INSTALADO so depois da instalacao concluida e validada
     if e.state == "done" and p and (e.op or ""):find("instala") and App.status(p) ~= "none" then
@@ -161,7 +163,10 @@ function S:draw()
   local hints = { { "dpad", L("Navegar") } }
   if sel and sel.job then hints[#hints + 1] = { "a", L("Ver progresso") }
   elseif sel and sel.state == "waiting" then hints[#hints + 1] = { "a", L("Tirar da fila") } end
-  if Downloads.history_count() > 0 then hints[#hints + 1] = { "x", L("Limpar histórico") } end
+  if Downloads.can_pause(sel) then hints[#hints+1]={"y",L("Pausar")}
+  elseif sel and sel.state=="paused" then hints[#hints+1]={"y",L("Retomar")} end
+  if sel and sel.state=="paused" then hints[#hints+1]={"x",L("Cancelar")}
+  elseif Downloads.history_count() > 0 then hints[#hints + 1] = { "x", L("Limpar histórico") } end
   hints[#hints + 1] = { "b", L("Voltar") }
   G.hints(hints)
 end
@@ -173,6 +178,12 @@ function S:action(act)
   if act == "up" and n > 0 then self.sel = math.max(1, self.sel - 1)
   elseif act == "down" and n > 0 then self.sel = math.min(n, self.sel + 1)
   elseif act == "b" then App.pop()
+  elseif act=="y" and e then
+    if Downloads.can_pause(e) then Downloads.pause(e)
+    elseif e.state=="paused" then Downloads.resume(e) end
+  elseif act=="x" and e and e.state=="paused" then
+    App.show_dialog({title=L("Cancelar download pausado?"),kind="warn",body=L("O arquivo parcial será apagado."),
+      buttons={{label=L("CANCELAR DOWNLOAD"),danger=true,fn=function() Downloads.cancel(e) end},{label=L("VOLTAR")}},sel=2})
   elseif act == "a" and e and e.job and e.ext then
     -- operacao externa (Gerenciador do PortMaster ou BIOS): abre a tela dela
     App.push(e.opts and e.opts.screen or "pmmanager")
