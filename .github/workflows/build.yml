@@ -50,6 +50,7 @@ jobs:
           luajit tests/test_cover_focus.lua
           luajit tests/test_rom_status_cache.lua
           luajit tests/test_download_pause.lua
+          luajit tests/test_wifi_radio.lua
           sh -n r36sromsstore/bin/fetch.sh
           luajit tests/test_region_view.lua
           PYTHONDONTWRITEBYTECODE=1 python3 tests/test_catalog_offline.py

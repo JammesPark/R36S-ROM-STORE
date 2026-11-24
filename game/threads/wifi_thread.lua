@@ -17,7 +17,7 @@ local ok, err = pcall(function()
     r.status = W.status()
   elseif job.op == "scan" then
     r.status = W.status()
-    if r.status.nmcli and r.status.iface and r.status.radio ~= false then
+    if r.status.nmcli and r.status.nm_running and r.status.iface and r.status.radio ~= false then
       r.list, r.error = W.scan(r.status.iface)
     end
   elseif job.op == "saved" then

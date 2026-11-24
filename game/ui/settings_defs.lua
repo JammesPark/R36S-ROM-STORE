@@ -195,7 +195,7 @@ local network = {
       value = function(scr)
         local w = scr.wst
         if not w then return "" end
-        if not w.nmcli then return L("indisponível") end
+        if not w.nmcli and w.radio_backend~="rfkill" then return L("indisponível") end
         if w.radio == false then return L("Wi-Fi desativado") end
         return w.connected and (w.connection or "") or L("não conectado")
       end,

@@ -44,7 +44,8 @@ local function restore_queue()
   local ok,rows=pcall(json.decode,raw)
   if not ok or type(rows)~="table" then return end
   for _,r in ipairs(rows) do
-    local p,o=r.port,r.opts
+    local p,o
+    if type(r)=="table" then p,o=r.port,r.opts end
     if type(p)=="table" and type(o)=="table" and p.section=="games" and type(p.id)=="string"
       and type(p.slug)=="string" and p.slug:match("^[%w%-]+$") and #p.slug<=200
       and type(p.name)=="string" and type(p.download_url)=="string" and p.download_url:match("^https?://")
@@ -186,7 +187,9 @@ function D.pump(can_start)
         -- A fila ativa nao sera restaurada como se tivesse sido pausada com seguranca.
         persist()
       else
-        e.state, e.error = "error", err
+        if is_rom(e) and e.opts.resume_download then
+          e.state,e.error="paused",err
+        else e.state,e.error="error",err end
         save()
       end
       return e

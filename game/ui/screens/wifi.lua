@@ -68,6 +68,18 @@ end
 function W.guard(fn)
   local Installer = require("core.installer")
   local Downloads = require("core.downloads")
+  local e=Downloads.active()
+  if Downloads.can_pause(e) then
+    App.show_dialog({title=L("Download em andamento"),kind="warn",
+      body=L("Pausar a ROM e guardar o progresso antes de alterar o Wi-Fi?"),
+      buttons={{label=L("PAUSAR E CONTINUAR"),fn=function()
+        if Downloads.pause(e) then App.wifi_after_pause=fn end
+      end},{label=L("VOLTAR")}},sel=2})
+    return
+  end
+  if Installer.busy() and Installer.job.pausing then
+    App.toast(L("Aguarde a pausa terminar."),"info");return
+  end
   if Installer.busy() or Downloads.active() then
     App.show_dialog({ title = L("Download em andamento"), kind = "warn",
       body = L("Trocar ou desligar a rede pode interromper o download atual. Ele não é cancelado pelo hub, mas a conexão pode cair durante a troca.\n\nContinuar?"),
@@ -170,6 +182,13 @@ function S:draw()
     G.hints({ { "b", L("Voltar") } })
     return
   end
+  if st.radio_backend=="rfkill" then
+    self:draw_unavailable(st.radio and L("WI-FI ATIVADO") or L("WI-FI DESATIVADO"),
+      L("Controle pelo rfkill do sistema. Pressione A para alterar o Wi-Fi. As redes salvas continuam sob controle do firmware.")
+      ..(st.hard_block and "\n"..L("Adaptador bloqueado fisicamente.") or ""))
+    G.hints({{"a",st.radio and L("Desativar") or L("Ativar")},{"y",L("Atualizar")},{"b",L("Voltar")}})
+    return
+  end
   if not st.nmcli then
     self:draw_unavailable(L("GERENCIADOR DE REDE NÃO ENCONTRADO"),
       L("O R36S ROMS STORE usa o gerenciador de rede do próprio sistema (NetworkManager, comando nmcli), que não foi encontrado neste console.\n\nNo dArkOSRE, use a opção \"Wifi Toggle\" do sistema para instalar e ativar o Wi-Fi. Depois volte aqui."))
@@ -196,7 +215,7 @@ function S:draw()
   local lbl = (radio == nil) and L("INDISPONÍVEL") or (radio and L("ATIVADO") or L("DESATIVADO"))
   -- interruptor
   local sx, sy = 640 - 24 - 60, 60
-  if radio ~= nil and st.iface then
+  if radio ~= nil then
     G.rect(sx, sy, 46, 22, radio and T.c.green or T.c.bg0, 11)
     G.frame(sx, sy, 46, 22, radio and T.c.green or T.c.line, 11)
     G.color(radio and T.c.bg0 or T.c.faint)
@@ -208,7 +227,7 @@ function S:draw()
   local line
   if not st.iface then line, lbl = L("Adaptador Wi-Fi não encontrado. Conecte o adaptador USB e ative-o pelo \"Wifi Toggle\" do sistema."), T.c.red
   elseif st.connected then
-    local sig = Net.signal(st.iface)
+    local sig = st.signal
     line = L("Conectado a ") .. (st.connection or "?") .. "  •  IP " .. st.ip
       .. (sig and ("  •  " .. L("sinal ") .. sig.quality .. "%") or "") .. "  •  " .. st.iface
     lbl = T.c.green
@@ -317,7 +336,16 @@ end
 function S:action(act)
   local st = self.status
   if act == "b" then App.pop(); return end
-  if not st or not st.nmcli then return end
+  if not st then return end
+  if st.radio_backend=="rfkill" then
+    if act=="a" and not self.busy and st.radio~=nil then
+      local want=not st.radio
+      local function go() self:request("radio",{on=want}) end
+      if want then go() else W.guard(go) end
+    elseif act=="y" and not self.busy then self:request("status") end
+    return
+  end
+  if not st.nmcli or st.nm_running==false then return end
   local items = self:items()
   local n = #items
   if act == "up" then self.sel = (self.sel - 2) % n + 1
@@ -331,7 +359,7 @@ function S:action(act)
     local it = items[self.sel]
     if not it or self.busy == "radio" then return end
     if it.kind == "switch" then
-      if st.radio == nil or not st.iface then return end
+      if st.radio == nil then return end
       local want = not st.radio
       local function go() self:request("radio", { on = want }) end
       if want then go() else W.guard(go) end

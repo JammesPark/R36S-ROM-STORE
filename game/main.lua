@@ -1166,6 +1166,11 @@ function love.update(dt)
     local ended=Installer.job
     Downloads.on_finished(ended)
     Overlay.on_install_finished(App, ended)
+    if App.wifi_after_pause then
+      local fn=App.wifi_after_pause;App.wifi_after_pause=nil
+      if ended.result=="paused" and Downloads.persist() then fn()
+      else App.toast(L("Não foi possível pausar; Wi-Fi mantido."),"warn") end
+    end
     if App.exit_after_pause then
       local req=App.exit_after_pause; App.exit_after_pause=nil
       if ended.result=="paused" and Downloads.persist() then
@@ -1351,6 +1356,10 @@ love.keypressed = Input.keypressed
 love.keyreleased = Input.keyreleased
 
 function love.quit()
+  if not App.quitting and Installer.busy() and (Installer.can_pause() or Installer.job.pausing) then
+    App.quit(false)
+    return true
+  end
   if Ftp.running() then Ftp.stop_wait() end
   if Stream.running() then Stream.stop_wait() end
   if Recorder.running() then Recorder.stop_wait() end   -- o video e fechado e fica salvo

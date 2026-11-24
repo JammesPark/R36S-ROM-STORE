@@ -45,7 +45,7 @@ local function detail_line(e)
   if e.state == "error" then return (e.error and (require("lib.i18n").tr(e.error):gsub("\n", " "))) or L("Erro desconhecido.") end
   if e.state == "cancelled" then return L("Cancelado") .. (e.date and (L(" em ") .. e.date) or "") end
   if e.state == "waiting" then return L("Na fila: começa quando a operação atual terminar.") end
-  if e.state=="paused" then return L("Pausado").." • "..U.format_bytes(e.done or 0)..L(" guardados • Y: Retomar") end
+  if e.state=="paused" then return L("Pausado").." • "..U.format_bytes(e.done or 0)..L(" guardados • Y: Retomar")..(e.error and (" • "..tostring(e.error)) or "") end
   if e.job and e.job.pausing then return L("Salvando progresso...") end
   if e.state == "done" then
     local parts = { L("Concluído") .. (e.date and (L(" em ") .. e.date) or "") }
@@ -167,6 +167,7 @@ function S:draw()
   elseif sel and sel.state=="paused" then hints[#hints+1]={"y",L("Retomar")} end
   if sel and sel.state=="paused" then hints[#hints+1]={"x",L("Cancelar")}
   elseif Downloads.history_count() > 0 then hints[#hints + 1] = { "x", L("Limpar histórico") } end
+  hints[#hints+1]={"select",L("Wi-Fi")}
   hints[#hints + 1] = { "b", L("Voltar") }
   G.hints(hints)
 end
@@ -178,6 +179,7 @@ function S:action(act)
   if act == "up" and n > 0 then self.sel = math.max(1, self.sel - 1)
   elseif act == "down" and n > 0 then self.sel = math.min(n, self.sel + 1)
   elseif act == "b" then App.pop()
+  elseif act=="select" then App.push("wifi")
   elseif act=="y" and e then
     if Downloads.can_pause(e) then Downloads.pause(e)
     elseif e.state=="paused" then Downloads.resume(e) end

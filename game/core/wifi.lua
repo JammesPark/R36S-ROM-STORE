@@ -20,7 +20,7 @@ local W = {}
 W.SUDO = false          -- passa a usar "sudo -n" se o NetworkManager negar permissao
 
 local function nm(args)
-  return (W.SUDO and "sudo -n nmcli " or "nmcli ") .. args
+  return (W.SUDO and "sudo -n env LC_ALL=C nmcli " or "LC_ALL=C nmcli ") .. args
 end
 
 --- roda um comando e devolve saida, codigo de saida
@@ -73,16 +73,39 @@ local function lines(s)
 end
 
 -- ---------------------------------------------------------------------------
+-- Fallback somente para radio Wi-Fi, sem alterar servicos ou Ethernet.
+local function rf_status(st)
+  if not U.exec_ok("command -v rfkill >/dev/null 2>&1") then return st end
+  local out=U.capture([[for p in /sys/class/rfkill/rfkill*; do
+    [ "$(cat "$p/type" 2>/dev/null)" = wlan ] || continue
+    printf '%s %s\n' "$(cat "$p/soft" 2>/dev/null)" "$(cat "$p/hard" 2>/dev/null)"
+  done]]) or ""
+  local seen,on,hard=false,false,false
+  for soft,h in out:gmatch("([01])%s+([01])") do
+    seen=true
+    if soft=="0" and h=="0" then on=true end
+    if h=="1" then hard=true end
+  end
+  if seen then
+    st.radio,st.radio_backend,st.hard_block=on,"rfkill",hard
+    local ok,net=pcall(function() return require("core.net").status() end)
+    if ok and net and net.wireless then st.iface,st.ip,st.connected=net.iface,net.ip,net.connected end
+  end
+  return st
+end
+
 --- Estado geral: nmcli presente, adaptador, radio e conexao ativa
 function W.status()
   local st = {}
   if not U.exec_ok("command -v nmcli >/dev/null 2>&1") then
     st.nmcli = false
-    return st
+    return rf_status(st)
   end
   st.nmcli = true
   local out, code = nmrun("-t -f RUNNING general status")
-  st.nm_running = code == 0 and U.trim(out):lower():find("running", 1, true) ~= nil
+  st.nm_running = code == 0 and U.trim(out):lower()=="running"
+  if not st.nm_running then return rf_status(st) end
+  st.radio_backend="nmcli"
   out = nmrun("radio wifi")
   local r = U.trim(out):lower()
   if r == "enabled" then st.radio = true elseif r == "disabled" then st.radio = false end
@@ -106,6 +129,10 @@ function W.status()
     end
     if st.ip and st.ip:match("^127%.") then st.ip = nil end   -- nunca mostra loopback como Wi-Fi
     st.connected = st.state_code == 100 and st.ip ~= nil
+    if st.connected then
+      local ok,sig=pcall(function() return require("core.net").signal(st.iface) end)
+      if ok then st.signal=sig end
+    end
   end
   return st
 end
@@ -268,8 +295,19 @@ function W.forget(uuid)
 end
 
 function W.radio(on)
-  local out, code = nmrun("radio wifi " .. (on and "on" or "off"))
-  return code == 0, U.trim(out)
+  local st=W.status()
+  local out,code
+  if st.radio_backend=="nmcli" then
+    out,code=nmrun("radio wifi "..(on and "on" or "off"))
+  elseif st.radio_backend=="rfkill" then
+    if on and st.hard_block then return false,"Wi-Fi bloqueado fisicamente" end
+    local cmd="rfkill "..(on and "unblock" or "block").." wifi"
+    out,code=run(cmd)
+    if code~=0 then out,code=run("sudo -n "..cmd) end
+  else return false,"Controle de radio indisponivel neste firmware" end
+  if code~=0 then return false,U.trim(out) end
+  local final=W.status()
+  return final.radio==on,final.radio==on and "" or "O firmware nao confirmou a mudanca"
 end
 
 return W
