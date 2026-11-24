@@ -1,6 +1,6 @@
 -- Regressao: glifos premium da Central (sem imagens antigas), todos os temas,
 -- e Force Nexus Sith imediatamente apos Jedi sem reinstalar arquivos.
-package.path="game/?.lua;game/?/init.lua;"..package.path
+package.path="src/?.lua;src/?/init.lua;"..package.path
 
 local calls,pushes={},0
 local mock={}

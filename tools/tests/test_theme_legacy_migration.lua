@@ -1,7 +1,7 @@
 -- Testa migração offline de tema legado selecionado em uma versão anterior.
 -- Em nova instalacao so Jedi/Sith podem aparecer; copiar apenas preferencia
 -- ja salva, mantendo os outros 3 temas como opcionais no catalogo.
-package.path="game/?.lua;game/?/init.lua;"..package.path
+package.path="src/?.lua;src/?/init.lua;"..package.path
 package.loaded["lib.i18n"]={L=function(s)return s end}
 package.loaded["config"]={APP_DIR="/app"}
 package.loaded["lib.util"]={

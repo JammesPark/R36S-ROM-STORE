@@ -1,5 +1,5 @@
 -- Teste offline das dimensoes SDL versus painel fisico KMSDRM/fbdev.
-package.path = "game/?.lua;game/?/init.lua;" .. package.path
+package.path = "src/?.lua;src/?/init.lua;" .. package.path
 local D = require("core.display")
 local function near(a,b)
   assert(math.abs(a-b)<0.000001, tostring(a).." != "..tostring(b))
@@ -88,9 +88,9 @@ assert(D.label()=="640x480" and D.source=="fallback")
 local function read(path)
   local f=assert(io.open(path,"rb"));local s=f:read("*a");f:close();return s
 end
-local main=read("game/main.lua")
-local conf=read("game/conf.lua")
-local defs=read("game/ui/settings_defs.lua")
+local main=read("src/main.lua")
+local conf=read("src/conf.lua")
+local defs=read("src/ui/settings_defs.lua")
 for _,word in ipairs({
   'local Display = require("core.display")',
   'function App.configure_display(width, height)',

@@ -1,4 +1,4 @@
-package.path = "./game/?.lua;./game/?/init.lua;" .. package.path
+package.path = "./src/?.lua;./src/?/init.lua;" .. package.path
 -- LuaJIT CLI nao fornece o modulo utf8 do LÖVE.
 package.loaded["lib.i18n"] = {L=function(s) return s end}
 package.loaded["lib.util"] = {safe_utf8=function(s) return s end, trim=function(s) return (tostring(s):gsub("^%s+", ""):gsub("%s+$", "")) end, slug=function(s) return tostring(s):lower():gsub("[^%w%-]", "-") end}

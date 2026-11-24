@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Controla o numero da versao do R36SPORTSBR STORE (sem dependencias externas).
 
-Fonte principal: C.VERSION_NUM e C.VERSION em game/config.lua.
+Fonte principal: C.VERSION_NUM e C.VERSION em src/config.lua.
 Outras referencias documentais sao sincronizadas no comando bump.
 
 Uso:
@@ -16,8 +16,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG = ROOT / "game" / "config.lua"
-READMES = [ROOT / "README.md", ROOT / "r36sromsstore" / "README.md"]
+CONFIG = ROOT / "src" / "config.lua"
+READMES = [ROOT / "README.md", ROOT / "port" / "r36sromsstore" / "README.md"]
 CHANGELOG = ROOT / "CHANGELOG.md"
 LABEL = re.compile(r'(?m)^(C\.VERSION\s*=\s*L\(")([^"]+)("\))')
 NUMBER = re.compile(r'(?m)^(C\.VERSION_NUM\s*=\s*")([^"]+)(")')
@@ -30,7 +30,7 @@ def current():
     labels = list(LABEL.finditer(text))
     numbers = list(NUMBER.finditer(text))
     if len(labels) != 1 or len(numbers) != 1:
-        raise ValueError("game/config.lua: marcadores de versao ausentes ou duplicados")
+        raise ValueError("src/config.lua: marcadores de versao ausentes ou duplicados")
     a, b = labels[0].group(2), numbers[0].group(2)
     if a != b or not SEMVER.fullmatch(b):
         raise ValueError("C.VERSION e C.VERSION_NUM devem ser iguais e ter formato x.y.z[-beta]")

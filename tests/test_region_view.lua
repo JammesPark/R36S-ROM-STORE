@@ -1,5 +1,5 @@
 -- Teste de selos, nomes de exibicao e botoes L2/R2 (sem janela LÖVE).
-package.path = "./game/?.lua;./game/?/init.lua;" .. package.path
+package.path = "./src/?.lua;./src/?/init.lua;" .. package.path
 local now = 1
 love = { timer = { getTime = function() return now end } }
 local f = { getWidth = function(_, s) return #s * 6 end }

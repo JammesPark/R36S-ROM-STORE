@@ -1,4 +1,4 @@
-package.path="./game/?.lua;"..package.path
+package.path="./src/?.lua;"..package.path
 local queue, active, canceled={},nil,0
 love={timer={getTime=function()return 0 end},filesystem={createDirectory=function()end,getSaveDirectory=function()return "/save"end,getInfo=function()return nil end}}
 package.loaded["config"]={APP_DIR="/app",COVER_CACHE_MAX=14}

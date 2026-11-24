@@ -17,8 +17,8 @@ def entries(path):
 
 class SpanishTests(unittest.TestCase):
     def test_four_languages_and_flag(self):
-        core = (ROOT / "game/lib/i18n.lua").read_text(encoding="utf-8")
-        screen = (ROOT / "game/ui/screens/language.lua").read_text(encoding="utf-8")
+        core = (ROOT / "src/lib/i18n.lua").read_text(encoding="utf-8")
+        screen = (ROOT / "src/ui/screens/language.lua").read_text(encoding="utf-8")
         assert 'id = "es", name = "Español"' in core
         assert 'es = true' in core
         assert 'elseif id == "es"' in screen
@@ -26,7 +26,7 @@ class SpanishTests(unittest.TestCase):
         assert 'for i, l in ipairs(I18N.LANGS)' in screen
 
     def test_spanish_dictionary_is_valid_and_translates_main_flows(self):
-        rows = entries("game/i18n/es.lua")
+        rows = entries("src/i18n/es.lua")
         translations = dict(rows)
         self.assertEqual(len(rows), len(translations), "Chaves duplicadas")
         self.assertGreaterEqual(len(rows), 1200, "Traducoes principais ausentes")
@@ -42,14 +42,14 @@ class SpanishTests(unittest.TestCase):
                              f"Novas linhas divergentes: {k!r}")
 
     def test_legacy_languages_and_catalog_still_supported(self):
-        core = (ROOT / "game/lib/i18n.lua").read_text(encoding="utf-8")
-        catalog = (ROOT / "game/core/catalog.lua").read_text(encoding="utf-8")
+        core = (ROOT / "src/lib/i18n.lua").read_text(encoding="utf-8")
+        catalog = (ROOT / "src/core/catalog.lua").read_text(encoding="utf-8")
         self.assertIn('["pt-BR"] = true, en = true, es = true, ru = true', core)
         self.assertIn('for _, lang in ipairs({ "en", "es", "ru" })', catalog)
-        self.assertTrue((ROOT / "game/i18n/en.lua").is_file())
-        self.assertTrue((ROOT / "game/i18n/ru.lua").is_file())
+        self.assertTrue((ROOT / "src/i18n/en.lua").is_file())
+        self.assertTrue((ROOT / "src/i18n/ru.lua").is_file())
         self.assertIn('Idioma de todo o aplicativo: Português (Brasil), English, Español e Русский',
-                      (ROOT / "game/ui/settings_extra.lua").read_text(encoding="utf-8"))
+                      (ROOT / "src/ui/settings_extra.lua").read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

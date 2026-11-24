@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def generate(src, out, commit):
     src = Path(src).resolve()
     out = Path(out).resolve()
-    for protected in (ROOT / "game", ROOT / "r36sportsbrstore"):
+    for protected in (ROOT / "src", ROOT / "port" / "r36sromsstore"):
         if out.is_relative_to(protected.resolve()):
             raise ValueError(f"Destino protegido: {out}; gere em build/ para revisao.")
     if not src.is_file():

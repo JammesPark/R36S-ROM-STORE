@@ -1,4 +1,4 @@
-package.path="./game/?.lua;"..package.path
+package.path="./src/?.lua;"..package.path
 local reads, checks, now=0,0,0
 love={filesystem={read=function() reads=reads+1;return "data" end},timer={getTime=function()return now end}}
 package.loaded["lib.json"]={decode=function()return {installed={dest_dir="/roms/gb",system="gb",entries={"game.gb"},card="SD1"}}end}

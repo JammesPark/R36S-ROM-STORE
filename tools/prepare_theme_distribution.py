@@ -2,8 +2,8 @@
 """Prepara a distribuicao dos temas sem alterar os arquivos de origem no Git.
 
 A execucao ocorre DEPOIS do gerador de logos e dos previews Force:
-- Jedi/Sith entram em game/themes (instalados com a STORE);
-- quatro temas legados migram de game/themes para theme_packages (opcionais);
+- Jedi/Sith entram em src/themes (instalados com a STORE);
+- quatro temas legados migram de src/themes para theme_packages (opcionais);
 - o bundler cria theme_updates/ com dados de compatibilidade offline para
   quem ja usa um dos legados (nao entram como temas instalados novos).
 As fontes GPL e todos os creditos sao preservados integralmente.
@@ -22,7 +22,7 @@ ALLOWED = {"theme.json", "preview.png", "logo_header.png",
 
 
 def prepare(root: Path = ROOT):
-    included = root / "game" / "themes"
+    included = root / "src" / "themes"
     packages = root / "theme_packages"
     included.mkdir(parents=True, exist_ok=True)
     packages.mkdir(parents=True, exist_ok=True)

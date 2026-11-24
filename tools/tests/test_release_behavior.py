@@ -28,7 +28,7 @@ def check_game_love(data):
         assert 'if act == "b" then App.pop(); return end' in z.read("ui/screens/infolist.lua").decode("utf-8")
         assert '"licenses"' in z.read("main.lua").decode("utf-8")
         version = z.read("config.lua").decode("utf-8")
-        source_version = (Path(__file__).resolve().parents[2] / "game/config.lua").read_text(encoding="utf-8")
+        source_version = (Path(__file__).resolve().parents[2] / "src/config.lua").read_text(encoding="utf-8")
         expected = next(line for line in source_version.splitlines() if line.startswith("C.VERSION_NUM = "))
         assert expected in version, f"game.love tem versao divergente: {expected}"
         for theme in ("forcejedi","forcesith"):

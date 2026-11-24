@@ -1,4 +1,4 @@
-package.path="./game/?.lua;"..package.path
+package.path="./src/?.lua;"..package.path
 local P=require("core.catalog_presentation")
 for _,ext in ipairs({"mgw","rom","mx2","unf","pak","sc","sap"}) do
   assert(P.title("Jogo."..ext,"https://example.org/Jogo."..ext)=="Jogo",ext)

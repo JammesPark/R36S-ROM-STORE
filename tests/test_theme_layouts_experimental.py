@@ -2,7 +2,7 @@
 """Regressoes de temas, gatilhos e selos de regiao para a Experimental."""
 from pathlib import Path
 
-root = Path("game")
+root = Path("src")
 theme_ids = {p.name for p in (root / "themes").iterdir() if p.is_dir()}
 assert theme_ids == {"default", "neongrid"}, f"Temas em game.love: {sorted(theme_ids)}"
 for obsolete in ("forcejedi", "forcesith", "pastel", "wiiblue"):

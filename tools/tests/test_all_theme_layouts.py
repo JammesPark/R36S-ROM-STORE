@@ -21,15 +21,15 @@ EXPECTED = {
 }
 
 def check_logo_and_geometry():
-    main = Image.open(ROOT/"game/assets/logo/logo_header.png").convert("RGBA")
+    main = Image.open(ROOT/"src/assets/logo/logo_header.png").convert("RGBA")
     assert main.size == (140, 40), main.size
     bbox = main.getchannel("A").getbbox()
     assert bbox and bbox[0] >= 2 and bbox[1] >= 2
     assert bbox[2] <= 138 and bbox[3] <= 38
     assert 3.1 < (bbox[2]-bbox[0])/(bbox[3]-bbox[1]) < 3.6
-    raw = (ROOT/"game/assets/logo/logo_header.png").read_bytes()
+    raw = (ROOT/"src/assets/logo/logo_header.png").read_bytes()
     for name, (layout, x, y, tx) in EXPECTED.items():
-        subdir = ROOT/("game/themes" if name in ("forcejedi","forcesith") else "theme_packages")/name
+        subdir = ROOT/("src/themes" if name in ("forcejedi","forcesith") else "theme_packages")/name
         meta = json.loads((subdir/"theme.json").read_text())
         assert meta["id"] == name and meta["version"]
         assert (subdir/"logo_header.png").read_bytes() == raw, name
@@ -47,20 +47,20 @@ def check_logo_and_geometry():
         assert y+main.height*scale <= bottom-1, (name, scale)
         print(f"QA {name}: logo x={x}..{right:.1f}; texto x>={tx}; margem={tx-right:.1f}px")
     for path, snippets in {
-        "game/ui/force_dash.lua": ['local tx=math.max(196,14+(lw or 0)+32)'],
-        "game/ui/gfx.lua": ['local tx = math.max(190, (pill and 20 or 12) + lw + 30)'],
-        "game/ui/neon_dash.lua": ['local title_x = math.max(190, 12 + lw + 30)'],
-        "game/ui/xdash.lua": ['local title_x = math.max(190, 14 + lw + 30)'],
-        "game/ui/channels.lua": ['local name_x = math.max(190, 14 + lw + 30)'],
+        "src/ui/force_dash.lua": ['local tx=math.max(196,14+(lw or 0)+32)'],
+        "src/ui/gfx.lua": ['local tx = math.max(190, (pill and 20 or 12) + lw + 30)'],
+        "src/ui/neon_dash.lua": ['local title_x = math.max(190, 12 + lw + 30)'],
+        "src/ui/xdash.lua": ['local title_x = math.max(190, 14 + lw + 30)'],
+        "src/ui/channels.lua": ['local name_x = math.max(190, 14 + lw + 30)'],
     }.items():
         text=(ROOT/path).read_text(encoding="utf-8")
         for snippet in snippets:
             assert snippet in text, (path,snippet)
-    about=(ROOT/"game/ui/screens/about.lua").read_text(encoding="utf-8")
+    about=(ROOT/"src/ui/screens/about.lua").read_text(encoding="utf-8")
     assert 'G.logo(26, 66, "about", 1.04)' in about
     about_width=132*min(1.04,(165-26)/132,(140-66)/62)
     assert 26+about_width < 168  # Cartao Telegram
-    splash=(ROOT/"game/ui/screens/splash.lua").read_text(encoding="utf-8")
+    splash=(ROOT/"src/ui/screens/splash.lua").read_text(encoding="utf-8")
     assert 'G.logo(lx, 70, "splash")' in splash
     assert (640-252)//2 + 252 <= 640
 
@@ -69,7 +69,7 @@ def check_force_screens():
     from playwright.sync_api import sync_playwright
     out=ROOT/"dist"/"qa_all_themes"
     out.mkdir(parents=True,exist_ok=True)
-    png=base64.b64encode((ROOT/"game/assets/logo/logo_header.png").read_bytes()).decode()
+    png=base64.b64encode((ROOT/"src/assets/logo/logo_header.png").read_bytes()).decode()
     chrome=next((shutil.which(name) for name in
       ("google-chrome","google-chrome-stable","chromium","chromium-browser") if shutil.which(name)),None)
     with sync_playwright() as p:
@@ -77,7 +77,7 @@ def check_force_screens():
         if chrome: kw["executable_path"]=chrome
         browser=p.chromium.launch(**kw)
         for name in ("jedi","sith"):
-            source=ROOT/"design/force-v4"/(name+"-v4.html")
+            source=ROOT/"docs/design/force-v4"/(name+"-v4.html")
             page=browser.new_page(viewport={"width":640,"height":480},device_scale_factor=1)
             errors=[]
             page.on("pageerror",lambda error:errors.append(str(error)))

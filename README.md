@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="game/assets/logo/logo_splash.png" alt="R36S ROM HUB STORE — logo oficial" width="290">
+  <img src="src/assets/logo/logo_splash.png" alt="R36S ROM HUB STORE — logo oficial" width="290">
 </p>
 
 <h1 align="center">R36S ROM HUB STORE</h1>
@@ -110,13 +110,11 @@ O manual e os documentos técnicos herdados estão em `docs/` e serão revisados
 ## Estrutura do projeto
 
 ```text
-game/             Código-fonte Lua/LÖVE, temas e recursos
-r36sromsstore/    Arquivos de instalação no console
-tools/            Build e ferramentas de apoio
+src/              Código-fonte Lua/LÖVE, temas e recursos
+port/             Launcher e arquivos de instalação no console
+tools/            Build, ferramentas e serviços auxiliares
 tests/            Testes automatizados
-docs/             Documentação
-design/           Protótipos visuais
-services/         Serviços auxiliares
+docs/             Documentação, protótipos e arquivos históricos
 .github/          GitHub Actions
 ```
 

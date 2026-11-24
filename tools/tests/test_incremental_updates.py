@@ -37,12 +37,12 @@ def make_full(path, version, content):
 
 
 def make_source(path, version):
-    required = ["game/main.lua", "game/config.lua", "tools/mkart.py",
+    required = ["src/main.lua", "src/config.lua", "tools/mkart.py",
                 "tools/make_update.py", "LICENSE", "NOTICE.md",
                 "R36SPORTSBR STORE.sh", ".github/workflows/build.yml"]
     with zipfile.ZipFile(path, "w") as z:
         for name in required:
-            data = ('C.VERSION_NUM = "' + version + '"\n') if name == "game/config.lua" else "teste"
+            data = ('C.VERSION_NUM = "' + version + '"\n') if name == "src/config.lua" else "teste"
             z.writestr(name, data)
 
 

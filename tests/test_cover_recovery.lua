@@ -1,4 +1,4 @@
-package.path = "./game/?.lua;./game/?/init.lua;" .. package.path
+package.path = "./src/?.lua;./src/?/init.lua;" .. package.path
 local now, files, calls, logs = 0, {}, {}, {}
 love = {timer = {getTime = function() return now end},
   filesystem = {createDirectory = function() end, getSaveDirectory = function() return "/save" end,

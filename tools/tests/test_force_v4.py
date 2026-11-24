@@ -7,7 +7,7 @@ ROOT=Path(__file__).resolve().parents[2]
 class ForceV4Tests(unittest.TestCase):
     def test_source_html_kept_for_both(self):
         for side in ("jedi","sith"):
-            src=(ROOT/"design"/"force-v4"/(side+"-v4.html")).read_text(encoding="utf-8")
+            src=(ROOT/"docs"/"design"/"force-v4"/(side+"-v4.html")).read_text(encoding="utf-8")
             for part in ('class="vertical-carousel"','class="recent-panel"',
                          'class="tile-grid"','TOP 5 DOWNLOADS',
                          'NOVOS','EM BREVE','class="release-switch"'):
@@ -29,7 +29,7 @@ class ForceV4Tests(unittest.TestCase):
             self.assertIn('#stage .left .quicklinks{gap:4px}',src)
 
     def test_force_dash_has_no_highlight_hero(self):
-        lua=(ROOT/"game/ui/force_dash.lua").read_text(encoding="utf-8")
+        lua=(ROOT/"src/ui/force_dash.lua").read_text(encoding="utf-8")
         self.assertNotIn("draw_hero",lua)
         self.assertNotIn('"EM DESTAQUE"',lua)
         self.assertNotIn('txt(L("INÍCIO")',lua)
@@ -56,11 +56,11 @@ class ForceV4Tests(unittest.TestCase):
         self.assertIn('local function force_star',lua)
         self.assertIn('R36S PORTS BR STORE HUB',lua)
         self.assertNotIn('{"←","→"}',lua)
-        ranking=(ROOT/"game/ui/force_ranking.lua").read_text()
+        ranking=(ROOT/"src/ui/force_ranking.lua").read_text()
         self.assertIn('Covers.get(p)',ranking)
         self.assertIn('item.catalog==catalog',ranking)
         self.assertIn('G.cover',ranking)
-        standard=(ROOT/"game/ui/screens/ranking.lua").read_text()
+        standard=(ROOT/"src/ui/screens/ranking.lua").read_text()
         self.assertIn('T.style.layout == "force"',standard)
         self.assertIn('ui.force_ranking',standard)
         # Regressao: a tela Force precisa retornar ANTES de G.header legado.
@@ -75,20 +75,20 @@ class ForceV4Tests(unittest.TestCase):
         self.assertLess(custom_header,custom_title)
 
     def test_sith_and_jedi_independent_112(self):
-        j=json.loads((ROOT/"game/themes/forcejedi/theme.json").read_text())
+        j=json.loads((ROOT/"src/themes/forcejedi/theme.json").read_text())
         for side in ("jedi","sith"):
             d=json.loads((ROOT/"theme_packages"/("force"+side)/"theme.json").read_text())
             self.assertEqual(d["id"],"force"+side)
             self.assertEqual(d["version"],"1.0.12")
             self.assertEqual(d["style"]["layout"],"force")
         self.assertEqual(j["version"],"1.0.12")
-        themes=(ROOT/"game/core/themes.lua").read_text()
+        themes=(ROOT/"src/core/themes.lua").read_text()
         self.assertIn('M.FIRST = "forcejedi"',themes)
         for preserved in ("default","wiiblue","neongrid","pastel"):
-            old=ROOT/"game/themes"/preserved/"theme.json"
+            old=ROOT/"src/themes"/preserved/"theme.json"
             optional=ROOT/"theme_packages"/preserved/"theme.json"
             self.assertTrue(old.exists() or optional.exists())
-            if (ROOT/"game/themes/forcesith/theme.json").exists():
+            if (ROOT/"src/themes/forcesith/theme.json").exists():
                 self.assertFalse(old.exists(),preserved)
                 self.assertTrue(optional.exists(),preserved)
 
@@ -105,12 +105,12 @@ class ForceV4Tests(unittest.TestCase):
         render=(ROOT/"tools"/"render_force_v4.py").read_text(encoding="utf-8")
         self.assertIn("from make_brand_logos import main as build_brand",render)
         for side in ("jedi","sith"):
-            html=(ROOT/"design"/"force-v4"/(side+"-v4.html")).read_text(encoding="utf-8")
+            html=(ROOT/"docs"/"design"/"force-v4"/(side+"-v4.html")).read_text(encoding="utf-8")
             self.assertIn("const LOGO_DATA = 'data:image/png;base64,",html)
             self.assertIn("EDITION · v1.0.12",html)
 
     def test_zip_whitelist_background_and_selected_tiles(self):
-        for file in ("game/threads/theme_store_thread.lua","game/core/theme_store.lua"):
+        for file in ("src/threads/theme_store_thread.lua","src/core/theme_store.lua"):
             text=(ROOT/file).read_text()
             self.assertIn("background_v4.png",text)
             self.assertIn("selected_tiles_v4.png",text)

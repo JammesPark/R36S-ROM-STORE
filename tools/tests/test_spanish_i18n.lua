@@ -13,7 +13,7 @@ package.preload["utf8"] = function()
     error("codepoint not expected")
   end }
 end
-package.path = "game/?.lua;game/?/init.lua;" .. package.path
+package.path = "src/?.lua;src/?/init.lua;" .. package.path
 local I = require("lib.i18n")
 assert(#I.LANGS == 4, "deve haver quatro idiomas")
 assert(I.valid("pt-BR") and I.valid("en") and I.valid("es") and I.valid("ru"))

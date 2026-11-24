@@ -17,13 +17,19 @@ def main():
     required = set(data["protected_existing_files"])
     required.update(data["restored_original_files"])
     required.update(data.get("additional_protected_files", []))
-    bad = sorted(p for p in required if not (ROOT / p).is_file())
+    def repo_path(p):
+        mapping = {"game/": "src/", "r36sromsstore/": "port/r36sromsstore/", "design/": "docs/design/", "services/": "tools/services/"}
+        exact = {"R36S ROMS STORE.sh": "port/R36S ROMS STORE.sh", "publicar.sh": "docs/preservacao/publicar-desativado.sh", "temas.json": "docs/preservacao/temas.json", "update_manifest.json": "docs/preservacao/update_manifest.json", "GUIA_GITHUB_CATALOGOS.txt": "docs/GUIA_GITHUB_CATALOGOS.txt"}
+        if p in exact:
+            return exact[p]
+        return next((v + p[len(k):] for k, v in mapping.items() if p.startswith(k)), p)
+    bad = sorted(p for p in required if not (ROOT / repo_path(p)).is_file())
     if bad:
         raise SystemExit("Arquivos protegidos ausentes:\n" + "\n".join(bad))
 
     # O backup offline do Lira precisa ser copia integral de ports.json.
     source = (ROOT / "ports.json").read_bytes()
-    offline = (ROOT / "game/catalog/lira_catalog_original.json").read_bytes()
+    offline = (ROOT / "src/catalog/lira_catalog_original.json").read_bytes()
     if source != offline:
         raise SystemExit("Catalogo original offline diverge do ports.json restaurado")
     cat = json.loads(offline.decode("utf-8"))
@@ -31,8 +37,8 @@ def main():
         raise SystemExit("O catalogo offline do Lira ficou vazio ou invalido")
 
     # As fontes da STORE nao podem desaparecer durante atualizacoes.
-    for file in ["game/catalog/catalog.json", "game/catalog/lira_catalog.json",
-                 "game/core/portstorage.lua", "game/config.lua",
+    for file in ["src/catalog/catalog.json", "src/catalog/lira_catalog.json",
+                 "src/core/portstorage.lua", "src/config.lua",
                  "R36SPORTSBR STORE.sh", "NOTICE.md", "LICENSE"]:
         if not (ROOT / file).is_file():
             raise SystemExit("Arquivo proprio da STORE ausente: " + file)
@@ -41,7 +47,7 @@ def main():
     workflow = (ROOT / ".github/workflows/import-source.yml").read_text(encoding="utf-8")
     if "if: false" not in workflow or "contents: read" not in workflow:
         raise SystemExit("Workflow legado perigoso nao esta desativado")
-    pub = (ROOT / "publicar.sh").read_text(encoding="utf-8")
+    pub = (ROOT / "docs/preservacao/publicar-desativado.sh").read_text(encoding="utf-8")
     if "exit 1" not in pub:
         raise SystemExit("Publicador original nao esta bloqueado")
 

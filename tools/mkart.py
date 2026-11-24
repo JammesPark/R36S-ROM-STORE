@@ -18,7 +18,7 @@ except ImportError as exc:
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_LOGO = ROOT / "r36sportsbrstore/logo.png"
-FONT = ROOT / "game/assets/fonts/ChakraPetch-SemiBold.ttf"
+FONT = ROOT / "src/assets/fonts/ChakraPetch-SemiBold.ttf"
 
 # Azul profundo e cinza: identidade moderna, sem estetica retro, sol ou grade.
 DARK = (10, 17, 33)

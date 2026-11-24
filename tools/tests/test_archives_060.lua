@@ -1,5 +1,5 @@
 -- Testes de TAR, senhas, multipartes e pendencias SD1/SD2 sem interface LÖVE.
-package.path="game/?.lua;game/?/init.lua;"..package.path
+package.path="src/?.lua;src/?/init.lua;"..package.path
 local files = {
   ["/roms/ports"] = {
     "rar.part1.rar", "rar.part2.rar", "game.zip", "game.z01", "game.z02",

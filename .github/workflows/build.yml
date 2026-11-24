@@ -2,7 +2,7 @@ name: Validar e empacotar R36S ROMS STORE
 
 on:
   push:
-    branches: [main, experimental/0.6.7-beta-20261121]
+    branches: [main, experimental/0.6.7-beta-20261121, experimental/reorganizacao-repositorio]
   pull_request:
   workflow_dispatch:
     inputs:
@@ -36,14 +36,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -f game/main.lua
-          test -f game/config.lua
-          test -f 'R36S ROMS STORE.sh'
-          test -d r36sromsstore
+          test -f src/main.lua
+          test -f src/config.lua
+          test -f 'port/R36S ROMS STORE.sh'
+          test -d port/r36sromsstore
           test -f LICENSE
           test -f NOTICE.md
           grep -q 'Lag do Lira' NOTICE.md
-          find game -type f -name '*.lua' -print0 | while IFS= read -r -d '' f; do
+          find src -type f -name '*.lua' -print0 | while IFS= read -r -d '' f; do
             luajit -b "$f" /dev/null
           done
 

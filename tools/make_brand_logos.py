@@ -54,10 +54,10 @@ def build(root=ROOT):
         "logo_about.png": fit(logo, 132, 62, padding=4),
         "logo_splash.png": fit(logo, 252, 170, padding=7),
     }
-    theme_folders = [root / "game" / "themes" / n for n in
+    theme_folders = [root / "src" / "themes" / n for n in
                      ("default", "neongrid", "wiiblue", "pastel", "forcejedi")]
     theme_folders += [root / "theme_packages" / n for n in ("forcejedi", "forcesith")]
-    theme_folders += [root / "game" / "assets" / "logo"]
+    theme_folders += [root / "src" / "assets" / "logo"]
     for folder in theme_folders:
         folder.mkdir(parents=True, exist_ok=True)
         for name, image in variants.items():

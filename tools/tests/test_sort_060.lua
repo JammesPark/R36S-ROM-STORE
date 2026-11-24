@@ -1,5 +1,5 @@
 -- A-Z / Recentes e alternancia X sem abrir janela do LÖVE.
-package.path="game/?.lua;game/?/init.lua;"..package.path
+package.path="src/?.lua;src/?/init.lua;"..package.path
 package.loaded["lib.i18n"]={L=function(s)return s end,tr=function(s)return s end}
 package.loaded["ui.theme"]={c={}}
 package.loaded["lib.util"]={}

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Reproduz EXACTAMENTE o HTML V4 em PNG: fundo real sem dados ficticios
 e preview ilustrativo. Executado no GitHub Actions antes de montar game.love.
-Fontes HTML originais: design/force-v4/*.html.
+Fontes HTML originais: docs/design/force-v4/*.html.
 """
 from pathlib import Path
 import shutil
@@ -34,7 +34,7 @@ def render(page,filename,theme,preview):
     # Preview HTML sempre usa o mesmo icone oficial atualizado pelo gerador.
     # Sem isso, a logo renderizada no preview diverge do PNG exibido no Hub.
     from base64 import b64encode
-    image64=b64encode((ROOT/"game/assets/logo/logo_header.png").read_bytes()).decode("ascii")
+    image64=b64encode((ROOT/"src/assets/logo/logo_header.png").read_bytes()).decode("ascii")
     page.evaluate("""async (data) => {
       const logo=document.querySelector('#brandLogo');
       if (logo) {
@@ -104,7 +104,7 @@ def main():
         browser=p.chromium.launch(**kwargs)
         try:
             for theme in ("JEDI","SITH"):
-                src=ROOT/"design"/"force-v4"/(theme.lower()+"-v4.html")
+                src=ROOT/"docs"/"design"/"force-v4"/(theme.lower()+"-v4.html")
                 if not src.exists():raise RuntimeError("HTML V4 de referencia ausente: "+str(src))
                 page=browser.new_page(viewport={"width":640,"height":480},
                                       device_scale_factor=1,reduced_motion="reduce")
@@ -117,7 +117,7 @@ def main():
                 package=ROOT/"theme_packages"/("force"+theme.lower())
                 for n in ("background_v4.png","preview.png","selected_tiles_v4.png"):check_png(package/n)
                 if theme=="JEDI":
-                    dest=ROOT/"game/themes/forcejedi"
+                    dest=ROOT/"src/themes/forcejedi"
                     for n in ("background_v4.png","preview.png","selected_tiles_v4.png"):
                         shutil.copy2(package/n,dest/n)
                         check_png(dest/n)

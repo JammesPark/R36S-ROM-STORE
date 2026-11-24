@@ -100,7 +100,7 @@ class GeneratorTests(unittest.TestCase):
                             "--a4", a4_json, "--ae", dk_json,
                             "--ini", ini, "--dk-commit", "testdk",
                             "--a4-commit", "testa4", "--ae-commit", "testae",
-                            "--out", ROOT / "game/data/console_signatures.json",
+                            "--out", ROOT / "src/data/console_signatures.json",
                             expect_ok=False)
 
     def test_invalid_dtb_rejected(self):
@@ -120,7 +120,7 @@ class GeneratorTests(unittest.TestCase):
             self.assertIn("M.SYSTEMS", source)
             self.assertIn("M.LIST", source)
             self.assertGreater(source.count("{ n = "), 50)
-            self.run_script("mkbiosdb.py", "--out", ROOT / "game/core/bios_db.lua",
+            self.run_script("mkbiosdb.py", "--out", ROOT / "src/core/bios_db.lua",
                             expect_ok=False)
 
     def test_arts_are_generated_without_touching_existing_images(self):

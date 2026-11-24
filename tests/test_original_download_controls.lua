@@ -1,4 +1,4 @@
-package.path="./game/?.lua;"..package.path
+package.path="./src/?.lua;"..package.path
 love={graphics={}}
 local calls={}
 local function hit(k)calls[k]=(calls[k] or 0)+1 end

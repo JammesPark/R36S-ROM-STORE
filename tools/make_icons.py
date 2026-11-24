@@ -8,7 +8,7 @@ O app pinta cada icone com a cor do tema (ui/icons.lua). Estilo unico:
 traco de 5 px (na escala 64) com pontas arredondadas, cantos arredondados,
 preenchimentos so em detalhes pequenos.
 
-Uso: python3 tools/make_icons.py (requer Pillow; nao altera game/assets)
+Uso: python3 tools/make_icons.py (requer Pillow; nao altera src/assets)
 """
 import math
 import os

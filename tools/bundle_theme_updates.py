@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Empacota temas extras da STORE para sincronizar na atualizacao geral.
 
-Todos os temas internos vivem em game/themes dentro do game.love. Temas
+Todos os temas internos vivem em src/themes dentro do game.love. Temas
 opcionais em theme_packages só são instalados/atualizados se o usuario ja
 os tiver instalado; core/themes.lua verifica user_themes/<id>/theme.json.
 O pacote inclui somente arquivos de dados, jamais codigo fornecido por temas.
@@ -18,8 +18,8 @@ REQUIRED = {"theme.json", "preview.png", "logo_header.png"}
 
 def bundle(root=ROOT):
     supplied = root/"theme_packages"
-    included = root/"game"/"themes"
-    target = root/"game"/"theme_updates"
+    included = root/"src"/"themes"
+    target = root/"src"/"theme_updates"
     if target.exists():
         shutil.rmtree(target)  # apenas arquivos gerados; nunca user_themes/
     target.mkdir(parents=True)

@@ -5,7 +5,7 @@
 
 Entrada: três JSONs extraídos dos DTBs públicos e r36_devices.ini.
 Saída padrão: build/generated-data/console_signatures.json
-NÃO altera game/data/console_signatures.json nem executa git clone.
+NÃO altera src/data/console_signatures.json nem executa git clone.
 """
 import argparse
 import datetime
@@ -29,7 +29,7 @@ def load_entries(path):
 
 def forbid_live_outputs(out):
     resolved = out.resolve()
-    for protected in (ROOT / "game", ROOT / "r36sportsbrstore"):
+    for protected in (ROOT / "src", ROOT / "port" / "r36sromsstore"):
         if resolved.is_relative_to(protected.resolve()):
             raise ValueError(f"Saída protegida: {resolved}. Gere no build/ para revisão.")
 

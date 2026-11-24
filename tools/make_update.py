@@ -20,7 +20,7 @@ Uso:
       com update_manifest.json na raiz. Pronto para a pasta r36sportsbrstore/update.
 
 PORTS_DIR e a pasta "ports" gerada pelo build (tem "R36SPORTSBR STORE.sh" e r36sportsbrstore/).
-A versao e lida de game/config.lua (C.VERSION_NUM e C.VERSION).
+A versao e lida de src/config.lua (C.VERSION_NUM e C.VERSION).
 
 Notas da versao (aparecem no hub antes de instalar e na primeira abertura):
   --mudanca / --correcao podem repetir; ou um arquivo --notas com linhas
@@ -36,7 +36,7 @@ PROTECTED = {"conf", "tmp", "logs", "gravacoes", "update", "backups", "bios", "b
 
 
 def version():
-    src = open(os.path.join(ROOT, "game", "config.lua"), encoding="utf-8").read()
+    src = open(os.path.join(ROOT, "src", "config.lua"), encoding="utf-8").read()
     num = re.search(r'C\.VERSION_NUM\s*=\s*"([^"]+)"', src).group(1)
     lab = re.search(r'C\.VERSION\s*=\s*L\("([^"]+)"\)', src).group(1)
     return num, lab
@@ -133,7 +133,7 @@ def cmd_incremental(a):
     base = json.load(open(a.base, encoding="utf-8"))
     num, lab = version()
     if base.get("version") == num:
-        sys.exit("a versao em game/config.lua (%s) e a mesma da base: aumente C.VERSION_NUM" % num)
+        sys.exit("a versao em src/config.lua (%s) e a mesma da base: aumente C.VERSION_NUM" % num)
     changed = [p for p in hub_files(a.ports) if base["files"].get(p) != sha256(os.path.join(a.ports, p))]
     if not changed:
         sys.exit("nenhum arquivo mudou desde a base")

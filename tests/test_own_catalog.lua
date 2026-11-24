@@ -34,7 +34,7 @@ os.rename = function(src, dst)
   return true
 end
 os.remove = function(path) disk[path] = nil; return true end
-local Own = dofile("game/core/own_source.lua")
+local Own = dofile("src/core/own_source.lua")
 local data, source, bytes = Own.read()
 assert(data == decoded and source == "own-local" and bytes == raw)
 assert(Own.remember(bytes), "backup valido deve ser gravado")

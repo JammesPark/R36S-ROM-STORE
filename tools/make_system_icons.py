@@ -10,7 +10,7 @@ centro em degrade. Desenhos genericos por tipo de aparelho: sem logotipos,
 marcas ou personagens. Os nomes dos arquivos sao os sistemas do
 es_systems.cfg do dArkOSRE (e alguns nomes comuns de outros sistemas).
 
-Uso: python3 tools/make_system_icons.py (requer Pillow; nao altera game/assets)
+Uso: python3 tools/make_system_icons.py (requer Pillow; nao altera src/assets)
 """
 import math
 import os

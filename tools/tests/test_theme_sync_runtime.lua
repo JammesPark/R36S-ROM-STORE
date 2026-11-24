@@ -1,7 +1,7 @@
 -- Teste de comportamento REAL da sincronizacao de temas no inicio do LÖVE.
 -- Simula love.filesystem: copia somente temas opcionais previamente instalados,
 -- preserva extras, bloqueia downgrade e nao confirma versao em copia parcial.
-package.path = "game/?.lua;game/?/init.lua;" .. package.path
+package.path = "src/?.lua;src/?/init.lua;" .. package.path
 package.loaded["lib.i18n"] = {L=function(s) return s end}
 package.loaded["config"] = {}
 package.loaded["lib.util"] = {

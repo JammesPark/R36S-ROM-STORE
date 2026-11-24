@@ -1,5 +1,5 @@
 -- Atualizacao direta v0.0.33-beta -> v0.6.0-beta, inclusive saltando versoes.
-package.path="game/?.lua;game/?/init.lua;"..package.path
+package.path="src/?.lua;src/?/init.lua;"..package.path
 package.loaded["lib.i18n"]={L=function(s)return s end}
 package.loaded["config"]={VERSION_NUM="0.0.33-beta"}
 package.loaded["lib.util"]={}

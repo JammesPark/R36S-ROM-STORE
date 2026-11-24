@@ -1,6 +1,6 @@
 -- Confirma que "BAIXAR NOVOS TEMAS" fica sempre no topo da tela Temas.
 -- Teste de logica sem janela LÖVE nem hardware do console.
-package.path = "game/?.lua;game/?/init.lua;" .. package.path
+package.path = "src/?.lua;src/?/init.lua;" .. package.path
 love = {graphics = {}}
 package.loaded["lib.i18n"] = {L = function(s) return s end}
 package.loaded["ui.theme"] = {}

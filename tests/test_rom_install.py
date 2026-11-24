@@ -1,5 +1,5 @@
 import tempfile,zipfile,tarfile,importlib.util,io,pathlib,argparse,os
-f=str(__import__('pathlib').Path(__file__).resolve().parents[1] / 'game/threads/rom_install.py')
+f=str(__import__('pathlib').Path(__file__).resolve().parents[1] / 'src/threads/rom_install.py')
 spec=importlib.util.spec_from_file_location('rominst',f)
 r=importlib.util.module_from_spec(spec);spec.loader.exec_module(r)
 failures=[]

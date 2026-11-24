@@ -1,5 +1,5 @@
 -- Valida o roteamento cumulativo sem abrir a janela LÖVE.
-package.path = "game/?.lua;game/?/init.lua;" .. package.path
+package.path = "src/?.lua;src/?/init.lua;" .. package.path
 package.loaded["lib.i18n"] = { L = function(s) return s end }
 package.loaded["config"] = { VERSION_NUM = "0.0.13-beta" }
 package.loaded["lib.util"] = {}

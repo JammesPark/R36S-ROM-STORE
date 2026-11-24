@@ -1,6 +1,6 @@
 -- Teste runtime puro: nao permite textos e cartoes invadir status, previews
 -- ou rodape na tela 640x480, em fontes normais e ampliadas.
-package.path="game/?.lua;game/?/init.lua;"..package.path
+package.path="src/?.lua;src/?/init.lua;"..package.path
 local rec = {}
 local function event(tp,t) t.type=tp;rec[#rec+1]=t;return t end
 local function font(h)

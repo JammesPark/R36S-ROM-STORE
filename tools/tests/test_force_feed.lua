@@ -1,5 +1,5 @@
 -- Dados reais: Novidades ordenadas por inclusao, Em Breve sem download.
-package.path = "game/?.lua;game/?/init.lua;" .. package.path
+package.path = "src/?.lua;src/?/init.lua;" .. package.path
 local Catalog = { ports = {}, news = {} }
 package.loaded["core.catalog"] = Catalog
 local Feed = require("core.force_feed")

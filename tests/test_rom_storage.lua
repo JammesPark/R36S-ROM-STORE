@@ -1,4 +1,4 @@
-package.path='./game/?.lua;./game/?/init.lua;'..package.path
+package.path='./src/?.lua;./src/?/init.lua;'..package.path
 package.loaded['lib.i18n']={L=function(s)return s end}
 package.loaded['lib.util']={
  is_dir=function(p) return p=='/roms' or p=='/roms2' or p=='/roms/gba' or p=='/roms2/snes' end,

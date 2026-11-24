@@ -1,4 +1,4 @@
-package.path="./game/?.lua;"..package.path
+package.path="./src/?.lua;"..package.path
 local T=require("ui.theme")
 local P=require("ui.color_schemes")
 local original={bg0=T.hex("#07100A"),accent=T.hex("#4CD964"),green=T.hex("#4CD964"),red=T.hex("#FF4D6A")}
@@ -59,7 +59,7 @@ local persisted="neongrid"
 love.filesystem={read=function()return persisted end,write=function(_,v)persisted=v;return true end}
 package.loaded["core.themes"]=nil
 local Themes=require("core.themes")
-local f=assert(io.open("game/themes/default/theme.json","r"))
+local f=assert(io.open("src/themes/default/theme.json","r"))
 local pulse_meta=require("lib.json").decode(f:read("*a"));f:close()
 assert(pulse_meta.colors.accent:upper()=="#60A5FA")
 assert(pulse_meta.colors.bg0:upper()=="#080F1D")

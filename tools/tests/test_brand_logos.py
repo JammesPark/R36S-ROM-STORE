@@ -47,10 +47,10 @@ class BrandLogoTests(unittest.TestCase):
                 self.assertGreaterEqual(bbox[1], 2, filename)
                 self.assertLessEqual(bbox[2], image.width-2, filename)
                 self.assertLessEqual(bbox[3], image.height-2, filename)
-                data = (root/"game"/"assets"/"logo"/filename).read_bytes()
+                data = (root/"src"/"assets"/"logo"/filename).read_bytes()
                 for theme in ("default","neongrid","wiiblue","pastel","forcejedi"):
                     self.assertEqual(data,
-                        (root/"game"/"themes"/theme/filename).read_bytes())
+                        (root/"src"/"themes"/theme/filename).read_bytes())
                 for theme in ("forcejedi","forcesith"):
                     self.assertEqual(data,
                         (root/"theme_packages"/theme/filename).read_bytes())
@@ -59,10 +59,10 @@ class BrandLogoTests(unittest.TestCase):
             bbox=launcher.getchannel("A").getbbox()
             self.assertTrue(4 <= bbox[0] < bbox[2] <= 124)
             self.assertTrue(4 <= bbox[1] < bbox[3] <= 124)
-            self.assertFalse((root/"game"/"assets"/"logo"/"dev_logo.png").exists())
+            self.assertFalse((root/"src"/"assets"/"logo"/"dev_logo.png").exists())
 
     def test_lua_prevents_theme_scaling_cuts(self):
-        lua = (ROOT/"game"/"ui"/"gfx.lua").read_text(encoding="utf-8")
+        lua = (ROOT/"src"/"ui"/"gfx.lua").read_text(encoding="utf-8")
         self.assertIn('if variant == "header" then', lua)
         # A logo global tem que ser tentada ANTES da imagem do tema instalado.
         global_img=lua.index('"assets/logo/logo_" .. variant .. ".png"')
@@ -73,12 +73,12 @@ class BrandLogoTests(unittest.TestCase):
         self.assertIn('G.rect(tx - 12, 10, 1, 20',lua)
         self.assertGreaterEqual(190-(12+140*0.9),25)
         for path,marker in (
-            ("game/ui/channels.lua","local name_x = math.max(190, 14 + lw + 30)"),
-            ("game/ui/neon_dash.lua","local title_x = math.max(190, 12 + lw + 30)"),
-            ("game/ui/xdash.lua","local title_x = math.max(190, 14 + lw + 30)"),
+            ("src/ui/channels.lua","local name_x = math.max(190, 14 + lw + 30)"),
+            ("src/ui/neon_dash.lua","local title_x = math.max(190, 12 + lw + 30)"),
+            ("src/ui/xdash.lua","local title_x = math.max(190, 14 + lw + 30)"),
         ):
             self.assertIn(marker,(ROOT/path).read_text(encoding="utf-8"))
-        force=(ROOT/"game/ui/force_dash.lua").read_text(encoding="utf-8")
+        force=(ROOT/"src/ui/force_dash.lua").read_text(encoding="utf-8")
         self.assertIn('G.logo(14,2,"header",1)',force)
         self.assertIn('local tx=math.max(196,14+(lw or 0)+32)',force)
         self.assertGreaterEqual(196-(14+140),22)
@@ -86,7 +86,7 @@ class BrandLogoTests(unittest.TestCase):
         self.assertIn('(bottom - y - 2) / img:getHeight()', lua)
         self.assertIn('elseif variant == "menu" then', lua)
         self.assertIn('elseif variant == "about" then', lua)
-        about=(ROOT/"game/ui/screens/about.lua").read_text(encoding="utf-8")
+        about=(ROOT/"src/ui/screens/about.lua").read_text(encoding="utf-8")
         self.assertIn('G.logo(26, 66, "about", 1.04)',about)
         self.assertLess(26+132*1.04,168)
         self.assertLess(66+62*1.04,146)
@@ -108,10 +108,10 @@ class BrandLogoTests(unittest.TestCase):
 
     def test_force_preview_reuses_brand_header_asset(self):
         script=(ROOT/"tools"/"render_force_v4.py").read_text(encoding="utf-8")
-        self.assertIn('ROOT/"game/assets/logo/logo_header.png"',script)
+        self.assertIn('ROOT/"src/assets/logo/logo_header.png"',script)
         self.assertIn('await logo.decode()',script)
         for side in ("jedi","sith"):
-            html=(ROOT/"design/force-v4"/(side+"-v4.html")).read_text(encoding="utf-8")
+            html=(ROOT/"docs/design/force-v4"/(side+"-v4.html")).read_text(encoding="utf-8")
             self.assertIn('.brandlogo{width:140px;height:38px;',html)
             self.assertNotIn('filter:hue-rotate(239deg)',html)
             self.assertIn('.brand{margin-left:26px;',html)

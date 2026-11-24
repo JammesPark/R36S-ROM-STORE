@@ -1,4 +1,4 @@
-package.path="game/?.lua;game/?/init.lua;"..package.path
+package.path="src/?.lua;src/?/init.lua;"..package.path
 local db={}
 love={filesystem={
  read=function(k)return db[k] end,

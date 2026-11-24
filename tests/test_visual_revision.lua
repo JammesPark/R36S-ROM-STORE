@@ -1,4 +1,4 @@
-package.path="./game/?.lua;"..package.path
+package.path="./src/?.lua;"..package.path
 love={graphics={}}
 package.loaded["lib.i18n"]={L=function(s)return s end}
 package.loaded["config"]={}

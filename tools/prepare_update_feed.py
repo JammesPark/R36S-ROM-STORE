@@ -76,14 +76,16 @@ def create_feed(package: Path, source: Path, version: str,
             if bad:
                 raise ValueError(f"ZIP de fonte corrompido: {bad}")
             contents = set(z.namelist())
+            source_dir = "src" if "src/config.lua" in contents else "game"
+            launcher = "port/R36S ROMS STORE.sh" if source_dir == "src" else "R36SPORTSBR STORE.sh"
             required = {
-                "game/main.lua", "game/config.lua", "tools/mkart.py",
+                f"{source_dir}/main.lua", f"{source_dir}/config.lua", "tools/mkart.py",
                 "tools/make_update.py", "LICENSE", "NOTICE.md",
-                "R36SPORTSBR STORE.sh", ".github/workflows/build.yml",
+                launcher, ".github/workflows/build.yml",
             }
             if not required.issubset(contents):
                 raise ValueError(f"Código-fonte incompleto: {sorted(required-contents)}")
-            cfg = z.read("game/config.lua").decode("utf-8")
+            cfg = z.read(f"{source_dir}/config.lua").decode("utf-8")
             if f'C.VERSION_NUM = "{version}"' not in cfg:
                 raise ValueError("Versão do código-fonte diverge do aplicativo")
     except (zipfile.BadZipFile, json.JSONDecodeError, KeyError) as error:

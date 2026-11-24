@@ -2,7 +2,7 @@
 """Assegura que a edicao Experimental nao consulte a API de jogos anterior."""
 from pathlib import Path
 
-root = Path("game")
+root = Path("src")
 for path in root.rglob("*.lua"):
     data = path.read_text(encoding="utf-8")
     assert "getgames.php" not in data, f"Endpoint antigo no runtime: {path}"

@@ -9,14 +9,14 @@ A loja e a identidade visual permanecem independentes.
 | `tools/make_update.py` | Gera o manifesto completo de hashes SHA-256, uma baseline e pacotes incrementais de atualização para **r36sromsstore/** e **R36S ROMS STORE.sh**. Não publica nem instala automaticamente. |
 | `tools/make_icons.py` | Gera ícones de linha herdados do projeto-base, para inspeção e eventual aproveitamento na loja. |
 | `tools/make_system_icons.py` | Gera artes de sistemas/consoles herdadas, para inspeção e eventual aproveitamento. Usa `make_icons.py`. |
-| `tools/build.sh` | Empacota `game/` em `game.love`, monta a árvore `build/ports/`, atualiza manifesto completo e gera ZIP instalável. |
+| `tools/build.sh` | Empacota `src/` em `game.love`, monta a árvore `build/ports/`, atualiza manifesto completo e gera ZIP instalável. |
 
 ## Comandos
 
 ```sh
 sh tools/build.sh
 python3 tools/make_update.py baseline build/ports build/versao-base.json
-# Depois de alterar C.VERSION_NUM em game/config.lua e gerar um novo build:
+# Depois de alterar C.VERSION_NUM em src/config.lua e gerar um novo build:
 python3 tools/make_update.py incremental --base build/versao-base.json --ports build/ports --out build/atualizacao.zip --desc "Atualização da STORE"
 ```
 
@@ -27,7 +27,7 @@ python3 tools/make_icons.py
 python3 tools/make_system_icons.py
 ```
 
-**Segurança:** os geradores escrevem por padrão em `build/generated-assets/`, **não** em `game/assets/`. Use `R36SBR_ICON_OUT` e `R36SBR_SYSTEM_ICON_OUT` para escolher outro diretório, e revise os resultados antes de integrá-los. A criação de pacotes trabalha em `build/`, sem alterar a instalação do console, os catálogos, a logo, temas, SD1/SD2 ou os arquivos de `game/`.
+**Segurança:** os geradores escrevem por padrão em `build/generated-assets/`, **não** em `src/assets/`. Use `R36SBR_ICON_OUT` e `R36SBR_SYSTEM_ICON_OUT` para escolher outro diretório, e revise os resultados antes de integrá-los. A criação de pacotes trabalha em `build/`, sem alterar a instalação do console, os catálogos, a logo, temas, SD1/SD2 ou os arquivos de `src/`.
 
 A geração de incrementais não habilita, por si só, atualizações remotas no console: a publicação de releases, URL própria de atualização e integração de download serão configuradas separadamente.
 
@@ -49,7 +49,7 @@ python3 tools/mkconsoledb.py \
   --out build/generated-data/console_signatures.json
 ```
 
-**Importante:** informar os SHAs reais dos commits das três fontes; não inventar identificação de placa. Comparar a base gerada com `game/data/console_signatures.json` antes de adotar novas assinaturas. O script não substitui a base ativa.
+**Importante:** informar os SHAs reais dos commits das três fontes; não inventar identificação de placa. Comparar a base gerada com `src/data/console_signatures.json` antes de adotar novas assinaturas. O script não substitui a base ativa.
 
 Para gerar a base de BIOS a partir do `System.dat` preservado:
 
@@ -58,7 +58,7 @@ python3 tools/mkbiosdb.py --source tools/ref/System.dat \
   --out build/generated-data/bios_db.lua
 ```
 
-A base ativa `game/core/bios_db.lua` não é alterada. O arquivo DAT é uma referência de hashes, **não** distribui ROMs/BIOS protegidas.
+A base ativa `src/core/bios_db.lua` não é alterada. O arquivo DAT é uma referência de hashes, **não** distribui ROMs/BIOS protegidas.
 
 Para gerar capas de prévia no estilo moderno da STORE:
 
@@ -67,7 +67,7 @@ python3 -m pip install Pillow
 python3 tools/mkart.py --out build/generated-assets/art
 ```
 
-Saídas: `cover.png` (640×480) e `fanart.png` (1280×720), utilizando a logo existente em `r36sromsstore/logo.png`. Isso não altera o tema nem substitui imagens já aprovadas.
+Saídas: `cover.png` (640×480) e `fanart.png` (1280×720), utilizando a logo existente em `port/r36sromsstore/logo.png`. Isso não altera o tema nem substitui imagens já aprovadas.
 
 Testes isolados, inclusive um DTB sintético e validação de destinos protegidos:
 
@@ -77,5 +77,5 @@ python3 -m unittest discover -s tools/tests -p 'test_*.py' -v
 
 ## Ferramentas preservadas e não ativadas automaticamente
 
-- `publicar.sh`: manipula publicação/lançamentos e URLs do projeto original; exige redesenho seguro antes de usar no nosso repositório.
+- `docs/preservacao/publicar-desativado.sh`: manipula publicação/lançamentos e URLs do projeto original; exige redesenho seguro antes de usar no nosso repositório.
 - Os scripts adaptados de hardware/BIOS/artes são **ferramentas offline de desenvolvimento**: não executam automaticamente no console nem substituem arquivos da STORE. A aplicação continua com as bases já aprovadas.
