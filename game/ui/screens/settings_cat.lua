@@ -9,8 +9,8 @@ local lg = love.graphics
 
 local S = {}
 
-local X, W = 16, 640 - 32
-local LIST_Y, ROW_H, GAP, VISIBLE = 50, 42, 4, 6
+local X, W = 220, 406
+local LIST_Y, ROW_H, GAP, VISIBLE = 84, 42, 4, 5
 local FOOT_Y = LIST_Y + VISIBLE * (ROW_H + GAP) + 4
 
 local function txt(v, scr)
@@ -20,6 +20,8 @@ end
 
 function S:enter(p)
   self.cat = Defs.BY_ID[p.id]
+  self.cat_index=require("ui.screens.settings").index(p.id)
+  self.sidebar_top=p.sidebar_top or 0
   self.sel, self.top = 1, 0
   if self.cat.enter then self.cat.enter(self) end
   self:rebuild()
@@ -28,7 +30,7 @@ end
 function S:rebuild()
   local r = self.cat.rows
   self.rows = type(r) == "function" and r(self) or r
-  if self.sel > #self.rows then self.sel = #self.rows end
+  self.sel=math.max(1,math.min(self.sel,#self.rows))
 end
 
 function S:resume()
@@ -70,7 +72,7 @@ local function slider(xr, y, v, minv, dim, c)
   local pct = string.format("%d%%", v)
   local pw = 46
   G.text(T.f.bodyb, pct, xr - pw, y + 2, dim and T.c.faint or T.c.text, "right", pw)
-  local tw = 150
+  local tw = 88
   local tx = xr - pw - 12 - tw
   local f = (v - minv) / (100 - minv)
   f = math.max(0, math.min(1, f))
@@ -84,8 +86,10 @@ end
 
 function S:draw()
   local cat = self.cat
-  G.header(cat.name, L("Configurações"))
+  G.header(L("Configurações"))
+  self.sidebar_top=require("ui.screens.settings").sidebar(self.cat_index,self.sidebar_top,false)
   local ccol = color(cat.color)
+  G.text_fit(T.f.bodyb,cat.name,X+8,55,W-16,ccol)
 
   if self.sel > self.top + VISIBLE then self.top = self.sel - VISIBLE end
   if self.sel <= self.top then self.top = self.sel - 1 end
@@ -133,7 +137,7 @@ function S:draw()
       left = xr - 16
       local v = r.value and txt(r.value, self)
       if v and v ~= "" then
-        local maxw = 220
+        local maxw = 118
         local vw = math.min(maxw, T.f.small:getWidth(v))
         G.text_fit(T.f.small, v, left - 6 - vw, cy + 4, maxw, T.c.dim)
         left = left - 6 - vw
@@ -141,17 +145,17 @@ function S:draw()
     elseif r.kind == "info" then
       local v = txt(r.value, self) or ""
       local lw = T.f.bodyb:getWidth(txt(r.label, self))
-      local maxw = W - 28 - lw - 24
+      local maxw = math.max(44,math.min(142,W - 28 - lw - 24))
       local vw = math.min(maxw, T.f.bodyb:getWidth(v))
       G.text_fit(T.f.bodyb, v, xr - vw, cy + 2, maxw, r.color and r.color(self) or T.c.text)
       left = xr - vw
     end
-    local lx = X + 16
+    local lx = X + 12
     if r.icon then
       Icons.draw(r.icon, lx, cy - 1, on and ccol or T.c.dim, 1)
       lx = lx + 32
     end
-    G.text_fit(T.f.bodyb, txt(r.label, self), lx, cy + 2, left - lx - 12,
+    G.text_fit(T.f.bodyb, txt(r.label, self), lx, cy + 2, math.max(25,left - lx - 8),
       dim and T.c.faint or (on and T.c.text or T.c.dim))
     y = y + ROW_H + GAP
   end
@@ -168,15 +172,12 @@ function S:draw()
   local fh = 436 - FOOT_Y
   G.panel(X, FOOT_Y, W, fh, { bg = T.c.bg1 })
   G.rect(X, FOOT_Y, 4, fh, ccol, 2)
-  Icons.draw(cat.icon, X + 16, FOOT_Y + 12, ccol, 1)
+  G.text_fit(T.f.small,cat.desc or "",X+12,FOOT_Y+7,W-24,T.c.faint)
   if r then
-    G.text_fit(T.f.bodyb, txt(r.label, self), X + 52, FOOT_Y + 10, W - 70, T.c.text)
-    -- descricao: com texto maior, a fonte desce ate caber; se nao couber, encurta
-    local ty = FOOT_Y + 12 + math.max(20, T.f.bodyb:getHeight())
-    local df, lines, dlh = G.fit_lines(T.f.small, txt(r.desc, self) or "", W - 70, FOOT_Y + fh - 6 - ty, true)
-    for k = 1, #lines do
-      G.text(df, lines[k], X + 52, ty + (k - 1) * dlh, T.c.dim)
-    end
+    G.text_fit(T.f.bodyb,txt(r.label,self),X+12,FOOT_Y+26,W-24,T.c.text)
+    local ty=FOOT_Y+48
+    local df,lines,dlh=G.fit_lines(T.f.small,txt(r.desc,self) or "",W-24,FOOT_Y+fh-6-ty,true)
+    for k,line in ipairs(lines) do G.text(df,line,X+12,ty+(k-1)*dlh,T.c.dim) end
   end
 
   local hints = { { "dpad", L("Navegar") } }
@@ -191,8 +192,8 @@ end
 function S:action(act)
   local n = #self.rows
   local r = self.rows[self.sel]
-  if act == "up" then self.sel = (self.sel - 2) % n + 1
-  elseif act == "down" then self.sel = self.sel % n + 1
+  if act == "up" and n>0 then self.sel = (self.sel - 2) % n + 1
+  elseif act == "down" and n>0 then self.sel = self.sel % n + 1
   elseif act == "b" then App.pop()
   elseif not r then return
   elseif r.kind == "toggle" and (act == "a" or act == "left" or act == "right") then

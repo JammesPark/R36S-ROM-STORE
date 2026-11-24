@@ -295,6 +295,12 @@ local function apply(res, source)
     local c=Catalog.by_category[key] or {}; Catalog.by_category[key]=c; c[#c+1]=p
   end
   Catalog.categories = res.categories
+  Catalog.rom_total=#(Catalog.by_section.games or {})
+  Catalog.system_total=0
+  for _,c in ipairs(res.categories) do
+    if c.section=="games" then Catalog.system_total=Catalog.system_total+1 end
+  end
+  Catalog.online_verified=source=="own-online"
   Catalog.warnings = res.warnings
   Catalog.title = res.title
   Catalog.updated = res.updated
@@ -308,6 +314,7 @@ end
 function Catalog.get_remote_url() return C.OWN_CATALOG_URL end
 -- As telas recebem lista ordenada mesmo se o SD tiver a ordem antiga.
 function Catalog.systems() return Presentation.systems(Catalog.categories) end
+function Catalog.totals() return Catalog.rom_total or 0,Catalog.system_total or 0 end
 
 function Catalog.load_local()
   Catalog.remote_url = Catalog.get_remote_url()
@@ -341,6 +348,8 @@ function Catalog.load_local()
   if #Catalog.ports == 0 then
     Catalog.ports, Catalog.by_id, Catalog.categories = {}, {}, {}
     Catalog.source = "none"
+    Catalog.rom_total,Catalog.system_total=0,0
+    Catalog.online_verified=false
   end
   return false
 end
@@ -363,6 +372,7 @@ function Catalog.on_remote(ok, path, reason)
   local own = require("core.own_source")
   if #Catalog.ports > 0 and U.read_file(own.path) == bytes and Catalog.source ~= "own-embedded" then
     Catalog.remote_state, Catalog.remote_error = "ok", ""
+    Catalog.online_verified=true
     return true, "Catálogo já atualizado.", false
   end
   local payload, err = own.decode_remote(bytes)

@@ -62,6 +62,7 @@ local BADGE = {
 --   Meus Ports (params.mine = true): abas Jogos | Utilitarios & Ferramentas (so instalados)
 -- As duas areas nunca aparecem na mesma listagem.
 function S:enter(params)
+  self.installed_only=params.installed_only==true
   self.mine = params.mine and true or false
   self.favs = params.favs and true or false
   self.section = params.section or "games"
@@ -77,7 +78,16 @@ end
 
 function S:build_tabs()
   local tabs = {}
-  if self.mine or self.favs then
+  if self.installed_only then
+    self.installed_rows=require("core.rom_installed").list(Catalog)
+    tabs[1]={id="installed",section="games",label=L("Todos")}
+    local seen={}
+    for _,q in ipairs(self.installed_rows) do seen[q.category_id]=q.category or q.category_id end
+    local ordered={}
+    for id,name in pairs(seen) do ordered[#ordered+1]={id=id,name=name} end
+    table.sort(ordered,require("core.catalog_presentation").less)
+    for _,c in ipairs(ordered) do tabs[#tabs+1]={id="cat:"..c.id,section="games",label=c.name} end
+  elseif self.mine or self.favs then
     for _, sec in ipairs(Cats.SECTIONS) do
       tabs[#tabs + 1] = { id = self.mine and "installed" or "favs", section = sec.id, label = sec.name }
     end
@@ -104,6 +114,15 @@ function S:refresh()
   local cur = self.items and self.items[self.sel]
   Covers.reset_pending()
   self.items = {}
+  if self.installed_only then
+    for _,p in ipairs(self.installed_rows or {}) do
+      if self.filter=="installed" or self.filter=="cat:"..p.category_id then self.items[#self.items+1]=p end
+    end
+    self.sel=1
+    if cur then for i,p in ipairs(self.items) do if p.id==cur.id then self.sel=i;break end end end
+    self:clamp()
+    return
+  end
   -- ferramentas integradas (Manutencao) primeiro; depois os ports do catalogo
   if not self.mine and not self.favs then
     for _, t in ipairs(Tools.for_filter(self.section, self.filter)) do self.items[#self.items + 1] = t end
@@ -148,6 +167,7 @@ function S:on_catalog()
 end
 
 function S:resume()
+  if self.installed_only then self:build_tabs() end
   if self.mine and self.section=="tools" then Manifest.refresh_locations() end
   self:refresh()
 end
@@ -163,6 +183,7 @@ function S:clamp()
 end
 
 function S:title()
+  if self.installed_only then return L("Instalados") end
   if self.mine then return L("Meus Ports") end
   if self.favs then return L("Favoritos") end
   return Cats.SECTION_BY_ID[self.section].name
@@ -212,7 +233,7 @@ function S:draw_list()
     local area = Cats.SECTION_BY_ID[self.section].name
     if self.filter == "favs" then
       msg, sub = L("Lista vazia"), L("Nenhum favorito em ") .. area .. L(".\nNa loja, pressione SELECT sobre um port para marcar com a estrela.")
-    elseif self.filter == "installed" and self.section=="games" then
+    elseif self.installed_only or (self.filter == "installed" and self.section=="games") then
       msg,sub=L("Nada instalado"),L("Nenhuma ROM baixada por este aplicativo até agora.")
     elseif self.filter == "installed" then
       msg, sub = L("Nada instalado"), L("Nenhum port de ") .. area .. L(" instalado no console.")
@@ -425,20 +446,25 @@ function S:draw()
     self:draw_preview()
   end
   local tabword = (self.mine or self.favs) and L("Área") or L("Categoria")
-  if self.filter == "installed" then
+  -- Rodape: L2/R2 mudam a visualizacao; as abas continuam L1/R1 no topo.
+  local left_key,right_key,footer_label="l1","r1",tabword
+  if self.section=="games" and Themes.current=="default" then
+    left_key,right_key,footer_label="l2","r2",L("Visualização")
+  end
+  if self.filter == "installed" or self.installed_only then
     local current = self.items[self.sel]
     local fav_text = (current and not current.builtin)
       and (Favorites.is(current) and L("Desfavoritar") or L("Favoritar")) or L("Favoritos")
     G.hints({ { "a", (current and current.builtin) and L("Abrir") or L("Detalhes") },
       { "x", L("Pesquisar") }, { "select", fav_text }, { "b", L("Voltar") },
-      { "l1", "" }, { "r1", tabword } })
+      { left_key, "" }, { right_key, footer_label } })
   else
     local cur = self.items[self.sel]
     local fav_text = (cur and not cur.builtin)
       and (Favorites.is(cur) and L("Desfavoritar") or L("Favoritar")) or L("Favoritos")
     local hints = { { "a", (cur and cur.builtin) and L("Abrir") or L("Ver detalhes") },
       { "x", L("Pesquisar") }, { "select", fav_text }, { "b", L("Voltar") },
-      { "l1", "" }, { "r1", tabword }, { "y", L("Atualizar") } }
+      { left_key, "" }, { right_key, footer_label }, { "y", L("Atualizar") } }
     G.hints(hints)
   end
 end
@@ -490,7 +516,8 @@ function S:action(act)
     App.toast(on and (p.name .. L(" adicionado aos favoritos")) or (p.name .. L(" removido dos favoritos")), "info")
     if self.favs then self:refresh() end
   elseif act == "x" then
-    App.push("search", { from = "store" })
+    App.push("search", { from = "store", installed_only=self.installed_only,
+      system=self.installed_only and self.filter:match("^cat:(.+)$") or nil })
   elseif act == "y" then
     App.refresh_catalog(true)
   end

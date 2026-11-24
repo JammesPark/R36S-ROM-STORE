@@ -240,16 +240,17 @@ function S:draw()
   -- status
   local sy = py + ph + 12
   G.panel(px, sy, pw, 76, { bg = T.c.bg1 })
-  local online = Catalog.source == "online"
+  local online = Catalog.online_verified and Catalog.remote_state == "ok"
   local dot = Catalog.remote_state == "loading" and T.c.yellow or (online and T.c.green or T.c.orange)
   G.color(dot); lg.circle("fill", px + 20, sy + 19, 4)
-  local st = Catalog.remote_state == "loading" and L("Sincronizando catálogo...") or Catalog.source_label()
+  local st = Catalog.remote_state == "loading" and L("Sincronizando catálogo...")
+    or (online and L("Catálogo (online)") or (#Catalog.ports>0 and L("Catálogo (SD)") or L("Catálogo indisponível")))
   G.text_fit(T.f.bodyb, st, px + 32, sy + 10, pw - 48, T.c.text)
-  -- Total fixo documentado no snapshot GameStoreBR (20 plataformas,
-  -- soma das contagens = 13.424), NAO o total parcial em cache.
-  local catalog_ref=require("core.rom_catalog_reference")
+  -- Contagem real do ultimo catalogo validado, remoto ou local.
+  local roms,systems=Catalog.totals()
+  local count=tostring(roms):reverse():gsub("(%d%d%d)","%1."):reverse():gsub("^%.","")
   G.text_fit(T.f.small, string.format(L("%s ROMs no catálogo  •  %d sistemas"),
-      catalog_ref.formatted_total(), catalog_ref.systems),
+      count, systems),
     px+16,sy+32,pw-32,T.c.dim)
   local stats=require("core.rom_console_stats")
   local cnt=stats.state=="done" and tostring(stats.total or 0)
@@ -281,26 +282,13 @@ local function draw_item(p, px, py, pw, ox, a, glow)
   local slide_x, slide_y = px+10+ox, py+27
   local slide_w, slide_h = pw-20, 274
   G.rect(slide_x,slide_y,slide_w,slide_h,T.c.bg0,8,a)
-  G.frame(slide_x,slide_y,slide_w,slide_h,type_color(p),8,1,a*.60)
-  -- A imagem ocupa o maior retangulo possivel na area do slide,
-  -- preservando a proporcao real (retrato/paisagem/quadrada), sem cortar.
+  -- Sem moldura na capa em destaque; ampliar para toda a area disponivel.
   local img=Covers.get(p)
-  local maxw,maxh=slide_w-12,230
-  local cw,ch=184,230  -- tamanho seguro ate a capa estar disponivel
-  if img then
-    local iw,ih=img:getDimensions()
-    if iw>0 and ih>0 then
-      local fit=math.min(maxw/iw,maxh/ih)
-      cw,ch=iw*fit,ih*fit
-    end
-  end
-  local cx=slide_x+(slide_w-cw)/2
-  local cy=slide_y+3+(maxh-ch)/2
-  G.cover(img,p,cx,cy,cw,ch,Covers.is_loading(p),App.t)
-  if a<1 then G.rect(cx,cy,cw,ch,T.c.bg0,4,1-a)
-  elseif glow then
-    G.frame(cx-1,cy-1,cw+2,ch+2,type_color(p),4,2,App.pulse(.55,.25,2.2))
-  end
+  local cw,ch=slide_w-8,230
+  local cx=slide_x+4
+  local cy=slide_y+3
+  G.cover(img,p,cx,cy,cw,ch,Covers.is_loading(p),App.t,{borderless=true,stretch=true})
+  if a<1 then G.rect(cx,cy,cw,ch,T.c.bg0,0,1-a) end
   local tx=slide_x+10
   G.text_fit(T.f.bodyb,p.name,tx,slide_y+237,slide_w-20,with_alpha(T.c.text,a))
   local category=tostring(p.category or "")
@@ -572,9 +560,9 @@ end
 function S.open(id)
   if id == "roms" or id == "store" then App.push("store", { section="games", filter="all" })
   elseif id == "bios" then App.push("bios")
-  elseif id == "tools" or id == "categories" then App.push("store", { section="tools", filter="all" })
+  elseif id == "tools" or id == "categories" then App.push("utilities")
   elseif id == "search" then App.push("search")
-  elseif id == "installed" then App.push("store", { section="games", filter="installed" })
+  elseif id == "installed" then App.push("store", { section="games", filter="installed", installed_only=true })
   elseif id == "library" then App.push("library")
   elseif id == "favorites" then App.push("store", { favs = true })
   elseif id == "downloads" then App.open_downloads(false)

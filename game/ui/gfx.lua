@@ -305,17 +305,19 @@ local function initials(name)
 end
 
 --- Desenha a capa (imagem com ajuste "cover") ou uma capa gerada
-function G.cover(img, p, x, y, w, h, loading, t)
-  G.rect(x + 2, y + 3, w, h, T.c.shadow, 6)
+function G.cover(img, p, x, y, w, h, loading, t, options)
+  options=options or {}
+  if not options.borderless then G.rect(x + 2, y + 3, w, h, T.c.shadow, 6) end
   if img then
     local iw, ih = img:getDimensions()
     local s = math.max(w / iw, h / ih)
     local dw, dh = iw * s, ih * s
     G.clip(x, y, w, h)
     lg.setColor(1, 1, 1, 1)
-    lg.draw(img, x + (w - dw) / 2, y + (h - dh) / 2, 0, s, s)
+    if options.stretch then lg.draw(img,x,y,0,w/iw,h/ih)
+    else lg.draw(img, x + (w - dw) / 2, y + (h - dh) / 2, 0, s, s) end
     G.unclip()
-    G.frame(x, y, w, h, T.c.line, 4)
+    if not options.borderless then G.frame(x, y, w, h, T.c.line, 4) end
     return
   end
   G.clip(x, y, w, h)
@@ -351,7 +353,7 @@ function G.cover(img, p, x, y, w, h, loading, t)
     G.rect(x + w / 2 - 12, y + h - 12, 24, 4, T.c.text, 2, 0.3 + 0.5 * a)
   end
   G.unclip()
-  G.frame(x, y, w, h, T.c.line, 4)
+  if not options.borderless then G.frame(x, y, w, h, T.c.line, 4) end
 end
 
 --- Fundo com grade e linhas de varredura (pre-renderizado uma vez)

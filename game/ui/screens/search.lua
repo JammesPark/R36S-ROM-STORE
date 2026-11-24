@@ -31,7 +31,9 @@ local function norm(s)
   return (s:gsub("%s+", " "))
 end
 
-function S:enter()
+function S:enter(params)
+  self.installed_only=params and params.installed_only==true
+  self.system=params and params.system
   self.query = ""
   self.kr, self.kc = 1, 1
   self.focus = "keys"
@@ -47,10 +49,11 @@ function S:search(keep)
   local q = norm(self.query):gsub("^%s+", ""):gsub("%s+$", "")
   local res = {}
   if q ~= "" then
-    for _, p in ipairs(Catalog.ports) do
+    local source=self.installed_only and require("core.rom_installed").list(Catalog) or Catalog.ports
+    for _, p in ipairs(source) do
       local n = norm(p.name)
       local pos = n:find(q, 1, true)
-      if pos then
+      if pos and (not self.system or p.category_id==self.system) then
         res[#res + 1] = { p = p, rank = (pos == 1 or n:sub(pos - 1, pos - 1) == " ") and 0 or 1 }
       end
     end

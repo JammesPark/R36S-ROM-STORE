@@ -24,8 +24,8 @@ local NX, NY, NW, NH = 180, 204, 448, 182 -- caixa da descricao no NEON GRID
 local function neon() return T.style.layout ~= nil end   -- dashboard, channels ou carousel
 
 function S:enter(params)
-  Manifest.rescan()
   self.port = params.port
+  if self.port.section~="games" then Manifest.rescan() end
   self.btn = 1
   self.scroll = 0
   self:layout()
@@ -165,7 +165,7 @@ end
 function S:draw()
   if neon() then return self:draw_neon() end
   local p = self.port
-  G.header(L("Detalhes do port"))
+  G.header(p.section == "games" and L("Detalhes da ROM") or L("Detalhes do utilitário"))
 
   -- capa
   G.cover(Covers.get(p), p, 20, 56, 200, 267, Covers.is_loading(p), App.t)
@@ -328,7 +328,7 @@ end
 
 function S:draw_neon()
   local p = self.port
-  G.header(L("Detalhes do port"))
+  G.header(p.section == "games" and L("Detalhes da ROM") or L("Detalhes do utilitário"))
   local acc = p.section == "tools" and T.c.green or T.c.accent
   -- capa em destaque com moldura neon
   local cx, cy, cw, ch = 16, 52, 150, 200

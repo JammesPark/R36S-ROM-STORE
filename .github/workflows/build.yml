@@ -50,6 +50,7 @@ jobs:
           luajit tests/test_cover_focus.lua
           luajit tests/test_rom_status_cache.lua
           luajit tests/test_original_download_controls.lua
+          luajit tests/test_visual_revision.lua
           luajit tests/test_region_view.lua
           PYTHONDONTWRITEBYTECODE=1 python3 tests/test_catalog_offline.py
           PYTHONDONTWRITEBYTECODE=1 python3 tests/test_theme_layouts_experimental.py
