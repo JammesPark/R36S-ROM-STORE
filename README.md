@@ -10,8 +10,22 @@
   <a href="https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases/latest"><img alt="Versão oficial" src="https://img.shields.io/github/v/release/JammesPark/R36S-ROM-STORE-UPDATES?style=for-the-badge&color=2563eb&label=Vers%C3%A3o"></a>
   <img alt="R36S e R36H" src="https://img.shields.io/badge/Console-R36S%20%7C%20R36H-0891b2?style=for-the-badge">
   <img alt="Sistemas: dArkOSRE, dArkOS, dArkOSen, ArkOS, ArchR, Omni36OS" src="https://img.shields.io/badge/Sistema-dArkOSRE%20%7C%20dArkOS%20%7C%20dArkOSen%20%7C%20ArkOS%20%7C%20ArchR%20%7C%20Omni36OS-ffdc49?style=for-the-badge">
-  <img alt="LÖVE 11.5" src="https://img.shields.io/badge/L%C3%96VE-11.5-db2777?style=for-the-badge">
   <a href="LICENSE"><img alt="GPL-3.0" src="https://img.shields.io/badge/Licen%C3%A7a-GPL--3.0-16a34a?style=for-the-badge"></a>
+</p>
+
+<p align="center">
+  <a href="https://www.lua.org/"><img alt="Lua" src="https://img.shields.io/badge/Lua-000080?style=for-the-badge&logo=lua&logoColor=white"></a>
+  <a href="https://love2d.org/"><img alt="LÖVE 11.5" src="https://img.shields.io/badge/L%C3%96VE-11.5-db2777?style=for-the-badge"></a>
+  <a href="https://luajit.org/"><img alt="LuaJIT" src="https://img.shields.io/badge/LuaJIT-Runtime-000080?style=for-the-badge"></a>
+  <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"></a>
+  <img alt="Shell Script" src="https://img.shields.io/badge/Shell_Script-4EAA25?style=for-the-badge&logo=gnubash&logoColor=white">
+  <img alt="HTML5" src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white">
+  <img alt="JSON" src="https://img.shields.io/badge/JSON-333333?style=for-the-badge&logo=json&logoColor=white">
+  <img alt="YAML" src="https://img.shields.io/badge/YAML-CB171E?style=for-the-badge&logo=yaml&logoColor=white">
+  <img alt="XML" src="https://img.shields.io/badge/XML-005A9C?style=for-the-badge">
+  <img alt="Markdown" src="https://img.shields.io/badge/Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white">
+  <a href="https://github.com/features/actions"><img alt="GitHub Actions" src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white"></a>
+  <a href="https://www.cloudflare.com/"><img alt="Cloudflare R2" src="https://img.shields.io/badge/Cloudflare-R2-F38020?style=for-the-badge&logo=cloudflare&logoColor=white"></a>
 </p>
 
 <p align="center">
@@ -193,21 +207,6 @@ A pasta `docs/` preserva também documentos do projeto-base, que podem citar ver
 ---
 
 ## 🧰 Tecnologias utilizadas
-
-<p align="center">
-  <a href="https://www.lua.org/"><img alt="Lua" src="https://img.shields.io/badge/Lua-000080?style=for-the-badge&logo=lua&logoColor=white"></a>
-  <a href="https://love2d.org/"><img alt="LÖVE 11.5" src="https://img.shields.io/badge/L%C3%96VE-11.5-db2777?style=for-the-badge"></a>
-  <a href="https://luajit.org/"><img alt="LuaJIT" src="https://img.shields.io/badge/LuaJIT-Runtime-000080?style=for-the-badge"></a>
-  <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"></a>
-  <img alt="Shell Script" src="https://img.shields.io/badge/Shell_Script-4EAA25?style=for-the-badge&logo=gnubash&logoColor=white">
-  <img alt="HTML5" src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white">
-  <img alt="JSON" src="https://img.shields.io/badge/JSON-333333?style=for-the-badge&logo=json&logoColor=white">
-  <img alt="YAML" src="https://img.shields.io/badge/YAML-CB171E?style=for-the-badge&logo=yaml&logoColor=white">
-  <img alt="XML" src="https://img.shields.io/badge/XML-005A9C?style=for-the-badge">
-  <img alt="Markdown" src="https://img.shields.io/badge/Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white">
-  <a href="https://github.com/features/actions"><img alt="GitHub Actions" src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white"></a>
-  <a href="https://www.cloudflare.com/"><img alt="Cloudflare R2" src="https://img.shields.io/badge/Cloudflare-R2-F38020?style=for-the-badge&logo=cloudflare&logoColor=white"></a>
-</p>
 
 | Tecnologia | Aplicação |
 |---|---|
