@@ -229,7 +229,7 @@ Para gerar o pacote: `sh tools/build.sh`. O GitHub Actions valida LuaJIT, testes
 
 ## 💬 Comunidade
 
-Canal oficial: [Telegram — R36SPORTSBR](https://t.me/R36SPORTSBR).
+Canal oficial: [Telegram]().
 
 Relatos de bugs e sugestões: [GitHub Issues](https://github.com/JammesPark/R36S-ROM-STORE/issues).
 
