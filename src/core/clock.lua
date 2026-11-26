@@ -1,5 +1,5 @@
 -- =============================================================================
---  Relogio do R36S ROMS STORE: hora REAL do sistema, mostrada no formato que o
+--  Relogio do R36S ROM STORE: hora REAL do sistema, mostrada no formato que o
 --  usuario escolheu (12/24 h e ordem da data).
 --
 --  Por que um deslocamento proprio: um programa em execucao nao percebe quando

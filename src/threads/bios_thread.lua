@@ -1,5 +1,5 @@
 -- =============================================================================
---  R36S ROMS STORE - BIOS do Sistema (thread)
+--  R36S ROM STORE - BIOS do Sistema (thread)
 --  Operacoes: info (fonte), download, scan (BIOS do console), analyze (pacote),
 --  install, restore (backup) e clean (arquivos de instalacao).
 --

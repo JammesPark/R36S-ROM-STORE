@@ -1,6 +1,6 @@
-# R36S ROMS STORE — contador de downloads (Cloudflare Workers + D1)
+# R36S ROM STORE — contador de downloads (Cloudflare Workers + D1)
 
-Backend da R36S ROMS STORE, baseado no Worker do projeto, sem misturar os dois catálogos.
+Backend da R36S ROM STORE, baseado no Worker do projeto, sem misturar os dois catálogos.
 
 ## Estado e seguranca
 

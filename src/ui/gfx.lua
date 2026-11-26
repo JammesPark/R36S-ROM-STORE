@@ -624,7 +624,7 @@ end
 function G.logo_box(x,y,w,h,variant)
   local img=logo_img(variant or "header")
   if not img then
-    G.text_fit(T.f.bodyb,L("R36S ROMS STORE"),x,y+math.floor((h-T.f.bodyb:getHeight())/2),w,T.c.text)
+    G.text_fit(T.f.bodyb,L("R36S ROM STORE"),x,y+math.floor((h-T.f.bodyb:getHeight())/2),w,T.c.text)
     return w
   end
   local iw,ih=img:getDimensions()
@@ -690,8 +690,8 @@ function G.logo(x, y, variant, scale)
   end
   -- reserva: texto (se a imagem faltar)
   local f = variant == "header" and T.f.pix8 or T.f.pix16
-  G.text(f, L("R36S ROMS STORE"), x, y + 4, T.c.text)
-  return f:getWidth("R36S ROMS STORE"), f:getHeight() + 8
+  G.text(f, L("R36S ROM STORE"), x, y + 4, T.c.text)
+  return f:getWidth("R36S ROM STORE"), f:getHeight() + 8
 end
 
 -- ---------------------------------------------------------------------------

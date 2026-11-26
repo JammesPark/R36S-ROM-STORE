@@ -371,7 +371,7 @@ function S:paste(target)
   end
   -- nunca colar dentro da pasta do proprio hub
   if target == C.APP_DIR or target:sub(1, #C.APP_DIR + 1) == C.APP_DIR .. "/" then
-    App.toast(L("Não dá para colar dentro da pasta do R36S ROMS STORE."), "warn"); return
+    App.toast(L("Não dá para colar dentro da pasta do R36S ROM STORE."), "warn"); return
   end
   if CLIP.dir and (target == src or target:sub(1, #src + 1) == src .. "/") then
     App.toast(CLIP.copy and L("Não dá para copiar uma pasta para dentro dela mesma.")

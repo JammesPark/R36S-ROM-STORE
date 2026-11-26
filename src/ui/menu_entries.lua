@@ -15,7 +15,7 @@ function M.items()
     { id="tools", label=L("Utilidades e Ferramentas"), sub=L("Ferramentas do sistema"), icon="roms_tools_kit", classic_icon="tools" },
     { id="settings", label=L("Configurações"), sub=L("Música, catálogo e sistema"), icon="settings", classic_icon="settings" },
     { id="about", label=L("Sobre o Projeto"), sub=L("Informações e créditos"), icon="set_about", classic_icon="about" },
-    { id="exit", label=C.OS_MODE and L("Energia") or L("Sair"), sub=C.OS_MODE and L("Desligar ou reiniciar") or L("Fechar o R36S ROMS STORE"), icon="set_exit", classic_icon="exit" },
+    { id="exit", label=C.OS_MODE and L("Energia") or L("Sair"), sub=C.OS_MODE and L("Desligar ou reiniciar") or L("Fechar o R36S ROM STORE"), icon="set_exit", classic_icon="exit" },
   }
 end
 return M

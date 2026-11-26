@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "src" / "config.lua"
-READMES = [ROOT / "README.md", ROOT / "port" / "r36sromsstore" / "README.md"]
+READMES = [ROOT / "README.md", ROOT / "port" / "r36sromstore" / "README.md"]
 CHANGELOG = ROOT / "CHANGELOG.md"
 LABEL = re.compile(r'(?m)^(C\.VERSION\s*=\s*L\(")([^"]+)("\))')
 NUMBER = re.compile(r'(?m)^(C\.VERSION_NUM\s*=\s*")([^"]+)(")')

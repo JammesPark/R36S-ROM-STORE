@@ -1,6 +1,6 @@
 -- =============================================================================
---  Trilha sonora do R36S ROMS STORE
---    main     -> "Tema principal - R36S ROMS STORE" (identidade sonora oficial:
+--  Trilha sonora do R36S ROM STORE
+--    main     -> "Tema principal - R36S ROM STORE" (identidade sonora oficial:
 --                aviso inicial e menu principal)
 --    nav      -> "Tema de navegação - Retro Arcade" (loja, categorias, detalhes)
 --    download -> "Tema de download - Download Power" (durante a instalação)

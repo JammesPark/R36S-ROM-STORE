@@ -1,4 +1,4 @@
--- R36S ROMS STORE: lista de licencas somente leitura (sem gerenciador de arquivos).
+-- R36S ROM STORE: lista de licencas somente leitura (sem gerenciador de arquivos).
 -- B: retorna exatamente a tela anterior. Preserva LICENSE, NOTICE e creditos.
 local L = require("lib.i18n").L
 local Base = require("ui.screens.infolist")

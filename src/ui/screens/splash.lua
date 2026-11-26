@@ -44,7 +44,7 @@ function S:draw()
   local img_w, img_h = 252, 170
   local lx = (T.W - img_w) / 2
   G.logo(lx, 70, "splash")
-  G.text(T.f.pix16, "R36S ROM HUB STORE", 0, 249, T.c.text, "center", T.W)
+  G.text(T.f.pix16, "R36S ROM STORE", 0, 249, T.c.text, "center", T.W)
   G.text(T.f.body, C.EDITION == "Experimental" and "— EXPERIMENTAL —" or "— BETA —", 0, 275, T.c.accent, "center", T.W)
   G.text(T.f.body, SLOGAN, 0, 298, T.c.accent2, "center", T.W)
   local tag = C.VERSION

@@ -1,5 +1,5 @@
 -- =============================================================================
---  R36S ROMS STORE - thread de exclusao de um jogo (nao trava a interface)
+--  R36S ROM STORE - thread de exclusao de um jogo (nao trava a interface)
 --  Recebe a pasta base (/roms/ports ja resolvida) e os NOMES dos itens da raiz
 --  a apagar. Revalida tudo antes de apagar: nomes simples, dentro da base,
 --  links simbolicos sao removidos sem seguir o destino.

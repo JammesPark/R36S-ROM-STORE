@@ -1,5 +1,5 @@
 -- =============================================================================
---  R36 Control (dArkOSRE) dentro do R36S ROMS STORE.
+--  R36 Control (dArkOSRE) dentro do R36S ROM STORE.
 --
 --  Faz exatamente o que o "R36 Control.sh" do sistema faz, com os mesmos
 --  arquivos e comandos do dArkOSRE:

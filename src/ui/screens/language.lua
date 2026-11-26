@@ -52,7 +52,7 @@ function S:draw()
   local top = self.first and 60 or 70
   G.text(T.f.pix16, "SELECT LANGUAGE", 0, top, T.c.accent, "center", T.W)
   if not self.first then
-    G.text(T.f.small, L("Escolha o idioma do R36S ROMS STORE. A mudança vale na hora."), 0, top + 28, T.c.dim, "center", T.W)
+    G.text(T.f.small, L("Escolha o idioma do R36S ROM STORE. A mudança vale na hora."), 0, top + 28, T.c.dim, "center", T.W)
   end
   local w, h = 380, 62
   local x = (T.W - w) / 2

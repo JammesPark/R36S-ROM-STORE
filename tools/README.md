@@ -1,4 +1,4 @@
-# Ferramentas de desenvolvimento — R36S ROMS STORE
+# Ferramentas de desenvolvimento — R36S ROM STORE
 
 Scripts recuperados e adaptados do **R36S PORT HUB**, por **Lag do Lira**:
 https://github.com/liralflsti-wq/r36s-port-hub (GPL-3.0, ver `LICENSE` e `NOTICE.md`).
@@ -6,7 +6,7 @@ A loja e a identidade visual permanecem independentes.
 
 | Script | Para que serve |
 | --- | --- |
-| `tools/make_update.py` | Gera o manifesto completo de hashes SHA-256, uma baseline e pacotes incrementais de atualização para **r36sromsstore/** e **R36S ROMS STORE.sh**. Não publica nem instala automaticamente. |
+| `tools/make_update.py` | Gera o manifesto completo de hashes SHA-256, uma baseline e pacotes incrementais de atualização para **r36sromsstore/** e **R36S ROM STORE.sh**. Não publica nem instala automaticamente. |
 | `tools/make_icons.py` | Gera ícones de linha herdados do projeto-base, para inspeção e eventual aproveitamento na loja. |
 | `tools/make_system_icons.py` | Gera artes de sistemas/consoles herdadas, para inspeção e eventual aproveitamento. Usa `make_icons.py`. |
 | `tools/build.sh` | Empacota `src/` em `game.love`, monta a árvore `build/ports/`, atualiza manifesto completo e gera ZIP instalável. |

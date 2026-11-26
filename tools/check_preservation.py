@@ -19,7 +19,7 @@ def main():
     required.update(data.get("additional_protected_files", []))
     def repo_path(p):
         mapping = {"game/": "src/", "r36sromsstore/": "port/r36sromsstore/", "design/": "docs/design/", "services/": "tools/services/"}
-        exact = {"R36S ROMS STORE.sh": "port/R36S ROMS STORE.sh", "publicar.sh": "docs/preservacao/publicar-desativado.sh", "temas.json": "docs/preservacao/temas.json", "update_manifest.json": "docs/preservacao/update_manifest.json", "GUIA_GITHUB_CATALOGOS.txt": "docs/GUIA_GITHUB_CATALOGOS.txt"}
+        exact = {"R36S ROM STORE.sh": "port/R36S ROM STORE.sh", "publicar.sh": "docs/preservacao/publicar-desativado.sh", "temas.json": "docs/preservacao/temas.json", "update_manifest.json": "docs/preservacao/update_manifest.json", "GUIA_GITHUB_CATALOGOS.txt": "docs/GUIA_GITHUB_CATALOGOS.txt"}
         if p in exact:
             return exact[p]
         return next((v + p[len(k):] for k, v in mapping.items() if p.startswith(k)), p)

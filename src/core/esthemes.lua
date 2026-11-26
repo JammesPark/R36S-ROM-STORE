@@ -13,6 +13,7 @@ local Fetcher = require("core.fetcher")
 local OS = require("core.osdetect")
 local Scan = require("core.esthemes_scan")
 local Gal = require("core.esgallery")
+local Unified = require("core.esthemes_unified")
 
 local M = { themes = {}, systems = {}, installed = {}, source = "nenhum" }
 local CACHE = "es_themes_cache.json"
@@ -28,7 +29,7 @@ function M.catalog_url()
   return nil
 end
 
-local VALID_STATUS = { testado = true, compativel = true, experimental = true }
+local VALID_STATUS = { testado = true, compativel = true, experimental = true, incompativel = true, incompatible = true, no = true }
 
 local function parse(text)
   local d = json.decode(text or "")
@@ -65,8 +66,8 @@ end
 -- O catalogo do hub vem primeiro (tem dados conferidos); a galeria acrescenta a
 -- compatibilidade por tamanho de tela e os temas que faltam; as colecoes entram
 -- por ultimo, sem repetir nenhum repositorio.
-local GAL_COMPAT = { arkos = "compativel", darkos = "experimental", darkosre = "experimental" }
-local COLL_COMPAT = { arkos = "experimental", darkos = "experimental", darkosre = "experimental" }
+local GAL_COMPAT = { arkos = "experimental", darkos = "experimental", darkosre = "experimental" }
+local COLL_COMPAT = {} -- coleção GitHub não comprova compatibilidade com firmware
 
 function M.merge()
   local data = Gal.data or Gal.load_cache() or { gallery = {}, collections = {} }
@@ -76,7 +77,7 @@ function M.merge()
   for _, th in ipairs(M.base or {}) do
     local key = Scan.repo_of(th.project_url)
     local g = key and gal_by[key]
-    th.res = g and g.res or { [th.resolution or "640x480"] = "yes" }
+    th.res = g and g.res or (th.resolution and { [th.resolution] = "yes" } or {})
     th.src = g and "catalog+gallery" or "catalog"
     if key then seen[key] = true end
     ids[th.id] = true
@@ -117,7 +118,12 @@ function M.merge()
       end
     end
   end
-  M.themes = list
+  local ok,raw=pcall(love.filesystem.read,"catalog/themegallery_metadata.json")
+  local extra=ok and raw and json.decode(raw) or nil
+  M.themes=Unified.merge_extra(list,type(extra)=="table" and extra or {})
+  local okidx,rawidx=pcall(love.filesystem.read,"catalog/es_theme_preview_index.json")
+  local idx=okidx and rawidx and json.decode(rawidx) or nil
+  Unified.apply_previews(M.themes,type(idx)=="table" and idx or {})
 end
 
 --- atualiza as fontes do ThemeMaster (controlado: no maximo a cada 6 h)
@@ -199,7 +205,7 @@ end
 
 -- ---------------------------------------------------------------------------
 -- Temas que existem no console (reconhecidos no sistema de arquivos)
-M.ORIGIN = { firmware = L("do sistema"), user = L("do usuário"), hub = L("R36S ROMS STORE"), thememaster = L("ThemeMaster") }
+M.ORIGIN = { firmware = L("do sistema"), user = L("do usuário"), hub = L("R36S ROM STORE"), thememaster = L("ThemeMaster") }
 
 --- varre as pastas de temas e cruza com o catalogo (uma vez ao abrir e depois de
 --- instalar, remover ou ativar; nao fica varrendo)
@@ -271,18 +277,120 @@ M.STATE_COLOR = { active = "accent", installed = "green", incomplete = "red", av
 
 --- ha versao mais nova no catalogo? (so quando a data instalada e conhecida:
 --- registro do hub ou do ThemeMaster, que guarda a data do commit)
-function M.update_available(th, loc)
-  loc = loc or M.local_for(th)
-  if not loc or type(th.updated) ~= "string" or th.updated == "" then return false end
-  local have
-  if loc.origin == "hub" then
-    local rec = M.installed[loc.hub_id or th.id]
-    have = rec and rec.version
+-- Upstream revisions are resolved from the actual archive ref, not an estimated date.
+M.remote_revisions={}
+M.revision_seq=0
+M.update_revision=0
+local function valid_sha(s) return type(s)=="string" and #s==40 and not s:find("[^%x]") end
+function M.revision_request(th)
+  local owner,repo=(th.project_url or ""):match("^https://github%.com/([%w_.%-]+)/([%w_.%-]+)/?$")
+  if not owner then return end
+  local base="https://github.com/"..owner.."/"..repo.."/archive/"
+  local url=th.download_url or ""
+  if url:sub(1,#base):lower()~=base:lower() then return end
+  local ref=url:sub(#base+1):match("^(.+)%.zip$")
+  if not ref then return end
+  ref=ref:gsub("^refs/heads/","")
+  if not ref:match("^[%w_.%/-]+$") or valid_sha(ref) then return end
+  local encoded=ref:gsub("/", "%%2F")
+  return "https://api.github.com/repos/"..owner.."/"..repo.."/commits?sha="..encoded.."&per_page=1",base
+end
+function M.decode_revision(raw,base)
+  local ok,list=pcall(json.decode,raw or "")
+  local item=ok and type(list)=="table" and list[1]
+  local date=item and item.commit and item.commit.committer and item.commit.committer.date
+  if not item or not valid_sha(item.sha) or type(date)~="string" or not date:match("^%d%d%d%d%-%d%d%-%d%dT") then return end
+  return {sha=item.sha:lower(),date=date,url=base..item.sha..".zip",checked=os.time()}
+end
+function M.fetch_revision(th,cb,force)
+  local url,base=M.revision_request(th)
+  if not url then cb(nil);return end
+  local key=Unified.key(th)
+  local prev=M.remote_revisions[key]
+  if not force and prev and prev.source==th.download_url and os.time()-prev.checked<1800 then cb(prev);return end
+  M.revision_seq=M.revision_seq+1
+  local out=love.filesystem.getSaveDirectory().."/theme-revision-"..M.revision_seq..".json"
+  Fetcher.get("theme_revision",url,out,function(ok,path)
+    local raw=ok and path and U.read_file(path) or nil
+    if path then os.remove(path) end
+    local rev=M.decode_revision(raw,base)
+    if rev then rev.source=th.download_url;M.remote_revisions[key]=rev
+    else M.remote_revisions[key]=nil end
+    cb(rev)
+  end,true)
+end
+function M.installed_revision(th,loc)
+  loc=loc or M.local_for(th)
+  if not loc then return end
+  if loc.origin=="hub" then
+    local rec=M.installed[loc.hub_id or th.id]
+    if rec and valid_sha(rec.commit) then return rec.commit,rec.version end
   elseif loc.tm_version then
-    have = loc.tm_version:match("^(%d%d%d%d%-%d%d%-%d%d)")
+    local date=loc.tm_version:match("^(%d%d%d%d%-%d%d%-%d%d)")
+    return nil,date
   end
-  if type(have) ~= "string" or not have:match("^%d%d%d%d%-%d%d%-%d%d") then return false end
-  return th.updated:sub(1, 10) > have:sub(1, 10), have
+end
+function M.update_available(th,loc)
+  loc=loc or M.local_for(th)
+  if not loc or not loc.readable or loc.incomplete then return false end
+  local sha,date=M.installed_revision(th,loc)
+  local rev=M.remote_revisions[Unified.key(th)]
+  local have=sha and sha:sub(1,8) or date
+  if not rev or rev.source~=th.download_url then return false,have end
+  if sha then return sha:lower()~=rev.sha,have,rev end
+  if date then return rev.date:sub(1,10)>date:sub(1,10),have,rev end
+  return false,nil,rev
+end
+function M.update_list()
+  local list={}
+  for _,th in ipairs(M.themes or {}) do
+    local loc=M.local_for(th)
+    if loc and loc.origin~="firmware" and M.update_available(th,loc) then list[#list+1]=th end
+  end
+  return list
+end
+function M.check_updates(force,cb)
+  if M.checking_updates then return false end
+  local targets={}
+  for _,th in ipairs(M.themes or {}) do
+    local loc=M.local_for(th)
+    if loc and loc.readable and not loc.incomplete and loc.origin~="firmware" and M.revision_request(th) then targets[#targets+1]=th end
+  end
+  M.checking_updates=true
+  local i,failed=0,0
+  local function next_one()
+    i=i+1
+    if i>#targets then
+      M.checking_updates=false;M.update_revision=M.update_revision+1
+      M.last_check=os.time()
+      local count=#M.update_list()
+      if count>0 then M.notice_count=count end
+      if cb then cb(count,failed,#targets) end
+      return
+    end
+    M.fetch_revision(targets[i],function(rev)
+      if not rev then failed=failed+1 end
+      next_one()
+    end,force)
+  end
+  next_one()
+  return true
+end
+function M.download_snapshot(th,rev)
+  local copy={};for k,v in pairs(th) do copy[k]=v end
+  if rev and rev.source==th.download_url and valid_sha(rev.sha) then
+    copy.download_url=rev.url;copy.installed_commit=rev.sha;copy.installed_date=rev.date
+    if copy.download_url~=th.download_url then copy.size=nil;copy.sha256=nil end
+  else copy.installed_commit=nil;copy.installed_date=nil end
+  return copy
+end
+function M.queue_install(th,dir,os,folder,size,confirmed,existed,cb)
+  local D=require("core.downloads")
+  if D.pending("estheme:"..Unified.key(th)) then cb(false,L("Tema já está na Central de Downloads."));return end
+  if not Unified.can_install(th,os,size) then cb(false,L("Tema incompatível ou link indisponível."));return end
+  M.fetch_revision(th,function(rev)
+    cb(D.enqueue_theme(M.download_snapshot(th,rev),dir,os,folder,size,confirmed,existed))
+  end,false)
 end
 
 --- compatibilidade com o codigo antigo da tela
@@ -297,7 +405,7 @@ function M.can_remove(loc)
   if loc.origin == "firmware" then return false, L("Este tema acompanha o sistema do console e não é removido pelo hub.") end
   if M.active and loc.folder == M.active then return false, "active" end
   if loc.is_link then return false, L("A pasta do tema é um link: não dá para confirmar a quem pertencem os arquivos. Nada foi apagado.") end
-  if not loc.folder:match("^[%w%._%-]+$") then return false, L("Nome de pasta inválido: nada foi apagado.") end
+  if type(loc.folder)~="string" or loc.folder=="" or loc.folder=="." or loc.folder==".." or loc.folder:find("[/%c]") then return false, L("Nome de pasta inválido: nada foi apagado.") end
   if not loc.readable then return false, L("Sem permissão para ler a pasta do tema: nada foi apagado.") end
   if not (loc.xml_ok or loc.marker) then
     return false, L("A pasta não tem theme.xml: não dá para confirmar que ela é só de um tema. Nada foi apagado.")
@@ -309,21 +417,35 @@ end
 function M.remove(loc)
   local okr, why = M.can_remove(loc)
   if not okr then return false, why end
+  if U.exec_ok("test -L "..U.shq(loc.path)) then return false,L("A pasta do tema é um link: nada foi apagado.") end
   local real = U.trim(U.capture("readlink -f -- " .. U.shq(loc.path) .. " 2>/dev/null") or "")
   local base = loc.root_real or ""
-  if real == "" or base == "" or real:match("^(.*)/[^/]+$") ~= base then
+  if real == "" or base == "" or real ~= base.."/"..loc.folder or real:match("^(.*)/[^/]+$") ~= base then
     return false, L("Caminho do tema fora da pasta de temas: nada foi apagado.")
   end
-  -- links dentro do tema podem apontar para arquivos compartilhados: nao apaga
-  if U.trim(U.capture("find " .. U.shq(real) .. " -type l 2>/dev/null | head -n 1") or "") ~= "" then
-    return false, L("O tema tem links para outros arquivos: não dá para confirmar que tudo é só dele. Nada foi apagado.")
+  -- A directory may contain symlinks to shared assets. rm -rf without a
+  -- trailing slash unlinks entries, never follows symlinks. Reject mount
+  -- points below the directory and re-check the exact root before deletion.
+  local mounts=U.read_file("/proc/self/mountinfo") or ""
+  for line in mounts:gmatch("[^\n]+") do
+    local mount=line:match("^%S+ %S+ %S+ %S+ (%S+)")
+    if mount then
+      mount=mount:gsub("\\(%d%d%d)",function(n)return string.char(tonumber(n,8) or 63)end)
+      if mount==real or mount:sub(1,#real+1)==real.."/" then
+        return false,L("A pasta contém um ponto de montagem: nada foi apagado.")
+      end
+    end
+  end
+  if type(OS.active_theme)=="function" and OS.active_theme()==loc.folder then return false,L("Tema em uso: ative outro tema antes de remover.") end
+  if U.exec_ok("test -L "..U.shq(loc.path)) or U.trim(U.capture("readlink -f -- "..U.shq(loc.path).." 2>/dev/null") or "")~=real then
+    return false,L("O caminho do tema mudou: nada foi apagado.")
   end
   if not U.exec_ok("rm -rf -- " .. U.shq(real)) or U.exec_ok("test -e " .. U.shq(real)) then
     return false, L("Não foi possível apagar a pasta do tema.")
   end
   if loc.hub_id and M.installed[loc.hub_id] then M.installed[loc.hub_id] = nil; save_installed() end
   for id, rec in pairs(M.installed) do
-    if type(rec) == "table" and rec.folder == loc.folder then M.installed[id] = nil; save_installed() end
+    if type(rec) == "table" and rec.folder == loc.folder and (not rec.dir or rec.dir==loc.root or rec.dir==loc.root_real) then M.installed[id] = nil; save_installed() end
   end
   return true
 end
@@ -337,7 +459,7 @@ end
 local PENDING = "es_theme_pending.json"
 
 function M.request_activate(loc)
-  if not loc or not loc.folder:match("^[%w%._%-]+$") then return false, L("Nome de pasta inválido.") end
+  if not loc or not loc.folder:match("^[%w%._%-]+$") or loc.folder=="." or loc.folder==".." or loc.is_link then return false, L("Nome de pasta inválido.") end
   if not loc.xml_ok then return false, L("O tema não tem theme.xml válido: ativar deixaria o EmulationStation sem tema.") end
   if loc.incomplete then return false, L("O tema está incompleto (arquivos ausentes). Reinstale antes de ativar.") end
   os.execute("mkdir -p " .. U.shq(C.APP_DIR .. "/conf") .. " 2>/dev/null")
@@ -360,11 +482,22 @@ end
 
 -- ---------------------------------------------------------------------------
 -- Instalacao (thread)
-function M.start_install(th, dir, os_id, folder)
+function M.start_install(th, dir, os_id, folder, size, confirmed_unknown, expected_existing)
+  size = size or "640x480"
+  if not Unified.can_install(th,os_id,size) then return false,L("Tema incompatível ou link indisponível.") end
+  if Unified.needs_confirmation(th,os_id,size) and confirmed_unknown~=true then
+    return false,L("Compatibilidade não verificada: confirme antes de instalar.")
+  end
   if M.job and not M.job.finished then return false, L("Já existe uma instalação de tema em andamento.") end
   local out, inn = "hub_esth_out", "hub_esth_in"
   love.thread.getChannel(out):clear(); love.thread.getChannel(inn):clear()
   folder = folder or th.folder
+  if type(folder)~="string" or not folder:match("^[%w%._%-]+$") or folder=="." or folder==".." then return false,L("Nome de pasta do tema inválido.") end
+  if type(dir)~="string" or dir=="" or not U.exec_ok("test -d "..U.shq(dir)) then return false,L("A pasta de temas não existe.") end
+  if U.exec_ok("test -L "..U.shq(dir.."/"..folder)) then return false,L("A pasta do tema é um link.") end
+  if expected_existing==false and U.exec_ok("test -e "..U.shq(dir.."/"..folder)) then
+    return false,L("A pasta do tema apareceu enquanto aguardava. Confirme uma nova instalação.")
+  end
   M.job = { theme = th, dir = dir, os = os_id, folder = folder, phase = "download", done = 0, total = th.size, speed = 0,
     out = love.thread.getChannel(out), inn = love.thread.getChannel(inn) }
   M.job.thread = love.thread.newThread("threads/estheme_thread.lua")
@@ -398,7 +531,7 @@ function M.update()
     elseif m.t == "done" then
       j.finished, j.ok, j.backup = true, true, m.backup
       M.installed[j.theme.id] = { folder = j.folder, dir = j.dir, date = os.date("%d/%m/%Y %H:%M"),
-        version = j.theme.updated or "", os = j.os, name = j.theme.name }
+        version = j.theme.installed_date or "", commit = j.theme.installed_commit, backup = j.backup, os = j.os, name = j.theme.name }
       save_installed()
     elseif m.t == "error" then j.finished, j.ok, j.error = true, false, m.msg
     elseif m.t == "cancelled" then j.finished, j.ok, j.cancelled = true, false, true end
@@ -409,7 +542,7 @@ end
 --- desinstala SOMENTE temas instalados pelo app. Devolve ok, mensagem
 function M.uninstall(th)
   local ok, rec = M.is_installed(th)
-  if not ok then return false, L("Este tema não foi instalado pelo R36S ROMS STORE.") end
+  if not ok then return false, L("Este tema não foi instalado pelo R36S ROM STORE.") end
   if not rec.folder:match("^[%w%._%-]+$") then return false, L("Registro de instalação inválido.") end
   local active = OS.active_theme()
   if active and active == rec.folder then

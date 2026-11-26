@@ -57,7 +57,7 @@ function S:draw()
     table.insert(hints, 1, { "a", L("Tentar de novo") })
   elseif st == "idle" then
     center(T.f.pix16, L("VERSÃO ") .. C.VERSION, y + 110, T.c.accent2)
-    center(T.f.body, L("Pressione A para verificar se existe uma versão mais nova do R36S ROMS STORE.\nNada é baixado ou instalado sem a sua confirmação."), y + 150, T.c.dim)
+    center(T.f.body, L("Pressione A para verificar se existe uma versão mais nova do R36S ROM STORE.\nNada é baixado ou instalado sem a sua confirmação."), y + 150, T.c.dim)
     table.insert(hints, 1, { "a", L("Verificar agora") })
   elseif st == "none" then
     center(T.f.pix16, L("SEM LINK DE ATUALIZAÇÃO"), y + 90, T.c.yellow)
@@ -111,7 +111,8 @@ function S:download()
   local name = Update.download_name()
   local dest = Folder.DIR .. "/" .. name
   self.dl_error = nil
-  local ok, why = Manager.start("download", { url = i.url, size = i.size or 0, sha256 = i.sha256 or "", dest = dest }, function(j)
+  local ok, why = Manager.start("download", { url = i.url, size = i.size or 0, sha256 = i.sha256 or "", dest = dest,
+    strict_tls = Update.source_url() == C.UPDATE_URL }, function(j)
     if j.state == "done" then
       App.push("upd_pkg", { path = dest, name = name, size = U.file_size(dest), format = require("core.updater.formats").detect_magic(dest), origin = "rede" })
     elseif j.state == "error" then

@@ -36,9 +36,11 @@ local ZIP = W .. "/theme.zip"
 local STAGE = W .. "/stage"
 
 local function run()
-  if not job.folder:match("^[%w%._%-]+$") then fail(L("Nome de pasta do tema inválido.")) end
+  if type(job.folder)~="string" or not job.folder:match("^[%w%._%-]+$") or job.folder=="." or job.folder==".." then fail(L("Nome de pasta do tema inválido.")) end
   if not sh("test -d " .. shq(job.dest)) then fail(L("A pasta de temas ") .. job.dest .. L(" não existe.")) end
-  sh("rm -rf " .. shq(W) .. " && mkdir -p " .. shq(STAGE))
+  local dst=job.dest.."/"..job.folder
+  if sh("test -L "..shq(dst)) or sh("test -L "..shq(W)) then fail(L("Pasta do tema ou temporária é um link.")) end
+  if not sh("rm -rf " .. shq(W) .. " && mkdir -p " .. shq(STAGE)) then fail(L("Não foi possível criar a pasta temporária.")) end
 
   -- 1) download para a pasta temporaria
   OUT:push({ t = "phase", phase = "download", total = job.size > 0 and job.size or nil })
@@ -130,9 +132,26 @@ local function run()
   OUT:push({ t = "phase", phase = "install" })
   local dst = job.dest .. "/" .. job.folder
   local backup
+  if sh("test -L "..shq(dst)) then fail(L("A pasta do tema é um link.")) end
   if sh("test -e " .. shq(dst)) then
+    -- Preserve user-created wallpaper slots only, when both themes use the same layout.
+    local oldbg,newbg=dst.."/_inc/background",root.."/_inc/background"
+    if sh("test -d "..shq(oldbg).." -a -d "..shq(newbg).." && test ! -L "..shq(dst.."/_inc").." && test ! -L "..shq(oldbg).." && test ! -L "..shq(newbg)) then
+      for n=2,20 do
+        for _,ext in ipairs({"png","mp4"}) do
+          local file="bg_"..n.."."..ext
+          local src,target=oldbg.."/"..file,newbg.."/"..file
+          if sh("test -f "..shq(src).." && test ! -L "..shq(src)) then
+            if not sh("cp -p "..shq(src).." "..shq(target)) then fail(L("Não foi possível preservar o papel de parede. Nada foi alterado.")) end
+          end
+        end
+      end
+    end
     sh("mkdir -p " .. shq(job.tmp_dir .. "/estheme_backups"))
-    backup = job.tmp_dir .. "/estheme_backups/" .. job.folder .. "-" .. os.date("%Y%m%d%H%M%S")
+    local base=job.tmp_dir .. "/estheme_backups/" .. job.folder .. "-" .. os.date("%Y%m%d%H%M%S")
+    backup=base
+    local n=0
+    while sh("test -e "..shq(backup).." || test -L "..shq(backup)) do n=n+1;backup=base.."-"..n end
     if not sh("mv " .. shq(dst) .. " " .. shq(backup)) then fail(L("Não foi possível fazer o backup do tema existente.")) end
   end
   if not sh("mv " .. shq(root) .. " " .. shq(dst)) then
@@ -159,4 +178,4 @@ end
 
 local ok, err = pcall(run)
 if not ok and err ~= "__stop__" then OUT:push({ t = "error", msg = L("Erro interno: ") .. tostring(err) }) end
-if not ok then sh("rm -rf " .. shq(W)) end
+if not ok and not sh("test -L "..shq(W)) then sh("rm -rf " .. shq(W)) end

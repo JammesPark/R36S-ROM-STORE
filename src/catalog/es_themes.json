@@ -1,7 +1,7 @@
 {
   "catalog_version": 1,
-  "title": "Loja de Temas - R36S ROMS STORE",
-  "updated": "2026-10-30",
+  "title": "Loja de Temas - R36S ROM STORE",
+  "updated": "2026-11-26",
   "status_legend": {
     "testado": "testado no aparelho por quem mantém o catálogo",
     "compativel": "indicado por fonte confiável (galeria OGA 640x480 ou imagem oficial do sistema)",
@@ -1105,6 +1105,32 @@
       "description_ru": "Тема EmulationStation от Jetup13. Галерея OGA указывает, что она работает в 640x480."
     },
     {
+      "id": "tg-jovemlcxx--es-theme-steamdeck",
+      "name": "Steam Deck",
+      "description": "Tema inspirado no Steam Deck, para EmulationStation-fcamod em 640×480. Autor validou dArkOS4Clone e dArkOSen; ArkOS, dArkOS e dArkOSRE foram relatados em versões anteriores. muOS não funciona.",
+      "description_en": "Steam Deck-inspired EmulationStation-fcamod theme for 640×480. Author tested dArkOS4Clone and dArkOSen; other ArkOS variants were reported on earlier versions. muOS is incompatible.",
+      "author": "jovemlcxx",
+      "project_url": "https://github.com/jovemlcxx/es-theme-steamdeck",
+      "download_url": "https://github.com/jovemlcxx/es-theme-steamdeck/archive/refs/heads/main.zip",
+      "download_type": "github_zip",
+      "folder": "es-theme-steamdeck",
+      "preview": "https://raw.githubusercontent.com/jovemlcxx/es-theme-steamdeck/13d212e087439ae7f356d569ecbf67e8047e3c03/images/carousel-snes.jpg",
+      "resolution": "640x480",
+      "es_min": null,
+      "es_max": null,
+      "size": null,
+      "updated": "2026-11-08",
+      "upstream_commit": "13d212e087439ae7f356d569ecbf67e8047e3c03",
+      "license": "CC-BY-NC-4.0",
+      "compat": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental",
+        "muos": "incompativel"
+      },
+      "source": "https://github.com/jovemlcxx/es-theme-steamdeck/blob/13d212e087439ae7f356d569ecbf67e8047e3c03/README.pt-BR.md"
+    },
+    {
       "id": "es-theme-switch",
       "name": "Switch",
       "description": "Tema de EmulationStation por Jetup13. A galeria OGA indica funcionamento em 640x480. Inclui vídeos ou sons. Acompanha as imagens oficiais do dArkOS.",
@@ -1130,6 +1156,31 @@
       "source": "Emulationstation OGA Theme Gallery (Jetup13)",
       "description_en": "EmulationStation theme by Jetup13. The OGA gallery reports it works at 640x480. Includes videos or sounds. Shipped with the official dArkOS images.",
       "description_ru": "Тема EmulationStation от Jetup13. Галерея OGA указывает, что она работает в 640x480. Содержит видео или звуки. Входит в официальные образы dArkOS."
+    },
+    {
+      "id": "tg-jovemlcxx--es-theme-switch2-fcamod",
+      "name": "Switch 2 FCAMOD",
+      "description": "Tema inspirado no Switch 2, para EmulationStation-fcamod em 640×480. Autor validou dArkOS4Clone em R36S; demais variantes ArkOS/dArkOS são experimentais. Outros sistemas não verificados.",
+      "description_en": "Switch 2-inspired EmulationStation-fcamod theme for 640×480. Author tested dArkOS4Clone on R36S; other ArkOS/dArkOS variants are experimental.",
+      "author": "jovemlcxx",
+      "project_url": "https://github.com/jovemlcxx/es-theme-switch2-fcamod",
+      "download_url": "https://github.com/jovemlcxx/es-theme-switch2-fcamod/archive/refs/heads/main.zip",
+      "download_type": "github_zip",
+      "folder": "es-theme-switch2-fcamod",
+      "preview": "https://raw.githubusercontent.com/jovemlcxx/es-theme-switch2-fcamod/fad7dfea7e5df3c4dd7caa0b952163c0eba47c93/images/carousel-snes.jpg",
+      "resolution": "640x480",
+      "es_min": null,
+      "es_max": null,
+      "size": null,
+      "updated": "2026-11-04",
+      "upstream_commit": "fad7dfea7e5df3c4dd7caa0b952163c0eba47c93",
+      "license": "CC-BY-NC-SA-4.0",
+      "compat": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "source": "https://github.com/jovemlcxx/es-theme-switch2-fcamod/blob/fad7dfea7e5df3c4dd7caa0b952163c0eba47c93/README.pt-BR.md"
     },
     {
       "id": "es-wii-theme",
@@ -1184,6 +1235,31 @@
       "source": "Emulationstation OGA Theme Gallery (Jetup13)",
       "description_en": "EmulationStation theme by CodyV59. The OGA gallery reports it works at 640x480. Includes videos or sounds.",
       "description_ru": "Тема EmulationStation от CodyV59. Галерея OGA указывает, что она работает в 640x480. Содержит видео или звуки."
+    },
+    {
+      "id": "tg-jovemlcxx--es-theme-xmb-fcamod",
+      "name": "XMB FCAMOD",
+      "description": "Tema inspirado no XMB do PSP e PS3, para EmulationStation-fcamod. Autor validou dArkOS4Clone em R36S e verificou outros sistemas ArkOS/dArkOS por simulador/código. Proporções 4:3, 1:1, 16:9 e 21:9.",
+      "description_en": "PSP/PS3 XMB-inspired EmulationStation-fcamod theme. Author tested dArkOS4Clone on R36S; other ArkOS variants were checked via simulation/code. Supports 4:3, 1:1, 16:9 and 21:9.",
+      "author": "jovemlcxx",
+      "project_url": "https://github.com/jovemlcxx/es-theme-xmb-fcamod",
+      "download_url": "https://github.com/jovemlcxx/es-theme-xmb-fcamod/archive/refs/heads/main.zip",
+      "download_type": "github_zip",
+      "folder": "es-theme-xmb-fcamod",
+      "preview": "https://raw.githubusercontent.com/jovemlcxx/es-theme-xmb-fcamod/ac64fe07b56cf0daafce3071d34403e4d7224449/images/carousel-snes.jpg",
+      "resolution": "640x480",
+      "es_min": null,
+      "es_max": null,
+      "size": null,
+      "updated": "2026-11-08",
+      "upstream_commit": "ac64fe07b56cf0daafce3071d34403e4d7224449",
+      "license": "CC-BY-NC-SA-4.0",
+      "compat": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "source": "https://github.com/jovemlcxx/es-theme-xmb-fcamod/blob/ac64fe07b56cf0daafce3071d34403e4d7224449/README.pt-BR.md"
     }
   ]
 }

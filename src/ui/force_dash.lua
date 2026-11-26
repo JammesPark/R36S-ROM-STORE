@@ -209,7 +209,7 @@ local function head(S,self,P,templ)
   -- A marca horizontal 3,36:1 e desenhada inteira, incluindo BR/bandeira.
   -- O texto inicia somente apos o comprimento REAL calculado da imagem.
   local tx=math.max(196,14+(lw or 0)+32)
-  txt("R36S ROMS STORE",tx,11,10,P.text,true,263)
+  txt("R36S ROM STORE",tx,11,10,P.text,true,263)
   local Themes=require("core.themes")
   local def=Themes.by_id and Themes.by_id[Themes.current]
   local version=def and def.version or ""
@@ -389,7 +389,7 @@ local function footer(P,templ)
     txt(b.key,b.x+3,459,9,P.text,true,b.w-4)
     txt(b.text,b.x+b.w+6,460,10,P.subtle,false)
   end
-  txt(P.name.." · R36S ROMS STORE",474,460,9,P.faint,false,160)
+  txt(P.name.." · R36S ROM STORE",474,460,9,P.faint,false,160)
 end
 function M.draw(S,self)
   M.update(S,self,0)

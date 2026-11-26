@@ -75,7 +75,7 @@ function R.draw(p, x, y, w, h, on, accent, extra)
     local size = (p.size_label or "?")
     local size_w = size ~= "?" and math.min(54, fs:getWidth(size) + 6) or 0
     local sys_w = math.max(42, sub_w - region_w - size_w - 4)
-    local dx = Region.draw_system(p, sub_x, y + h - 23, sys_w)
+    local dx = not extra.hide_system and Region.draw_system(p, sub_x, y + h - 23, sys_w) or 0
     if code then
       dx = dx + 6
       dx = dx + Region.draw_region(p, sub_x + dx, y + h - 23)

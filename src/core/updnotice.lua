@@ -1,4 +1,4 @@
--- Aviso de versao nova do R36S ROMS STORE (faixa no alto da tela inicial).
+-- Aviso de versao nova do R36S ROM STORE (faixa no alto da tela inicial).
 -- Ao abrir o hub, depois que a rede responde, consulta em segundo plano o
 -- link oficial de atualizacao (le so o comeco do pacote). Se a versao do
 -- link for maior que a instalada, a tela inicial mostra um texto deslizante
@@ -73,7 +73,7 @@ function N.popup_body()
   local first = notes:match("%- ([^\n]+)") or notes:match("^([^\n]+)") or ""
   first = require("lib.util").safe_utf8(first:sub(1, 125))
   local news = first ~= "" and (L("Novidade: ") .. first .. "\n\n") or ""
-  return L("Existe uma nova versão do R36S ROMS STORE disponível pela internet.\n\n")
+  return L("Existe uma nova versão do R36S ROM STORE disponível pela internet.\n\n")
     .. L("Versão instalada: ") .. tostring(C.VERSION_NUM or "?") .. "\n"
     .. L("Nova versão: ") .. tostring(newv) .. "\n\n"
     .. news .. L("Deseja baixar a atualização agora?")
@@ -81,7 +81,7 @@ end
 
 function N.text()
   local v = N.label or N.version or ""
-  return L("Nova versão do R36S ROMS STORE disponível: ") .. v
+  return L("Nova versão do R36S ROM STORE disponível: ") .. v
     .. L("  •  Atualize agora: aperte SELECT ou vá em Configurações > Atualizações do hub > Atualização via rede.")
 end
 

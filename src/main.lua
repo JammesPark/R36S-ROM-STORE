@@ -1,5 +1,5 @@
 -- =============================================================================
---  R36S ROMS STORE (BETA)
+--  R36S ROM STORE (BETA)
 --  Ports para o R36S - feito pela comunidade, para a comunidade.
 --  Runtime: LOVE 11.5 (PortMaster)  |  Resolucao logica: 640x480
 -- =============================================================================
@@ -590,7 +590,7 @@ function App.quit(force)
       title = L("Downloads em andamento"), kind = "warn",
       body = (a and (a.name .. L(" ainda está em andamento.")) or L("Há operações em andamento."))
         .. (w > 0 and ("\n" .. w .. L(" item(ns) aguardando na fila.")) or "")
-        .. L("\n\nOs downloads só continuam com o R36S ROMS STORE aberto. Se sair agora, a operação atual é interrompida (os arquivos temporários são apagados e nada fica pela metade) e a fila é descartada."),
+        .. L("\n\nOs downloads só continuam com o R36S ROM STORE aberto. Se sair agora, a operação atual é interrompida (os arquivos temporários são apagados e nada fica pela metade) e a fila é descartada."),
       buttons = { { label = L("SAIR MESMO ASSIM"), fn = function() App.power_pending = pending; App.quit("downloads") end }, { label = L("VOLTAR") } },
       sel = 2,
     })
@@ -810,7 +810,7 @@ function love.load(args)
       elseif not okg then U.log("gamelist.xml: erro", tostring(what)) end
     end },
     { L("Carregando catálogo..."), function()
-      U.log("R36S ROMS STORE", C.VERSION, "| ports:", C.PORTS_DIR, "| app:", C.APP_DIR)
+      U.log("R36S ROM STORE", C.VERSION, "| ports:", C.PORTS_DIR, "| app:", C.APP_DIR)
       U.log("dados:", love.filesystem.getSaveDirectory())
       if not Catalog.load_local() then
         App.catalog_load_error = Catalog.remote_error
@@ -873,14 +873,14 @@ function App.launch_tool(id, from)
   local path = App.tool_path(id)
   if not path or not U.exists(path) then
     App.show_dialog({ title = L("Ferramenta não encontrada"), kind = "error",
-      body = L("Os arquivos do teste não estão na pasta do app:\n") .. tostring(path) .. L("\n\nReinstale o R36S ROMS STORE para recuperá-los.") })
+      body = L("Os arquivos do teste não estão na pasta do app:\n") .. tostring(path) .. L("\n\nReinstale o R36S ROM STORE para recuperá-los.") })
     return
   end
   local ESth = package.loaded["core.esthemes"]
   if Installer.busy() or Downloads.waiting_count() > 0 or Runtimes.job or Update.busy() or PM.busy()
       or (ESth and ESth.job and not ESth.job.finished) then
     App.show_dialog({ title = L("Aguarde"), kind = "warn",
-      body = L("Termine ou cancele os downloads e instalações em andamento antes de abrir o teste. O R36S ROMS STORE fecha enquanto o teste estiver aberto.") })
+      body = L("Termine ou cancele os downloads e instalações em andamento antes de abrir o teste. O R36S ROM STORE fecha enquanto o teste estiver aberto.") })
     return
   end
   local function go()
@@ -919,7 +919,7 @@ local function blocked_for_game()
   if Installer.busy() or Downloads.waiting_count() > 0 or Runtimes.job or Update.busy() or PM.busy()
       or (ESth and ESth.job and not ESth.job.finished) then
     App.show_dialog({ title = L("Aguarde"), kind = "warn",
-      body = L("Termine ou cancele os downloads e instalações em andamento antes de iniciar um jogo. O R36S ROMS STORE fecha enquanto o jogo estiver aberto.") })
+      body = L("Termine ou cancele os downloads e instalações em andamento antes de iniciar um jogo. O R36S ROM STORE fecha enquanto o jogo estiver aberto.") })
     return true
   end
   return false
@@ -968,7 +968,7 @@ function App.launch_port(p)
     Prefs.set("recent_ports", table.concat(list, ","))
     App.quit(true)
   end
-  local body = string.format(L("O R36S ROMS STORE vai fechar e %s vai abrir.\nAo sair do jogo, o hub abre de novo.\n\nScript: %s"), p.name, script)
+  local body = string.format(L("O R36S ROM STORE vai fechar e %s vai abrir.\nAo sair do jogo, o hub abre de novo.\n\nScript: %s"), p.name, script)
     .. "\n" .. L("Cartão: ") .. dir
   if Ftp.running() then body = body .. L("\n\nO servidor FTP será parado.") end
   App.show_dialog({ title = L("Iniciar o jogo?"), kind = "info", body = body,
@@ -1144,6 +1144,12 @@ function love.update(dt)
   require("core.theme_store").update()
   local was_busy = Installer.job and not Installer.job.finished
   Installer.update()
+  local theme_done=Downloads.update_theme()
+  if theme_done then
+    App.update_free_space()
+    local success=theme_done.state=="done"
+    App.toast(theme_done.name..(success and L(" instalado. Ative na Temas Store.") or theme_done.state=="cancelled" and L(" cancelado.") or L(" - falha. Veja Downloads.")),success and "ok" or theme_done.state=="cancelled" and "warn" or "error")
+  end
   Downloads.update()
   if Installer.job and Installer.job.confirm and Installer.job.background then
     Installer.job.background = false   -- a confirmacao de sobrescrita sempre aparece
@@ -1198,6 +1204,37 @@ function love.update(dt)
   Update.update()
   UpdMgr.update()
   maybe_show_update_popup()
+  -- Separate theme notice, never enables application OTA.
+  local cur=App.current()
+  if not App.itest and not App.autotest and cur and cur.name=="menu" and not App.theme_update_started and not Downloads.active() and not App.dialog then
+    local net=require("core.net").current()
+    if net and net.connected then
+      App.theme_update_started=true
+      local ES=require("core.esthemes")
+      local osinfo=require("core.osdetect").detect()
+      if osinfo.confirmed then
+        ES.load(function()
+          if App.current() and App.current().name=="menu" then
+            local sys=ES.systems[osinfo.id] or {}
+            ES.scan(osinfo.id,sys.themes_dir or "/roms/themes")
+            if not ES.last_check or os.time()-ES.last_check>=1800 then ES.check_updates(false) end
+          end
+        end)
+      end
+    end
+  end
+  local ES=package.loaded["core.esthemes"]
+  if ES and ES.notice_count and not App.theme_notice_seen and not App.dialog and not App.itest and not App.autotest and not Downloads.active() and cur and (cur.name=="menu" or cur.name=="esthemes" and not cur.view and not cur.options and not cur.picker) then
+    local n=#ES.update_list()
+    if n>0 then
+      App.theme_notice_seen=true
+      App.show_dialog({title=L("ATUALIZAÇÕES DE TEMAS"),kind="info",body=tostring(n).." "..L("temas instalados têm atualização disponível."),
+        buttons={{label=L("VER ATUALIZAÇÕES"),fn=function()
+          if App.current().name=="esthemes" then local s=App.current();s.filter=6;s.secondary="all";s.query="";s.sel,s.scroll=1,0;s:refresh()
+          else App.push("esthemes",{updates=true}) end
+        end},{label=L("AGORA NÃO")}},sel=2})
+    end
+  end
   -- confirmacao vencida (a thread nega sozinha em 60 s): fecha o dialogo
   if App.dialog and App.dialog.ftp_confirm then
     local alive = false
@@ -1366,7 +1403,7 @@ function love.errorhandler(msg)
       msg = tostring(msg) .. "\n\n" .. I18N.tr(L("O registro deste erro foi salvo em:")) .. "\n" .. saved
     end)
   end
-  pcall(function() msg = tostring(msg) .. "\n\n" .. I18N.tr(L("Aperte START para fechar o R36S ROMS STORE.")) end)
+  pcall(function() msg = tostring(msg) .. "\n\n" .. I18N.tr(L("Aperte START para fechar o R36S ROM STORE.")) end)
   if not default_errhand then return nil end   -- sem tela padrao: fecha (o registro ja foi salvo)
   local loop = default_errhand(msg)
   -- a tela padrao so fecha com o teclado (Esc): no R36S, START fecha

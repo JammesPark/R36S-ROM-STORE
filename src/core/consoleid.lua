@@ -287,7 +287,7 @@ end
 function M.report_text(info, r)
   local cls = M.CLASSES[r.class] or M.CLASSES.unknown
   local t = {}
-  t[#t + 1] = "R36S ROMS STORE " .. C.VERSION .. " - " .. L("ANALISADOR DE CONSOLE")
+  t[#t + 1] = "R36S ROM STORE " .. C.VERSION .. " - " .. L("ANALISADOR DE CONSOLE")
   t[#t + 1] = L("Data da análise: ") .. os.date("%d/%m/%Y %H:%M:%S", r.time)
   t[#t + 1] = ""
   t[#t + 1] = L("Modelo estimado: ") .. (r.model or L("não identificado"))

@@ -1,6 +1,6 @@
 # CRÉDITOS E AVISOS DE AUTORIA
 
-R36S ROM HUB STORE — projeto derivado independente.
+R36S ROM STORE — projeto derivado independente.
 
 **Projeto base:** R36S PORT HUB, desenvolvido por Lag do Lira.
 **Canal do autor:** https://youtube.com/@lagdolira
@@ -14,3 +14,5 @@ Os temas Pulse Edition e Matrix Edition são adaptações de temas originais de 
 
 As licenças e os avisos de copyright dos componentes de terceiros (LÖVE, LuaQRCode, 7-Zip, fontes e outros) são preservados na pasta `licenses/`.
 O conteúdo de jogos, BIOS, temas e ports disponibilizados por terceiros pode ter regras próprias e não recebe automaticamente licença GPL-3.0 por estar listado nesta loja.
+
+Prévias ThemeGallery: Copyright (c) 2026 Dave, MIT (src/assets/themegallery/LICENSE.txt). Prévias adicionais: links das galerias OGA, RetroPie e repositórios originais, sem redistribuir arquivos de terceiros.

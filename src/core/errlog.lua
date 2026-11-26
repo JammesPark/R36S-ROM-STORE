@@ -1,5 +1,5 @@
 -- =============================================================================
---  Registro de erros do R36S ROMS STORE
+--  Registro de erros do R36S ROM STORE
 --  Tudo fica dentro da pasta do port: r36sromsstore/logs/
 --    - erro_AAAAMMDD_HHMMSS.txt : uma travada do app (erro fatal) ou de uma tarefa
 --      em segundo plano, com a mensagem, onde aconteceu (traceback), tela aberta,
@@ -63,7 +63,7 @@ end
 local function header()
   local t = {}
   local okc, cfg = pcall(C)
-  t[#t + 1] = "R36S ROMS STORE " .. tostring(okc and cfg.VERSION or "?")
+  t[#t + 1] = "R36S ROM STORE " .. tostring(okc and cfg.VERSION or "?")
   t[#t + 1] = "Data: " .. os.date("%Y-%m-%d %H:%M:%S")
   local okl, I18N = pcall(require, "lib.i18n")
   t[#t + 1] = "Idioma: " .. tostring(okl and I18N.lang or "?")

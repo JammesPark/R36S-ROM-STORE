@@ -12,7 +12,7 @@ local M = {}
 M.DIR = C.APP_DIR .. "/update"
 
 local README = [[
-R36S ROMS STORE - pasta de atualizações / updates folder
+R36S ROM STORE - pasta de atualizações / updates folder
 
 PT: Coloque aqui o pacote de atualização (.zip, .7z ou .rar) e abra
     Configurações > Downloads e atualizações > Atualizações >

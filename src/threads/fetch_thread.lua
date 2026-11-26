@@ -1,5 +1,5 @@
 -- =============================================================================
---  R36S ROMS STORE - thread de downloads pequenos (catalogo e capas)
+--  R36S ROM STORE - thread de downloads pequenos (catalogo e capas)
 --  Recebe pedidos pelo canal "hub_fetch_req" e responde em "hub_fetch_res".
 --  Pedido: { id=, url=, out=, kind="catalog"|"cover", part=BYTES (opcional) }
 -- =============================================================================
@@ -49,6 +49,10 @@ while true do
       local status = os.execute("curl --proto '=https' --proto-redir '=https' -fsSL --connect-timeout 5 --max-time 12 --max-filesize 2097152 -o "
         .. shq(tmp) .. " " .. shq(req.url))
       rc = (status == 0 or status == true) and 0 or (type(status) == "number" and math.max(1, math.floor(status / 256)) or 1)
+    elseif req.kind == "theme_revision" then
+      local ok = os.execute("curl --proto '=https' --proto-redir '=https' -fsSL --connect-timeout 8 --max-time 20 --max-filesize 1048576 -H 'Accept: application/vnd.github+json' -o "
+        .. shq(tmp) .. " " .. shq(req.url))
+      rc = (ok == 0 or ok == true) and 0 or 1
     elseif req.kind == "ota_feed" then
       local ok = os.execute("curl --proto '=https' --proto-redir '=https' -fsSL --max-time 30 --max-filesize 262144 -o "
         .. shq(tmp) .. " " .. shq(req.url))

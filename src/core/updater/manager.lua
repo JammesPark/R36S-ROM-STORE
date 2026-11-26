@@ -1,5 +1,5 @@
 -- =============================================================================
---  Gerenciador de atualizacoes do R36S ROMS STORE (thread principal)
+--  Gerenciador de atualizacoes do R36S ROM STORE (thread principal)
 --  Uma operacao por vez (analise, instalacao, restauracao, download), feita
 --  em threads/updater_thread.lua. Aqui ficam o estado, as mensagens
 --  traduzidas, o historico e a recuperacao na abertura do app.
@@ -43,12 +43,12 @@ function M.formats_text()
   return table.concat(ok, ", "), table.concat(no, ", ")
 end
 
---- o hub esta na estrutura esperada (<ports>/r36sromsstore)?
+--- o hub esta na estrutura esperada (<ports>/r36sromstore)?
 function M.layout_ok()
   if M.layout == nil then
     local a = U.trim(U.capture("readlink -f -- " .. U.shq(C.APP_DIR) .. " 2>/dev/null") or "")
     local p = U.trim(U.capture("readlink -f -- " .. U.shq(C.PORTS_DIR) .. " 2>/dev/null") or "")
-    M.layout = a ~= "" and a == p .. "/r36sromsstore"
+    M.layout = a ~= "" and a == p .. "/r36sromstore"
   end
   return M.layout
 end
@@ -69,7 +69,7 @@ function M.start(op, args, on_done)
   -- ler o proprio pacote (threads e modulos novos). So depois de reiniciar.
   if M.restart_needed then return false, L("Atualização instalada: reinicie o app antes de continuar.") end
   if op ~= "probe" and op ~= "download" and not M.layout_ok() then
-    return false, L("A pasta do R36S ROMS STORE não está na estrutura esperada (ports/r36sromsstore). Atualização bloqueada por segurança.")
+    return false, L("A pasta do R36S ROM STORE não está na estrutura esperada (ports/r36sromstore). Atualização bloqueada por segurança.")
   end
   local tools = M.tools()
   local function plain(t) return t and { kind = t.kind, bin = t.bin, name = t.name } or nil end
@@ -108,7 +108,7 @@ local MSG = {
   no_tool = L("Este console não tem uma ferramenta para abrir este formato."),
   list = L("Não foi possível ler o conteúdo do pacote (arquivo danificado ou incompleto)."),
   too_many = L("O pacote tem arquivos demais."),
-  structure = L("Estrutura desconhecida: o pacote não tem update_manifest.json nem a pasta r36sromsstore com o game.love."),
+  structure = L("Estrutura desconhecida: o pacote não tem update_manifest.json nem a pasta r36sromstore com o game.love."),
   invalid = L("O pacote não passou na validação. Nada foi alterado."),
   integrity = L("O arquivo compactado está danificado (falhou no teste de integridade). Nada foi alterado."),
   space = L("Espaço livre insuficiente no cartão SD para extrair o pacote e guardar o backup."),
@@ -246,7 +246,7 @@ function M.on_boot()
       -- a versao nova abriu E sua versao corresponde ao manifesto: confirma
       Backup.journal_clear(C.APP_DIR)
       U.log("Atualizações: versão", C.VERSION_NUM, "confirmada na abertura")
-      if j.state == "booting" then notice = notice or { L("Atualização concluída: R36S ROMS STORE ") .. C.VERSION .. ".", "ok" } end
+      if j.state == "booting" then notice = notice or { L("Atualização concluída: R36S ROM STORE ") .. C.VERSION .. ".", "ok" } end
       -- novidades da versao que acabou de abrir (mostradas depois do aviso inicial)
       local okr, txt = pcall(love.filesystem.read, NOTES_FILE)
       local n = okr and txt and require("lib.json").decode(txt) or nil

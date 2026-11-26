@@ -1,156 +1,22 @@
-name: Validar e empacotar R36S ROMS STORE
-
+name: Validar código oficial R36S ROM STORE
 on:
   push:
-    branches: [main, experimental/0.6.7-beta-20261121, experimental/reorganizacao-repositorio]
+    branches: [main]
   pull_request:
   workflow_dispatch:
-    inputs:
-      publish_release:
-        description: 'Publicar versão oficial aprovada (inclui OTA)'
-        type: boolean
-        required: true
-        default: false
-
-permissions:
-  contents: read
-
+permissions: {contents: read}
 jobs:
-  build:
+  validate:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write  # somente para enviar ZIP a branch experimental-downloads
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
-
-      - name: Instalar ferramentas de validação
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y luajit zip unzip
-
-      - name: Conferir versao e documentacao
-        run: python3 tools/version.py check
-
-      - name: Conferir estrutura e LuaJIT
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f src/main.lua
-          test -f src/config.lua
-          test -f 'port/R36S ROMS STORE.sh'
-          test -d port/r36sromsstore
-          test -f LICENSE
-          test -f NOTICE.md
-          grep -q 'Lag do Lira' NOTICE.md
-          find src -type f -name '*.lua' -print0 | while IFS= read -r -d '' f; do
-            luajit -b "$f" /dev/null
-          done
-
-      - name: Testar armazenamento e instalação de ROMs
-        run: |
-          luajit tests/test_own_catalog.lua
-          luajit tests/test_cover_recovery.lua
-          luajit tests/test_category_order.lua
-          luajit tests/test_catalog_presentation.lua
-          luajit tests/test_cover_focus.lua
-          luajit tests/test_rom_status_cache.lua
-          luajit tests/test_original_download_controls.lua
-          luajit tests/test_visual_revision.lua
-          luajit tests/test_color_neon.lua
-          luajit tests/test_region_view.lua
-          PYTHONDONTWRITEBYTECODE=1 python3 tests/test_catalog_offline.py
-          PYTHONDONTWRITEBYTECODE=1 python3 tests/test_theme_layouts_experimental.py
-          luajit tests/test_rom_storage.lua
-          PYTHONDONTWRITEBYTECODE=1 python3 tests/test_rom_install.py
-
-      - name: Gerar ZIP de instalação
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 tools/version.py get
-          sh tools/build.sh
-          for pkg in build/*.zip; do unzip -tq "$pkg"; done
-
-      # upload-artifact nao e usado: a cota de artifacts deste repositorio
-      # esta esgotada, embora o build e os testes estejam funcionando.
-      - name: Publicar instalador na branch experimental-downloads (sem Release ou OTA)
-        if: github.ref == 'refs/heads/experimental/0.6.7-beta-20261121' && github.event_name != 'pull_request'
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$GITHUB_REF" = 'refs/heads/experimental/0.6.7-beta-20261121'
-          pkg="build/R36S_ROMS_STORE_$(python3 tools/version.py get).zip"
-          test -s "$pkg"
-          # Limite de arquivo individual permitido pelo GitHub.
-          test "$(stat -c%s "$pkg")" -lt 100000000 || {
-            echo "::error::ZIP acima de 100 MB; GitHub nao permite arquivo desse tamanho em Git."
-            exit 1
-          }
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          branch="experimental-downloads"
-          pub="$RUNNER_TEMP/romstore-exp-downloads"
-          if git fetch --depth=1 origin "$branch:refs/remotes/origin/$branch"; then
-            git worktree add -B "$branch" "$pub" "refs/remotes/origin/$branch"
-          else
-            git worktree add --detach "$pub" HEAD
-            git -C "$pub" switch --orphan "$branch"
-            git -C "$pub" rm -rf . || true
-          fi
-          mkdir -p "$pub/distribution"
-          cp "$pkg" "$pub/distribution/R36S_ROMSTORE_Experimental_Etapa1.zip"
-          (
-            cd "$pub"
-            printf '%s\n' '# Instalação R36S ROMS STORE Experimental' '' \
-              'Esta branch publica somente o instalador gerado de uma build testada da Experimental.' \
-              'Nao e a branch main nem o canal OTA oficial.' '' \
-              'Instale também R36S_ROMSTORE_INSTALAR_SD_15652_SIGLAS.zip (catálogo .zlib com 15.652 ROMs, fornecido separadamente).' \
-              "Commit do codigo: $GITHUB_SHA" > README.md
-            git add -A
-            if git diff --cached --quiet; then
-              echo "O ZIP publicado ja esta atualizado."
-            else
-              git commit -m "build(experimental): disponibilizar ZIP validado de $GITHUB_SHA"
-              git push origin "HEAD:refs/heads/$branch"
-            fi
-          )
-          echo "Instalador disponivel na branch $branch; nao usa Actions artifacts."
-  release:
-    needs: build
-    # Publicacao oficial somente por aprovacao explicita; builds comuns apenas validam.
-    if: >-
-      github.ref == 'refs/heads/main' &&
-      ((github.event_name == 'workflow_dispatch' && inputs.publish_release == true) ||
-       (github.event_name == 'push' && contains(github.event.head_commit.message, '[release approved]')))
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - name: Gerar instalador do commit validado
-        run: sh tools/build.sh
-      - name: Enviar versão nova ao canal público
-        env:
-          GH_TOKEN: ${{ secrets.ROMS_UPDATES_TOKEN }}
-          PUBLIC_REPO: JammesPark/R36S-ROMS-HUB-STORE-UPDATES
-        run: |
-          set -euo pipefail
-          version=$(python3 tools/version.py get)
-          test -n "$GH_TOKEN" || { echo "::error::Configure ROMS_UPDATES_TOKEN com escrita de conteúdo no repositório público."; exit 1; }
-          gh auth setup-git
-          gh repo clone "$PUBLIC_REPO" "$RUNNER_TEMP/canal" -- --depth=1
-          cd "$RUNNER_TEMP/canal"
-          if [[ -f distribution/version.txt ]]; then
-            current=$(cat distribution/version.txt)
-            [[ "$current" != "$version" ]] || exit 0
-            [[ "$(printf '%s\n' "$version" "$current" | sort -V | tail -1)" == "$version" ]] || exit 1
-          fi
-          mkdir -p distribution
-          cp "$GITHUB_WORKSPACE/build/R36S_ROMS_STORE_${version}.zip" distribution/installer.zip
-          printf '%s\n' "$version" > distribution/version.txt
-          git config user.name github-actions
-          git config user.email github-actions[bot]@users.noreply.github.com
-          git add distribution
-          git commit -m "Distribuir R36S ROMS STORE $version" -m "Assisted-by: ChatGPT (OpenAI)"
-          git push origin HEAD:main
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {persist-credentials: false}
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq luajit zip unzip python3-pil
+      - run: |
+          set -eu
+          python3 tools/version.py check
+          sh -n INSTALAR_R36S_ROM_STORE.sh
+          bash -n 'port/R36S ROM STORE.sh'
+          find src -type f -name '*.lua' -exec luajit -b '{}' /dev/null \;
+          ART_PYTHON=/usr/bin/python3 sh tools/build.sh
+          STORE_CHANNEL=official python3 tools/verify_candidate_package.py build/R36S_ROM_STORE_$(python3 tools/version.py get).zip

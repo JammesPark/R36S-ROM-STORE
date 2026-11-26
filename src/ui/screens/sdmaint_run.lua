@@ -273,7 +273,7 @@ function S:report(integ)
   local c, s = p.card, p.sum
   local R = {}
   local function w(x) R[#R + 1] = x or "" end
-  w("R36S ROMS STORE " .. C.VERSION .. " - " .. L("Relatório do microSD"))
+  w("R36S ROM STORE " .. C.VERSION .. " - " .. L("Relatório do microSD"))
   w(os.date("%d/%m/%Y %H:%M:%S"))
   w(string.rep("=", 60))
   w(L("CARTÃO"))
@@ -334,7 +334,7 @@ function S:report(integ)
   w(L("RECOMENDAÇÕES"))
   if #problems > 0 then w("  - " .. L("Faça backup do cartão o quanto antes.")); w("  - " .. pc_help()) end
   if s and s.frac and s.frac > 0.9 then w("  - " .. L("O cartão está com mais de 90% ocupado: libere espaço para evitar falhas de gravação.")) end
-  w("  - " .. L("Desligue o console pelo menu do sistema (ou pelo R36S ROMS STORE) antes de remover o cartão ou tirar a bateria."))
+  w("  - " .. L("Desligue o console pelo menu do sistema (ou pelo R36S ROM STORE) antes de remover o cartão ou tirar a bateria."))
   w("  - " .. L("Desfragmentação não é recomendada no microSD (memória flash)."))
   w("")
   w(L("Somente leitura: este relatório não alterou nada no cartão."))

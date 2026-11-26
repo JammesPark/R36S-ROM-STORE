@@ -67,7 +67,7 @@ function S:draw()
   if self.sel>self.scroll+VIS then self.scroll=self.sel-VIS end
   G.header("Baixar Temas",M.source=="online" and "CATÁLOGO ONLINE" or "CATÁLOGO EM CACHE")
   -- O subtitulo nao pode ficar em y=34: a faixa de cabecalho acaba em 40.
-  G.text_fit(T.f.small,"Temas exclusivos da R36S ROMS STORE",16,47,T.W-32,T.c.dim)
+  G.text_fit(T.f.small,"Temas exclusivos da R36S ROM STORE",16,47,T.W-32,T.c.dim)
   local lx,lw=12,260
   if #items==0 then
     G.panel(lx,TOP,lw,CONTENT_BOTTOM-TOP,{bg=T.c.bg1})

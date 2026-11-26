@@ -40,8 +40,18 @@ local function exists(p) local f = io.open(p, "rb"); if f then f:close(); return
 function S.roots(catalog_dir, tm)
   local cands = {}
   if catalog_dir then cands[#cands + 1] = catalog_dir end
+  cands[#cands + 1] = "/roms/themes"
+  cands[#cands + 1] = "/roms2/themes"
+  cands[#cands + 1] = "/storage/.config/emulationstation/themes"
+  cands[#cands + 1] = "/storage/.emulationstation/themes"
+  cands[#cands + 1] = "/userdata/themes"
   cands[#cands + 1] = "/etc/emulationstation/themes"
   cands[#cands + 1] = "/home/ark/.emulationstation/themes"
+  cands[#cands + 1] = "/home/ark/.config/emulationstation/themes"
+  cands[#cands + 1] = "/userdata/system/configs/emulationstation/themes"
+  cands[#cands + 1] = "/storage/roms/themes"
+  cands[#cands + 1] = "/storage/roms2/themes"
+  cands[#cands + 1] = "/root/.emulationstation/themes"
   if tm and tm.themes_location then cands[#cands + 1] = (tm.themes_location:gsub("/+$", "")) end
   local out, seen = {}, {}
   for _, d in ipairs(cands) do
@@ -163,7 +173,7 @@ function S.scan(roots, os_id, registry, tm)
         local folder = name:match("^(.-)/$")
         if folder and folder:sub(1, 1) ~= "." then
           local path = r.path .. "/" .. folder
-          if not res.by_folder[folder] then
+          do
             local loc = { folder = folder, path = path, root = r.path, root_real = r.real }
             loc.is_link = U.trim(U.capture("test -L " .. U.shq(path) .. " && echo L") or "") == "L"
             loc.readable = U.exec_ok("test -r " .. U.shq(path) .. " -a -x " .. U.shq(path))
@@ -193,7 +203,7 @@ function S.scan(roots, os_id, registry, tm)
             else
               loc.origin, loc.evidence = "user", loc.repo and (".git: " .. loc.repo) or nil
             end
-            res.by_folder[folder] = loc
+            res.by_folder[folder] = res.by_folder[folder] or loc
             res.list[#res.list + 1] = loc
           end
         end

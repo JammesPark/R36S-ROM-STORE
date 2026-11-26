@@ -6,11 +6,11 @@ package.loaded["config"] = {
   APP_DIR = "/fake/roms/ports/r36sromsstore",
 }
 local mock_manifest = {
-  format = 1, name = "R36S ROMS STORE", type = "full",
+  format = 1, name = "R36S ROM STORE", type = "full",
   version = "0.0.30-beta",
   files = {
     { path = "r36sromsstore/game.love", size = 42, sha256 = string.rep("a",64) },
-    { path = "R36S ROMS STORE.sh", size = 3, sha256 = string.rep("b",64) },
+    { path = "R36S ROM STORE.sh", size = 3, sha256 = string.rep("b",64) },
   }
 }
 package.loaded["lib.json"] = { decode = function() return mock_manifest end }

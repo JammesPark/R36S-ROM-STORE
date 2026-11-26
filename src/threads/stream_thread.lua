@@ -1,5 +1,5 @@
 -- =============================================================================
---  R36S ROMS STORE - transmissao da tela do hub (thread, LuaSocket do LOVE)
+--  R36S ROM STORE - transmissao da tela do hub (thread, LuaSocket do LOVE)
 --
 --  Servidor HTTP minimo, somente leitura:
 --    GET /<codigo>     -> pagina de visualizacao (HTML embutido, sem arquivos)

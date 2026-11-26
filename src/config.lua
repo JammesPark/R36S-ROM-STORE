@@ -1,17 +1,17 @@
--- R36S ROMS STORE: versao modificada em 2026-11-15. GPL-3.0.
+-- R36S ROM STORE: versao modificada em 2026-11-15. GPL-3.0.
 -- Base: R36S PORT HUB, por Lag do Lira (creditos em NOTICE.md).
 -- =============================================================================
---  R36S ROMS STORE - configuracao
---  Edicao Experimental: catalogo proprio remoto com copia local.
+--  R36S ROM STORE - configuracao
+--  Edicao oficial: catalogo proprio remoto com copia local.
 --  Uma ultima copia valida e salva no SD para recuperacao offline.
 -- =============================================================================
 local L = require("lib.i18n").L
 local C = {}
 
-C.APP_NAME = "R36S ROM HUB STORE"
-C.EDITION = "Official"  -- canal publico beta
-C.VERSION = L("0.7.0-beta")       -- texto exibido
-C.VERSION_NUM = "0.7.0-beta"        -- numero usado para comparar com a atualizacao
+C.APP_NAME = "R36S ROM STORE"
+C.EDITION = "Official"
+C.VERSION = L("0.7.1-beta")       -- texto exibido
+C.VERSION_NUM = "0.7.1-beta"        -- numero usado para comparar com a atualizacao
 -- R36 Hub OS: o hub e a interface principal do sistema (supervisor exporta R36HUBOS=1)
 C.OS_MODE = os.getenv("R36HUBOS") == "1"
 C.OS_NAME = "R36 Hub OS"
@@ -24,7 +24,8 @@ C.OS_VERSION = os.getenv("R36HUBOS_VERSION") or ""
 -- { "version", "url", "sha256", "notes" }.
 -- Tambem pode ser definido em <pasta do app>/update_url.txt (sobrescreve este).
 -- Canal oficial OTA; o feed so muda depois da verificacao do pacote publicado.
-C.UPDATE_URL = "https://raw.githubusercontent.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/main/ota/update.json"
+C.UPDATE_URL = "https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE-UPDATES/main/ota/rom-store/update.json"  -- canal da nova pasta
+C.EXPERIMENTAL_NO_OTA = false
 
 -- Catalogo de temas (Configuracoes > Temas > Baixar novos temas). Vazio ate o
 -- repositorio de temas ser publicado. Tambem pode ser definido em
@@ -35,10 +36,10 @@ C.THEMES_CATALOG_URL = "https://raw.githubusercontent.com/JammesPark/R36SPORTSBR
 -- sistema). Link "raw" do temas.json no GitHub. Vazio = usa a copia que vem no
 -- app (catalog/es_themes.json). Tambem pode ir em <pasta do app>/es_themes_url.txt
 C.ES_THEMES_URL = ""
-C.TAGLINE = L("Ports de jogos e utilitários para o console R36S, criados por fãs e para fãs.")
+C.TAGLINE = L("ROMs e ferramentas para o console R36S, criadas por fãs e para fãs.")
 
 -- Jogos: canal proprio separado do OTA. A copia valida permanece no SD.
-C.OWN_CATALOG_URL = "https://raw.githubusercontent.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/catalogo-experimental/catalogo/catalogo_proprio.zlib"
+C.OWN_CATALOG_URL = "https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE-UPDATES/catalogo-estavel/catalogo/catalogo_proprio.zlib"
 -- Arquivo: C.APP_DIR/catalogo_proprio.zlib.
 
 -- Central de Conteudo > BIOS do Sistema: pacote de BIOS (link direto do arquivo).
@@ -51,7 +52,7 @@ C.BIOS_URL = "https://archive.org/download/bios-r-36s/Bios%20r36s.rar"
 
 -- Pastas (definidas pelo launcher .sh; os valores padrao servem para o R36S)
 C.PORTS_DIR = os.getenv("R36SBR_PORTS_DIR") or "/roms/ports"
-C.APP_DIR = os.getenv("R36SBR_DIR") or (C.PORTS_DIR .. "/r36sromsstore")
+C.APP_DIR = os.getenv("R36SBR_DIR") or (C.PORTS_DIR .. "/r36sromstore")
 C.TMP_DIR = C.APP_DIR .. "/tmp"          -- mesma particao de /roms/ports (mover = instantaneo)
 C.FETCH_SH = C.APP_DIR .. "/bin/fetch.sh"
 
@@ -63,7 +64,7 @@ C.SPACE_MARGIN = 32 * 1024 * 1024
 -- (nunca substitui o original). Comparacao sem diferenciar maiusculas.
 C.PROTECTED_NAMES = {
   ["portmaster"] = true, ["portmaster.sh"] = true, ["gamelist.xml"] = true,
-  ["r36sromsstore"] = true, ["r36s port hub.sh"] = true, ["r36sportsbr store.sh"] = true,
+  ["r36sromstore"] = true, ["r36sromsstore"] = true, ["r36s rom store.sh"] = true, ["r36s roms store.sh"] = true, ["r36s port hub.sh"] = true, ["r36sportsbr store.sh"] = true,
 }
 
 -- =============================================================================

@@ -120,7 +120,7 @@ function S:draw()
     G.text(T.f.small, l, x + 14, yy, T.c.dim); yy = yy + 15
   end
   yy = yy + 6
-  for _, l in ipairs(G.wrap(T.f.small, L("O R36S ROMS STORE fecha durante o teste e abre de novo sozinho, nesta tela, quando você sair."), w - 28)) do
+  for _, l in ipairs(G.wrap(T.f.small, L("O R36S ROM STORE fecha durante o teste e abre de novo sozinho, nesta tela, quando você sair."), w - 28)) do
     G.text(T.f.small, l, x + 14, yy, T.c.faint); yy = yy + 15
   end
 

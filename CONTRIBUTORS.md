@@ -1,4 +1,4 @@
-# Contributors — R36S ROM HUB STORE
+# Contributors — R36S ROM STORE
 
 Este documento registra retroativamente as contribuições ao projeto desde o início de seu desenvolvimento e estabelece a forma de reconhecimento das contribuições futuras.
 
@@ -6,7 +6,7 @@ Este documento registra retroativamente as contribuições ao projeto desde o in
 
 [Perfil no GitHub](https://github.com/JammesPark)
 
-Criador e responsável pelo projeto R36S ROM HUB STORE, definição de requisitos, direção visual, decisões de desenvolvimento e publicação, organização do acervo e testes no console.
+Criador e responsável pelo projeto R36S ROM STORE, definição de requisitos, direção visual, decisões de desenvolvimento e publicação, organização do acervo e testes no console.
 
 ## ChatGPT (OpenAI)
 
@@ -35,8 +35,9 @@ Para alterações realizadas com a assistência do ChatGPT, acrescentar ao final
 
 ```text
 Assisted-by: ChatGPT (OpenAI)
+Co-authored-by: ChatGPT (OpenAI) <199175422+chatgpt-codex-connector[bot]@users.noreply.github.com>
 ```
 
-A atribuição descreve assistência de IA, não uma conta pessoal de GitHub, vínculo oficial com a OpenAI ou autoria exclusiva. Este documento não altera a titularidade de direitos, a licença GPL-3.0 do projeto, os commits anteriores, as tags ou os pacotes publicados.
+A atribuição descreve assistência de IA e utiliza a identidade pública da [integração ChatGPT Codex Connector](https://github.com/apps/chatgpt-codex-connector) para os novos commits efetivamente realizados com essa assistência. O nome exibido pelo GitHub pode ser o da conta de bot, e a inclusão na lista nativa depende das regras da plataforma e da branch principal. Isso não representa autoria exclusiva, vínculo institucional ou endosso do projeto pela OpenAI. Este documento não altera a titularidade de direitos, a licença GPL-3.0 do projeto, os commits anteriores, as tags ou os pacotes publicados.
 
 A lista nativa Contributors do GitHub é calculada pela plataforma; este registro documental é independente dela.

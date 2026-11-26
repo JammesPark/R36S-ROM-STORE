@@ -2,7 +2,7 @@
 # Adaptado de R36S PORT HUB (Lag do Lira), GPL-3.0.
 # https://github.com/liralflsti-wq/r36s-port-hub
 """
-R36SPORTSBR STORE - pacotes de atualizacao (update_manifest.json + SHA-256)
+R36S ROM STORE - pacotes de atualizacao (update_manifest.json + SHA-256)
 
 Uso:
   make_update.py full PORTS_DIR
@@ -19,7 +19,7 @@ Uso:
       Monta o ZIP incremental: so arquivos novos ou alterados desde BASE,
       com update_manifest.json na raiz. Pronto para a pasta r36sportsbrstore/update.
 
-PORTS_DIR e a pasta "ports" gerada pelo build (tem "R36SPORTSBR STORE.sh" e r36sportsbrstore/).
+PORTS_DIR e a pasta "ports" gerada pelo build (tem "R36S ROM STORE.sh" e r36sportsbrstore/).
 A versao e lida de src/config.lua (C.VERSION_NUM e C.VERSION).
 
 Notas da versao (aparecem no hub antes de instalar e na primeira abertura):
@@ -29,8 +29,8 @@ Notas da versao (aparecem no hub antes de instalar e na primeira abertura):
 import hashlib, json, os, re, sys, zipfile, datetime, argparse, time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LAUNCHER = "R36S ROMS STORE.sh"
-APP = "r36sromsstore"
+LAUNCHER = "R36S ROM STORE.sh"
+APP = "r36sromstore"
 PROTECTED = {"conf", "tmp", "logs", "gravacoes", "update", "backups", "bios", "bios_url.txt", "catalog.json",
              "catalog_url.txt", "update_url.txt", "stats_url.txt", "log.txt", "themes_url.txt", "es_themes_url.txt", "runtimes_url.txt"}
 
@@ -75,7 +75,7 @@ def manifest(ports, files, kind, vmin=None, vmax=None, desc="", changes=None, fi
     num, lab = version()
     m = {
         "format": 1,
-        "name": "R36S ROMS STORE",
+        "name": "R36S ROM STORE",
         "type": kind,
         "version": num,
         "version_label": lab,
@@ -112,7 +112,7 @@ def release_changes():
 def cmd_full(ports):
     files = hub_files(ports)
     m = manifest(ports, files, "full",
-                 desc="Pacote completo do R36S ROMS STORE.",
+                 desc="Pacote completo do R36S ROM STORE.",
                  changes=release_changes())
     with open(os.path.join(ports, "update_manifest.json"), "w", encoding="utf-8") as f:
         json.dump(m, f, ensure_ascii=False, indent=1)

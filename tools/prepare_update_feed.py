@@ -77,7 +77,7 @@ def create_feed(package: Path, source: Path, version: str,
                 raise ValueError(f"ZIP de fonte corrompido: {bad}")
             contents = set(z.namelist())
             source_dir = "src" if "src/config.lua" in contents else "game"
-            launcher = "port/R36S ROMS STORE.sh" if source_dir == "src" else "R36SPORTSBR STORE.sh"
+            launcher = "port/R36S ROM STORE.sh" if source_dir == "src" else "R36SPORTSBR STORE.sh"
             required = {
                 f"{source_dir}/main.lua", f"{source_dir}/config.lua", "tools/mkart.py",
                 "tools/make_update.py", "LICENSE", "NOTICE.md",

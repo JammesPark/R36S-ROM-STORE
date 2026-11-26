@@ -55,7 +55,9 @@ local function save()
       -- sem dados sensiveis: so nome, data, resultado e numeros do download
       hist[#hist + 1] = { id = e.pid, name = e.name, section = e.section, state = e.state,
         error = e.error, date = e.date, size = e.dl_total, op = e.op, stages = stage_copy(e.stages),
-        avg = e.avg, elapsed = e.elapsed }
+        avg = e.avg, elapsed = e.elapsed,
+        local_operation = e.local_operation or (e.opts and e.opts.local_file~=nil) or nil,
+        catalog_source = e.catalog_source }
     end
   end
   while #hist > HISTORY_MAX do table.remove(hist) end
@@ -73,9 +75,28 @@ function D.load()
       D.seq = D.seq + 1
       D.list[#D.list + 1] = { key = D.seq, pid = h.id, name = h.name, section = h.section or "games",
         state = h.state or "done", error = h.error, date = h.date, dl_total = h.size, from_history = true,
-        op = h.op, stages = stage_copy(h.stages), avg = h.avg, elapsed = h.elapsed }
+        op = h.op, stages = stage_copy(h.stages), avg = h.avg, elapsed = h.elapsed,
+        local_operation = h.local_operation==true, catalog_source = h.catalog_source }
     end
   end
+end
+
+-- Never persist source paths, credentials, URLs or old installation options.
+-- Reopen the CURRENT source using stable IDs; repeat through normal validation.
+function D.target(e, catalog)
+  if not e then return end
+  if e.pid=="bios_package" then return "bios" end
+  if e.pid=="portmaster_app" then return "pmmanager" end
+  if e.section=="themes" then
+    local key=type(e.pid)=="string" and e.pid:match("^estheme:(.+)$")
+    if key then return "esthemes",{download_key=key} end
+    return
+  end
+  if e.local_operation or (e.opts and e.opts.local_file) then return "files" end
+  local port=catalog and catalog.by_id and catalog.by_id[e.pid]
+  if port then return "details",{port=port} end
+  -- Legacy local operations may not have a persisted type.
+  if e.op==L("Extração de arquivo local") or e.op==L("Instalação de arquivo local") then return "files" end
 end
 
 --- entrada ativa ou aguardando para este port (evita duplicatas)
@@ -123,6 +144,31 @@ function D.enqueue(p, opts)
   return true, nil
 end
 
+--- Temas compartilham a mesma fila, sem trocar o instalador seguro de temas.
+function D.enqueue_theme(th, dir, os_id, folder, size, confirmed_unknown, expected_existing)
+  local Unified = require("core.esthemes_unified")
+  if not Unified.can_install(th,os_id,size) or (Unified.needs_confirmation(th,os_id,size) and confirmed_unknown~=true) then
+    return false,L("Tema incompatível ou confirmação necessária.")
+  end
+  if not D.loaded then D.load() end
+  local pid="estheme:"..Unified.key(th)
+  if D.pending(pid) then return false,th.name..L(" já está na Central de Downloads.") end
+  for _,e in ipairs(D.list) do
+    if e.theme and (e.state=="waiting" or e.job) and e.theme_dir==dir and e.theme_folder==folder then
+      return false,L("Já existe um tema na fila para esta pasta.")
+    end
+  end
+  D.seq=D.seq+1
+  local e={key=D.seq,pid=pid,name=th.name,section="themes",state="waiting",ext=true,
+    theme=th,theme_dir=dir,theme_os=os_id,theme_folder=folder,theme_size=size,
+    confirmed_unknown=confirmed_unknown,expected_existing=expected_existing,
+    op=L("Download e instalação de tema"),stages={},done=0,date=os.date("%d/%m/%Y %H:%M")}
+  local pos=1
+  for i,o in ipairs(D.list) do if o.state=="waiting" or o.job then pos=i+1 end end
+  table.insert(D.list,pos,e)
+  return true
+end
+
 --- Inicia o proximo da fila quando nada mais estiver ocupando o console.
 --- can_start(): checagem externa (runtimes/exclusao em andamento)
 function D.pump(can_start)
@@ -130,6 +176,20 @@ function D.pump(can_start)
   if can_start and not can_start() then return end
   for _, e in ipairs(D.list) do
     if e.state == "waiting" then
+      if e.theme then
+        local ES=require("core.esthemes")
+        local called,ok,err=pcall(ES.start_install,e.theme,e.theme_dir,e.theme_os,e.theme_folder,e.theme_size,e.confirmed_unknown,e.expected_existing)
+        if called and ok then
+          e.job={finished=false,ext=true}
+          e.cancel_fn=ES.cancel
+          e.state="downloading"
+          e.started=love.timer.getTime()
+        else
+          e.state,e.error="error",tostring(called and (err or L("Erro.")) or ok)
+          save()
+        end
+        return e
+      end
       local ok, err = Installer.start(e.port, e.opts)
       if ok then
         e.job = Installer.job
@@ -307,6 +367,27 @@ function D.ext_finish(e, result, err)
   if not e or not e.job then return end
   e.job.finished = true
   D.on_finished({ download_entry = e, result = result, error = err })
+end
+
+--- Processa o worker de temas em qualquer tela; a fila só avança após a limpeza.
+function D.update_theme()
+  local e=D.active()
+  if not e or not e.theme then return end
+  local ES=require("core.esthemes")
+  ES.update()
+  local j=ES.job
+  if not j then D.ext_finish(e,"error",L("Instalação de tema interrompida."));return e end
+  local phase=j.phase
+  local speed=phase=="download" and j.speed or nil
+  local total=phase=="download" and j.total or nil
+  local eta=speed and speed>0 and total and total>0 and math.max(0,total-(j.done or 0))/speed or nil
+  D.ext_progress(e,phase=="install" and "apply" or phase,phase=="download" and j.done or 0,total,speed,eta)
+  if j.finished and not j.thread:isRunning() then
+    D.ext_finish(e,j.ok and "done" or j.cancelled and "cancelled" or "error",j.error)
+    ES.job=nil
+    ES.install_revision=(ES.install_revision or 0)+1
+    return e
+  end
 end
 
 --- quantos itens finalizados (historico) existem

@@ -121,6 +121,13 @@ function A.update(dt)
         if cmd == "pushport" then A.app.push("details", { port = pp }) else A.app.ask_uninstall(pp) end
       end
     end
+  elseif cmd == "previewmenu" then
+    if not A.app.current() or A.app.current().name=="splash" then return end
+    A.app.dialog=nil
+    A.app.toast_msg=nil
+    assert(require("core.themes").apply(arg,false))
+    A.app.reset_to("menu")
+    A.app.toast_msg=nil
   elseif cmd == "theme" then
     require("core.themes").apply(arg, false)
   elseif cmd == "refreshcat" then

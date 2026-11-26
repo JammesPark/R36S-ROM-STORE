@@ -2,7 +2,7 @@
 --  Central de Downloads em Segundo Plano (START ou menu principal)
 --  Mostra a fila, o progresso real (download, extracao, instalacao) e o
 --  historico salvo. A mesma tela e os mesmos dados para os dois acessos.
---  A: ver progresso (ativo) / tirar da fila (aguardando) | X: limpar historico
+--  A: abrir detalhes diretamente | Y: informações e ações | X: limpar histórico
 --  B: voltar
 -- =============================================================================
 local L = require("lib.i18n").L
@@ -38,7 +38,7 @@ end
 function S:update() self:clamp() end
 
 --- port do catalogo (para capa e para conferir se esta instalado)
-local function port_of(e) return e.port or (e.pid and Catalog.by_id[e.pid]) end
+local function port_of(e) if e.section=="themes" then return nil end; return e.port or (e.pid and Catalog.by_id[e.pid]) end
 
 --- linha de numeros reais da etapa atual / resultado final
 local function detail_line(e)
@@ -159,11 +159,59 @@ function S:draw()
   end
   local sel = list[self.sel]
   local hints = { { "dpad", L("Navegar") } }
-  if sel and sel.job then hints[#hints + 1] = { "a", L("Ver progresso") }
-  elseif sel and sel.state == "waiting" then hints[#hints + 1] = { "a", L("Tirar da fila") } end
+  if sel then
+    hints[#hints+1]={"a",L("Detalhes")}
+    hints[#hints+1]={"y",sel.job and L("Ações") or sel.state=="waiting" and L("Ações") or L("Informações")}
+  end
   if Downloads.history_count() > 0 then hints[#hints + 1] = { "x", L("Limpar histórico") } end
   hints[#hints + 1] = { "b", L("Voltar") }
   G.hints(hints)
+end
+
+-- Details are available for every record, including legacy entries without a source.
+-- All actions re-check live state; downloads continue while this dialog is open.
+function S:information(e)
+  local body={e.name or "?",e.op or Downloads.op_label(nil,e.section),
+    L("Status")..": "..(Downloads.LABEL[e.state] or e.state or "?")}
+  if e.date then body[#body+1]=L("Data")..": "..e.date end
+  if e.dl_total and e.dl_total>0 then body[#body+1]=L("Tamanho")..": "..U.format_bytes(e.dl_total) end
+  body[#body+1]=detail_line(e)
+  local buttons={}
+  local function add(label,fn) buttons[#buttons+1]={label=L(label),fn=fn} end
+  local screen,params=Downloads.target(e,Catalog)
+  if screen then
+    add(screen=="files" and "Abrir gerenciador de arquivos" or screen=="bios" and "Abrir BIOS" or screen=="pmmanager" and "Abrir PortMaster" or "Abrir detalhes",function() App.push(screen,params) end)
+  elseif not e.job and e.state~="waiting" then
+    body[#body+1]=L("Origem indisponível no catálogo atual.")
+  end
+  if e.job then
+    if not e.ext then
+      add("Ver progresso",function() if e.job and not e.job.finished then e.job.background=false;Downloads.background=false end end)
+    end
+    if not e.job.finished and (e.phase=="download" or (not e.ext and e.job.phase=="download")) and (not e.ext or e.cancel_fn) then
+      add("Cancelar download",function()
+        if not e.job or e.job.finished or (e.phase~="download" and (e.ext or e.job.phase~="download")) then return end
+        App.show_dialog({title=L("Cancelar download?"),kind="warn",body=e.name,
+          buttons={{label=L("CANCELAR DOWNLOAD"),fn=function() if e.job and not e.job.finished and (e.phase=="download" or (not e.ext and e.job.phase=="download")) then Downloads.cancel(e) end end},{label=L("VOLTAR")}},sel=2})
+      end)
+    end
+  elseif e.state=="waiting" then
+    add("Tirar da fila",function()
+      if e.state~="waiting" then return end
+      App.show_dialog({title=L("Tirar da fila?"),kind="warn",body=e.name..L(" será retirado da fila. Nada foi baixado ainda."),
+        buttons={{label=L("TIRAR DA FILA"),fn=function() if e.state=="waiting" then Downloads.cancel(e) end end},{label=L("VOLTAR")}},sel=2})
+    end)
+  elseif screen=="details" or screen=="esthemes" then
+    add("Baixar novamente",function()
+      if Downloads.pending(e.pid) then App.toast(L("Já está na Central de Downloads."),"warn");return end
+      local dest,arg=Downloads.target(e,Catalog)
+      if dest=="details" then App.install(arg.port,{})
+      elseif dest=="esthemes" then arg.download_retry=true;App.push(dest,arg)
+      else App.toast(L("Origem indisponível no catálogo atual."),"warn") end
+    end)
+  end
+  add("VOLTAR")
+  App.show_dialog({title=L("Informações"),kind=e.state=="error" and "warn" or "info",body=table.concat(body,"\n"),list=true,buttons=buttons,sel=1})
 end
 
 function S:action(act)
@@ -173,20 +221,11 @@ function S:action(act)
   if act == "up" and n > 0 then self.sel = math.max(1, self.sel - 1)
   elseif act == "down" and n > 0 then self.sel = math.min(n, self.sel + 1)
   elseif act == "b" then App.pop()
-  elseif act == "a" and e and e.job and e.ext then
-    -- operacao externa (Gerenciador do PortMaster ou BIOS): abre a tela dela
-    App.push(e.opts and e.opts.screen or "pmmanager")
-  elseif act == "a" and e and e.job then
-    -- traz a janela de progresso para a frente (B nela permite cancelar)
-    e.job.background = false
-    Downloads.background = false
-  elseif act == "a" and e and e.state == "waiting" then
-    App.show_dialog({
-      title = L("Tirar da fila?"), kind = "warn",
-      body = e.name .. L(" será retirado da fila. Nada foi baixado ainda."),
-      buttons = { { label = L("TIRAR DA FILA"), fn = function() Downloads.cancel(e) end }, { label = "VOLTAR" } },
-      sel = 2,
-    })
+  elseif act=="a" and e then
+    local screen,params=Downloads.target(e,Catalog)
+    if screen then App.push(screen,params) else self:information(e) end
+  elseif act=="y" and e then
+    self:information(e)
   elseif act == "x" then
     local h = Downloads.history_count()
     if h == 0 then App.toast(L("O histórico já está vazio."), "info"); return end

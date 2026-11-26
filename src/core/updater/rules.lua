@@ -1,8 +1,8 @@
--- R36S ROMS STORE: versao modificada em 2026-11-15. GPL-3.0.
+-- R36S ROM STORE: versao modificada em 2026-11-15. GPL-3.0.
 -- Base: R36S PORT HUB, por Lag do Lira (creditos em NOTICE.md).
 -- =============================================================================
 --  Atualizacoes do hub: regras de validacao (Lua puro: thread principal e threads)
---  - Quais caminhos um pacote pode trocar (so arquivos do R36S ROMS STORE)
+--  - Quais caminhos um pacote pode trocar (so arquivos do R36S ROM STORE)
 --  - Leitura e conferencia do update_manifest.json
 --  - Comparacao de versoes e compatibilidade
 -- =============================================================================
@@ -11,8 +11,8 @@ local json = require("lib.json")
 local M = {}
 
 M.MANIFEST = "update_manifest.json"
-M.LAUNCHER = "R36S ROMS STORE.sh"
-M.APP = "r36sromsstore"
+M.LAUNCHER = "R36S ROM STORE.sh"
+M.APP = "r36sromstore"
 --- itens do hub que guardam dados do usuario: nunca vem de um pacote
 M.PROTECTED = { conf = true, tmp = true, logs = true, gravacoes = true, update = true, backups = true,
   bios = true, ["bios_url.txt"] = true, ["senhas.txt"] = true,

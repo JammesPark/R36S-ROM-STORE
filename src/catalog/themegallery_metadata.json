@@ -1,0 +1,989 @@
+[
+  {
+    "name": "Albedo",
+    "author": "mluizvitor",
+    "category": "fcamod",
+    "size_label": "17.9MB",
+    "project_url": "https://github.com/mluizvitor/es-theme-albedo",
+    "download_url": "https://github.com/mluizvitor/es-theme-albedo/archive/refs/heads/main.zip",
+    "folder": "es-theme-albedo",
+    "preview_sources": [
+      "assets/Images/albedo/1.webp",
+      "assets/Images/albedo/2.webp",
+      "assets/Images/albedo/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/albedo/1.jpg",
+      "assets/themegallery/albedo/2.jpg",
+      "assets/themegallery/albedo/3.jpg"
+    ]
+  },
+  {
+    "name": "Alekfull-NX",
+    "author": "fagnerpc",
+    "category": "batocera",
+    "size_label": "188MB",
+    "project_url": "https://github.com/fagnerpc/Alekfull-NX",
+    "download_url": "https://github.com/fagnerpc/Alekfull-NX/archive/refs/heads/master.zip",
+    "folder": "Alekfull-NX",
+    "preview_sources": [
+      "assets/Images/alekfull-nx/1.webp",
+      "assets/Images/alekfull-nx/2.webp",
+      "assets/Images/alekfull-nx/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/alekfull-nx/1.jpg",
+      "assets/themegallery/alekfull-nx/2.jpg",
+      "assets/themegallery/alekfull-nx/3.jpg"
+    ]
+  },
+  {
+    "name": "Alekfull-SOLO-ArkOS",
+    "author": "AeolusUX",
+    "category": "fcamod",
+    "size_label": "102MB",
+    "project_url": "https://github.com/AeolusUX/Alekfull-SOLO-ArkOS",
+    "download_url": "https://github.com/AeolusUX/Alekfull-SOLO-ArkOS/archive/refs/heads/master.zip",
+    "folder": "Alekfull-SOLO-ArkOS",
+    "preview_sources": [
+      "assets/Images/alekfull-solo-arkos/1.webp",
+      "assets/Images/alekfull-solo-arkos/2.webp",
+      "assets/Images/alekfull-solo-arkos/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/alekfull-solo-arkos/1.jpg",
+      "assets/themegallery/alekfull-solo-arkos/2.jpg",
+      "assets/themegallery/alekfull-solo-arkos/3.jpg"
+    ]
+  },
+  {
+    "name": "Animetaverse",
+    "author": "riofriz",
+    "category": "batocera",
+    "size_label": "49.2MB",
+    "project_url": "https://github.com/riofriz/es-theme-animetaverse",
+    "download_url": "https://github.com/riofriz/es-theme-animetaverse/archive/refs/heads/master.zip",
+    "folder": "es-theme-animetaverse",
+    "preview_sources": [
+      "assets/Images/animetiverse/1.webp",
+      "assets/Images/animetiverse/2.webp",
+      "assets/Images/animetiverse/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/animetiverse/1.jpg",
+      "assets/themegallery/animetiverse/2.jpg",
+      "assets/themegallery/animetiverse/3.jpg"
+    ]
+  },
+  {
+    "name": "Arcadeplanet",
+    "author": "EvilDindon",
+    "category": "batocera",
+    "size_label": "171MB",
+    "project_url": "https://github.com/EvilDindon/ES-THEME-ARCADEPLANET",
+    "download_url": "https://github.com/EvilDindon/ES-THEME-ARCADEPLANET/archive/refs/heads/master.zip",
+    "folder": "ES-THEME-ARCADEPLANET",
+    "preview_sources": [
+      "assets/Images/arcadeplanet/1.webp",
+      "assets/Images/arcadeplanet/2.webp",
+      "assets/Images/arcadeplanet/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/arcadeplanet/1.jpg",
+      "assets/themegallery/arcadeplanet/2.jpg",
+      "assets/themegallery/arcadeplanet/3.jpg"
+    ]
+  },
+  {
+    "name": "ARC-S-Theme Remix",
+    "author": "Nacurutu",
+    "category": "fcamod",
+    "size_label": "14.4MB",
+    "project_url": "https://github.com/Nacurutu/es-theme-ARC-S-Theme-Remix---The-RA-CFW",
+    "download_url": "https://github.com/Nacurutu/es-theme-ARC-S-Theme-Remix---The-RA-CFW/archive/refs/heads/main.zip",
+    "folder": "es-theme-ARC-S-Theme-Remix---The-RA-CFW",
+    "preview_sources": [
+      "assets/Images/arc-s-theme-remix/1.webp",
+      "assets/Images/arc-s-theme-remix/2.webp",
+      "assets/Images/arc-s-theme-remix/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/arc-s-theme-remix/1.jpg",
+      "assets/themegallery/arc-s-theme-remix/2.jpg",
+      "assets/themegallery/arc-s-theme-remix/3.jpg"
+    ]
+  },
+  {
+    "name": "Art Book Next ES Demake",
+    "author": "Kegg1701",
+    "category": "batocera",
+    "size_label": "166MB",
+    "project_url": "https://github.com/djparentx/Art-Book-Next-ES-Demake",
+    "download_url": "https://github.com/djparentx/Art-Book-Next-ES-Demake/archive/refs/heads/main.zip",
+    "folder": "Art-Book-Next-ES-Demake",
+    "preview_sources": [
+      "assets/Images/art-book-next-demake/1.webp",
+      "assets/Images/art-book-next-demake/2.webp",
+      "assets/Images/art-book-next-demake/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/art-book-next-demake/1.jpg",
+      "assets/themegallery/art-book-next-demake/2.jpg",
+      "assets/themegallery/art-book-next-demake/3.jpg"
+    ]
+  },
+  {
+    "name": "Artflix",
+    "author": "fagnerpc",
+    "category": "batocera",
+    "size_label": "389MB",
+    "project_url": "https://github.com/fagnerpc/Alekfull-ARTFLIX",
+    "download_url": "https://github.com/fagnerpc/Alekfull-ARTFLIX/archive/refs/heads/master.zip",
+    "folder": "Alekfull-ARTFLIX",
+    "preview_sources": [
+      "assets/Images/artflix/1.webp",
+      "assets/Images/artflix/2.webp",
+      "assets/Images/artflix/4.webp"
+    ],
+    "previews": [
+      "assets/themegallery/artflix/1.jpg",
+      "assets/themegallery/artflix/2.jpg",
+      "assets/themegallery/artflix/3.jpg"
+    ]
+  },
+  {
+    "name": "Artflix-Cobalto",
+    "author": "galisteogames",
+    "category": "batocera",
+    "size_label": "578MB",
+    "project_url": "https://github.com/galisteogames/ARTFLIX-Cobalto",
+    "download_url": "https://github.com/galisteogames/ARTFLIX-Cobalto/archive/refs/heads/main.zip",
+    "folder": "ARTFLIX-Cobalto",
+    "preview_sources": [
+      "assets/Images/artflix-cobalto/1.webp",
+      "assets/Images/artflix-cobalto/2.webp",
+      "assets/Images/artflix-cobalto/4.webp"
+    ],
+    "previews": [
+      "assets/themegallery/artflix-cobalto/1.jpg",
+      "assets/themegallery/artflix-cobalto/2.jpg",
+      "assets/themegallery/artflix-cobalto/3.jpg"
+    ]
+  },
+  {
+    "name": "Atlas-ES",
+    "author": "mirko93s",
+    "category": "batocera",
+    "size_label": "83.8MB",
+    "project_url": "https://github.com/mirko93s/atlas-es",
+    "download_url": "https://github.com/mirko93s/atlas-es/archive/refs/heads/master.zip",
+    "folder": "atlas-es",
+    "preview_sources": [
+      "assets/Images/atlas-es/1.webp",
+      "assets/Images/atlas-es/2.webp"
+    ],
+    "previews": [
+      "assets/themegallery/atlas-es/1.jpg",
+      "assets/themegallery/atlas-es/2.jpg"
+    ]
+  },
+  {
+    "name": "Base Text",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "76.1KB",
+    "project_url": "https://github.com/Jetup13/es-theme-base-text",
+    "download_url": "https://github.com/Jetup13/es-theme-base-text/archive/refs/heads/main.zip",
+    "folder": "es-theme-base-text",
+    "preview_sources": [
+      "assets/Images/base-text/1.webp",
+      "assets/Images/base-text/2.webp"
+    ],
+    "previews": [
+      "assets/themegallery/base-text/1.jpg",
+      "assets/themegallery/base-text/2.jpg"
+    ]
+  },
+  {
+    "name": "Canvas-ES",
+    "author": "Siddy212",
+    "category": "batocera",
+    "size_label": "170MB",
+    "project_url": "https://github.com/Siddy212/canvas-es",
+    "download_url": "https://github.com/Siddy212/canvas-es/archive/refs/heads/main.zip",
+    "folder": "canvas-es",
+    "preview_sources": [
+      "assets/Images/canvas-es/1.webp",
+      "assets/Images/canvas-es/2.webp",
+      "assets/Images/canvas-es/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/canvas-es/1.jpg",
+      "assets/themegallery/canvas-es/2.jpg",
+      "assets/themegallery/canvas-es/3.jpg"
+    ]
+  },
+  {
+    "name": "ChicueloAP",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "19.9MB",
+    "project_url": "https://github.com/Jetup13/es-theme-ChicueloAP",
+    "download_url": "https://github.com/Jetup13/es-theme-ChicueloAP/archive/refs/heads/master.zip",
+    "folder": "es-theme-ChicueloAP",
+    "preview_sources": [
+      "assets/Images/chicueloap/1.webp",
+      "assets/Images/chicueloap/2.webp"
+    ],
+    "previews": [
+      "assets/themegallery/chicueloap/1.jpg",
+      "assets/themegallery/chicueloap/2.jpg"
+    ]
+  },
+  {
+    "name": "Cody-Darkteck",
+    "author": "CodyV59",
+    "category": "fcamod",
+    "size_label": "4.89MB",
+    "project_url": "https://github.com/CodyV59/es-theme-CODY-DARKTECK",
+    "download_url": "https://github.com/CodyV59/es-theme-CODY-DARKTECK/archive/refs/heads/main.zip",
+    "folder": "es-theme-CODY-DARKTECK",
+    "preview_sources": [
+      "assets/Images/cody-darkteck/1.webp",
+      "assets/Images/cody-darkteck/2.webp",
+      "assets/Images/cody-darkteck/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/cody-darkteck/1.jpg",
+      "assets/themegallery/cody-darkteck/2.jpg",
+      "assets/themegallery/cody-darkteck/3.jpg"
+    ]
+  },
+  {
+    "name": "Cody-Destroy The RG351V",
+    "author": "CodyV59",
+    "category": "fcamod",
+    "size_label": "193MB",
+    "project_url": "https://github.com/CodyV59/es-theme-CODY-DESTROY-THE-RG351V",
+    "download_url": "https://github.com/CodyV59/es-theme-CODY-DESTROY-THE-RG351V/archive/refs/heads/main.zip",
+    "folder": "es-theme-CODY-DESTROY-THE-RG351V",
+    "preview_sources": [
+      "assets/Images/cody-destroy/1.webp",
+      "assets/Images/cody-destroy/2.webp"
+    ],
+    "previews": [
+      "assets/themegallery/cody-destroy/1.jpg",
+      "assets/themegallery/cody-destroy/2.jpg"
+    ]
+  },
+  {
+    "name": "Cody-Flux",
+    "author": "CodyV59",
+    "category": "fcamod",
+    "size_label": "17.2MB",
+    "project_url": "https://github.com/CodyV59/es-theme-CODY-FLUX",
+    "download_url": "https://github.com/CodyV59/es-theme-CODY-FLUX/archive/refs/heads/main.zip",
+    "folder": "es-theme-CODY-FLUX",
+    "preview_sources": [
+      "assets/Images/cody-flux/1.webp",
+      "assets/Images/cody-flux/2.webp",
+      "assets/Images/cody-flux/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/cody-flux/1.jpg",
+      "assets/themegallery/cody-flux/2.jpg",
+      "assets/themegallery/cody-flux/3.jpg"
+    ]
+  },
+  {
+    "name": "Cody-FuckyPlastics",
+    "author": "CodyV59",
+    "category": "fcamod",
+    "size_label": "186MB",
+    "project_url": "https://github.com/CodyV59/es-theme-CODY-FUCKYPLASTICS",
+    "download_url": "https://github.com/CodyV59/es-theme-CODY-FUCKYPLASTICS/archive/refs/heads/main.zip",
+    "folder": "es-theme-CODY-FUCKYPLASTICS",
+    "preview_sources": [
+      "assets/Images/cody-fuckyplastics/1.webp",
+      "assets/Images/cody-fuckyplastics/2.webp",
+      "assets/Images/cody-fuckyplastics/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/cody-fuckyplastics/1.jpg",
+      "assets/themegallery/cody-fuckyplastics/2.jpg",
+      "assets/themegallery/cody-fuckyplastics/3.jpg"
+    ]
+  },
+  {
+    "name": "Colorful v2",
+    "author": "mistertomlinson",
+    "category": "batocera",
+    "size_label": "776MB",
+    "project_url": "https://github.com/mistertomlinson/es-theme-colorful-v2",
+    "download_url": "https://github.com/mistertomlinson/es-theme-colorful-v2/archive/refs/heads/main.zip",
+    "folder": "es-theme-colorful-v2",
+    "preview_sources": [
+      "assets/Images/colorful-v2/1.webp",
+      "assets/Images/colorful-v2/2.webp",
+      "assets/Images/colorful-v2/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/colorful-v2/1.jpg",
+      "assets/themegallery/colorful-v2/2.jpg",
+      "assets/themegallery/colorful-v2/3.jpg"
+    ]
+  },
+  {
+    "name": "CrazyBoy",
+    "author": "SzalikDesigns",
+    "category": "batocera",
+    "size_label": "24MB",
+    "project_url": "https://github.com/SzalikDesigns/amberelec-crazyboy",
+    "download_url": "https://github.com/SzalikDesigns/amberelec-crazyboy/archive/refs/heads/main.zip",
+    "folder": "amberelec-crazyboy",
+    "preview_sources": [
+      "assets/Images/crazyboy/1.webp",
+      "assets/Images/crazyboy/2.webp",
+      "assets/Images/crazyboy/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/crazyboy/1.jpg",
+      "assets/themegallery/crazyboy/2.jpg",
+      "assets/themegallery/crazyboy/3.jpg"
+    ]
+  },
+  {
+    "name": "Cyber2077",
+    "author": "AeolusUX",
+    "category": "fcamod",
+    "size_label": "29.2MB",
+    "project_url": "https://github.com/AeolusUX/es-theme-Cyber2077",
+    "download_url": "https://github.com/AeolusUX/es-theme-Cyber2077/archive/refs/heads/main.zip",
+    "folder": "es-theme-Cyber2077",
+    "preview_sources": [
+      "assets/Images/cyber2077/1.webp",
+      "assets/Images/cyber2077/2.webp"
+    ],
+    "previews": [
+      "assets/themegallery/cyber2077/1.jpg",
+      "assets/themegallery/cyber2077/2.jpg"
+    ]
+  },
+  {
+    "name": "Elementerial",
+    "author": "mluizvitor",
+    "category": "fcamod",
+    "size_label": "11.7MB",
+    "project_url": "https://github.com/mluizvitor/es-theme-elementerial",
+    "download_url": "https://github.com/mluizvitor/es-theme-elementerial/archive/refs/heads/main.zip",
+    "folder": "es-theme-elementerial",
+    "preview_sources": [
+      "assets/Images/elementerial/1.webp",
+      "assets/Images/elementerial/2.webp",
+      "assets/Images/elementerial/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/elementerial/1.jpg",
+      "assets/themegallery/elementerial/2.jpg",
+      "assets/themegallery/elementerial/3.jpg"
+    ]
+  },
+  {
+    "name": "EpicAeolus",
+    "author": "AeolusUX",
+    "category": "fcamod",
+    "size_label": "47.8MB",
+    "project_url": "https://github.com/AeolusUX/es-theme-EpicAeolus",
+    "download_url": "https://github.com/AeolusUX/es-theme-EpicAeolus/archive/refs/heads/main.zip",
+    "folder": "es-theme-EpicAeolus",
+    "preview_sources": [
+      "assets/Images/epicaeolus/1.webp",
+      "assets/Images/epicaeolus/2.webp"
+    ],
+    "previews": [
+      "assets/themegallery/epicaeolus/1.jpg",
+      "assets/themegallery/epicaeolus/2.jpg"
+    ]
+  },
+  {
+    "name": "Epic Cody V2",
+    "author": "creeperxyz86",
+    "category": "fcamod",
+    "size_label": "47.8MB",
+    "project_url": "https://github.com/creeperxyz86/Epic-Cody-V2",
+    "download_url": "https://github.com/creeperxyz86/Epic-Cody-V2/archive/refs/heads/main.zip",
+    "folder": "Epic-Cody-V2",
+    "preview_sources": [
+      "assets/Images/epic-cody-v2/1.webp",
+      "assets/Images/epic-cody-v2/2.webp"
+    ],
+    "previews": [
+      "assets/themegallery/epic-cody-v2/1.jpg",
+      "assets/themegallery/epic-cody-v2/2.jpg"
+    ]
+  },
+  {
+    "name": "EpicNoir",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "23.2MB",
+    "project_url": "https://github.com/Jetup13/es-theme-epicnoir",
+    "download_url": "https://github.com/Jetup13/es-theme-epicnoir/archive/refs/heads/master.zip",
+    "folder": "es-theme-epicnoir",
+    "preview_sources": [
+      "assets/Images/epicnoir/1.webp",
+      "assets/Images/epicnoir/2.webp",
+      "assets/Images/epicnoir/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/epicnoir/1.jpg",
+      "assets/themegallery/epicnoir/2.jpg",
+      "assets/themegallery/epicnoir/3.jpg"
+    ]
+  },
+  {
+    "name": "Farfenkugell Crystal",
+    "author": "farfenkugell",
+    "category": "fcamod",
+    "size_label": "123MB",
+    "project_url": "https://github.com/farfenkugell/es-theme-farfenkugell_crystal",
+    "download_url": "https://github.com/farfenkugell/es-theme-farfenkugell_crystal/archive/refs/heads/master.zip",
+    "folder": "es-theme-farfenkugell_crystal",
+    "preview_sources": [
+      "assets/Images/farfenkugell-crystal/1.webp",
+      "assets/Images/farfenkugell-crystal/2.webp",
+      "assets/Images/farfenkugell-crystal/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/farfenkugell-crystal/1.jpg",
+      "assets/themegallery/farfenkugell-crystal/2.jpg",
+      "assets/themegallery/farfenkugell-crystal/3.jpg"
+    ]
+  },
+  {
+    "name": "Farfenkugell Lazy",
+    "author": "farfenkugell",
+    "category": "fcamod",
+    "size_label": "5.85MB",
+    "project_url": "https://github.com/farfenkugell/es-theme-farfenkugell_lazy",
+    "download_url": "https://github.com/farfenkugell/es-theme-farfenkugell_lazy/archive/refs/heads/main.zip",
+    "folder": "es-theme-farfenkugell_lazy",
+    "preview_sources": [
+      "assets/Images/farfenkugell-lazy/1.webp",
+      "assets/Images/farfenkugell-lazy/2.webp",
+      "assets/Images/farfenkugell-lazy/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/farfenkugell-lazy/1.jpg",
+      "assets/themegallery/farfenkugell-lazy/2.jpg",
+      "assets/themegallery/farfenkugell-lazy/3.jpg"
+    ]
+  },
+  {
+    "name": "FreePlay",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "6.38MB",
+    "project_url": "https://github.com/Jetup13/es-theme-freeplay",
+    "download_url": "https://github.com/Jetup13/es-theme-freeplay/archive/refs/heads/master.zip",
+    "folder": "es-theme-freeplay",
+    "preview_sources": [
+      "assets/Images/freeplay/1.webp",
+      "assets/Images/freeplay/2.webp",
+      "assets/Images/freeplay/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/freeplay/1.jpg",
+      "assets/themegallery/freeplay/2.jpg",
+      "assets/themegallery/freeplay/3.jpg"
+    ]
+  },
+  {
+    "name": "GBZ35_mod",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "7.62MB",
+    "project_url": "https://github.com/Jetup13/es-theme-gbz35_mod",
+    "download_url": "https://github.com/Jetup13/es-theme-gbz35_mod/archive/refs/heads/master.zip",
+    "folder": "es-theme-gbz35_mod",
+    "preview_sources": [
+      "assets/Images/gbz35_mod/1.webp",
+      "assets/Images/gbz35_mod/2.webp",
+      "assets/Images/gbz35_mod/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/gbz35_mod/1.jpg",
+      "assets/themegallery/gbz35_mod/2.jpg",
+      "assets/themegallery/gbz35_mod/3.jpg"
+    ]
+  },
+  {
+    "name": "Iconic-ES",
+    "author": "Delgan",
+    "category": "batocera",
+    "size_label": "91.3MB",
+    "project_url": "https://github.com/Delgan/iconic-es",
+    "download_url": "https://github.com/Delgan/iconic-es/archive/refs/heads/main.zip",
+    "folder": "iconic-es",
+    "preview_sources": [
+      "assets/Images/iconic-es/1.webp",
+      "assets/Images/iconic-es/2.webp",
+      "assets/Images/iconic-es/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/iconic-es/1.jpg",
+      "assets/themegallery/iconic-es/2.jpg",
+      "assets/themegallery/iconic-es/3.jpg"
+    ]
+  },
+  {
+    "name": "LCARS-p42",
+    "author": "prefect421",
+    "category": "widescreen",
+    "size_label": "38.7MB",
+    "project_url": "https://github.com/prefect421/es-theme-lcars-p42",
+    "download_url": "https://github.com/prefect421/es-theme-lcars-p42/archive/refs/heads/main.zip",
+    "folder": "es-theme-lcars-p42",
+    "preview_sources": [
+      "assets/Images/lcars-p42/1.webp",
+      "assets/Images/lcars-p42/2.webp"
+    ],
+    "previews": [
+      "assets/themegallery/lcars-p42/1.jpg",
+      "assets/themegallery/lcars-p42/2.jpg"
+    ]
+  },
+  {
+    "name": "Lethal",
+    "author": "LucasAlexandrou",
+    "category": "batocera",
+    "size_label": "93.3MB",
+    "project_url": "https://github.com/LucasAlexandrou/LethalTheme-ES",
+    "download_url": "https://github.com/LucasAlexandrou/LethalTheme-ES/archive/refs/heads/main.zip",
+    "folder": "LethalTheme-ES",
+    "preview_sources": [
+      "assets/Images/lethal/1.webp",
+      "assets/Images/lethal/2.webp",
+      "assets/Images/lethal/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/lethal/1.jpg",
+      "assets/themegallery/lethal/2.jpg",
+      "assets/themegallery/lethal/3.jpg"
+    ]
+  },
+  {
+    "name": "Magical Pixel",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "46.1MB",
+    "project_url": "https://github.com/Jetup13/es-theme-magical-pixel",
+    "download_url": "https://github.com/Jetup13/es-theme-magical-pixel/archive/refs/heads/main.zip",
+    "folder": "es-theme-magical-pixel",
+    "preview_sources": [
+      "assets/Images/magical-pixel/1.webp",
+      "assets/Images/magical-pixel/2.webp",
+      "assets/Images/magical-pixel/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/magical-pixel/1.jpg",
+      "assets/themegallery/magical-pixel/2.jpg",
+      "assets/themegallery/magical-pixel/3.jpg"
+    ]
+  },
+  {
+    "name": "Minimal",
+    "author": "crcerror",
+    "category": "batocera",
+    "size_label": "6.89MB",
+    "project_url": "https://github.com/crcerror/es-theme-minimal",
+    "download_url": "https://github.com/crcerror/es-theme-minimal/archive/refs/heads/master.zip",
+    "folder": "es-theme-minimal",
+    "preview_sources": [
+      "assets/Images/minimal/1.webp",
+      "assets/Images/minimal/2.webp",
+      "assets/Images/minimal/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/minimal/1.jpg",
+      "assets/themegallery/minimal/2.jpg",
+      "assets/themegallery/minimal/3.jpg"
+    ]
+  },
+  {
+    "name": "Minimal-ArkOS",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "6.28MB",
+    "project_url": "https://github.com/Jetup13/es-theme-minimal-arkos",
+    "download_url": "https://github.com/Jetup13/es-theme-minimal-arkos/archive/refs/heads/master.zip",
+    "folder": "es-theme-minimal-arkos",
+    "preview_sources": [
+      "assets/Images/minimal-arkos/1.webp",
+      "assets/Images/minimal-arkos/2.webp",
+      "assets/Images/minimal-arkos/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/minimal-arkos/1.jpg",
+      "assets/themegallery/minimal-arkos/2.jpg",
+      "assets/themegallery/minimal-arkos/3.jpg"
+    ]
+  },
+  {
+    "name": "NES-Box",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "46MB",
+    "project_url": "https://github.com/Jetup13/es-theme-nes-box",
+    "download_url": "https://github.com/Jetup13/es-theme-nes-box/archive/refs/heads/master.zip",
+    "folder": "es-theme-nes-box",
+    "preview_sources": [
+      "assets/Images/nes-box/1.webp",
+      "assets/Images/nes-box/2.webp",
+      "assets/Images/nes-box/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/nes-box/1.jpg",
+      "assets/themegallery/nes-box/2.jpg",
+      "assets/themegallery/nes-box/3.jpg"
+    ]
+  },
+  {
+    "name": "Pixel",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "4.88MB",
+    "project_url": "https://github.com/Jetup13/es-theme-pixel",
+    "download_url": "https://github.com/Jetup13/es-theme-pixel/archive/refs/heads/master.zip",
+    "folder": "es-theme-pixel",
+    "preview_sources": [
+      "assets/Images/pixel/1.webp",
+      "assets/Images/pixel/2.webp",
+      "assets/Images/pixel/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/pixel/1.jpg",
+      "assets/themegallery/pixel/2.jpg",
+      "assets/themegallery/pixel/3.jpg"
+    ]
+  },
+  {
+    "name": "Replica",
+    "author": "dani7959",
+    "category": "fcamod",
+    "size_label": "7.87MB",
+    "project_url": "https://github.com/dani7959/es-theme-replica",
+    "download_url": "https://github.com/dani7959/es-theme-replica/archive/refs/heads/main.zip",
+    "folder": "es-theme-replica",
+    "preview_sources": [
+      "assets/Images/replica/1.webp",
+      "assets/Images/replica/2.webp",
+      "assets/Images/replica/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/replica/1.jpg",
+      "assets/themegallery/replica/2.jpg",
+      "assets/themegallery/replica/3.jpg"
+    ]
+  },
+  {
+    "name": "RetroDark",
+    "author": "djparent",
+    "category": "fcamod",
+    "size_label": "18.9MB",
+    "project_url": "https://github.com/djparentx/es-theme-retrodark",
+    "download_url": "https://github.com/djparentx/es-theme-retrodark/archive/refs/heads/main.zip",
+    "folder": "es-theme-retrodark",
+    "preview_sources": [
+      "assets/Images/retrodark/1.webp",
+      "assets/Images/retrodark/2.webp",
+      "assets/Images/retrodark/4.webp"
+    ],
+    "previews": [
+      "assets/themegallery/retrodark/1.jpg",
+      "assets/themegallery/retrodark/2.jpg",
+      "assets/themegallery/retrodark/3.jpg"
+    ]
+  },
+  {
+    "name": "Retrofix-Mini",
+    "author": "20GotoTen",
+    "category": "batocera",
+    "size_label": "81.4MB",
+    "project_url": "https://github.com/20GotoTen/es-theme-retrofix-mini",
+    "download_url": "https://github.com/20GotoTen/es-theme-retrofix-mini/archive/refs/heads/main.zip",
+    "folder": "es-theme-retrofix-mini",
+    "preview_sources": [
+      "assets/Images/retrofix-mini/1.webp",
+      "assets/Images/retrofix-mini/2.webp",
+      "assets/Images/retrofix-mini/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/retrofix-mini/1.jpg",
+      "assets/themegallery/retrofix-mini/2.jpg",
+      "assets/themegallery/retrofix-mini/3.jpg"
+    ]
+  },
+  {
+    "name": "RetroNeon",
+    "author": "Akira-N28",
+    "category": "fcamod",
+    "size_label": "29.9MB",
+    "project_url": "https://github.com/Akira-N28/es-theme-RetroNeon",
+    "download_url": "https://github.com/Akira-N28/es-theme-RetroNeon/archive/refs/heads/main.zip",
+    "folder": "es-theme-RetroNeon",
+    "preview_sources": [
+      "assets/Images/retroneon/1.webp",
+      "assets/Images/retroneon/2.webp",
+      "assets/Images/retroneon/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/retroneon/1.jpg",
+      "assets/themegallery/retroneon/2.jpg",
+      "assets/themegallery/retroneon/3.jpg"
+    ]
+  },
+  {
+    "name": "RetroVerse",
+    "author": "GylanSalih",
+    "category": "batocera",
+    "size_label": "81MB",
+    "project_url": "https://github.com/GylanSalih/RetroVerse-Batocera-Theme",
+    "download_url": "https://github.com/GylanSalih/RetroVerse-Batocera-Theme/archive/refs/heads/main.zip",
+    "folder": "RetroVerse-Batocera-Theme",
+    "preview_sources": [
+      "assets/Images/retroverse/1.webp",
+      "assets/Images/retroverse/2.webp",
+      "assets/Images/retroverse/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/retroverse/1.jpg",
+      "assets/themegallery/retroverse/2.jpg",
+      "assets/themegallery/retroverse/3.jpg"
+    ]
+  },
+  {
+    "name": "SagaArtBook",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "32.6MB",
+    "project_url": "https://github.com/Jetup13/es-theme-sagaartbook",
+    "download_url": "https://github.com/Jetup13/es-theme-sagaartbook/archive/refs/heads/main.zip",
+    "folder": "es-theme-sagaartbook",
+    "preview_sources": [
+      "assets/Images/sagaartbook/1.webp",
+      "assets/Images/sagaartbook/2.webp",
+      "assets/Images/sagaartbook/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/sagaartbook/1.jpg",
+      "assets/themegallery/sagaartbook/2.jpg",
+      "assets/themegallery/sagaartbook/3.jpg"
+    ]
+  },
+  {
+    "name": "SagaBox",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "43MB",
+    "project_url": "https://github.com/Jetup13/es-theme-sagabox",
+    "download_url": "https://github.com/Jetup13/es-theme-sagabox/archive/refs/heads/main.zip",
+    "folder": "es-theme-sagabox",
+    "preview_sources": [
+      "assets/Images/sagabox/1.webp",
+      "assets/Images/sagabox/2.webp",
+      "assets/Images/sagabox/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/sagabox/1.jpg",
+      "assets/themegallery/sagabox/2.jpg",
+      "assets/themegallery/sagabox/3.jpg"
+    ]
+  },
+  {
+    "name": "SagaModern",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "52.6MB",
+    "project_url": "https://github.com/Jetup13/es-theme-sagamodern",
+    "download_url": "https://github.com/Jetup13/es-theme-sagamodern/archive/refs/heads/main.zip",
+    "folder": "es-theme-sagamodern",
+    "preview_sources": [
+      "assets/Images/sagamodern/1.webp",
+      "assets/Images/sagamodern/2.webp",
+      "assets/Images/sagamodern/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/sagamodern/1.jpg",
+      "assets/themegallery/sagamodern/2.jpg",
+      "assets/themegallery/sagamodern/3.jpg"
+    ]
+  },
+  {
+    "name": "SagaNX",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "14.2MB",
+    "project_url": "https://github.com/Jetup13/es-theme-saganx",
+    "download_url": "https://github.com/Jetup13/es-theme-saganx/archive/refs/heads/main.zip",
+    "folder": "es-theme-saganx",
+    "preview_sources": [
+      "assets/Images/saganx/1.webp",
+      "assets/Images/saganx/2.webp",
+      "assets/Images/saganx/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/saganx/1.jpg",
+      "assets/themegallery/saganx/2.jpg",
+      "assets/themegallery/saganx/3.jpg"
+    ]
+  },
+  {
+    "name": "Steamdeck",
+    "author": "jovemlcxx",
+    "category": "fcamod",
+    "size_label": "36.5MB",
+    "project_url": "https://github.com/jovemlcxx/es-theme-steamdeck",
+    "download_url": "https://github.com/jovemlcxx/es-theme-steamdeck/archive/refs/heads/main.zip",
+    "folder": "es-theme-steamdeck",
+    "preview_sources": [
+      "assets/Images/steamdeck/1.webp",
+      "assets/Images/steamdeck/2.webp"
+    ],
+    "previews": [
+      "assets/themegallery/steamdeck/1.jpg",
+      "assets/themegallery/steamdeck/2.jpg"
+    ]
+  },
+  {
+    "name": "Switch",
+    "author": "Jetup13",
+    "category": "fcamod",
+    "size_label": "26.2MB",
+    "project_url": "https://github.com/Jetup13/es-theme-switch",
+    "download_url": "https://github.com/Jetup13/es-theme-switch/archive/refs/heads/master.zip",
+    "folder": "es-theme-switch",
+    "preview_sources": [
+      "assets/Images/switch/1.webp",
+      "assets/Images/switch/2.webp",
+      "assets/Images/switch/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/switch/1.jpg",
+      "assets/themegallery/switch/2.jpg",
+      "assets/themegallery/switch/3.jpg"
+    ]
+  },
+  {
+    "name": "TechDweeb",
+    "author": "anthonycaccese",
+    "category": "batocera",
+    "size_label": "721KB",
+    "project_url": "https://github.com/anthonycaccese/techdweeb-es",
+    "download_url": "https://github.com/anthonycaccese/techdweeb-es/archive/refs/heads/master.zip",
+    "folder": "techdweeb-es",
+    "preview_sources": [
+      "assets/Images/techdweeb/1.webp",
+      "assets/Images/techdweeb/2.webp",
+      "assets/Images/techdweeb/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/techdweeb/1.jpg",
+      "assets/themegallery/techdweeb/2.jpg",
+      "assets/themegallery/techdweeb/3.jpg"
+    ]
+  },
+  {
+    "name": "Theme-basic",
+    "author": "lehcimcramtrebor",
+    "category": "batocera",
+    "size_label": "507MB",
+    "project_url": "https://github.com/lehcimcramtrebor/es-theme-basic",
+    "download_url": "https://github.com/lehcimcramtrebor/es-theme-basic/archive/refs/heads/master.zip",
+    "folder": "es-theme-basic",
+    "preview_sources": [
+      "assets/Images/theme-basic/1.webp",
+      "assets/Images/theme-basic/2.webp",
+      "assets/Images/theme-basic/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/theme-basic/1.jpg",
+      "assets/themegallery/theme-basic/2.jpg",
+      "assets/themegallery/theme-basic/3.jpg"
+    ]
+  },
+  {
+    "name": "XMB dArkOSen",
+    "author": "RayW1986",
+    "category": "batocera",
+    "size_label": "12.6MB",
+    "project_url": "https://github.com/RayW1986/es-theme-xmb-darkosen",
+    "download_url": "https://github.com/RayW1986/es-theme-xmb-darkosen/archive/refs/heads/main.zip",
+    "folder": "es-theme-xmb-darkosen",
+    "preview_sources": [
+      "assets/Images/xmb-darkosen/1.webp",
+      "assets/Images/xmb-darkosen/2.webp",
+      "assets/Images/xmb-darkosen/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/xmb-darkosen/1.jpg",
+      "assets/themegallery/xmb-darkosen/2.jpg",
+      "assets/themegallery/xmb-darkosen/3.jpg"
+    ]
+  },
+  {
+    "name": "XMB fcamod",
+    "author": "jovemlcxx",
+    "category": "fcamod",
+    "size_label": "22.4MB",
+    "project_url": "https://github.com/jovemlcxx/es-theme-xmb-fcamod",
+    "download_url": "https://github.com/jovemlcxx/es-theme-xmb-fcamod/archive/refs/heads/main.zip",
+    "folder": "es-theme-xmb-fcamod",
+    "preview_sources": [
+      "assets/Images/xmb-fcamod/1.webp",
+      "assets/Images/xmb-fcamod/2.webp"
+    ],
+    "previews": [
+      "assets/themegallery/xmb-fcamod/1.jpg",
+      "assets/themegallery/xmb-fcamod/2.jpg"
+    ]
+  },
+  {
+    "name": "351noir",
+    "author": "SzalikDesigns",
+    "category": "batocera",
+    "size_label": "25.6MB",
+    "project_url": "https://github.com/SzalikDesigns/amberelec-351noir",
+    "download_url": "https://github.com/SzalikDesigns/amberelec-351noir/archive/refs/heads/main.zip",
+    "folder": "amberelec-351noir",
+    "preview_sources": [
+      "assets/Images/351noir/1.webp",
+      "assets/Images/351noir/2.webp",
+      "assets/Images/351noir/4.webp"
+    ],
+    "previews": [
+      "assets/themegallery/351noir/1.jpg",
+      "assets/themegallery/351noir/2.jpg",
+      "assets/themegallery/351noir/3.jpg"
+    ]
+  },
+  {
+    "name": "8bit",
+    "author": "SzalikDesigns",
+    "category": "batocera",
+    "size_label": "1.73MB",
+    "project_url": "https://github.com/SzalikDesigns/amberelec-8bit",
+    "download_url": "https://github.com/SzalikDesigns/amberelec-8bit/archive/refs/heads/master.zip",
+    "folder": "amberelec-8bit",
+    "preview_sources": [
+      "assets/Images/8bit/1.webp",
+      "assets/Images/8bit/2.webp",
+      "assets/Images/8bit/3.webp"
+    ],
+    "previews": [
+      "assets/themegallery/8bit/1.jpg",
+      "assets/themegallery/8bit/2.jpg",
+      "assets/themegallery/8bit/3.jpg"
+    ]
+  }
+]

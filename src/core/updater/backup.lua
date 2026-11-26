@@ -5,7 +5,7 @@
 --     meta.json   versao anterior/nova, pacote, data, arquivos, tamanho, estado
 --     files/...   copia dos arquivos que a atualizacao trocou (mesmos caminhos)
 --     added.txt   arquivos que a atualizacao criou (apagados ao restaurar)
---  r36sromsstore/backups/.journal  (lido tambem pelo lancador R36S ROMS STORE.sh)
+--  r36sromsstore/backups/.journal  (lido tambem pelo lancador R36S ROM STORE.sh)
 --     state=applying  -> instalacao interrompida no meio: restaurar
 --     state=pending   -> instalada; a proxima abertura confirma
 --     state=booting   -> abrindo a versao nova; se o app nao confirmar, restaurar

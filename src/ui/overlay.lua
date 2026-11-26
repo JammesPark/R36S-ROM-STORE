@@ -514,7 +514,7 @@ function O.on_install_finished(app, j)
           app.show_dialog({
             title = L("Reiniciar EmulationStation?"),
             kind = "info",
-            body = L("O R36S ROMS STORE será fechado e o EmulationStation será reiniciado para atualizar a lista de Ports."),
+            body = L("O R36S ROM STORE será fechado e o EmulationStation será reiniciado para atualizar a lista de Ports."),
             buttons = { { label = L("REINICIAR"), fn = app.request_es_restart }, { label = "VOLTAR" } },
           })
         end },

@@ -499,8 +499,8 @@ local function power_confirm(kind)
   App.show_dialog({
     title = off and L("Desligar o console?") or L("Reiniciar o console?"),
     kind = "warn",
-    body = (off and L("O R36S ROMS STORE será fechado e o console será desligado.")
-      or L("O R36S ROMS STORE será fechado e o console será reiniciado."))
+    body = (off and L("O R36S ROM STORE será fechado e o console será desligado.")
+      or L("O R36S ROM STORE será fechado e o console será reiniciado."))
       .. "\n" .. L("Jogos e arquivos abertos em outros apps não são salvos."),
     buttons = {
       { label = off and L("DESLIGAR") or L("REINICIAR"), danger = true, fn = function() App.power_request(kind) end },
@@ -526,12 +526,12 @@ local function exit_dialog()
     return
   end
   App.show_dialog({
-    title = L("Sair do R36S ROMS STORE"),
+    title = L("Sair do R36S ROM STORE"),
     kind = "info",
     list = true,
     body = L("O que você quer fazer?"),
     buttons = {
-      { label = L("Sair"), sub = L("Fechar o R36S ROMS STORE e voltar ao EmulationStation"), fn = App.quit },
+      { label = L("Sair"), sub = L("Fechar o R36S ROM STORE e voltar ao EmulationStation"), fn = App.quit },
       { label = L("Reiniciar lista"), sub = L("Use se instalou ports nesta sessão: reinicia o EmulationStation"), fn = App.request_es_restart },
       { label = L("Reiniciar console"), sub = L("Fecha o hub e reinicia o R36S"), danger = true, fn = function() power_confirm("reboot") end },
       { label = L("Desligar console"), sub = L("Fecha o hub e desliga o R36S"), danger = true, fn = function() power_confirm("poweroff") end },

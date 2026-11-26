@@ -1,13 +1,13 @@
 -- =============================================================================
---  R36S ROMS STORE - atualizacoes (thread)
+--  R36S ROM STORE - atualizacoes (thread)
 --  Operacoes: probe (pacotes da pasta update), analyze (conteudo sem extrair),
 --  install, restore (de um backup) e download (atualizacao via rede).
 --
 --  Seguranca da instalacao:
 --   - formato pelos primeiros bytes; ferramenta testada no console
 --   - lista o conteudo ANTES de extrair: recusa ../, caminhos absolutos,
---     links, itens fora do pacote e qualquer arquivo fora do R36S ROMS STORE
---     (so "R36S ROMS STORE.sh" e r36sromsstore/..., nunca as pastas de dados)
+--     links, itens fora do pacote e qualquer arquivo fora do R36S ROM STORE
+--     (so "R36S ROM STORE.sh" e r36sromstore/..., nunca as pastas de dados)
 --   - teste de integridade do arquivo, extracao numa pasta temporaria,
 --     nova conferencia no disco (so arquivos comuns) e SHA-256 de cada arquivo
 --   - destino conferido: nenhuma pasta-link levando para fora do hub
@@ -81,7 +81,7 @@ local function inspect(arch, full_version)
   if not entries then fail("list", err) end
   if #entries > Rules.MAX_FILES then fail("too_many") end
 
-  -- raiz do pacote: onde esta o manifesto (ou r36sromsstore/game.love), no maximo 1 pasta abaixo
+  -- raiz do pacote: onde esta o manifesto (ou r36sromstore/game.love), no maximo 1 pasta abaixo
   local base, mode
   for _, e in ipairs(entries) do
     if not e.dir then
@@ -91,7 +91,7 @@ local function inspect(arch, full_version)
   end
   if not base then
     for _, e in ipairs(entries) do
-      local b = not e.dir and e.path:match("^(.-)r36sromsstore/game%.love$")
+      local b = not e.dir and e.path:match("^(.-)r36sromstore/game%.love$")
       if b and (b == "" or b:match("^[^/]+/$")) then base, mode = b, "full"; break end
     end
   end
@@ -147,7 +147,7 @@ local function inspect(arch, full_version)
       end
     end
   elseif mode == "full" and full_version then
-    local num, label = game_love_version(tool, job.tools.zip, arch, base .. "r36sromsstore/game.love")
+    local num, label = game_love_version(tool, job.tools.zip, arch, base .. "r36sromstore/game.love")
     r.version, r.version_label = num, label
   end
   return r
@@ -295,7 +295,7 @@ function ops.probe()
         end
       end
       for _, e in ipairs(entries) do
-        local b = not e.dir and e.path:match("^(.-)r36sromsstore/game%.love$")
+        local b = not e.dir and e.path:match("^(.-)r36sromstore/game%.love$")
         if b and (b == "" or b:match("^[^/]+/$")) then return { format = fmt, mode = "full" } end
       end
       return { format = fmt, mode = "unknown" }
@@ -456,7 +456,8 @@ function ops.download()
   os.remove(part)
   phase("download", job.size > 0 and job.size or nil)
   local rcf, pidf = W .. "/dl.rc", W .. "/dl.pid"
-  sh("( sh " .. shq(job.fetch_sh) .. " get " .. shq(job.url) .. " " .. shq(part) .. " " .. shq(pidf) .. " "
+  local mode = job.strict_tls and " get-ota " or " get "
+  sh("( sh " .. shq(job.fetch_sh) .. mode .. shq(job.url) .. " " .. shq(part) .. " " .. shq(pidf) .. " "
     .. shq(rcf) .. " 0 >/dev/null 2>&1 & )")
   local total = job.size > 0 and job.size or nil
   if not total then

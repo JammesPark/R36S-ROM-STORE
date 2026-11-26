@@ -1,5 +1,12 @@
 # Histórico de versões
 
+## [0.7.1-beta] - 2026-11-26
+
+- Lançamento oficial: nova identidade R36S ROM STORE, Matrix padrão e Pulse opcional, artes HD e pasta r36sromstore.
+- Consolidação das correções de temas, downloads e regiões aprovadas no console.
+- Documentação em quatro idiomas, créditos, tecnologias utilizadas e roadmap. Instalador SH online e pacote UPDATE.zip manual separados.
+- Migração por pacote completo, preservação de dados em instalações parciais e validação do novo canal OTA. O feed das instalações antigas permanece na 0.7.0-beta.
+
 ## [0.7.0-beta] - 2026-11-24
 
 - Novo marco oficial do R36S ROM HUB STORE: consolidação das melhorias da versão Experimental aprovada e da distribuição 0.6.8-beta.

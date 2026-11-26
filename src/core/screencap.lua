@@ -1,5 +1,5 @@
 -- =============================================================================
---  Captura da interface do R36S ROMS STORE (somente a tela do hub)
+--  Captura da interface do R36S ROM STORE (somente a tela do hub)
 --
 --  O hub desenha tudo numa imagem interna de 640x480 (canvas). Enquanto a
 --  transmissao ou a gravacao estiverem ligadas, uma copia desse canvas e lida

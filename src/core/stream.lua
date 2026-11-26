@@ -75,7 +75,7 @@ local function js(s) return (tostring(s):gsub("\\", "\\\\"):gsub("'", "\\'"):gsu
 
 local function build_page(lang)
   local tx = {
-    title = L("R36S ROMS STORE — transmissão"),
+    title = L("R36S ROM STORE — transmissão"),
     connecting = L("Conectando ao console..."),
     live = L("AO VIVO"),
     lost = L("Conexão perdida. Tentando de novo..."),
@@ -101,7 +101,7 @@ canvas{max-width:100%;max-height:100%;aspect-ratio:4/3;width:auto;height:100%;ba
 canvas.px{image-rendering:pixelated}
 #note{padding:6px 12px;color:#7f8aa3;font-size:12px;text-align:center}
 </style></head><body><div id="wrap">
-<div id="bar"><b>R36S ROMS STORE</b><span id="st">]] .. esc(tx.connecting) .. [[</span>
+<div id="bar"><b>R36S ROM STORE</b><span id="st">]] .. esc(tx.connecting) .. [[</span>
 <button id="px">]] .. esc(tx.sharp) .. [[</button><button id="fs">]] .. esc(tx.full) .. [[</button></div>
 <div id="view"><canvas id="c" width="]] .. T.W .. [[" height="]] .. T.H .. [["></canvas></div>
 <div id="note">]] .. esc(tx.note) .. [[</div></div>
@@ -142,8 +142,8 @@ run();
 end
 
 local function build_root_page(lang)
-  return "<!DOCTYPE html><html lang=\"" .. esc(lang) .. "\"><head><meta charset=\"utf-8\"><title>R36S ROMS STORE</title></head>"
-    .. "<body style=\"background:#0b0d12;color:#cfd6e4;font:16px system-ui,sans-serif;padding:24px\"><b>R36S ROMS STORE</b><p>"
+  return "<!DOCTYPE html><html lang=\"" .. esc(lang) .. "\"><head><meta charset=\"utf-8\"><title>R36S ROM STORE</title></head>"
+    .. "<body style=\"background:#0b0d12;color:#cfd6e4;font:16px system-ui,sans-serif;padding:24px\"><b>R36S ROM STORE</b><p>"
     .. esc(L("Digite o endereço completo mostrado no console, com o código no final.")) .. "</p></body></html>"
 end
 

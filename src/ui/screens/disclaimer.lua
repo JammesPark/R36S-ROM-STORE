@@ -6,7 +6,7 @@ local G = require("ui.gfx")
 local S = {}
 
 local PARAGRAPHS = {
-  L("Bem-vindo ao R36S ROMS STORE!"),
+  L("Bem-vindo ao R36S ROM STORE!"),
   L("Este projeto é uma iniciativa independente, criada por fãs e para fãs do console R36S, com o objetivo de facilitar o acesso, a organização e a descoberta de ports de jogos."),
   L("Não somos desenvolvedores, proprietários ou representantes dos jogos e ports disponibilizados por terceiros."),
   L("Não nos responsabilizamos pela criação, funcionamento, conteúdo, distribuição ou eventuais problemas relacionados aos jogos e ports de terceiros."),

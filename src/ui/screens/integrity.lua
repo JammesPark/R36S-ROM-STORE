@@ -39,7 +39,7 @@ function S:start()
   end
   local list = {}
   for _, p in ipairs(Scan.ports) do
-    list[#list + 1] = { script = p.script, title = p.title, source = hub[p.script] and L("R36S ROMS STORE") or p.source,
+    list[#list + 1] = { script = p.script, title = p.title, source = hub[p.script] and L("R36S ROM STORE") or p.source,
       dir = p.dir, dir_source = p.dir_source, gamedir = p.gamedir, pm_items = p.pm_items, hub_entries = hub[p.script] }
   end
   self.results = {}

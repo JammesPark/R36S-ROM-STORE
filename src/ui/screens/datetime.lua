@@ -270,8 +270,8 @@ function S:draw()
     sync = L("Pede uma sincronização agora (precisa de internet e da sincronização automática ligada)."),
     zone = L("Todos os fusos da base IANA instalada no sistema, com horário de verão quando houver."),
     manual = L("Dia, mês, ano, hora, minutos e segundos. Altera o relógio do sistema."),
-    tfmt = L("Só muda a exibição no R36S ROMS STORE."),
-    dfmt = L("Só muda a exibição no R36S ROMS STORE."),
+    tfmt = L("Só muda a exibição no R36S ROM STORE."),
+    dfmt = L("Só muda a exibição no R36S ROM STORE."),
   })[rows[self.sel]] or ""
   G.text_fit(T.f.small, desc, x + 4, 401, w - 8, T.c.dim)
   G.hints({ { "dpad", L("Navegar") }, { "a", L("Selecionar") }, { "b", L("Voltar") } })

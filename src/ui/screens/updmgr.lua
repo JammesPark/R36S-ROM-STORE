@@ -25,9 +25,9 @@ local ITEMS = {
 }
 
 local DESC = {
-  ["local"] = L("Instala um pacote .zip, .7z ou .rar colocado na pasta update do R36S ROMS STORE (pelo gerenciador de arquivos). Nada é instalado sem confirmação."),
+  ["local"] = L("Instala um pacote .zip, .7z ou .rar colocado na pasta update do R36S ROM STORE (pelo gerenciador de arquivos). Nada é instalado sem confirmação."),
   net = L("Verifica a fonte oficial configurada, mostra a versão disponível, baixa o pacote para a pasta update e instala depois da sua confirmação."),
-  version = L("Versão instalada do R36S ROMS STORE e detalhes da última atualização."),
+  version = L("Versão instalada do R36S ROM STORE e detalhes da última atualização."),
   history = L("Versão anterior e nova, data, origem, pacote e resultado de cada atualização."),
   backups = L("Cópias dos arquivos trocados em cada atualização (as 3 mais recentes). Restaure ou apague, sempre com confirmação."),
 }

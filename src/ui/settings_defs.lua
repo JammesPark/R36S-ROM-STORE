@@ -36,7 +36,7 @@ local D = {}
 
 local function theme_name()
   local cur = Themes.by_id and Themes.by_id[Themes.current]
-  return L(cur and cur.name or "Pulse Edition")
+  return L(cur and cur.name or "Matrix Edition")
 end
 
 local function lang_name()
@@ -63,7 +63,7 @@ local appearance = {
     if ok == false then App.toast(L("O brilho não pôde ser alterado: ") .. tostring(why), "error") end
   end,
   rows = {
-    { kind = "value", label = L("Tema"), desc = L("Escolha a aparência do R36S ROMS STORE. A mudança vale na hora."),
+    { kind = "value", label = L("Tema"), desc = L("Escolha a aparência do R36S ROM STORE. A mudança vale na hora."),
       value = theme_name, on_a = function() App.push("themes") end },
     { kind = "value", label = L("Cores"), icon = "set_appearance",
       desc = L("Escolha uma paleta para os dois temas. A cor altera fundos, painéis e destaques, sem mudar o layout. A escolha fica salva."),
@@ -149,7 +149,7 @@ local audio = {
     return Music.enabled and string.format(L("Música %d%%"), Music.volume_pct()) or L("Música desligada")
   end,
   rows = {
-    { kind = "toggle", label = L("Música de fundo"), desc = L("Trilha sonora do R36S ROMS STORE. A escolha fica salva no console."),
+    { kind = "toggle", label = L("Música de fundo"), desc = L("Trilha sonora do R36S ROM STORE. A escolha fica salva no console."),
       get = function() return Music.enabled end, set = function(v) Music.set_enabled(v) end },
     { kind = "slider", label = L("Volume da música"), desc = L("Esquerda/direita ajusta o volume da trilha sonora. A escolha fica salva."),
       enabled = function() return Music.enabled end,
@@ -371,7 +371,7 @@ local controls = {
       end },
     { kind = "action", label = L("Todos os testes de controles"), desc = L("Lista de testes de controles da loja, com os três tipos identificados."),
       on_a = function() App.push("store", { section = "tools", filter = "cat:testes_de_controles" }) end },
-    { kind = "action", label = L("Mapa dos botões"), desc = L("O que cada botão do R36S faz no R36S ROMS STORE."),
+    { kind = "action", label = L("Mapa dos botões"), desc = L("O que cada botão do R36S faz no R36S ROM STORE."),
       on_a = function()
         App.show_dialog({ title = L("Mapa dos botões"), kind = "info", body = BUTTON_MAP() })
       end },

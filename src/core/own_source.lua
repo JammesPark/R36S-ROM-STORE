@@ -1,4 +1,4 @@
--- R36S ROMS STORE Experimental: catalogo proprio e recuperacao offline.
+-- R36S ROM STORE Experimental: catalogo proprio e recuperacao offline.
 -- Fonte propria local/remota; copia valida fica ao lado do arquivo.
 local json = require("lib.json")
 local U = require("lib.util")

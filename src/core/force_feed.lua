@@ -1,5 +1,5 @@
 -- Novidades e Em Breve da tela Force Nexus.
--- Lista exclusivamente dados reais do catalogo selecionado (Lira ou R36S ROMS STORE).
+-- Lista exclusivamente dados reais do catalogo selecionado (Lira ou R36S ROM STORE).
 -- Nunca mistura fontes nem inventa jogos para preencher a vitrine.
 local Catalog = require("core.catalog")
 local M = { LIMIT = 6 }

@@ -1,5 +1,5 @@
 -- =============================================================================
---  R36S ROMS STORE HUB - thread de instalacao
+--  R36S ROM STORE HUB - thread de instalacao
 --  Roda fora da thread principal para nao travar a interface.
 --  Etapas: espaco -> download -> verificacao -> extracao (pasta temporaria)
 --          -> analise da estrutura -> confirmacao de sobrescrita -> instalacao

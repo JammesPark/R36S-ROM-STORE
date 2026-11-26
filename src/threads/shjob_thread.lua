@@ -1,5 +1,5 @@
 -- =============================================================================
---  R36S ROMS STORE - comandos de verificacao em segundo plano (somente leitura)
+--  R36S ROM STORE - comandos de verificacao em segundo plano (somente leitura)
 --  Recebe { out = canal, cmds = { "cmd1", "cmd2", ... } } e devolve, na ordem,
 --  a saida e o codigo de cada um. Usado por Configuracoes (espaco dos ports,
 --  repositorios, modulos do hub). Nenhum comando aqui altera arquivos.

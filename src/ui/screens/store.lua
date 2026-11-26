@@ -251,7 +251,7 @@ function S:draw_list()
     local p = self.items[i]
     local y = LIST_Y + 4 + (i - self.scroll - 1) * ROW_H
     PortRow.draw(p, LIST_X + 4, y, LIST_W - 8, ROW_H - 4, i == self.sel, T.c.accent,
-      self.mine and { location = Manifest.location_label(p) } or nil)
+      { location = self.mine and Manifest.location_label(p) or nil, hide_system=self.filter~="all" and not self.favs })
   end
   -- barra de rolagem
   if n > VISIBLE then
@@ -280,7 +280,9 @@ function S:draw_preview()
   local y = py + ch + 22
   G.text_fit(T.f.h3, Region.display_name(p), px + 14, y, pw - 28, T.c.text)
   y = y + 24
-  local tw = Region.draw_system(p, px + 14, y, pw - 28)
+  local tag=Region.code(p)
+  local reserve=tag and Region.pill_width(tag)+8 or 0
+  local tw = (self.filter=="all" or self.favs) and Region.draw_system(p, px + 14, y, pw - 28 - reserve) or 0
   local rx = px + 20 + tw
   if Region.code(p) then rx = rx + Region.draw_region(p, rx, y) + 6 end
   if p.version ~= "" and rx < px + pw - 52 then G.tag("v" .. p.version, rx, y, T.c.bg3, T.c.dim) end
@@ -327,7 +329,7 @@ function S:draw_showcase()
   end
   local p = items[self.sel]
   local pills, tags = {}, {}
-  pills[#pills + 1] = { p.category, Region.SYSTEM_COLOR }
+  if self.filter=="all" or self.favs then pills[#pills + 1] = { p.category, Region.SYSTEM_COLOR } end
   if Region.code(p) then pills[#pills + 1] = { Region.code(p), Region.color(Region.code(p)) } end
   if not p.builtin then
     if p.size_label and p.size_label ~= "?" then pills[#pills + 1] = { p.size_label, T.c.line } end
@@ -384,7 +386,7 @@ function S:draw_grid()
     else
       G.cover(Covers.get(p), p, x, y, w, h, Covers.is_loading(p), App.t)
     end
-    if w >= 80 and h >= 105 and Region.code(p) then
+    if w >= 45 and h >= 45 and Region.code(p) then
       local code = Region.code(p)
       Region.draw_region(p, x + w - Region.pill_width(code) - 3, y + 3)
     end
@@ -398,7 +400,7 @@ function S:draw_grid()
   end
   local p = items[self.sel]
   local pills, tags = {}, {}
-  pills[#pills + 1] = { p.category, Region.SYSTEM_COLOR }
+  if self.filter=="all" or self.favs then pills[#pills + 1] = { p.category, Region.SYSTEM_COLOR } end
   if Region.code(p) then pills[#pills + 1] = { Region.code(p), Region.color(Region.code(p)) } end
   if not p.builtin then
     if p.size_label and p.size_label ~= "?" then pills[#pills + 1] = { p.size_label, T.c.line } end

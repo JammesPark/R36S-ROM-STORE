@@ -86,6 +86,11 @@ function G.load_cache()
   local ok, text = pcall(love.filesystem.read, CACHE)
   local d = ok and text and json.decode(text) or nil
   if type(d) == "table" and type(d.gallery) == "table" then G.data = d end
+  if not G.data then
+    local okb, bundled=pcall(love.filesystem.read,"catalog/es_gallery_snapshot.json")
+    local snapshot=okb and bundled and json.decode(bundled) or nil
+    if type(snapshot)=="table" and type(snapshot.gallery)=="table" then G.data=snapshot end
+  end
   return G.data
 end
 

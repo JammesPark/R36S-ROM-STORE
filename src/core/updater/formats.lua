@@ -55,7 +55,7 @@ function M.detect_tools(opts)
   if opts.bundled and io.open(opts.bundled, "rb") then
     local tmpbin = "/tmp/r36sromsstore-7zzs"
     os.execute("cp -f " .. shq(opts.bundled) .. " " .. tmpbin .. " 2>/dev/null && chmod +x " .. tmpbin .. " 2>/dev/null")
-    try7(tmpbin, "7-Zip (R36S ROMS STORE)")
+    try7(tmpbin, "7-Zip (R36S ROM STORE)")
   end
   for _, b in ipairs({ "7zz", "7z", "7za" }) do
     local p = capture("command -v " .. b .. " 2>/dev/null"):gsub("%s+$", "")

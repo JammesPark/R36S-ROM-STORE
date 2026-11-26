@@ -22,6 +22,7 @@ local Fetcher = require("core.fetcher")
 local M = { state = "idle" }   -- idle | checking | none | uptodate | available | error | working | done
 
 function M.source_url()
+  if C.EXPERIMENTAL_NO_OTA then return nil end
   local s = U.read_file(C.APP_DIR .. "/update_url.txt")
   if s then
     s = U.trim(s:match("^[^\r\n]*") or "")
@@ -232,7 +233,8 @@ end
 
 --- consulta a ultima Release pela API do GitHub (ou um JSON proprio)
 local function check_api(url, api, want_name, on_done)
-  local out = love.filesystem.getSaveDirectory() .. "/update_info.json"
+  love.filesystem.createDirectory("update_cache")
+  local out = love.filesystem.getSaveDirectory() .. "/update_cache/update_info.json"
   Fetcher.get(url == C.UPDATE_URL and "ota_feed" or "catalog", api or url, out, function(ok, path, reason)
     if not ok then
       finish(nil, L("Não foi possível consultar a atualização (") .. tostring(reason) .. L("). Verifique o Wi-Fi."))
@@ -268,7 +270,8 @@ function M.check(on_done)
   end
   -- link direto do pacote: le o manifesto no comeco do .zip
   local want = url_file(url)
-  local out = love.filesystem.getSaveDirectory() .. "/update_head.bin"
+  love.filesystem.createDirectory("update_cache")
+  local out = love.filesystem.getSaveDirectory() .. "/update_cache/update_head.bin"
   Fetcher.get_part("catalog", url, out, 262144, function(ok, path, reason)
     local info, err
     if ok then

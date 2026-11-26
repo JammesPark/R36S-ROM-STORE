@@ -776,7 +776,7 @@ def progress(part, done, total):
 allowed_docs={'README.md','LICENSE','NOTICE.md','CHANGELOG.md'}
 # O ZIP completo de 0.7.0-beta contém esta cópia legada fora do manifesto.
 # O hash do ZIP inteiro já foi conferido. Nunca extrair nem substituir este arquivo.
-ignored_legacy={'r36sromsstore/catalog.json'} if app_name=='r36sromsstore' else set()
+ignored_legacy={app_name+'/catalog.json'}
 protected={'catalogo_proprio.zlib','catalogo_proprio.json','favorites.json','downloads.json','settings.txt','theme.txt','user_themes','saves','conf' ,'tmp','logs','gravacoes','update','backups','bios','bios_url.txt','catalog.json','catalog_url.txt','update_url.txt','stats_url.txt','log.txt','themes_url.txt','es_themes_url.txt','runtimes_url.txt','senhas.txt','catalogo_proprio_ultimo_valido.zlib','configuracoes','.legacy_migrated','.legacy_migrated_v2'}
 def valid(p):
     if not isinstance(p,str) or '\\' in p or p.startswith('/') or '\x00' in p:return False

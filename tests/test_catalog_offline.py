@@ -16,7 +16,10 @@ assert "core.rom_source" not in (root / "ui/screens/store.lua").read_text(encodi
 assert "core.rom_source" not in (root / "ui/screens/search.lua").read_text(encoding="utf-8")
 config = (root / "config.lua").read_text(encoding="utf-8")
 if 'C.EDITION = "Official"' in config:
-    assert 'C.UPDATE_URL = "https://raw.githubusercontent.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/main/ota/update.json"' in config
+    assert 'C.UPDATE_URL = "https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE-UPDATES/main/ota/rom-store/update.json"' in config
 else:
-    assert 'C.UPDATE_URL = ""' in config
+    assert 'C.UPDATE_URL = ""' in config or (
+        'C.EXPERIMENTAL_NO_OTA = true' in config
+        and 'if C.EXPERIMENTAL_NO_OTA then return nil end' in (root / "core/update.lua").read_text(encoding="utf-8")
+    )
 print("CATALOGO: OK - API antiga inacessivel, fonte propria e OTA conforme canal")

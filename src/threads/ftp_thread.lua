@@ -1,5 +1,5 @@
 -- =============================================================================
---  R36S ROMS STORE - servidor FTP (thread do proprio app, LuaSocket do LOVE)
+--  R36S ROM STORE - servidor FTP (thread do proprio app, LuaSocket do LOVE)
 --
 --  - So modo passivo (PASV/EPSV), o padrao dos clientes Android e do FileZilla.
 --  - Login obrigatorio (usuario/senha configurados); anonimo sempre recusado.
@@ -580,7 +580,7 @@ CMD.ABOR = function(s)
     reply(s, 226, L("Nada para abortar."))
   end
 end
-CMD.STAT = function(s) reply(s, 211, L("R36S ROMS STORE FTP - ") .. count_clients() .. L(" cliente(s).")) end
+CMD.STAT = function(s) reply(s, 211, L("R36S ROM STORE FTP - ") .. count_clients() .. L(" cliente(s).")) end
 CMD.HELP = function(s) reply(s, 214, L("Comandos: USER PASS PWD CWD CDUP LIST NLST MLSD MLST RETR STOR APPE REST SIZE MDTM MKD RMD DELE RNFR RNTO PASV EPSV TYPE NOOP QUIT")) end
 CMD.SITE = function(s) reply(s, 502, L("Comandos SITE nao sao permitidos.")) end
 CMD.QUIT = function(s) reply(s, 221, L("Ate logo.")); close_session(s, "saiu") end
@@ -727,7 +727,7 @@ while running do
         c:setoption("tcp-nodelay", true)
         local s = { ctrl = c, peer = peer, cwd = "/", buf = "", last = now(), type = "I" }
         sessions[#sessions + 1] = s
-        reply(s, 220, L("R36S ROMS STORE - servidor FTP. Somente rede local."))
+        reply(s, 220, L("R36S ROM STORE - servidor FTP. Somente rede local."))
         log("conexao de", peer)
       end
     end

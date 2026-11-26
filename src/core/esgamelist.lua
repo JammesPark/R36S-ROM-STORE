@@ -1,7 +1,7 @@
--- R36S ROMS STORE: versao modificada em 2026-11-15. GPL-3.0.
+-- R36S ROM STORE: versao modificada em 2026-11-15. GPL-3.0.
 -- Base: R36S PORT HUB, por Lag do Lira (creditos em NOTICE.md).
 -- =============================================================================
---  Capa do R36S ROMS STORE na lista de Ports do EmulationStation.
+--  Capa do R36S ROM STORE na lista de Ports do EmulationStation.
 --
 --  O EmulationStation mostra imagens a partir de /roms/ports/gamelist.xml.
 --  Quem instala pelo PortMaster ja ganha a entrada (via gameinfo.xml); quem so
@@ -18,7 +18,7 @@ local C = require("config")
 
 local E = {}
 
-local SCRIPT = "R36S ROMS STORE.sh"
+local SCRIPT = "R36S ROM STORE.sh"
 local TAGS = {
   { "image", "./r36sromsstore/cover.png" },
   { "thumbnail", "./r36sromsstore/cover.png" },
@@ -38,7 +38,7 @@ local function entry(nl)
   local t = {
     "\t<game>",
     "\t\t<path>./" .. esc(SCRIPT) .. "</path>",
-    "\t\t<name>R36S ROMS STORE</name>",
+    "\t\t<name>R36S ROM STORE</name>",
     "\t\t<desc>" .. esc(DESC) .. "</desc>",
   }
   for _, tg in ipairs(TAGS) do t[#t + 1] = "\t\t<" .. tg[1] .. ">" .. tg[2] .. "</" .. tg[1] .. ">" end

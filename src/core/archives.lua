@@ -1,5 +1,5 @@
 -- Recurso adaptado de R36S PORT HUB v0.5.4, por Lag do Lira (GPL-3.0).
--- R36S ROMS STORE HUB: suporte a SD1/SD2 e pacotes locais seguros.
+-- R36S ROM STORE HUB: suporte a SD1/SD2 e pacotes locais seguros.
 -- =============================================================================
 --  Arquivos compactados: senhas e arquivos em varias partes
 --  * Senhas: as dos grupos de ports (padrao do hub) + as do usuario em
@@ -88,7 +88,7 @@ end
 function M.file() return C.APP_DIR .. "/senhas.txt" end
 
 local TEMPLATE = [[
-# R36S ROMS STORE HUB - senhas de arquivos compactados (.zip, .rar, .7z)
+# R36S ROM STORE HUB - senhas de arquivos compactados (.zip, .rar, .7z)
 # Uma senha por linha. Linhas que comecam com # sao ignoradas.
 # Ao instalar um arquivo com senha, o hub tenta as senhas do hub
 # (R36SPORTSBR, R36XBR) e depois as desta lista.

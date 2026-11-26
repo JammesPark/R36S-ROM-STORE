@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gameList>
+  <game>
+    <path>./R36S ROM STORE.sh</path>
+    <name>R36S ROM STORE</name>
+    <desc>Central de ROMs e ferramentas para o R36S: gerencie jogos autorizados, BIOS, temas e downloads.</desc>
+    <image>./r36sromstore/cover.png</image>
+    <thumbnail>./r36sromstore/cover.png</thumbnail>
+    <marquee>./r36sromstore/logo.png</marquee>
+    <fanart>./r36sromstore/fanart.png</fanart>
+    <releasedate>20261030T000000</releasedate>
+    <developer>R36S ROM STORE</developer>
+    <publisher>Comunidade R36S</publisher>
+    <genre>Other</genre>
+  </game>
+</gameList>

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/atual/logo_hd.png" alt="R36S ROM STORE — logo oficial" width="340">
+  <img src="port/r36sromstore/logo_hd.png" alt="R36S ROM STORE — logo oficial" width="340">
 </p>
 
 <h1 align="center">R36S ROM STORE</h1>
@@ -7,7 +7,7 @@
 <p align="center"><strong>Sua central de jogos retrô</strong><br>ROMs, BIOS, temas e ferramentas direto no console.</p>
 
 <p align="center">
-  <a href="https://github.com/JammesPark/R36S-ROM-STORE/releases/latest"><img alt="Versão oficial" src="https://img.shields.io/github/v/release/JammesPark/R36S-ROM-STORE-UPDATES?style=for-the-badge&color=2563eb&label=Vers%C3%A3o"></a>
+  <a href="https://github.com/JammesPark/R36S-ROM-STORE/releases/latest"><img alt="Versão oficial" src="https://img.shields.io/github/v/release/JammesPark/R36S-ROM-STORE?style=for-the-badge&color=2563eb&label=Vers%C3%A3o"></a>
   <img alt="R36S e R36H" src="https://img.shields.io/badge/Console-R36S%20%7C%20R36H-0891b2?style=for-the-badge">
   <img alt="Sistemas: dArkOSRE, dArkOS, dArkOSen, ArkOS, ArchR" src="https://img.shields.io/badge/Sistema-dArkOSRE%20%7C%20dArkOS%20%7C%20dArkOSen%20%7C%20ArkOS%20%7C%20ArchR-ffdc49?style=for-the-badge">
   <a href="LICENSE"><img alt="GPL-3.0" src="https://img.shields.io/badge/Licen%C3%A7a-GPL--3.0-16a34a?style=for-the-badge"></a>
@@ -36,7 +36,7 @@
 </p>
 
 
-**Status:** versão 0.7.0-beta — beta oficial.
+**Status:** versão 0.7.1-beta — versão oficial BETA.
 
 ---
 
@@ -44,7 +44,7 @@
 
 O **R36S ROM STORE** é um aplicativo independente para consoles portáteis R36S e R36H. Desenvolvido em Lua e LÖVE 11.5, permite organizar jogos, baixar e instalar ROMs em SD1 ou SD2, gerenciar BIOS, temas e utilizar ferramentas do sistema diretamente com os controles físicos do console.
 
-A interface tem resolução lógica de 640×480, dois temas integrados (Pulse e Matrix) e quatro idiomas selecionáveis. O aplicativo tem origem no R36S PORT HUB, de Lag do Lira, e preserva a autoria de ferramentas e temas herdados.
+A interface tem resolução lógica de 640×480, dois temas integrados (Matrix padrão e Pulse opcional) e quatro idiomas selecionáveis. O aplicativo tem origem no R36S PORT HUB, de Lag do Lira, e preserva a autoria de ferramentas e temas herdados. Não é uma loja oficial, afiliada ou mantida pelo projeto-base.
 
 ---
 
@@ -54,7 +54,7 @@ A interface tem resolução lógica de 640×480, dois temas integrados (Pulse e 
 
 Este é um projeto independente, em fase BETA, feito pela comunidade. Não somos autores, proprietários ou representantes dos jogos, ROMs, BIOS, temas e demais conteúdos de terceiros. A licença do aplicativo não autoriza automaticamente seu acesso ou redistribuição. Respeite os direitos autorais e utilize apenas arquivos para os quais tenha autorização.
 
-A compatibilidade varia conforme modelo, firmware e tela. Faça backup dos cartões e da instalação antes de alterações; ferramentas de manutenção podem modificar arquivos mediante confirmação. Relate falhas de funcionamento.
+A compatibilidade varia conforme modelo, firmware e tela. Faça backup dos cartões e da instalação antes de alterações; ferramentas de manutenção podem modificar arquivos mediante confirmação. Relate falhas de funcionamento e não confunda versões experimentais com as oficiais.
 
 ---
 
@@ -63,24 +63,24 @@ A compatibilidade varia conforme modelo, firmware e tela. Faça backup dos cart�
 | Pacote | Download |
 |---|---|
 | 📄 Instalador automático (.sh) — última versão oficial com OTA | [Baixar SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh) |
-| 📦 Instalação completa 0.7.0-beta (com OTA) | [Baixar ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta.zip) |
-| 🔄 Atualização manual 0.7.0-beta | [Baixar UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta_UPDATE.zip) |
+| 📦 Instalação completa 0.7.1-beta (com OTA) | [Baixar ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.1-beta/R36S_ROM_STORE_0.7.1-beta.zip) |
+| 🔄 Atualização manual 0.7.1-beta | [Baixar UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.1-beta/R36S_ROM_STORE_0.7.1-beta_UPDATE.zip) |
 | 🗂️ Versões anteriores | [Histórico oficial](https://github.com/JammesPark/R36S-ROM-STORE/releases) |
 
-O instalador SH consulta o canal oficial ativo, baixa e valida o pacote completo, instala na pasta `ports` e abre a loja. Não é necessário baixar o ZIP separadamente.
+O SH consulta o canal oficial ativo e baixa o ZIP completo com verificação de integridade. Para migrar de 0.7.0-beta ou anterior, use o SH ou ZIP completo: a pasta agora é `r36sromstore/`. O UPDATE.zip contém apenas a pasta da aplicação, para instalações existentes da nova estrutura. Faça backup e mescle as pastas sem apagar os dados. O canal OTA legado permanece na 0.7.0-beta.
 
-O ZIP completo já inclui o atualizador online (OTA). O UPDATE.zip contém apenas a pasta `r36sromsstore/`, com `game.love` e os arquivos da aplicação, sem launcher nem dados pessoais. Use-o somente para uma instalação existente com a mesma estrutura; extraia em `ports/`, mesclando as pastas sem apagar seus dados. Prefira a atualização online pelo aplicativo. Faça backup antes de atualizar.
+O instalador SH do novo canal passou em testes automatizados; a execução física desse script separadamente ainda não foi confirmada.
 
 ---
 
 ## 🎨 Temas e interface
 
-| Matrix Edition | Pulse Edition |
+| Matrix Edition — padrão | Pulse Edition — alternativa |
 |:---:|:---:|
 | <img src="docs/images/atual/matrix-menu.png" width="320" alt="Tela inicial Matrix"> | <img src="docs/images/atual/pulse-menu.png" width="320" alt="Tela inicial Pulse"> |
 | Verde original, menu em grade | Azul original, menu com logo centralizada |
 
-As imagens apresentam a identidade visual aprovada para a próxima edição, em capturas reais do aplicativo em LÖVE, 640×480, geradas em ambiente isolado. A versão disponível para instalação continua sendo a 0.7.0-beta. A exibição das prévias foi aprovada no console. Os números de jogos, espaço e hardware mostrados nas capturas não representam um console físico.
+As imagens são capturas da interface real do aplicativo em LÖVE, 640×480, geradas em ambiente isolado. A exibição das prévias foi aprovada no console. Os números de jogos, espaço e hardware mostrados nas capturas não representam um console físico.
 
 Ambos são integrados à loja, com cores personalizáveis de forma independente e modos Lista, Grade e Vitrine. São adaptações de temas originais de Lag do Lira.
 
@@ -100,7 +100,7 @@ Ambos são integrados à loja, com cores personalizáveis de forma independente 
 | 🧩 | **BIOS do Sistema** | Área de verificação, download e instalação de BIOS, com gerenciamento de arquivos. |
 | 🎨 | **Temas Store** | Consulta e instalação de temas da interface do console. |
 | ⚙️ | **Configurações** | Aparência, cores, brilho, áudio, notificações e preferências. |
-| 🔄 | **Atualizações** | Consulta online, confirmação, verificação de pacote, histórico e recuperação. |
+| 🔄 | **Atualizações** | Canal OTA da nova pasta com SHA-256, histórico e recuperação. |
 | 🌐 | **Quatro idiomas** | 🇧🇷 PT-BR, 🇺🇸 EN, 🇪🇸 ES e 🇷🇺 RU. |
 
 ---
@@ -134,24 +134,24 @@ As ferramentas abaixo foram identificadas no código e nas telas da versão atua
 
 ## 🚀 Instalação no R36S
 
-**Instalação automática:** baixe o [instalador SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh), copie-o para a pasta `ports` do cartão, conecte o console à internet e execute-o no EmulationStation. Ele instala a versão oficial ativa com OTA. Testado em ambiente automatizado; validação física deste script pendente.
+**Instalador automático:** copie o [SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh) para `ports/`, conecte o console à internet e execute pelo EmulationStation.
 
-**Instalação manual (ZIP completo):**
+**Instalação manual:**
 
-1. Baixe o pacote completo na [página de download oficial](https://github.com/JammesPark/R36S-ROM-STORE/releases/latest).
+1. Baixe o pacote completo da seção Downloads.
 2. Extraia os arquivos na pasta `ports` do cartão de destino.
 3. Confira a estrutura:
 
    ```text
    ports/
-   ├── R36S ROMS STORE.sh
-   └── r36sromsstore/
+   ├── R36S ROM STORE.sh
+   └── r36sromstore/
    ```
 
 4. Reinicie o EmulationStation, se necessário, e abra o aplicativo na seção Ports.
 5. Conecte o console à internet para a primeira sincronização.
 
-**Requisito:** runtime LÖVE 11.5 disponível no aparelho. O pacote oficial é preparado para os caminhos de instalação originais; a organização do código no GitHub não modifica esses caminhos.
+**Requisito:** runtime LÖVE 11.5 disponível no aparelho. A primeira instalação da nova estrutura usa o ZIP completo em `ports/`.
 
 ---
 
@@ -163,11 +163,11 @@ As ferramentas abaixo foram identificadas no código e nas telas da versão atua
 | **A** | Abrir, confirmar, selecionar ou executar a ação indicada. |
 | **B** | Voltar, cancelar ou abrir a saída no menu principal. |
 | **X** | Pesquisa na lista de ROMs; outras ações conforme a tela. |
-| **Y** | Atualiza a lista de ROMs; ações contextuais em outras telas. |
+| **Y** | Atualiza a lista de ROMs; remove temas instalados ou abre informações e ações na Central de Downloads. |
 | **L1 / R1** | Alternam categorias, abas ou páginas nas telas compatíveis. |
 | **L2 / R2** | Alternam os modos de visualização nas listas de ROMs compatíveis. |
 | **SELECT** | Marca ou desmarca favoritos; abre a atualização quando há aviso no menu. |
-| **START** | Abre a Central de Downloads; na tela Sobre, abre o apoio ao projeto. |
+| **START** | Abre a Central de Downloads; na Temas Store, abre opções; na tela Sobre, abre o apoio ao projeto. |
 | **FN** | Captura de tela quando reconhecido pelo sistema; no teste de controles, é testado sem capturar. |
 | Analógico direito / L3 / R3 | Sem atalho global definido no mapeamento geral; consultar o teste de controles. |
 
@@ -192,7 +192,7 @@ A documentação não certifica todos os firmwares ou aparelhos. Informe o model
 
 ## 🔄 Atualizações
 
-Use o menu de atualização online da loja. Faça backup antes de instalar qualquer atualização. Os downloads oficiais são disponibilizados na página de releases.
+A primeira migração exige backup do cartão e o pacote completo. As instalações em `r36sromstore/` consultam o canal OTA da nova estrutura. O feed das instalações anteriores continua na 0.7.0-beta.
 
 ---
 
@@ -201,9 +201,8 @@ Use o menu de atualização online da loja. Faça backup antes de instalar qualq
 | Documento | Conteúdo |
 |---|---|
 | [CHANGELOG.md](CHANGELOG.md) | Histórico de versões |
-| [HISTORICO_RELEASES.md](docs/HISTORICO_RELEASES.md) | Histórico das publicações oficiais e downloads preservados |
 | [CONTRIBUTORS.md](CONTRIBUTORS.md) | Registro de contribuições |
-| [PUBLICACAO_OFICIAL.md](docs/PUBLICACAO_OFICIAL.md) | Processo de publicação |
+| [HISTORICO_RELEASES.md](docs/HISTORICO_RELEASES.md) | Histórico das publicações oficiais |
 | [REORGANIZACAO.md](docs/REORGANIZACAO.md) | Organização dos arquivos |
 | [NOTICE.md](NOTICE.md) | Autoria e avisos |
 | [LICENSE](LICENSE) | Licença GPL-3.0 |
@@ -229,7 +228,7 @@ Para gerar o pacote: `sh tools/build.sh`. O GitHub Actions valida LuaJIT, testes
 
 ## 💬 Comunidade
 
-Canal oficial: [Telegram]().
+Canal oficial: [Telegram — R36SPORTSBR](https://t.me/R36SPORTSBR).
 
 Relatos de bugs e sugestões: [GitHub Issues](https://github.com/JammesPark/R36S-ROM-STORE/issues).
 

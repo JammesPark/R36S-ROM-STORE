@@ -15,12 +15,12 @@ local T = require("ui.theme")
 local Prefs=require("core.prefs")
 local Schemes=require("ui.color_schemes")
 
-local M = { list = {}, current = "default", DEFAULT = "default" }
+local M = { list = {}, current = "neongrid", DEFAULT = "neongrid" }
 -- Edicao Experimental: somente Tema Padrao e Neon Grid sao permitidos.
 -- Os outros temas nao sao mais carregados nem exibidos no seletor.
-M.FIRST = "default"
+M.FIRST = "neongrid"
 M.ALLOWED = { default = true, neongrid = true }
-M.ORDER = { "default", "neongrid" }
+M.ORDER = { "neongrid", "default" }
 -- ids antigos -> ids atuais (quem usava o tema antigo continua com ele, ja renomeado)
 M.ALIASES = { xbox = "neongrid" }
 local function resolve(id) return M.ALIASES[id] or id end
@@ -296,12 +296,11 @@ function M.init()
     local applied = M.apply(saved, false)
     if applied then return nil end
     U.log("tema salvo indisponivel:", saved)
-    M.apply(M.DEFAULT, true)
+    if not M.apply(M.DEFAULT, true) then M.apply("default", true) end
     return L("O tema escolhido não pôde ser carregado. Usando Tema Padrão.")
   end
   if not M.apply(M.DEFAULT, false) then
-    -- sem o theme.json padrao: continua com as cores embutidas em ui/theme.lua
-    M.current = M.DEFAULT
+    if not M.apply("default", false) then M.current = "default" end
   end
   return nil
 end

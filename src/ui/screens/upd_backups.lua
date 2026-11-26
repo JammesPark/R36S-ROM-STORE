@@ -64,7 +64,7 @@ end
 
 local function restore(self, b)
   App.show_dialog({ title = L("Restaurar este backup?"), kind = "warn",
-    body = L("O R36S ROMS STORE volta para a versão ") .. tostring(b.from_label or b.from) .. L(" (") .. #(b.files or {})
+    body = L("O R36S ROM STORE volta para a versão ") .. tostring(b.from_label or b.from) .. L(" (") .. #(b.files or {})
       .. L(" arquivo(s) devolvidos, ") .. #(b.added or {}) .. L(" arquivo(s) novos removidos).")
       .. L("\n\nAntes, o estado atual também vai para um backup. Configurações, ports e gravações não são alterados."),
     buttons = { { label = L("RESTAURAR"), fn = function()

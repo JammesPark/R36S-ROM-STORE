@@ -1,5 +1,5 @@
 -- =============================================================================
---  R36S ROMS STORE - thread do Gerenciador do PortMaster
+--  R36S ROM STORE - thread do Gerenciador do PortMaster
 --
 --  Operacoes: check (descobre a versao estavel), install, update, verify, repair.
 --  Fluxo seguro (install/update/repair):

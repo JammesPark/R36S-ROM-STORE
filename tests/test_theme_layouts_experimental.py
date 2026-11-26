@@ -10,7 +10,9 @@ for obsolete in ("forcejedi", "forcesith", "pastel", "wiiblue"):
     assert not (Path("theme_packages") / obsolete).exists(), f"Pacote antigo: {obsolete}"
 core = (root / "core/themes.lua").read_text(encoding="utf-8")
 assert 'M.ALLOWED = { default = true, neongrid = true }' in core
-assert 'M.ORDER = { "default", "neongrid" }' in core
+assert 'M.ORDER = { "neongrid", "default" }' in core
+assert 'M.FIRST = "neongrid"' in core
+assert 'DEFAULT = "neongrid"' in core
 store = (root / "ui/screens/store.lua").read_text(encoding="utf-8")
 assert 'Prefs.get(view_key())' in store
 assert '"rom_view_matrix"' in store and '"rom_view_default"' in store

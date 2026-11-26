@@ -111,12 +111,12 @@ function S:optimize()
             L("O fstrim informa ao cartão quais blocos estão livres, o que pode ajudar a manter a velocidade de gravação. Não apaga arquivos. Pode levar alguns minutos e precisa de permissão de administrador. Partições: ") .. table.concat(trim_mps, ", "),
             { op = "trim", mps = trim_mps }, L("TRIM (fstrim)"))
         end },
-      { label = L("Limpar temporários do R36S ROMS STORE"),
+      { label = L("Limpar temporários do R36S ROM STORE"),
         sub = busy and L("Indisponível: há uma instalação em andamento") or L("Disponível: restos de instalações interrompidas do próprio hub"),
         fn = function()
           if busy then App.toast(L("Aguarde a operação atual terminar."), "warn"); return end
           self:confirm(L("Limpar temporários?"),
-            L("Apaga somente as pastas temporárias de instalações interrompidas do R36S ROMS STORE (em ") .. C.TMP_DIR .. L("). Jogos, ports e arquivos do sistema não são tocados."),
+            L("Apaga somente as pastas temporárias de instalações interrompidas do R36S ROM STORE (em ") .. C.TMP_DIR .. L("). Jogos, ports e arquivos do sistema não são tocados."),
             { op = "cleantmp", tmp = C.TMP_DIR }, L("Limpar temporários"))
         end },
       { label = L("Cancelar") },

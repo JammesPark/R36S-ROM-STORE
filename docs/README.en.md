@@ -1,4 +1,4 @@
-<p align="center"><img src="images/atual/logo_hd.png" alt="R36S ROM STORE" width="340"></p>
+<p align="center"><img src="../port/r36sromstore/logo_hd.png" alt="R36S ROM STORE" width="340"></p>
 
 # R36S ROM STORE
 
@@ -9,51 +9,79 @@
 
 [🇧🇷 Português](../README.md) · [🇺🇸 English](README.en.md) · [🇪🇸 Español](README.es.md) · [🇷🇺 Русский](README.ru.md)
 
-**Status:** 0.7.0-beta — official beta.
+**Status:** 0.7.1-beta — official beta.
 
 ## About
 
-Independent retro gaming manager for R36S and R36H, written in Lua and LÖVE 11.5. ROM catalog, search, covers, favorites, local library, SD1/SD2 installation, BIOS, EmulationStation themes, download queue, history and device tools. Two built-in themes, Matrix and Pulse; four languages.
+An independent retro gaming manager for R36S, written in Lua and LÖVE 11.5. It manages ROMs, BIOS, EmulationStation themes and tools using the handheld controls, SD1/SD2 and a logical 640×480 layout. R36S and R36H have both been physically tested by the maintainer. Based on R36S PORT HUB by Lag do Lira; not an official product of the original project or console manufacturer.
 
 ## Important notice
 
 ⚠️ **BETA version.** The main features have been tested in a simulated environment on a computer and on R36S and R36H handhelds. Some functions and operating-system combinations still need additional validation. Community bug reports, suggestions and contributions are welcome.
 
-Back up your cards and use only content you are authorized to access. The GPL-3.0 software license does not grant rights to third-party ROMs, BIOS, artwork or themes.
+Beta software: back up your cards. Download and use only content you are authorized to access and distribute. The GPL-3.0 software license does not grant rights to third-party games, BIOS, artwork or themes. Compatibility varies.
 
 ## Downloads
 
-| Package | Download |
+| | Download |
 |---|---|
-| Automatic installer (.sh), latest active official version with OTA | [Download SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh) |
-| Full 0.7.0-beta installation with OTA | [ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta.zip) |
-| Manual 0.7.0-beta update | [UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta_UPDATE.zip) |
-| Previous versions | [Official history](https://github.com/JammesPark/R36S-ROM-STORE/releases) |
+| Automatic installer (.sh) — active official release with OTA | [SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh) |
+| Full installation with OTA | [ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.1-beta/R36S_ROM_STORE_0.7.1-beta.zip) |
+| Manual update | [UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.1-beta/R36S_ROM_STORE_0.7.1-beta_UPDATE.zip) |
+| Previous releases | [Releases](https://github.com/JammesPark/R36S-ROM-STORE/releases) |
 
-Copy the SH to ports, connect to the internet and run it from EmulationStation. It downloads and verifies the active official full installer. Automated validation passed; physical validation of this script is pending. The manual update contains only the application folder, including game.love, not the launcher or user data. Use it only with an existing installation of the same layout; back up first. The full ZIP already includes OTA.
+For migration from 0.7.0-beta or older, use the SH or full ZIP. The manual update requires the new r36sromstore/ layout. Back up first. The legacy OTA remains at 0.7.0-beta. The new-channel SH passed automated tests; separate physical validation has not been confirmed.
 
 ## Interface
-
-Approved visual identity for the next edition; actual LÖVE screenshots at 640×480 from an isolated environment. The currently available release is 0.7.0-beta.
 
 | Matrix Edition | Pulse Edition |
 |:---:|:---:|
 | <img src="images/atual/matrix-menu.png" width="320" alt="Matrix"> | <img src="images/atual/pulse-menu.png" width="320" alt="Pulse"> |
 
-## Installation
 
-Extract the complete 0.7.0-beta ZIP into `ports/` on the card. Open `R36S ROMS STORE.sh` beside `r36sromsstore/` in EmulationStation with LÖVE 11.5 available. Connect to the internet for initial synchronization.
+Matrix is the default on fresh installs; Pulse is optional. Independent colors; List, Grid and Showcase views. Actual application captures rendered at 640×480 in an isolated environment, not physical hardware readings.
 
-## Compatibility and tests
+## Features
 
-R36S and R36H have both been physically tested by the maintainer. dArkOSen was tested with controller-mapping differences. Installation on ArchR was tested. dArkOSRE, dArkOS and ArkOS are reference systems; full validation of every combination remains pending.
+- ROM catalog with over 15,000 validated collection entries, search, covers, region badges, favorites and system categories; totals change with catalog updates.
+- Local game library, SD1/SD2 selection and store-installed ROM management.
+- Themes Store: 100 themes in the tested catalog, previews, installation in background, activation, updates and removal of installed themes including external ones; warnings for unverified themes and protection for active/system themes.
+- Shared ROM/theme download queue, speed, progress, ETA, cancellation during transfer, history and direct details.
+- BIOS detection and management; SD tools, controls/analog tester, network diagnostics, Wi-Fi, FTP, file manager, PortMaster/runtimes, device information, backup/restore and logs (availability depends on firmware).
+- Appearance, colors, text size and four languages; last valid catalog and cached artwork available offline.
 
-## Updates
+## Install and migrate
 
-Use the in-app online updater for official releases. Back up before updating.
+Back up first. Extract the full ZIP into the card's `ports/` directory. In the new layout, the launcher is `R36S ROM STORE.sh` beside `r36sromstore/` containing `game.love`. Open it from Ports in EmulationStation, with LÖVE 11.5 available; connect to the internet for initial synchronization.
+
+First migrate with the full installer. Keep the old folder, launcher and backups until you have checked your data on the card. The new layout uses its own OTA feed. The legacy feed stays at 0.7.0-beta.
+
+## Controls
+
+| Button | Action |
+|---|---|
+| D-pad / left stick | Navigate |
+| A / B | Details/confirm / back/cancel |
+| X | ROM search; theme install; clear download history |
+| Y | Context action; remove theme; download info/actions |
+| L1/R1 | Categories/filters |
+| L2/R2 | ROM views; theme previews |
+| SELECT | ROM favorite; theme system/display selector |
+| START | Downloads; theme options; About support action |
+| FN | Screenshot when supported |
+
+## Compatibility and support
+
+Both R36S and R36H have been physically tested by the maintainer. dArkOSen was tested with earlier controller-mapping differences. Installation on ArchR was tested. dArkOSRE, dArkOS and ArkOS are reference systems; full validation of individual firmware/model combinations remains pending. AmberELEC, ROCKNIX, JELOS, KNULLI and Batocera have theme compatibility/detection information, not certification of the whole app. Automatic theme-update popup and specifically manual theme removal were not physically exercised. ThemeMaster and outside-catalog removal passed. Migration and the physical checklist were approved by the maintainer; live new-channel OTA and SH are not separately confirmed on hardware.
+
+Internet is required for first sync and new downloads. An active theme must be replaced before removal. If an error occurs, report firmware, version and steps, without passwords or personal information.
+
+[Telegram](https://t.me/R36SPORTSBR) · [Issues](https://github.com/JammesPark/R36S-ROM-STORE/issues) · [Support guide (PT-BR)](SUPORTE.md)
 
 ## Development and credits
 
-Lua/LuaJIT/LÖVE, Python, Shell Script, HTML, JSON/YAML/XML, Markdown, GitHub Actions and Cloudflare R2. Based on R36S PORT HUB by Lag do Lira; JammesPark maintains the derivative, with assistance from ChatGPT (OpenAI). Original theme/tool authorship and third-party licenses are preserved.
+Source: `src/`; build: `sh tools/build.sh`; [changelog](../CHANGELOG.md), [post-launch roadmap](ROADMAP.md), [release process](HISTORICO_RELEASES.md). Rankings and other roadmap items are future proposals, not current features.
 
-[Telegram](https://t.me/R36SPORTSBR) · [GitHub Issues](https://github.com/JammesPark/R36S-ROM-STORE/issues) · [GPL-3.0](../LICENSE) · [NOTICE](../NOTICE.md) · [Contributors](../CONTRIBUTORS.md)
+[JammesPark](https://github.com/JammesPark) · [Lag do Lira](https://github.com/liralflsti-wq/r36s-port-hub) · [ChatGPT (OpenAI)](https://chatgpt.com/) · [NOTICE](../NOTICE.md) · [Contributors](../CONTRIBUTORS.md) · [GPL-3.0](../LICENSE)
+
+Lag do Lira authored the base project, original Matrix/Pulse themes and inherited tools. JammesPark maintains the derivative; ChatGPT assists development. ThemeGallery previews: Dave, MIT. Third-party credits and licensing apply separately.

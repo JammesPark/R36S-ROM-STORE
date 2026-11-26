@@ -1,4 +1,4 @@
--- R36S ROMS STORE: versao modificada em 2026-11-15. GPL-3.0.
+-- R36S ROM STORE: versao modificada em 2026-11-15. GPL-3.0.
 -- Base: R36S PORT HUB, por Lag do Lira (creditos em NOTICE.md).
 -- =============================================================================
 --  Central de Configuracoes (0.4.7): categorias novas e acoes de apoio.
@@ -626,7 +626,7 @@ function X.updates_category()
     desc = L("Versão, verificar, instalar, histórico e recuperação."),
     status = function() return "v" .. C.VERSION .. (Mgr.restart_needed and ("  •  " .. I18N.tr(L("reinicie o app"))) or "") end,
     rows = {
-      { kind = "info", label = L("Versão instalada"), desc = L("Versão do R36S ROMS STORE em uso."),
+      { kind = "info", label = L("Versão instalada"), desc = L("Versão do R36S ROM STORE em uso."),
         value = function() return C.VERSION .. (Mgr.restart_needed and ("  •  " .. I18N.tr(L("reinicie o app"))) or "") end },
       { kind = "action", label = L("Atualização via rede"),
         desc = L("Verifica a versão disponível no link oficial, mostra as novidades e baixa o pacote para a pasta update."),
@@ -1007,7 +1007,7 @@ function X.diag_category()
         desc = L("Verifica catálogo, downloads, ports instalados, FTP, atualizações, ferramentas do sistema e registros. X exporta um relatório para o suporte."),
         on_a = run_diag },
       { kind = "action", label = L("Registro de erros"), icon = "set_console",
-        desc = L("Erros e avisos do R36S ROMS STORE e relatórios para o suporte. A abre o mais recente para ler; esquerda/direita troca de arquivo e B volta para esta tela."),
+        desc = L("Erros e avisos do R36S ROM STORE e relatórios para o suporte. A abre o mais recente para ler; esquerda/direita troca de arquivo e B volta para esta tela."),
         value = function()
           local n = require("core.errlog").count()
           return n == 0 and L("nenhum erro registrado") or string.format(I18N.tr(L("%d arquivo(s)")), n)
@@ -1037,12 +1037,12 @@ function X.about_category()
     id = "about", icon = "set_about", color = "accent",
     name = L("Sobre o projeto"),
     desc = L("Versão, desenvolvedor, créditos, licenças e avisos."),
-    status = function() return "R36S ROMS STORE  •  v" .. C.VERSION end,
+    status = function() return "R36S ROM STORE  •  v" .. C.VERSION end,
     rows = {
-      { kind = "info", label = L("Nome"), desc = L("Nome do aplicativo."), value = function() return "R36S ROMS STORE" end },
+      { kind = "info", label = L("Nome"), desc = L("Nome do aplicativo."), value = function() return "R36S ROM STORE" end },
       { kind = "info", label = L("Versão"), desc = L("Versão instalada."), value = function() return C.VERSION end },
-      { kind = "info", label = L("Desenvolvedor"), desc = L("Projeto derivado, com identidade própria."), value = function() return "Projeto R36S ROMS STORE" end },
-      { kind = "action", label = L("Sobre o R36S ROMS STORE"),
+      { kind = "info", label = L("Desenvolvedor"), desc = L("Projeto derivado, com identidade própria."), value = function() return "Projeto R36S ROM STORE" end },
+      { kind = "action", label = L("Sobre o R36S ROM STORE"),
         desc = L("Apresentação, créditos ao autor da base, GPL-3.0 e canal de referência."),
         on_a = function() App.push("about") end },
       { kind = "action", label = L("Licenças"),

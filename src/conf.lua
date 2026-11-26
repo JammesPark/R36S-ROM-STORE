@@ -1,7 +1,7 @@
 function love.conf(t)
   t.identity = "r36sromsstore"
   t.version = "11.5"
-  t.window.title = "R36S ROMS STORE"
+  t.window.title = "R36S ROM STORE"
   -- Em alguns firmwares KMSDRM, 0x0 usa o modo SDL legado 640x480
   -- mesmo quando o painel Linux e 720x720. Consultar fb0/DRM ANTES de
   -- abrir a janela. Se o backend nao aceitar o modo, o renderizador

@@ -1,5 +1,5 @@
 -- =============================================================================
---  R36S ROMS STORE - gravacao da tela do hub (thread)
+--  R36S ROM STORE - gravacao da tela do hub (thread)
 --
 --  Dois modos, escolhidos pelo que existe no console:
 --   - "mp4": quadros RGBA enviados ao ffmpeg por um pipe (H.264 ou MPEG-4).

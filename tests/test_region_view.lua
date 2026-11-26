@@ -23,6 +23,12 @@ for code, color in pairs(labels) do
   assert(Region.draw_region(p, 0, 0)>0)
 end
 assert(Region.code({section="games",name="Sem regiao"})==nil)
+assert(Region.code({section="games",name="Game (USA)"})=="US")
+assert(Region.code({section="games",name="Game (Europe)"})=="EU")
+assert(Region.code({section="games",name="Game",original_name="Game (Japan).zip"})=="JP")
+assert(Region.code({section="games",name="Game",download_url="https://example.org/Game%20%28China%29.zip"})=="CN")
+assert(Region.code({section="games",name="Game (USA, Europe)"})=="WW")
+assert(Region.code({section="games",name="Game",region_tag="CH"})=="CN")
 assert(Region.code({section="tools",name="Ferramenta [JP]"})==nil)
 assert(Region.display_name({section="games",name="Jogo (China) [CN]"})=="Jogo")
 assert(Region.display_name({section="games",name="Jogo (Taiwan) [TW]"})=="Jogo")

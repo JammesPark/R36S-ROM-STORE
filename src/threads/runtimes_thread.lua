@@ -1,5 +1,5 @@
 -- =============================================================================
---  R36S ROMS STORE - thread de atualizacao dos runtimes do PortMaster
+--  R36S ROM STORE - thread de atualizacao dos runtimes do PortMaster
 --
 --  Estrutura real do pacote (verificada): runtimes.all.aarch64.zip contem apenas
 --  arquivos *.squashfs na raiz (sem pastas). O PortMaster carrega esses arquivos

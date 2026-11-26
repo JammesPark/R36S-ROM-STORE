@@ -1,4 +1,4 @@
--- R36S ROMS STORE: versao modificada em 2026-11-15. GPL-3.0.
+-- R36S ROM STORE: versao modificada em 2026-11-15. GPL-3.0.
 -- Base: R36S PORT HUB, por Lag do Lira (creditos em NOTICE.md).
 -- =============================================================================
 --  Sobre o projeto
@@ -27,13 +27,13 @@ local TELEGRAM_ICON = "assets/icons/telegram_official.png"
 local SUPPORT_URL = "https://livepix.gg/jammespark"
 local SUPPORT_SHORT = "livepix.gg/jammespark"
 local SUPPORT_QR_ASSET = "assets/qr/livepix_jammespark.png"
-local SUPPORT_TEXT = L("Esta loja é gratuita. Se ela ajudou você, considere apoiar o desenvolvimento da R36S ROMS STORE & HUB.")
+local SUPPORT_TEXT = L("Esta loja é gratuita. Se ela ajudou você, considere apoiar o desenvolvimento da R36S ROM STORE.")
 local SUPPORT_HOW = L("Leia o QR Code com a câmera do celular para abrir livepix.gg/jammespark. Escolha o valor e conclua o apoio no site. Este não é um QR Pix de pagamento direto.")
 
 -- Credito preservado conforme a licenca GPL-3.0 e o pedido do autor da base.
 local TITLE = C.APP_NAME
 local PARAGRAPHS = {
-  L("R36S ROM HUB STORE é uma loja independente de ROMs e ferramentas para o console R36S."),
+  L("R36S ROM STORE é uma loja independente de ROMs e ferramentas para o console R36S."),
   L("Baseado no R36S PORT HUB, por Lag do Lira"),
   L("Canal do autor da base: https://youtube.com/@lagdolira"),
   L("Esta é uma versão modificada, com identidade e manutenção próprias. Não é um lançamento oficial do autor da base."),

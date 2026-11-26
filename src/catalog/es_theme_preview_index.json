@@ -1,0 +1,2212 @@
+{
+  "20gototen/es-theme-retrofix-mini": {
+    "source": "themegallery",
+    "local": "assets/themegallery/retrofix-mini/1.jpg",
+    "name": "Retrofix-Mini",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/20GotoTen/es-theme-retrofix-mini/zip/refs/heads/main",
+      "url": "https://github.com/20GotoTen/es-theme-retrofix-mini/archive/refs/heads/main.zip",
+      "name": "Retrofix-Mini",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 193,
+      "tree_truncated": false
+    }
+  },
+  "aeolusux/alekfull-solo-arkos": {
+    "source": "themegallery",
+    "local": "assets/themegallery/alekfull-solo-arkos/1.jpg",
+    "name": "Alekfull-SOLO-ArkOS",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/AeolusUX/Alekfull-SOLO-ArkOS/zip/refs/heads/master",
+      "url": "https://github.com/AeolusUX/Alekfull-SOLO-ArkOS/archive/refs/heads/master.zip",
+      "name": "Alekfull-SOLO-ArkOS",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "untested",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 29,
+      "tree_truncated": false
+    }
+  },
+  "aeolusux/es-theme-cyber2077": {
+    "source": "themegallery",
+    "local": "assets/themegallery/cyber2077/1.jpg",
+    "name": "Cyber2077",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/AeolusUX/es-theme-Cyber2077/zip/refs/heads/main",
+      "url": "https://github.com/AeolusUX/es-theme-Cyber2077/archive/refs/heads/main.zip",
+      "name": "Cyber2077",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 132,
+      "tree_truncated": false
+    }
+  },
+  "aeolusux/es-theme-epicaeolus": {
+    "source": "themegallery",
+    "local": "assets/themegallery/epicaeolus/1.jpg",
+    "name": "EpicAeolus",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/AeolusUX/es-theme-EpicAeolus/zip/refs/heads/main",
+      "url": "https://github.com/AeolusUX/es-theme-EpicAeolus/archive/refs/heads/main.zip",
+      "name": "EpicAeolus",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 139,
+      "tree_truncated": false
+    }
+  },
+  "akira-n28/es-theme-retroneon": {
+    "source": "themegallery",
+    "local": "assets/themegallery/retroneon/1.jpg",
+    "name": "RetroNeon",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Akira-N28/es-theme-RetroNeon/zip/refs/heads/main",
+      "url": "https://github.com/Akira-N28/es-theme-RetroNeon/archive/refs/heads/main.zip",
+      "name": "RetroNeon",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 113,
+      "tree_truncated": false
+    }
+  },
+  "anthonycaccese/techdweeb-es": {
+    "source": "themegallery",
+    "local": "assets/themegallery/techdweeb/1.jpg",
+    "name": "TechDweeb",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/anthonycaccese/techdweeb-es/zip/refs/heads/master",
+      "url": "https://github.com/anthonycaccese/techdweeb-es/archive/refs/heads/master.zip",
+      "name": "TechDweeb",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "codyv59/es-theme-cody-darkteck": {
+    "source": "themegallery",
+    "local": "assets/themegallery/cody-darkteck/1.jpg",
+    "name": "CodyDarkteck",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/CodyV59/es-theme-CODY-DARKTECK/zip/refs/heads/main",
+      "url": "https://github.com/CodyV59/es-theme-CODY-DARKTECK/archive/refs/heads/main.zip",
+      "name": "CodyDarkteck",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 169,
+      "tree_truncated": false
+    }
+  },
+  "codyv59/es-theme-cody-destroy-the-rg351v": {
+    "source": "themegallery",
+    "local": "assets/themegallery/cody-destroy/1.jpg",
+    "name": "CodyDestroy",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/CodyV59/es-theme-CODY-DESTROY-THE-RG351V/zip/refs/heads/main",
+      "url": "https://github.com/CodyV59/es-theme-CODY-DESTROY-THE-RG351V/archive/refs/heads/main.zip",
+      "name": "CodyDestroy",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 166,
+      "tree_truncated": false
+    }
+  },
+  "codyv59/es-theme-cody-flux": {
+    "source": "themegallery",
+    "local": "assets/themegallery/cody-flux/1.jpg",
+    "name": "CodyFlux",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/CodyV59/es-theme-CODY-FLUX/zip/refs/heads/main",
+      "url": "https://github.com/CodyV59/es-theme-CODY-FLUX/archive/refs/heads/main.zip",
+      "name": "CodyFlux",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "codyv59/es-theme-cody-fuckyplastics": {
+    "source": "themegallery",
+    "local": "assets/themegallery/cody-fuckyplastics/1.jpg",
+    "name": "CodyFuckPlastic",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/CodyV59/es-theme-CODY-FUCKYPLASTICS/zip/refs/heads/main",
+      "url": "https://github.com/CodyV59/es-theme-CODY-FUCKYPLASTICS/archive/refs/heads/main.zip",
+      "name": "CodyFuckPlastic",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 166,
+      "tree_truncated": false
+    }
+  },
+  "codyv59/es-theme-cody-neon": {
+    "source": "collection",
+    "name": "es-theme-CODY-NEON",
+    "missing": true,
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/CodyV59/es-theme-CODY-NEON/zip/refs/heads/main",
+      "url": "https://github.com/CodyV59/es-theme-CODY-NEON/archive/refs/heads/main.zip",
+      "name": "es-theme-CODY-NEON",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "codyv59/es-theme-epic-cody-rg351p-m": {
+    "source": "oga",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/epiccody.png",
+    "name": "EpicCody",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/CodyV59/es-theme-epic-cody-RG351P-M/zip/265565def31a79d4f951ee48567b03667d8b2d0b",
+      "url": "https://github.com/CodyV59/es-theme-epic-cody-RG351P-M/archive/HEAD.zip",
+      "name": "EpicCody",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "no",
+        "854x480": "no",
+        "960x544": "no",
+        "720x720": "no"
+      },
+      "theme_xml_count": 128,
+      "tree_truncated": false
+    }
+  },
+  "codyv59/es-theme-epic-cody-rg351v": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/epiccodyrg351v.png",
+    "name": "EpicCodyRG351V",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/CodyV59/es-theme-epic-cody-RG351V/zip/refs/heads/main",
+      "url": "https://github.com/CodyV59/es-theme-epic-cody-RG351V/archive/refs/heads/main.zip",
+      "name": "EpicCodyRG351V",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "yes",
+        "854x480": "no",
+        "960x544": "no",
+        "720x720": "no"
+      },
+      "theme_xml_count": 129,
+      "tree_truncated": false
+    }
+  },
+  "codyv59/es-theme-epicmax-cody-rgb10max": {
+    "source": "oga",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/epicmax.png",
+    "name": "EpicMax",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/CodyV59/es-theme-EPICMAX-CODY-RGB10MAX/zip/b64f7fbceb31d94a4cd454bdcbcd8c581b3045a3",
+      "url": "https://github.com/CodyV59/es-theme-EPICMAX-CODY-RGB10MAX/archive/HEAD.zip",
+      "name": "EpicMax",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "no",
+        "854x480": "yes",
+        "960x544": "no",
+        "720x720": "no"
+      },
+      "theme_xml_count": 169,
+      "tree_truncated": false
+    }
+  },
+  "codyv59/es-theme-woody-cody-rg351v": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/woodycody.png",
+    "name": "WoodyCody",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/CodyV59/es-theme-WOODY-CODY-RG351V/zip/refs/heads/main",
+      "url": "https://github.com/CodyV59/es-theme-WOODY-CODY-RG351V/archive/refs/heads/main.zip",
+      "name": "WoodyCody",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "yes",
+        "854x480": "no",
+        "960x544": "yes",
+        "720x720": "no"
+      },
+      "theme_xml_count": 167,
+      "tree_truncated": false
+    }
+  },
+  "crcerror/es-theme-minimal": {
+    "source": "themegallery",
+    "local": "assets/themegallery/minimal/1.jpg",
+    "name": "Minimal",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/crcerror/es-theme-minimal/zip/refs/heads/master",
+      "url": "https://github.com/crcerror/es-theme-minimal/archive/refs/heads/master.zip",
+      "name": "Minimal",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "creeperxyz86/epic-cody-v2": {
+    "source": "themegallery",
+    "local": "assets/themegallery/epic-cody-v2/1.jpg",
+    "name": "Epic Cody V2",
+    "download": {
+      "status": "missing",
+      "http": 404,
+      "reason": "HTTP Error 404: Not Found",
+      "url": "https://github.com/creeperxyz86/Epic-Cody-V2/archive/refs/heads/main.zip",
+      "name": "Epic Cody V2",
+      "compatibility": {},
+      "resolution": {},
+      "tree_error": "HTTP Error 404: Not Found"
+    }
+  },
+  "dani7959/es-theme-replica": {
+    "source": "themegallery",
+    "local": "assets/themegallery/replica/1.jpg",
+    "name": "Replica",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/dani7959/es-theme-replica/zip/refs/heads/main",
+      "url": "https://github.com/dani7959/es-theme-replica/archive/refs/heads/main.zip",
+      "name": "Replica",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "compativel",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "untested",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "delgan/iconic-es": {
+    "source": "themegallery",
+    "local": "assets/themegallery/iconic-es/1.jpg",
+    "name": "Iconic-ES",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Delgan/iconic-es/zip/refs/heads/main",
+      "url": "https://github.com/Delgan/iconic-es/archive/refs/heads/main.zip",
+      "name": "Iconic-ES",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "djparentx/art-book-next-es-demake": {
+    "source": "themegallery",
+    "local": "assets/themegallery/art-book-next-demake/1.jpg",
+    "name": "Art Book Next ES Demake",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/djparentx/Art-Book-Next-ES-Demake/zip/refs/heads/main",
+      "url": "https://github.com/djparentx/Art-Book-Next-ES-Demake/archive/refs/heads/main.zip",
+      "name": "Art Book Next ES Demake",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "djparentx/es-theme-retrodark": {
+    "source": "themegallery",
+    "local": "assets/themegallery/retrodark/1.jpg",
+    "name": "RetroDark",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/djparentx/es-theme-retrodark/zip/refs/heads/main",
+      "url": "https://github.com/djparentx/es-theme-retrodark/archive/refs/heads/main.zip",
+      "name": "RetroDark",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 107,
+      "tree_truncated": false
+    }
+  },
+  "emuelec/es-theme-alekfull-emueelec": {
+    "source": "repo-preview",
+    "url": "https://raw.githubusercontent.com/EmuELEC/es-theme-alekfull-EmueELEC/master/_inc/screenshot/system.png",
+    "name": "es-theme-alekfull-EmueELEC",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/EmuELEC/es-theme-alekfull-EmueELEC/zip/refs/heads/master",
+      "url": "https://github.com/EmuELEC/es-theme-alekfull-EmueELEC/archive/refs/heads/master.zip",
+      "name": "es-theme-alekfull-EmueELEC",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 111,
+      "tree_truncated": false
+    }
+  },
+  "emuelec/es-theme-emuelec-clean-style": {
+    "source": "collection",
+    "name": "es-theme-EmuELEC-clean-style",
+    "missing": true,
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/EmuELEC/es-theme-EmuELEC-clean-style/zip/refs/heads/master",
+      "url": "https://github.com/EmuELEC/es-theme-EmuELEC-clean-style/archive/refs/heads/master.zip",
+      "name": "es-theme-EmuELEC-clean-style",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 128,
+      "tree_truncated": false
+    }
+  },
+  "emuelec/es-theme-emuelec-roleta": {
+    "source": "collection",
+    "name": "es-theme-EmuELEC-Roleta",
+    "missing": true,
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/EmuELEC/es-theme-EmuELEC-Roleta/zip/refs/heads/master",
+      "url": "https://github.com/EmuELEC/es-theme-EmuELEC-Roleta/archive/refs/heads/master.zip",
+      "name": "es-theme-EmuELEC-Roleta",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 119,
+      "tree_truncated": false
+    }
+  },
+  "emuelec/es-theme-new-emuelec": {
+    "source": "collection",
+    "name": "es-theme-New-EmuELEC",
+    "missing": true,
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/EmuELEC/es-theme-New-EmuELEC/zip/refs/heads/master",
+      "url": "https://github.com/EmuELEC/es-theme-New-EmuELEC/archive/refs/heads/master.zip",
+      "name": "es-theme-New-EmuELEC",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 107,
+      "tree_truncated": false
+    }
+  },
+  "emuelec/es-theme-supreme-emuelec": {
+    "source": "repo-preview",
+    "url": "https://raw.githubusercontent.com/EmuELEC/es-theme-Supreme-EmuELEC/master/_inc/images/main_top.png",
+    "name": "es-theme-Supreme-EmuELEC",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/EmuELEC/es-theme-Supreme-EmuELEC/zip/refs/heads/master",
+      "url": "https://github.com/EmuELEC/es-theme-Supreme-EmuELEC/archive/refs/heads/master.zip",
+      "name": "es-theme-Supreme-EmuELEC",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 118,
+      "tree_truncated": false
+    }
+  },
+  "evildindon/es-theme-arcadeplanet": {
+    "source": "themegallery",
+    "local": "assets/themegallery/arcadeplanet/1.jpg",
+    "name": "Arcadeplanet",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/EvilDindon/ES-THEME-ARCADEPLANET/zip/refs/heads/master",
+      "url": "https://github.com/EvilDindon/ES-THEME-ARCADEPLANET/archive/refs/heads/master.zip",
+      "name": "Arcadeplanet",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "fagnerpc/alekfull-artflix": {
+    "source": "themegallery",
+    "local": "assets/themegallery/artflix/1.jpg",
+    "name": "Artflix",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/fagnerpc/Alekfull-ARTFLIX/zip/refs/heads/master",
+      "url": "https://github.com/fagnerpc/Alekfull-ARTFLIX/archive/refs/heads/master.zip",
+      "name": "Artflix",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 146,
+      "tree_truncated": false
+    }
+  },
+  "fagnerpc/alekfull-nx": {
+    "source": "themegallery",
+    "local": "assets/themegallery/alekfull-nx/1.jpg",
+    "name": "Alekfull-NX",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/fagnerpc/Alekfull-NX/zip/refs/heads/master",
+      "url": "https://github.com/fagnerpc/Alekfull-NX/archive/refs/heads/master.zip",
+      "name": "Alekfull-NX",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 81,
+      "tree_truncated": false
+    }
+  },
+  "farfenkugell/es-theme-farfenkugell-columns": {
+    "source": "oga",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/farfenkugell_columns.png",
+    "name": "Farfenkugell_Columns",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/farfenkugell/es-theme-farfenkugell-columns/zip/889c01cb54e40805a3e5dc6649af9a6637aaccb1",
+      "url": "https://github.com/farfenkugell/es-theme-farfenkugell-columns/archive/HEAD.zip",
+      "name": "Farfenkugell_Columns",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "no",
+        "854x480": "yes",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "farfenkugell/es-theme-farfenkugell_crystal": {
+    "source": "themegallery",
+    "local": "assets/themegallery/farfenkugell-crystal/1.jpg",
+    "name": "Farfenkugell_Crystal",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/farfenkugell/es-theme-farfenkugell_crystal/zip/refs/heads/master",
+      "url": "https://github.com/farfenkugell/es-theme-farfenkugell_crystal/archive/refs/heads/master.zip",
+      "name": "Farfenkugell_Crystal",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "farfenkugell/es-theme-farfenkugell_epicmax": {
+    "source": "oga",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/farfenkugell_epicmax.png",
+    "name": "Farfenkugell_EPICMAX",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/farfenkugell/es-theme-farfenkugell_EPICMAX/zip/f64a6a10c3b2f5fa2d03b424f5639ea02d4a9f7f",
+      "url": "https://github.com/farfenkugell/es-theme-farfenkugell_EPICMAX/archive/HEAD.zip",
+      "name": "Farfenkugell_EPICMAX",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "no",
+        "854x480": "no",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 171,
+      "tree_truncated": false
+    }
+  },
+  "farfenkugell/es-theme-farfenkugell_lazy": {
+    "source": "themegallery",
+    "local": "assets/themegallery/farfenkugell-lazy/1.jpg",
+    "name": "Farfenkugell Lazy",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/farfenkugell/es-theme-farfenkugell_lazy/zip/refs/heads/main",
+      "url": "https://github.com/farfenkugell/es-theme-farfenkugell_lazy/archive/refs/heads/main.zip",
+      "name": "Farfenkugell Lazy",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "galisteogames/artflix-cobalto": {
+    "source": "themegallery",
+    "local": "assets/themegallery/artflix-cobalto/1.jpg",
+    "name": "Artflix-Cobalto",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/galisteogames/ARTFLIX-Cobalto/zip/refs/heads/main",
+      "url": "https://github.com/galisteogames/ARTFLIX-Cobalto/archive/refs/heads/main.zip",
+      "name": "Artflix-Cobalto",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 207,
+      "tree_truncated": false
+    }
+  },
+  "gylansalih/retroverse-batocera-theme": {
+    "source": "themegallery",
+    "local": "assets/themegallery/retroverse/1.jpg",
+    "name": "RetroVerse",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/GylanSalih/RetroVerse-Batocera-Theme/zip/refs/heads/main",
+      "url": "https://github.com/GylanSalih/RetroVerse-Batocera-Theme/archive/refs/heads/main.zip",
+      "name": "RetroVerse",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-arkos-carbon": {
+    "source": "oga",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/arkos-carbon.png",
+    "name": "ArkOS-Carbon",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-arkos-carbon/zip/b4c5bd37038f56ebf33d4fcdbd604ce3e9229d2a",
+      "url": "https://github.com/Jetup13/es-theme-arkos-carbon/archive/HEAD.zip",
+      "name": "ArkOS-Carbon",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "untested",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-art-book-3-2": {
+    "source": "oga",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/art-book.png",
+    "name": "Art-Book",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-art-book-3-2/zip/7f9feb41544a31289980e00d9630a314f50bf297",
+      "url": "https://github.com/Jetup13/es-theme-art-book-3-2/archive/HEAD.zip",
+      "name": "Art-Book",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "untested",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-banner-ogsmax": {
+    "source": "oga",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/bannerogsmax.png",
+    "name": "BannerOGSMAX",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-banner-ogsmax/zip/7875d1687b6f0f19ce6c5e083d5f6a1183c5101d",
+      "url": "https://github.com/Jetup13/es-theme-banner-ogsmax/archive/HEAD.zip",
+      "name": "BannerOGSMAX",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "no",
+        "854x480": "yes",
+        "960x544": "no",
+        "720x720": "no"
+      },
+      "theme_xml_count": 197,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-base-text": {
+    "source": "themegallery",
+    "local": "assets/themegallery/base-text/1.jpg",
+    "name": "Base Text",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-base-text/zip/refs/heads/main",
+      "url": "https://github.com/Jetup13/es-theme-base-text/archive/refs/heads/main.zip",
+      "name": "Base Text",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "yes"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-chicueloap": {
+    "source": "themegallery",
+    "local": "assets/themegallery/chicueloap/1.jpg",
+    "name": "ChicueloAP",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-ChicueloAP/zip/94b8547b5f96f63e5c1f1eae104c23f3eba2588d",
+      "url": "https://github.com/Jetup13/es-theme-ChicueloAP/archive/HEAD.zip",
+      "name": "ChicueloAP",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "untested",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 193,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-custom-box": {
+    "source": "oga",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/custom-box.png",
+    "name": "Custom-Box",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-custom-box/zip/ba243dc31511b6a164f6bb137f9a68ef61ff8e1e",
+      "url": "https://github.com/Jetup13/es-theme-custom-box/archive/HEAD.zip",
+      "name": "Custom-Box",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "no",
+        "854x480": "no",
+        "960x544": "no",
+        "720x720": "no"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-epicnoir": {
+    "source": "themegallery",
+    "local": "assets/themegallery/epicnoir/1.jpg",
+    "name": "EpicNoir",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-epicnoir/zip/refs/heads/master",
+      "url": "https://github.com/Jetup13/es-theme-epicnoir/archive/refs/heads/master.zip",
+      "name": "EpicNoir",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 210,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-freeplay": {
+    "source": "themegallery",
+    "local": "assets/themegallery/freeplay/1.jpg",
+    "name": "Freeplay",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-freeplay/zip/refs/heads/master",
+      "url": "https://github.com/Jetup13/es-theme-freeplay/archive/refs/heads/master.zip",
+      "name": "Freeplay",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "compativel",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-gbz35_mod": {
+    "source": "themegallery",
+    "local": "assets/themegallery/gbz35_mod/1.jpg",
+    "name": "GBZ35_Mod",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-gbz35_mod/zip/refs/heads/master",
+      "url": "https://github.com/Jetup13/es-theme-gbz35_mod/archive/refs/heads/master.zip",
+      "name": "GBZ35_Mod",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 157,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-magical-pixel": {
+    "source": "themegallery",
+    "local": "assets/themegallery/magical-pixel/1.jpg",
+    "name": "Magical-Pixel",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-magical-pixel/zip/refs/heads/main",
+      "url": "https://github.com/Jetup13/es-theme-magical-pixel/archive/refs/heads/main.zip",
+      "name": "Magical-Pixel",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-minimal-arkos": {
+    "source": "themegallery",
+    "local": "assets/themegallery/minimal-arkos/1.jpg",
+    "name": "Minimal-ArkOS",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-minimal-arkos/zip/refs/heads/master",
+      "url": "https://github.com/Jetup13/es-theme-minimal-arkos/archive/refs/heads/master.zip",
+      "name": "Minimal-ArkOS",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "compativel",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-nes-box": {
+    "source": "themegallery",
+    "local": "assets/themegallery/nes-box/1.jpg",
+    "name": "NES-Box",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-nes-box/zip/refs/heads/master",
+      "url": "https://github.com/Jetup13/es-theme-nes-box/archive/refs/heads/master.zip",
+      "name": "NES-Box",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "compativel",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "untested",
+        "720x720": "no"
+      },
+      "theme_xml_count": 191,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-pixel": {
+    "source": "themegallery",
+    "local": "assets/themegallery/pixel/1.jpg",
+    "name": "Pixel",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-pixel/zip/refs/heads/master",
+      "url": "https://github.com/Jetup13/es-theme-pixel/archive/refs/heads/master.zip",
+      "name": "Pixel",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 196,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-sagaartbook": {
+    "source": "themegallery",
+    "local": "assets/themegallery/sagaartbook/1.jpg",
+    "name": "SagaArtBook",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-sagaartbook/zip/refs/heads/main",
+      "url": "https://github.com/Jetup13/es-theme-sagaartbook/archive/refs/heads/main.zip",
+      "name": "SagaArtBook",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "yes"
+      },
+      "theme_xml_count": 253,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-sagabox": {
+    "source": "themegallery",
+    "local": "assets/themegallery/sagabox/1.jpg",
+    "name": "SagaBox",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-sagabox/zip/refs/heads/main",
+      "url": "https://github.com/Jetup13/es-theme-sagabox/archive/refs/heads/main.zip",
+      "name": "SagaBox",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "yes"
+      },
+      "theme_xml_count": 248,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-sagacrystal": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/sagacrystal.png",
+    "name": "SagaCrystal",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-sagacrystal/zip/refs/heads/main",
+      "url": "https://github.com/Jetup13/es-theme-sagacrystal/archive/refs/heads/main.zip",
+      "name": "SagaCrystal",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "no"
+      },
+      "theme_xml_count": 210,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-sagamodern": {
+    "source": "themegallery",
+    "local": "assets/themegallery/sagamodern/1.jpg",
+    "name": "SagaModern",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-sagamodern/zip/refs/heads/main",
+      "url": "https://github.com/Jetup13/es-theme-sagamodern/archive/refs/heads/main.zip",
+      "name": "SagaModern",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "yes"
+      },
+      "theme_xml_count": 212,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-saganx": {
+    "source": "themegallery",
+    "local": "assets/themegallery/saganx/1.jpg",
+    "name": "SagaNX",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-saganx/zip/refs/heads/main",
+      "url": "https://github.com/Jetup13/es-theme-saganx/archive/refs/heads/main.zip",
+      "name": "SagaNX",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "yes"
+      },
+      "theme_xml_count": 253,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-sagaparagon": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/sagaparagon.png",
+    "name": "SagaParagon",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-sagaparagon/zip/refs/heads/main",
+      "url": "https://github.com/Jetup13/es-theme-sagaparagon/archive/refs/heads/main.zip",
+      "name": "SagaParagon",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "no"
+      },
+      "theme_xml_count": 210,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-sagaslice": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/sagaslice.png",
+    "name": "SagaSlice",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-sagaslice/zip/refs/heads/main",
+      "url": "https://github.com/Jetup13/es-theme-sagaslice/archive/refs/heads/main.zip",
+      "name": "SagaSlice",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "no"
+      },
+      "theme_xml_count": 210,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-sagaworld": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/sagaworld.png",
+    "name": "SagaWorld",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-sagaworld/zip/refs/heads/main",
+      "url": "https://github.com/Jetup13/es-theme-sagaworld/archive/refs/heads/main.zip",
+      "name": "SagaWorld",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "no"
+      },
+      "theme_xml_count": 210,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-simply-basic": {
+    "source": "collection",
+    "name": "es-theme-simply-basic",
+    "missing": true,
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-simply-basic/zip/refs/heads/main",
+      "url": "https://github.com/Jetup13/es-theme-simply-basic/archive/refs/heads/main.zip",
+      "name": "es-theme-simply-basic",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 221,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-solo-horizontal-arkos-ed": {
+    "source": "oga",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/solo-horizontal.png",
+    "name": "Solo-Horizontal",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-solo-horizontal-arkos-ed/zip/4e7e516e108b6bc7283c24514a57141c091ce995",
+      "url": "https://github.com/Jetup13/es-theme-solo-horizontal-arkos-ed/archive/HEAD.zip",
+      "name": "Solo-Horizontal",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "untested",
+        "854x480": "untested",
+        "960x544": "yes",
+        "720x720": "no"
+      },
+      "theme_xml_count": 262,
+      "tree_truncated": false
+    }
+  },
+  "jetup13/es-theme-switch": {
+    "source": "themegallery",
+    "local": "assets/themegallery/switch/1.jpg",
+    "name": "Switch",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Jetup13/es-theme-switch/zip/refs/heads/master",
+      "url": "https://github.com/Jetup13/es-theme-switch/archive/refs/heads/master.zip",
+      "name": "Switch",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "compativel",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "yes"
+      },
+      "theme_xml_count": 253,
+      "tree_truncated": false
+    }
+  },
+  "jovemlcxx/es-theme-steamdeck": {
+    "source": "themegallery",
+    "local": "assets/themegallery/steamdeck/1.jpg",
+    "name": "Steam Deck",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/jovemlcxx/es-theme-steamdeck/zip/refs/heads/main",
+      "url": "https://github.com/jovemlcxx/es-theme-steamdeck/archive/refs/heads/main.zip",
+      "name": "Steam Deck",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental",
+        "muos": "incompativel"
+      },
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "jovemlcxx/es-theme-switch2-fcamod": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/jovemlcxx/es-theme-switch2-fcamod/fad7dfea7e5df3c4dd7caa0b952163c0eba47c93/images/carousel-snes.jpg",
+    "name": "Switch 2 FCAMOD",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/jovemlcxx/es-theme-switch2-fcamod/zip/refs/heads/main",
+      "url": "https://github.com/jovemlcxx/es-theme-switch2-fcamod/archive/refs/heads/main.zip",
+      "name": "Switch 2 FCAMOD",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "jovemlcxx/es-theme-xmb-fcamod": {
+    "source": "themegallery",
+    "local": "assets/themegallery/xmb-fcamod/1.jpg",
+    "name": "XMB FCAMOD",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/jovemlcxx/es-theme-xmb-fcamod/zip/refs/heads/main",
+      "url": "https://github.com/jovemlcxx/es-theme-xmb-fcamod/archive/refs/heads/main.zip",
+      "name": "XMB FCAMOD",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "lehcimcramtrebor/es-theme-basic": {
+    "source": "themegallery",
+    "local": "assets/themegallery/theme-basic/1.jpg",
+    "name": "Theme-basic",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/lehcimcramtrebor/es-theme-basic/zip/refs/heads/master",
+      "url": "https://github.com/lehcimcramtrebor/es-theme-basic/archive/refs/heads/master.zip",
+      "name": "Theme-basic",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 610,
+      "tree_truncated": false
+    }
+  },
+  "lucasalexandrou/lethaltheme-es": {
+    "source": "themegallery",
+    "local": "assets/themegallery/lethal/1.jpg",
+    "name": "Lethal",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/LucasAlexandrou/LethalTheme-ES/zip/refs/heads/main",
+      "url": "https://github.com/LucasAlexandrou/LethalTheme-ES/archive/refs/heads/main.zip",
+      "name": "Lethal",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "lucy-dot-exe/es-wii-theme": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/lucy-dot-exe/es-wii-theme/main/previews/system.png",
+    "name": "Wii",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/lucy-dot-exe/es-wii-theme/zip/refs/heads/main",
+      "url": "https://github.com/lucy-dot-exe/es-wii-theme/archive/refs/heads/main.zip",
+      "name": "Wii",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "untested",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "mirko93s/atlas-es": {
+    "source": "themegallery",
+    "local": "assets/themegallery/atlas-es/1.jpg",
+    "name": "Atlas-ES",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/mirko93s/atlas-es/zip/refs/heads/master",
+      "url": "https://github.com/mirko93s/atlas-es/archive/refs/heads/master.zip",
+      "name": "Atlas-ES",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "mistertomlinson/es-theme-colorful-v2": {
+    "source": "themegallery",
+    "local": "assets/themegallery/colorful-v2/1.jpg",
+    "name": "Colorful v2",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/mistertomlinson/es-theme-colorful-v2/zip/refs/heads/main",
+      "url": "https://github.com/mistertomlinson/es-theme-colorful-v2/archive/refs/heads/main.zip",
+      "name": "Colorful v2",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "compativel"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "yes",
+        "960x544": "yes",
+        "720x720": "yes"
+      },
+      "theme_xml_count": 19,
+      "tree_truncated": false
+    }
+  },
+  "mluizvitor/es-theme-albedo": {
+    "source": "themegallery",
+    "local": "assets/themegallery/albedo/1.jpg",
+    "name": "Albedo",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/mluizvitor/es-theme-albedo/zip/refs/heads/main",
+      "url": "https://github.com/mluizvitor/es-theme-albedo/archive/refs/heads/main.zip",
+      "name": "Albedo",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "mluizvitor/es-theme-elementerial": {
+    "source": "themegallery",
+    "local": "assets/themegallery/elementerial/1.jpg",
+    "name": "Elementerial",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/mluizvitor/es-theme-elementerial/zip/refs/heads/main",
+      "url": "https://github.com/mluizvitor/es-theme-elementerial/archive/refs/heads/main.zip",
+      "name": "Elementerial",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "nacurutu/es-theme-arc-s-theme-remix---the-ra-cfw": {
+    "source": "themegallery",
+    "local": "assets/themegallery/arc-s-theme-remix/1.jpg",
+    "name": "ARC-S-Theme Remix",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Nacurutu/es-theme-ARC-S-Theme-Remix---The-RA-CFW/zip/refs/heads/main",
+      "url": "https://github.com/Nacurutu/es-theme-ARC-S-Theme-Remix---The-RA-CFW/archive/refs/heads/main.zip",
+      "name": "ARC-S-Theme Remix",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "untested",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "nkahoang/es-theme-art-book-next-arkos": {
+    "source": "oga",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/art-book-next-arkos.png",
+    "name": "Art-Book-Next-ArkOS",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/nkahoang/es-theme-art-book-next-arkos/zip/a34125967f3ef59c72474279e71b980d2ddd35fa",
+      "url": "https://github.com/nkahoang/es-theme-art-book-next-arkos/archive/HEAD.zip",
+      "name": "Art-Book-Next-ArkOS",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "untested",
+        "640x480": "untested",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 3,
+      "tree_truncated": false
+    }
+  },
+  "prefect421/es-theme-lcars-p42": {
+    "source": "themegallery",
+    "local": "assets/themegallery/lcars-p42/1.jpg",
+    "name": "LCARS-p42",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/prefect421/es-theme-lcars-p42/zip/refs/heads/main",
+      "url": "https://github.com/prefect421/es-theme-lcars-p42/archive/refs/heads/main.zip",
+      "name": "LCARS-p42",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 83,
+      "tree_truncated": false
+    }
+  },
+  "ptv-0/classic-winamp": {
+    "source": "oga",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/classic-winamp.png",
+    "name": "Classic-Winamp",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/ptv-0/classic-winamp/zip/ceecd6fa62deba689901ff12e89eb0bb4ad46e06",
+      "url": "https://github.com/ptv-0/classic-winamp/archive/HEAD.zip",
+      "name": "Classic-Winamp",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "untested",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "rayw1986/es-theme-xmb-darkosen": {
+    "source": "themegallery",
+    "local": "assets/themegallery/xmb-darkosen/1.jpg",
+    "name": "XMB dArkOSen",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RayW1986/es-theme-xmb-darkosen/zip/refs/heads/main",
+      "url": "https://github.com/RayW1986/es-theme-xmb-darkosen/archive/refs/heads/main.zip",
+      "name": "XMB dArkOSen",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "retropie/es-theme-carbon": {
+    "source": "retropie-docs",
+    "url": "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/carbon.png",
+    "previews": [
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/carbon.png",
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/carbon-gamelist.png"
+    ],
+    "name": "es-theme-carbon",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RetroPie/es-theme-carbon/zip/refs/heads/master",
+      "url": "https://github.com/RetroPie/es-theme-carbon/archive/refs/heads/master.zip",
+      "name": "es-theme-carbon",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 94,
+      "tree_truncated": false
+    }
+  },
+  "retropie/es-theme-carbon-2021": {
+    "source": "collection",
+    "name": "es-theme-carbon-2021",
+    "missing": true,
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RetroPie/es-theme-carbon-2021/zip/refs/heads/master",
+      "url": "https://github.com/RetroPie/es-theme-carbon-2021/archive/refs/heads/master.zip",
+      "name": "es-theme-carbon-2021",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 2,
+      "tree_truncated": false
+    }
+  },
+  "retropie/es-theme-carbon-centered": {
+    "source": "retropie-docs",
+    "url": "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/carbon-centered.png",
+    "previews": [
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/carbon-centered.png",
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/carbon-centered-gamelist.png"
+    ],
+    "name": "es-theme-carbon-centered",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RetroPie/es-theme-carbon-centered/zip/refs/heads/master",
+      "url": "https://github.com/RetroPie/es-theme-carbon-centered/archive/refs/heads/master.zip",
+      "name": "es-theme-carbon-centered",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 78,
+      "tree_truncated": false
+    }
+  },
+  "retropie/es-theme-carbon-nometa": {
+    "source": "retropie-docs",
+    "url": "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/carbon-nometa.png",
+    "previews": [
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/carbon-nometa.png",
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/carbon-nometa-gamelist.png"
+    ],
+    "name": "es-theme-carbon-nometa",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RetroPie/es-theme-carbon-nometa/zip/refs/heads/master",
+      "url": "https://github.com/RetroPie/es-theme-carbon-nometa/archive/refs/heads/master.zip",
+      "name": "es-theme-carbon-nometa",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 83,
+      "tree_truncated": false
+    }
+  },
+  "retropie/es-theme-clean-look": {
+    "source": "retropie-docs",
+    "url": "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/clean-look.png",
+    "previews": [
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/clean-look.png",
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/clean-look-gamelist.png"
+    ],
+    "name": "es-theme-clean-look",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RetroPie/es-theme-clean-look/zip/refs/heads/master",
+      "url": "https://github.com/RetroPie/es-theme-clean-look/archive/refs/heads/master.zip",
+      "name": "es-theme-clean-look",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 70,
+      "tree_truncated": false
+    }
+  },
+  "retropie/es-theme-color-pi": {
+    "source": "retropie-docs",
+    "url": "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/color-pi.png",
+    "previews": [
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/color-pi.png",
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/color-pi-gamelist.png"
+    ],
+    "name": "es-theme-color-pi",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RetroPie/es-theme-color-pi/zip/refs/heads/master",
+      "url": "https://github.com/RetroPie/es-theme-color-pi/archive/refs/heads/master.zip",
+      "name": "es-theme-color-pi",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 62,
+      "tree_truncated": false
+    }
+  },
+  "retropie/es-theme-nbba": {
+    "source": "retropie-docs",
+    "url": "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/nbba.png",
+    "previews": [
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/nbba.png",
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/nbba-gamelist.png"
+    ],
+    "name": "es-theme-nbba",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RetroPie/es-theme-nbba/zip/refs/heads/master",
+      "url": "https://github.com/RetroPie/es-theme-nbba/archive/refs/heads/master.zip",
+      "name": "es-theme-nbba",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 39,
+      "tree_truncated": false
+    }
+  },
+  "retropie/es-theme-pixel": {
+    "source": "retropie-docs",
+    "url": "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/pixel.png",
+    "previews": [
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/pixel.png",
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/pixel-gamelist.png"
+    ],
+    "name": "es-theme-pixel",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RetroPie/es-theme-pixel/zip/refs/heads/master",
+      "url": "https://github.com/RetroPie/es-theme-pixel/archive/refs/heads/master.zip",
+      "name": "es-theme-pixel",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 75,
+      "tree_truncated": false
+    }
+  },
+  "retropie/es-theme-simple": {
+    "source": "retropie-docs",
+    "url": "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/simple.png",
+    "previews": [
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/simple.png",
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/simple-gamelist.png"
+    ],
+    "name": "es-theme-simple",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RetroPie/es-theme-simple/zip/refs/heads/master",
+      "url": "https://github.com/RetroPie/es-theme-simple/archive/refs/heads/master.zip",
+      "name": "es-theme-simple",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 74,
+      "tree_truncated": false
+    }
+  },
+  "retropie/es-theme-simple-dark": {
+    "source": "retropie-docs",
+    "url": "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/simple-dark.png",
+    "previews": [
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/simple-dark.png",
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/simple-dark-gamelist.png"
+    ],
+    "name": "es-theme-simple-dark",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RetroPie/es-theme-simple-dark/zip/refs/heads/master",
+      "url": "https://github.com/RetroPie/es-theme-simple-dark/archive/refs/heads/master.zip",
+      "name": "es-theme-simple-dark",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 70,
+      "tree_truncated": false
+    }
+  },
+  "retropie/es-theme-simplified-static-canela": {
+    "source": "retropie-docs",
+    "url": "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/simplified-static-canela.png",
+    "previews": [
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/simplified-static-canela.png",
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/simplified-static-canela-gamelist.png"
+    ],
+    "name": "es-theme-simplified-static-canela",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RetroPie/es-theme-simplified-static-canela/zip/refs/heads/master",
+      "url": "https://github.com/RetroPie/es-theme-simplified-static-canela/archive/refs/heads/master.zip",
+      "name": "es-theme-simplified-static-canela",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 65,
+      "tree_truncated": false
+    }
+  },
+  "retropie/es-theme-turtle-pi": {
+    "source": "retropie-docs",
+    "url": "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/turtle-pi.png",
+    "previews": [
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/turtle-pi.png",
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/turtle-pi-gamelist.png"
+    ],
+    "name": "es-theme-turtle-pi",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RetroPie/es-theme-turtle-pi/zip/refs/heads/master",
+      "url": "https://github.com/RetroPie/es-theme-turtle-pi/archive/refs/heads/master.zip",
+      "name": "es-theme-turtle-pi",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 65,
+      "tree_truncated": false
+    }
+  },
+  "retropie/es-theme-zoid": {
+    "source": "retropie-docs",
+    "url": "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/zoid.png",
+    "previews": [
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/zoid.png",
+      "https://raw.githubusercontent.com/V0rt3x667/es-theme-gallery/1a52b6cb926889173f98bdf2270d09dde86c7a0f/zoid-gamelist.png"
+    ],
+    "name": "es-theme-zoid",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/RetroPie/es-theme-zoid/zip/refs/heads/master",
+      "url": "https://github.com/RetroPie/es-theme-zoid/archive/refs/heads/master.zip",
+      "name": "es-theme-zoid",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 87,
+      "tree_truncated": false
+    }
+  },
+  "riofriz/es-theme-animetaverse": {
+    "source": "themegallery",
+    "local": "assets/themegallery/animetiverse/1.jpg",
+    "name": "Animetaverse",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/riofriz/es-theme-animetaverse/zip/refs/heads/master",
+      "url": "https://github.com/riofriz/es-theme-animetaverse/archive/refs/heads/master.zip",
+      "name": "Animetaverse",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "siddy212/canvas-es": {
+    "source": "themegallery",
+    "local": "assets/themegallery/canvas-es/1.jpg",
+    "name": "Canvas-ES",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Siddy212/canvas-es/zip/refs/heads/main",
+      "url": "https://github.com/Siddy212/canvas-es/archive/refs/heads/main.zip",
+      "name": "Canvas-ES",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "snakkarike/es-theme-colorful": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/colorful.png",
+    "name": "Colorful",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/snakkarike/es-theme-colorful/zip/refs/heads/main",
+      "url": "https://github.com/snakkarike/es-theme-colorful/archive/refs/heads/main.zip",
+      "name": "Colorful",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "yes",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "no"
+      },
+      "theme_xml_count": 129,
+      "tree_truncated": false
+    }
+  },
+  "szalikdesigns/amberelec-351noir": {
+    "source": "themegallery",
+    "local": "assets/themegallery/351noir/1.jpg",
+    "name": "351noir",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/SzalikDesigns/amberelec-351noir/zip/refs/heads/main",
+      "url": "https://github.com/SzalikDesigns/amberelec-351noir/archive/refs/heads/main.zip",
+      "name": "351noir",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 130,
+      "tree_truncated": false
+    }
+  },
+  "szalikdesigns/amberelec-8bit": {
+    "source": "themegallery",
+    "local": "assets/themegallery/8bit/1.jpg",
+    "name": "8bit",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/SzalikDesigns/amberelec-8bit/zip/refs/heads/master",
+      "url": "https://github.com/SzalikDesigns/amberelec-8bit/archive/refs/heads/master.zip",
+      "name": "8bit",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 109,
+      "tree_truncated": false
+    }
+  },
+  "szalikdesigns/amberelec-crazyboy": {
+    "source": "themegallery",
+    "local": "assets/themegallery/crazyboy/1.jpg",
+    "name": "CrazyBoy",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/SzalikDesigns/amberelec-crazyboy/zip/refs/heads/main",
+      "url": "https://github.com/SzalikDesigns/amberelec-crazyboy/archive/refs/heads/main.zip",
+      "name": "CrazyBoy",
+      "compatibility": {},
+      "resolution": {},
+      "theme_xml_count": 127,
+      "tree_truncated": false
+    }
+  },
+  "thebenny/es-theme-rg351v-retrobenny-nesbox-blackbg": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/retrobenny-nesbox-blackbg.png",
+    "name": "RetroBenny-NesBox-BlackBG",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/TheBenny/es-theme-RG351V-RetroBenny-NesBox-BlackBG/zip/refs/heads/main",
+      "url": "https://github.com/TheBenny/es-theme-RG351V-RetroBenny-NesBox-BlackBG/archive/refs/heads/main.zip",
+      "name": "RetroBenny-NesBox-BlackBG",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "yes",
+        "854x480": "no",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 148,
+      "tree_truncated": false
+    }
+  },
+  "thebenny/es-theme-rg351v-retrobenny-nesbox-wood": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/retrobenny-nesbox-wood.png",
+    "name": "RetroBenny-NesBox-Wood",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/TheBenny/es-theme-RG351V-RetroBenny-NesBox-Wood/zip/refs/heads/main",
+      "url": "https://github.com/TheBenny/es-theme-RG351V-RetroBenny-NesBox-Wood/archive/refs/heads/main.zip",
+      "name": "RetroBenny-NesBox-Wood",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "yes",
+        "854x480": "no",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 148,
+      "tree_truncated": false
+    }
+  },
+  "thebenny/es-theme-rg351v-retrobenny-ps2": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/retrobenny-ps2.png",
+    "name": "RetroBenny-PS2",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/TheBenny/es-theme-RG351V-RetroBenny-PS2/zip/refs/heads/main",
+      "url": "https://github.com/TheBenny/es-theme-RG351V-RetroBenny-PS2/archive/refs/heads/main.zip",
+      "name": "RetroBenny-PS2",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "yes",
+        "640x480": "yes",
+        "854x480": "no",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "thebenny/es-theme-rg351v-retrobenny-ps5": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/retrobenny-ps5.png",
+    "name": "RetroBenny-PS5",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/TheBenny/es-theme-RG351V-RetroBenny-PS5/zip/refs/heads/main",
+      "url": "https://github.com/TheBenny/es-theme-RG351V-RetroBenny-PS5/archive/refs/heads/main.zip",
+      "name": "RetroBenny-PS5",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "yes",
+        "854x480": "no",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "thebenny/es-theme-rg3551v-retrobenny-nesmini": {
+    "source": "base",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/retrobenny-nesmini.png",
+    "name": "RetroBenny-NesMini",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/TheBenny/es-theme-RG3551V-RetroBenny-NesMini/zip/refs/heads/main",
+      "url": "https://github.com/TheBenny/es-theme-RG3551V-RetroBenny-NesMini/archive/refs/heads/main.zip",
+      "name": "RetroBenny-NesMini",
+      "compatibility": {
+        "arkos": "compativel",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "yes",
+        "854x480": "no",
+        "960x544": "untested",
+        "720x720": "untested"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "vidnez/es-theme-alekfull-nx": {
+    "source": "oga",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/Alekfull-NX.png",
+    "name": "Alekfull-NX",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Vidnez/es-theme-Alekfull-NX/zip/4879e06ac8787c3868531e67d99d623661c63380",
+      "url": "https://github.com/Vidnez/es-theme-Alekfull-NX/archive/HEAD.zip",
+      "name": "Alekfull-NX",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "no",
+        "640x480": "no",
+        "854x480": "no",
+        "960x544": "no",
+        "720x720": "yes"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  },
+  "vidnez/es-theme-minuark": {
+    "source": "oga",
+    "url": "https://raw.githubusercontent.com/Jetup13/Emulationstation-OGA-Theme-Gallery/main/images/minuark.png",
+    "name": "MinUArk",
+    "download": {
+      "status": "zip_header",
+      "http": 200,
+      "final_url": "https://codeload.github.com/Vidnez/es-theme-MinUArk/zip/50c93d07c36dc0df2373915557396aac34df893b",
+      "url": "https://github.com/Vidnez/es-theme-MinUArk/archive/HEAD.zip",
+      "name": "MinUArk",
+      "compatibility": {
+        "arkos": "experimental",
+        "darkos": "experimental",
+        "darkosre": "experimental"
+      },
+      "resolution": {
+        "480x320": "untested",
+        "640x480": "untested",
+        "854x480": "untested",
+        "960x544": "untested",
+        "720x720": "yes"
+      },
+      "theme_xml_count": 1,
+      "tree_truncated": false
+    }
+  }
+}

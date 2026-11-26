@@ -167,7 +167,7 @@ function S:draw()
   end
   if not st.nmcli then
     self:draw_unavailable(L("GERENCIADOR DE REDE NÃO ENCONTRADO"),
-      L("O R36S ROMS STORE usa o gerenciador de rede do próprio sistema (NetworkManager, comando nmcli), que não foi encontrado neste console.\n\nNo dArkOSRE, use a opção \"Wifi Toggle\" do sistema para instalar e ativar o Wi-Fi. Depois volte aqui."))
+      L("O R36S ROM STORE usa o gerenciador de rede do próprio sistema (NetworkManager, comando nmcli), que não foi encontrado neste console.\n\nNo dArkOSRE, use a opção \"Wifi Toggle\" do sistema para instalar e ativar o Wi-Fi. Depois volte aqui."))
     G.hints({ { "b", L("Voltar") } })
     return
   end

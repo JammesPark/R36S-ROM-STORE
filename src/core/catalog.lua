@@ -73,11 +73,7 @@ local function normalize_port(raw, idx, cat_names)
   if p.name == "" then return nil, L("item ") .. idx .. L(" sem nome") end
   -- Manter titulo original para associar capas; selo visual e tratado na UI.
   p.original_name = str(raw.original_name)
-  p.region_tag = str(raw.region_tag):upper()
-  if p.region_tag ~= "JP" and p.region_tag ~= "CN"
-      and p.region_tag ~= "TW" and p.region_tag ~= "HK" then
-    p.region_tag = p.name:match("%s+%[([A-Z][A-Z])%]$") or ""
-  end
+  p.region_tag = require("core.rom_region").detect({region_tag=str(raw.region_tag),region=str(raw.region),regiao=str(raw.regiao),name=p.name,original_name=p.original_name,filename=str(raw.filename),download_url=str(raw.download_url or raw.url)}) or ""
   p.id = str(raw.id or raw.identificador)
   if p.id == "" then p.id = U.slug(p.name) end
   p.slug = U.slug(p.id)

@@ -1,0 +1,29 @@
+# Temas Store unificada — experimental
+
+Base 0.7.0-beta. Não inclui correção de armazenamento nem outras pendências. Cinco filtros principais: Todos, Compatíveis, Recentes, Instalados e Favoritos. START abre opções secundárias, pesquisa com teclado, ordenação A-Z/Z-A, favoritos e atualização da galeria; SELECT mantém sistema/tela; Y alterna favorito quando não instalado (para instalado, mantém remoção). Contador exibidos/total. Coleções aparecem em Todos. Temas incompatíveis com a tela ou sem compatibilidade declarada para o sistema ficam visíveis, mas não podem ser instalados. Não atribuímos compatibilidade ao ArchR por inferência.
+
+Metadados de 53 entradas fornecidos no ZIP ThemeGallery (1).zip (gallery.ini), autoria original preservada, fonte ThemeGallery de djparentx. Deduplicação por proprietário/repositório contra catálogo interno, OGA e coleções carregadas. Tamanho indicado na fonte é estimativa, não usado na validação do download. Novos itens sem evidência de compatibilidade têm status Não verificado. Prévias: 149 imagens numeradas de 53 temas do repositório público djparentx/ThemeGallery (commit dab1d53b11da952538bdba71b5d9bf949cdc4635), licença MIT com Copyright (c) 2026 Dave. Convertidas para JPEG em até 640x480 na build experimental, disponíveis offline; originais e autores dos temas identificados no catálogo. Direitos de elementos de terceiros eventualmente retratados não são garantidos pela licença do programa. Links de origem ainda precisam de conferência individual e testes por firmware. O cache existente de imagens é mantido. Sem OTA.
+
+## Reprodução das imagens
+
+Em uma cópia do código, faça checkout do ThemeGallery no commit acima, instale Pillow e execute `python3 tools/prepare_themegallery_previews.py /caminho/ThemeGallery` antes de `sh tools/build.sh`. A CI faz isso automaticamente na branch experimental. Os caminhos das 149 prévias estão no JSON; a licença acompanha os recursos no game.love. L2/R2 nos detalhes alterna as imagens (quando houver mais de uma).
+
+## Cobertura de imagens das coleções
+
+A CI audita o catálogo interno, a galeria OGA, as coleções padrão e ThemeGallery, deduplicados por repositório. Para os demais temas, aceita prévias PNG/JPEG verificadas da galeria ou do README/repositório original. URLs são incluídas no índice de prévias; não há redistribuição dos arquivos de terceiros. O relatório THEME_PREVIEW_AUDIT.json é publicado junto ao ZIP. Coleções personalizadas, temas futuros e temas sem captura publicada podem continuar sem prévia. O app tenta ainda a imagem do ThemeMaster/tema instalado disponível localmente.
+
+## Revisão de validação
+
+A galeria oficial do RetroPie fornece prévias por nome exato; capturas quadradas aceitas. Snapshot embutido permite visualizar os temas sem rede; cache online continua ativo. O relatório audita cada link com GET parcial e assinatura ZIP, não garante CRC integral ou compatibilidade física. OGA indica tamanho de tela, não teste por firmware. Coleções sem evidência não são promovidas a compatíveis. Mantidos dados explícitos do catálogo-base. Temas com incompatibilidade conhecida ou link comprovadamente quebrado continuam bloqueados. Compatibilidade desconhecida permite instalação somente após confirmação explícita, sem alterar o status do catálogo. Sem OTA.
+
+## Downloads em segundo plano
+
+Temas entram na mesma fila FIFO de ROMs, com tipo de operação próprio, etapas de download, verificação, extração e instalação, progresso e histórico. Não interrompem a operação ativa. A Temas Store continua navegável, e a Central permite retirar itens da fila ou cancelar durante a transferência; extração/instalação não são interrompidas. Não há ativação automática: após conclusão, volte à Temas Store. A confirmação de incompatibilidade desconhecida não altera os metadados de compatibilidade. A fila permanece em memória enquanto a loja estiver aberta. A opção de ativar um tema exige concluir ou cancelar os downloads antes de reiniciar o EmulationStation.
+
+## Temas de jovemlcxx (26/11/2026)
+
+Switch 2 FCAMOD adicionado; Steam Deck e XMB FCAMOD já existiam na ThemeGallery e receberam metadados explícitos sem duplicação, preservando IDs e imagens locais. As versões consultadas são respectivamente fad7dfea (04/11), 13d212e0 (08/11) e ac64fe07 (08/11). Os links continuam apontando à main dos autores; as datas representam a revisão consultada, não um hash garantido do ZIP futuro. O Switch 2 usa a captura original do README via URL, auditada na CI. A compatibilidade da família ArkOS/dArkOS permanece experimental porque os IDs genéricos do detector não distinguem todas as variantes que o autor testou. Licenças dos autores CC BY-NC-SA 4.0 (Switch 2/XMB) e CC BY-NC 4.0 (Steam Deck); download direto do upstream, não incluímos os pacotes dos temas na loja. Não há confirmação de versão instalada no aparelho sem registro local.
+
+## Atualizações de temas instalados
+
+Verificação em segundo plano apenas dos temas instalados reconhecidos (exceto firmware protegido), usando commits do ref de download do GitHub. O aviso na tela inicial ou Temas Store é independente da OTA do aplicativo. A interface possui filtro Atualizações e ações de consulta manual e atualização em lote com confirmação. A versão baixada é fixada pelo SHA quando a consulta é bem-sucedida; se a API estiver indisponível, uma instalação individual pode baixar o link original, com versão desconhecida. Registros antigos sem SHA confiável não são rotulados automaticamente como desatualizados; podem ser reinstalados. Datas do ThemeMaster permitem comparação conservadora. O backup anterior é mantido; os papéis de parede bg_2 a bg_20 em _inc/background são preservados se ambos os temas usam essa estrutura, sem seguir links simbólicos. Nenhum tema é ativado automaticamente. O aviso só aparece uma vez por sessão. Cache de revisão em memória por 30 minutos; verificação manual força nova consulta.
