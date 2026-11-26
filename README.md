@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases/latest"><img alt="Versão oficial" src="https://img.shields.io/github/v/release/JammesPark/R36S-ROM-STORE-UPDATES?style=for-the-badge&color=2563eb&label=Vers%C3%A3o"></a>
   <img alt="R36S e R36H" src="https://img.shields.io/badge/Console-R36S%20%7C%20R36H-0891b2?style=for-the-badge">
-  <img alt="Sistemas: dArkOSRE, dArkOS, ArkOS, ArchR, Omni36OS" src="https://img.shields.io/badge/Sistema-dArkOSRE%20%7C%20dArkOS%20%7C%20ArkOS%20%7C%20ArchR%20%7C%20Omni36OS-ffdc49?style=for-the-badge">
+  <img alt="Sistemas: dArkOSRE, dArkOS, dArkOSen, ArkOS, ArchR, Omni36OS" src="https://img.shields.io/badge/Sistema-dArkOSRE%20%7C%20dArkOS%20%7C%20dArkOSen%20%7C%20ArkOS%20%7C%20ArchR%20%7C%20Omni36OS-ffdc49?style=for-the-badge">
   <img alt="LÖVE 11.5" src="https://img.shields.io/badge/L%C3%96VE-11.5-db2777?style=for-the-badge">
   <a href="LICENSE"><img alt="GPL-3.0" src="https://img.shields.io/badge/Licen%C3%A7a-GPL--3.0-16a34a?style=for-the-badge"></a>
 </p>
