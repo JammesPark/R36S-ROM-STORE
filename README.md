@@ -206,21 +206,6 @@ A pasta `docs/` preserva também documentos do projeto-base, que podem citar ver
 
 ---
 
-## 🧰 Tecnologias utilizadas
-
-| Tecnologia | Aplicação |
-|---|---|
-| Lua / LuaJIT / LÖVE | Aplicativo, interface, controles e lógica de execução. |
-| Python | Ferramentas de catálogo, testes e automação. |
-| Shell Script | Inicialização, instalação e integração com o console. |
-| HTML | Protótipos visuais. |
-| JSON / YAML / XML | Catálogos, configurações, automação e metadados. |
-| Markdown | Documentação do projeto. |
-| GitHub Actions | Validação e empacotamento. |
-| Cloudflare R2 | Hospedagem de capas. |
-
----
-
 ## 🗂️ Estrutura do projeto
 
 ```text
