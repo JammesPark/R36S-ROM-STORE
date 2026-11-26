@@ -23,7 +23,14 @@ Back up your cards and use only content you are authorized to access. The GPL-3.
 
 ## Downloads
 
-[Official releases](https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases) · [Current launcher (.sh)](../port/R36S%20ROMS%20STORE.sh) (requires the complete ZIP).
+| Package | Download |
+|---|---|
+| Automatic installer (.sh), latest active official version with OTA | [Download SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh) |
+| Full 0.7.0-beta installation with OTA | [ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta.zip) |
+| Manual 0.7.0-beta update | [UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta_UPDATE.zip) |
+| Previous versions | [Official history](https://github.com/JammesPark/R36S-ROM-STORE/releases) |
+
+Copy the SH to ports, connect to the internet and run it from EmulationStation. It downloads and verifies the active official full installer. Automated validation passed; physical validation of this script is pending. The manual update contains only the application folder, including game.love, not the launcher or user data. Use it only with an existing installation of the same layout; back up first. The full ZIP already includes OTA.
 
 ## Interface
 

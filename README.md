@@ -62,13 +62,14 @@ A compatibilidade varia conforme modelo, firmware e tela. Faça backup dos cart�
 
 | Pacote | Download |
 |---|---|
-| 📦 Instalação completa 0.7.0-beta | [Baixar ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta.zip) |
-| 🔄 Atualização 0.7.0-beta (OTA) | [Baixar ZIP de atualização](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta_OTA.zip) |
-| 📄 Script de inicialização (.sh) | [Ver launcher da versão atual](port/R36S%20ROMS%20STORE.sh) — requer os arquivos do ZIP completo. |
-| 🆕 Versão oficial mais recente | [Página permanente de download](https://github.com/JammesPark/R36S-ROM-STORE/releases/latest) |
+| 📄 Instalador automático (.sh) — última versão oficial com OTA | [Baixar SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh) |
+| 📦 Instalação completa 0.7.0-beta (com OTA) | [Baixar ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta.zip) |
+| 🔄 Atualização manual 0.7.0-beta | [Baixar UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta_UPDATE.zip) |
 | 🗂️ Versões anteriores | [Histórico oficial](https://github.com/JammesPark/R36S-ROM-STORE/releases) |
 
-Para uma instalação nova, use o pacote completo, sem o sufixo OTA. Para atualizar uma instalação existente, prefira o menu de atualização online da loja. Os links de ZIP acima são da versão indicada; a página da última versão permanece fixa.
+O instalador SH consulta o canal oficial ativo, baixa e valida o pacote completo, instala na pasta `ports` e abre a loja. Não é necessário baixar o ZIP separadamente.
+
+O ZIP completo já inclui o atualizador online (OTA). O UPDATE.zip contém apenas a pasta `r36sromsstore/`, com `game.love` e os arquivos da aplicação, sem launcher nem dados pessoais. Use-o somente para uma instalação existente com a mesma estrutura; extraia em `ports/`, mesclando as pastas sem apagar seus dados. Prefira a atualização online pelo aplicativo. Faça backup antes de atualizar.
 
 ---
 
@@ -132,6 +133,10 @@ As ferramentas abaixo foram identificadas no código e nas telas da versão atua
 ---
 
 ## 🚀 Instalação no R36S
+
+**Instalação automática:** baixe o [instalador SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh), copie-o para a pasta `ports` do cartão, conecte o console à internet e execute-o no EmulationStation. Ele instala a versão oficial ativa com OTA. Testado em ambiente automatizado; validação física deste script pendente.
+
+**Instalação manual (ZIP completo):**
 
 1. Baixe o pacote completo na [página de download oficial](https://github.com/JammesPark/R36S-ROM-STORE/releases/latest).
 2. Extraia os arquivos na pasta `ports` do cartão de destino.

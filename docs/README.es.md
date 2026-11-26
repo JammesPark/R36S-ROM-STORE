@@ -23,7 +23,14 @@ Haga copias de seguridad y utilice únicamente contenido autorizado. GPL-3.0 no 
 
 ## Descargas
 
-[Versiones oficiales](https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases) · [Lanzador actual (.sh)](../port/R36S%20ROMS%20STORE.sh) (requiere el ZIP completo).
+| Paquete | Descarga |
+|---|---|
+| Instalador automático (.sh), última versión oficial activa con OTA | [Descargar SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh) |
+| Instalación completa 0.7.0-beta con OTA | [ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta.zip) |
+| Actualización manual 0.7.0-beta | [UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta_UPDATE.zip) |
+| Versiones anteriores | [Historial oficial](https://github.com/JammesPark/R36S-ROM-STORE/releases) |
+
+Copie el SH en ports, conecte a internet y ejecútelo desde EmulationStation. Descarga y verifica el instalador oficial activo. Validación automatizada aprobada; prueba física de este script pendiente. La actualización manual contiene solo la carpeta de la aplicación, incluido game.love, sin lanzador ni datos personales. Úsela únicamente en una instalación existente de la misma estructura y haga una copia de seguridad. El ZIP completo ya incluye OTA.
 
 ## Interfaz
 

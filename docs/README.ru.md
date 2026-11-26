@@ -23,7 +23,14 @@
 
 ## Загрузки
 
-[Официальные выпуски](https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases) · [Текущий скрипт запуска (.sh)](../port/R36S%20ROMS%20STORE.sh) (необходим полный ZIP).
+| Пакет | Загрузка |
+|---|---|
+| Автоматический установщик (.sh), последняя активная официальная версия с OTA | [Скачать SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh) |
+| Полная установка 0.7.0-beta с OTA | [ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta.zip) |
+| Ручное обновление 0.7.0-beta | [UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta_UPDATE.zip) |
+| Предыдущие версии | [История выпусков](https://github.com/JammesPark/R36S-ROM-STORE/releases) |
+
+Скопируйте SH в ports, подключитесь к интернету и запустите его через EmulationStation. Скрипт скачивает и проверяет активную официальную версию. Автоматические тесты пройдены; проверка скрипта на консоли ещё предстоит. Ручное обновление содержит только папку приложения с game.love, без скрипта запуска и пользовательских данных. Используйте только с существующей установкой той же структуры, предварительно сделав резервную копию. Полный ZIP уже включает OTA.
 
 ## Интерфейс
 
