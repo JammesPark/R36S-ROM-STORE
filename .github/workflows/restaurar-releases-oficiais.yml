@@ -1,0 +1,87 @@
+name: Restaurar histórico das releases oficiais
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/restaurar-releases-oficiais.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  restore:
+    if: github.repository == 'JammesPark/R36S-ROM-STORE' && github.event.repository.private == false && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Restaurar somente as três releases oficiais verificadas
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, subprocess, pathlib, hashlib, tempfile, zipfile
+          repo = 'JammesPark/R36S-ROM-STORE'
+          upstream = repo + '-UPDATES'
+          versions = [
+              ('0.6.7-beta','f9f7d2b9caa87ca3f6e8242641a3b483d1f29f50','650722a94b1aa37ab2bdd623b85a84e7f1bae84732b8213e119285c3d007a0ca','0c593c0e2244c762d327e3664ae2031c4095465d6dc41c0ec28ab3eb0a6e0931'),
+              ('0.6.8-beta','3fcf979d5f57b9e021077e81d1675fcb7de945a8','d7dc079da6c3befab92b62755e54aca9746da77e79cd7e6f72b225424266a907','c5b59a5096a19eb6cb2e48470e726354f183e8b8496542219df1c2d05cc838dd'),
+              ('0.7.0-beta','d2fe9672290b4560f414a3190af3b215b5d402f2','5c0146f154542c660e901da6d9446102bcec2122848dc254f1894c7245316d13','ac0c5c899cdd5526b19fa0f0cca8e7fab60dd25b659a6e995dd12e9b0969bd37'),
+          ]
+          def gh(*args):
+              return subprocess.check_output(['gh', *args], text=True)
+          def api(path):
+              return json.loads(gh('api',path))
+          def digest(p):
+              return hashlib.sha256(p.read_bytes()).hexdigest()
+          assert os.environ['GITHUB_REPOSITORY']==repo
+          assert not api('repos/'+repo)['private']
+          prepared=[]
+          with tempfile.TemporaryDirectory() as temp:
+              root=pathlib.Path(temp)
+              # Verify every source release, commit and package before publishing anything.
+              for v,sha,h1,h2 in versions:
+                  tag='store-v'+v
+                  old=api('repos/'+upstream+'/releases/tags/'+tag)
+                  assert not old['draft'] and not old['prerelease'] and old['published_at']
+                  assert api('repos/'+repo+'/git/commits/'+sha)['sha']==sha
+                  d=root/v; d.mkdir()
+                  names={f'R36S_ROMS_STORE_{v}.zip':h1,f'R36S_ROMS_STORE_{v}_OTA.zip':h2}
+                  assert {a['name'] for a in old['assets']}==set(names)
+                  for a in old['assets']:
+                      name=a['name']; p=d/name
+                      assert a['digest']=='sha256:'+names[name]
+                      subprocess.run(['gh','release','download',tag,'--repo',upstream,'--pattern',name,'--dir',str(d)],check=True)
+                      assert p.stat().st_size==a['size'] and digest(p)==names[name]
+                      with zipfile.ZipFile(p) as z:
+                          assert z.testzip() is None
+                  checks=d/'SHA256SUMS.txt'
+                  checks.write_text(''.join(f'{h}  {n}\n' for n,h in names.items()))
+                  notes=d/'notes.md'
+                  notes.write_text(f"## Versão oficial histórica {v}\n\nPublicação original: {old['published_at'][:10]}.\n\n{old['body']}\n\nPacotes originais preservados byte a byte, sem recompilação. SHA-256 em SHA256SUMS.txt.\n\n[Distribuição original]({old['html_url']}) · [Código da versão](https://github.com/{repo}/tree/{sha})\n\nO canal OTA original continua no repositório UPDATES; esta cópia não altera o feed.\n\nBaseado no R36S PORT HUB, por Lag do Lira, GPL-3.0.\n")
+                  prepared.append((v,sha,tag,d,names,notes))
+              existing={r['tag_name']:r for r in api('repos/'+repo+'/releases?per_page=100')}
+              # Do not overwrite any existing release or tag.
+              for v,sha,tag,d,names,notes in prepared:
+                  if tag in existing:
+                      r=existing[tag]
+                      assert not r['draft'] and not r['prerelease']
+                      assert {a['name']:a['digest'] for a in r['assets'] if a['name'] in names}=={n:'sha256:'+h for n,h in names.items()}
+                      assert api('repos/'+repo+'/git/ref/tags/'+tag)['object']['sha']==sha
+                      print('Já verificada:',tag)
+                      continue
+                  # Create the exact historic source tag, refusing an existing mismatched tag.
+                  out=subprocess.run(['gh','api','repos/'+repo+'/git/ref/tags/'+tag],capture_output=True,text=True)
+                  if out.returncode==0:
+                      assert json.loads(out.stdout)['object']['sha']==sha
+                  else:
+                      subprocess.run(['gh','api','--method','POST','repos/'+repo+'/git/refs','-f','ref=refs/tags/'+tag,'-f','sha='+sha],check=True)
+                  subprocess.run(['gh','release','create',tag,'--repo',repo,'--verify-tag','--draft','--title','R36S ROM STORE '+v,'--notes-file',str(notes),*[str(d/n) for n in names],str(d/'SHA256SUMS.txt')],check=True)
+                  # Verify uploaded bytes before making the draft public.
+                  dl=d/'verification'; dl.mkdir()
+                  subprocess.run(['gh','release','download',tag,'--repo',repo,'--dir',str(dl)],check=True)
+                  for n,h in names.items():
+                      assert digest(dl/n)==h
+                  assert (dl/'SHA256SUMS.txt').read_bytes()==(d/'SHA256SUMS.txt').read_bytes()
+                  subprocess.run(['gh','release','edit',tag,'--repo',repo,'--draft=false','--latest='+('true' if v=='0.7.0-beta' else 'false')],check=True)
+                  print('Publicada e verificada:',tag,flush=True)
+          PY
