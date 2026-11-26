@@ -1,23 +1,24 @@
 <p align="center">
-  <img src="src/assets/logo/logo_splash.png" alt="R36S ROM HUB STORE — logo oficial" width="290">
+  <img src="docs/images/atual/logo_hd.png" alt="R36S ROM STORE — logo oficial" width="340">
 </p>
 
-<h1 align="center">R36S ROM HUB STORE</h1>
+<h1 align="center">R36S ROM STORE</h1>
 
 <p align="center"><strong>Sua central de jogos retrô</strong><br>ROMs, BIOS, temas e ferramentas direto no console.</p>
 
 <p align="center">
-  <a href="https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases/latest"><img alt="Versão oficial" src="https://img.shields.io/github/v/release/JammesPark/R36S-ROMS-HUB-STORE-UPDATES?style=for-the-badge&color=2563eb&label=Vers%C3%A3o"></a>
-  <img alt="R36S" src="https://img.shields.io/badge/Console-R36S-0891b2?style=for-the-badge">
+  <a href="https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases/latest"><img alt="Versão oficial" src="https://img.shields.io/github/v/release/JammesPark/R36S-ROM-STORE-UPDATES?style=for-the-badge&color=2563eb&label=Vers%C3%A3o"></a>
+  <img alt="R36S e R36H" src="https://img.shields.io/badge/Console-R36S%20%7C%20R36H-0891b2?style=for-the-badge">
+  <img alt="Sistemas: dArkOSRE, dArkOS, ArkOS, ArchR, Omni36OS" src="https://img.shields.io/badge/Sistema-dArkOSRE%20%7C%20dArkOS%20%7C%20ArkOS%20%7C%20ArchR%20%7C%20Omni36OS-ffdc49?style=for-the-badge">
   <img alt="LÖVE 11.5" src="https://img.shields.io/badge/L%C3%96VE-11.5-db2777?style=for-the-badge">
   <a href="LICENSE"><img alt="GPL-3.0" src="https://img.shields.io/badge/Licen%C3%A7a-GPL--3.0-16a34a?style=for-the-badge"></a>
 </p>
 
 <p align="center">
-  <img alt="Português do Brasil" src="https://img.shields.io/badge/PT--BR-Português-16803c?style=flat-square">
-  <img alt="English" src="https://img.shields.io/badge/EN-English-2563eb?style=flat-square">
-  <img alt="Español" src="https://img.shields.io/badge/ES-Español-eab308?style=flat-square">
-  <img alt="Русский" src="https://img.shields.io/badge/RU-Русский-dc2626?style=flat-square">
+  <a href="README.md"><img alt="Português do Brasil" src="https://img.shields.io/badge/PT--BR-Português-16803c?style=flat-square"></a>
+  <a href="docs/README.en.md"><img alt="English" src="https://img.shields.io/badge/EN-English-2563eb?style=flat-square"></a>
+  <a href="docs/README.es.md"><img alt="Español" src="https://img.shields.io/badge/ES-Español-eab308?style=flat-square"></a>
+  <a href="docs/README.ru.md"><img alt="Русский" src="https://img.shields.io/badge/RU-Русский-dc2626?style=flat-square"></a>
 </p>
 
 
@@ -27,7 +28,7 @@
 
 ## 💡 Sobre o projeto
 
-O **R36S ROM HUB STORE** é um aplicativo independente para consoles portáteis R36S, com suporte ao R36H/R36S como alvo de compatibilidade. Desenvolvido em Lua e LÖVE 11.5, permite organizar jogos, baixar e instalar ROMs em SD1 ou SD2, gerenciar BIOS, temas e utilizar ferramentas do sistema diretamente com os controles físicos do console.
+O **R36S ROM STORE** é um aplicativo independente para consoles portáteis R36S e R36H. Desenvolvido em Lua e LÖVE 11.5, permite organizar jogos, baixar e instalar ROMs em SD1 ou SD2, gerenciar BIOS, temas e utilizar ferramentas do sistema diretamente com os controles físicos do console.
 
 A interface tem resolução lógica de 640×480, dois temas integrados (Pulse e Matrix) e quatro idiomas selecionáveis. O aplicativo tem origem no R36S PORT HUB, de Lag do Lira, e preserva a autoria de ferramentas e temas herdados.
 
@@ -35,9 +36,11 @@ A interface tem resolução lógica de 640×480, dois temas integrados (Pulse e 
 
 ## ⚠️ Aviso importante
 
+⚠️ **Versão BETA.** As principais funcionalidades foram testadas em ambiente simulado no computador e nos consoles R36S e R36H. Algumas funções e combinações de sistemas operacionais ainda precisam de validação adicional. Relatos de problemas, sugestões e contribuições da comunidade são bem-vindos.
+
 Este é um projeto independente, em fase BETA, feito pela comunidade. Não somos autores, proprietários ou representantes dos jogos, ROMs, BIOS, temas e demais conteúdos de terceiros. A licença do aplicativo não autoriza automaticamente seu acesso ou redistribuição. Respeite os direitos autorais e utilize apenas arquivos para os quais tenha autorização.
 
-A compatibilidade varia conforme modelo, firmware e tela. Faça backup dos cartões e da instalação antes de alterações; ferramentas de manutenção podem modificar arquivos mediante confirmação. Relate falhas de funcionamento e não confunda versões experimentais com as oficiais.
+A compatibilidade varia conforme modelo, firmware e tela. Faça backup dos cartões e da instalação antes de alterações; ferramentas de manutenção podem modificar arquivos mediante confirmação. Relate falhas de funcionamento.
 
 ---
 
@@ -45,10 +48,11 @@ A compatibilidade varia conforme modelo, firmware e tela. Faça backup dos cart�
 
 | Pacote | Download |
 |---|---|
-| 📦 Instalação completa 0.7.0-beta | [Baixar ZIP](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta.zip) |
-| 🔄 Atualização 0.7.0-beta (OTA) | [Baixar ZIP de atualização](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta_OTA.zip) |
-| 🆕 Versão oficial mais recente | [Página permanente de download](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases/latest) |
-| 🗂️ Versões anteriores | [Histórico oficial](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases) |
+| 📦 Instalação completa 0.7.0-beta | [Baixar ZIP](https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta.zip) |
+| 🔄 Atualização 0.7.0-beta (OTA) | [Baixar ZIP de atualização](https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta_OTA.zip) |
+| 📄 Script de inicialização (.sh) | [Ver launcher da versão atual](port/R36S%20ROMS%20STORE.sh) — requer os arquivos do ZIP completo. |
+| 🆕 Versão oficial mais recente | [Página permanente de download](https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases/latest) |
+| 🗂️ Versões anteriores | [Histórico oficial](https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases) |
 
 Para uma instalação nova, use o pacote completo, sem o sufixo OTA. Para atualizar uma instalação existente, prefira o menu de atualização online da loja. Os links de ZIP acima são da versão indicada; a página da última versão permanece fixa.
 
@@ -56,23 +60,14 @@ Para uma instalação nova, use o pacote completo, sem o sufixo OTA. Para atuali
 
 ## 🎨 Temas e interface
 
-| Pulse Edition | Matrix Edition |
+| Matrix Edition | Pulse Edition |
 |:---:|:---:|
-| Paleta azul original | Paleta verde original |
-| Logo centralizada e menu principal | Painel de catálogo e menu 3×3 |
-| Lista, Grade e Vitrine | Lista, Grade e Vitrine |
+| <img src="docs/images/atual/matrix-menu.png" width="320" alt="Tela inicial Matrix"> | <img src="docs/images/atual/pulse-menu.png" width="320" alt="Tela inicial Pulse"> |
+| Verde original, menu em grade | Azul original, menu com logo centralizada |
 
-Ambos são integrados à loja, com cores personalizáveis de forma independente. São adaptações de temas originais de Lag do Lira.
+As imagens apresentam a identidade visual aprovada para a próxima edição, em capturas reais do aplicativo em LÖVE, 640×480, geradas em ambiente isolado. A versão disponível para instalação continua sendo a 0.7.0-beta. A exibição das prévias foi aprovada no console. Os números de jogos, espaço e hardware mostrados nas capturas não representam um console físico.
 
-| Menu principal — Pulse | Menu principal — Matrix |
-|:---:|:---:|
-| <img src="docs/images/atual/pulse-menu.png" width="320" alt="Menu Pulse Edition"> | <img src="docs/images/atual/matrix-menu.png" width="320" alt="Menu Matrix Edition"> |
-
-| Configurações — Pulse | Configurações — Matrix |
-|:---:|:---:|
-| <img src="docs/images/atual/pulse-configuracoes.png" width="320" alt="Configurações Pulse Edition"> | <img src="docs/images/atual/matrix-configuracoes.png" width="320" alt="Configurações Matrix Edition"> |
-
-<sub>Capturas do aplicativo real 0.7.0-beta executado em simulador LÖVE, com janela 640×480 e ambiente isolado sem acervo sincronizado. Não representam a contagem de jogos nem as informações de hardware de um console físico.</sub>
+Ambos são integrados à loja, com cores personalizáveis de forma independente e modos Lista, Grade e Vitrine. São adaptações de temas originais de Lag do Lira.
 
 ---
 
@@ -124,7 +119,7 @@ As ferramentas abaixo foram identificadas no código e nas telas da versão atua
 
 ## 🚀 Instalação no R36S
 
-1. Baixe o pacote completo na [página de download oficial](https://github.com/JammesPark/R36S-ROMS-HUB-STORE-UPDATES/releases/latest).
+1. Baixe o pacote completo na [página de download oficial](https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases/latest).
 2. Extraia os arquivos na pasta `ports` do cartão de destino.
 3. Confira a estrutura:
 
@@ -165,11 +160,12 @@ As funções contextuais aparecem no rodapé das telas. O mapeamento físico pod
 
 | Aparelho / sistema | Situação |
 |---|---|
-| R36S | Funcionamento confirmado em console; versão 0.7.0-beta e sincronização dos dados testadas pelo responsável. |
-| dArkOSen | Testado em console; foram observadas diferenças no mapeamento de controles em relação a outro sistema. |
-| R36H | Alvo de compatibilidade; confirmação física específica pendente. |
-| ArkOS, dArkOS e dArkOSRE | Famílias de sistemas de referência; não há confirmação individual completa nesta versão. |
-| Outras telas e clones | Compatibilidade em validação; correções experimentais não integram automaticamente a versão oficial. |
+| R36S | Testado fisicamente pelo responsável. |
+| R36H | Testado fisicamente pelo responsável. |
+| dArkOSen | Testado em console; foram observadas diferenças de mapeamento de controles. |
+| ArchR | Instalação testada; demais funções dependem da versão do sistema. |
+| dArkOSRE / dArkOS / ArkOS / Omni36OS | Sistemas de referência; validação individual completa em andamento. |
+| Outras telas e clones | Compatibilidade em validação. |
 
 A documentação não certifica todos os firmwares ou aparelhos. Informe o modelo, o sistema e a versão ao relatar problemas.
 
@@ -177,7 +173,7 @@ A documentação não certifica todos os firmwares ou aparelhos. Informe o model
 
 ## 🔄 Atualizações
 
-Use o menu de atualização online da loja. A publicação oficial exige aprovação e testes; versões experimentais permanecem em canal separado. Não instale pacotes experimentais sobre a versão oficial sem backup.
+Use o menu de atualização online da loja. Faça backup antes de instalar qualquer atualização. Os downloads oficiais são disponibilizados na página de releases.
 
 ---
 
@@ -193,6 +189,36 @@ Use o menu de atualização online da loja. A publicação oficial exige aprova�
 | [LICENSE](LICENSE) | Licença GPL-3.0 |
 
 A pasta `docs/` preserva também documentos do projeto-base, que podem citar versões e caminhos antigos.
+
+---
+
+## 🧰 Tecnologias utilizadas
+
+<p align="center">
+  <a href="https://www.lua.org/"><img alt="Lua" src="https://img.shields.io/badge/Lua-000080?style=for-the-badge&logo=lua&logoColor=white"></a>
+  <a href="https://love2d.org/"><img alt="LÖVE 11.5" src="https://img.shields.io/badge/L%C3%96VE-11.5-db2777?style=for-the-badge"></a>
+  <a href="https://luajit.org/"><img alt="LuaJIT" src="https://img.shields.io/badge/LuaJIT-Runtime-000080?style=for-the-badge"></a>
+  <a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"></a>
+  <img alt="Shell Script" src="https://img.shields.io/badge/Shell_Script-4EAA25?style=for-the-badge&logo=gnubash&logoColor=white">
+  <img alt="HTML5" src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white">
+  <img alt="JSON" src="https://img.shields.io/badge/JSON-333333?style=for-the-badge&logo=json&logoColor=white">
+  <img alt="YAML" src="https://img.shields.io/badge/YAML-CB171E?style=for-the-badge&logo=yaml&logoColor=white">
+  <img alt="XML" src="https://img.shields.io/badge/XML-005A9C?style=for-the-badge">
+  <img alt="Markdown" src="https://img.shields.io/badge/Markdown-000000?style=for-the-badge&logo=markdown&logoColor=white">
+  <a href="https://github.com/features/actions"><img alt="GitHub Actions" src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white"></a>
+  <a href="https://www.cloudflare.com/"><img alt="Cloudflare R2" src="https://img.shields.io/badge/Cloudflare-R2-F38020?style=for-the-badge&logo=cloudflare&logoColor=white"></a>
+</p>
+
+| Tecnologia | Aplicação |
+|---|---|
+| Lua / LuaJIT / LÖVE | Aplicativo, interface, controles e lógica de execução. |
+| Python | Ferramentas de catálogo, testes e automação. |
+| Shell Script | Inicialização, instalação e integração com o console. |
+| HTML | Protótipos visuais. |
+| JSON / YAML / XML | Catálogos, configurações, automação e metadados. |
+| Markdown | Documentação do projeto. |
+| GitHub Actions | Validação e empacotamento. |
+| Cloudflare R2 | Hospedagem de capas. |
 
 ---
 
@@ -215,7 +241,7 @@ Para gerar o pacote: `sh tools/build.sh`. O GitHub Actions valida LuaJIT, testes
 
 Canal oficial: [Telegram — R36SPORTSBR](https://t.me/R36SPORTSBR).
 
-Relatos de bugs e sugestões: [GitHub Issues](https://github.com/JammesPark/R36S-ROMS-HUB-STORE/issues).
+Relatos de bugs e sugestões: [GitHub Issues](https://github.com/JammesPark/R36S-ROM-STORE/issues).
 
 ---
 
@@ -235,4 +261,4 @@ Baseado no **R36S PORT HUB, por [Lag do Lira](https://youtube.com/@lagdolira)**.
 
 Código sob GNU GPL-3.0, conforme [LICENSE](LICENSE), [NOTICE.md](NOTICE.md) e avisos de terceiros. A licença do aplicativo não concede direitos sobre ROMs, BIOS, capas ou outros conteúdos de terceiros. Utilize somente arquivos para os quais tenha direito de acesso, download e distribuição.
 
-<p align="center"><strong>R36S ROM HUB STORE</strong><br>Desenvolvimento colaborativo para a comunidade retrô.</p>
+<p align="center"><strong>R36S ROM STORE</strong><br>Desenvolvimento colaborativo para a comunidade retrô.</p>
