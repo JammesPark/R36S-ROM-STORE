@@ -4,7 +4,7 @@
 
 <p align="center">
   <img alt="R36S e R36H" src="https://img.shields.io/badge/Console-R36S%20%7C%20R36H-0891b2?style=for-the-badge">
-  <img alt="Sistemas: dArkOSRE, dArkOS, dArkOSen, ArkOS, ArchR, Omni36OS" src="https://img.shields.io/badge/Sistema-dArkOSRE%20%7C%20dArkOS%20%7C%20dArkOSen%20%7C%20ArkOS%20%7C%20ArchR%20%7C%20Omni36OS-ffdc49?style=for-the-badge">
+  <img alt="Sistemas: dArkOSRE, dArkOS, dArkOSen, ArkOS, ArchR" src="https://img.shields.io/badge/Sistema-dArkOSRE%20%7C%20dArkOS%20%7C%20dArkOSen%20%7C%20ArkOS%20%7C%20ArchR-ffdc49?style=for-the-badge">
 </p>
 
 [🇧🇷 Português](../README.md) · [🇺🇸 English](README.en.md) · [🇪🇸 Español](README.es.md) · [🇷🇺 Русский](README.ru.md)
@@ -39,7 +39,7 @@ Extract the complete 0.7.0-beta ZIP into `ports/` on the card. Open `R36S ROMS S
 
 ## Compatibility and tests
 
-R36S and R36H have both been physically tested by the maintainer. dArkOSen was tested with controller-mapping differences. Installation on ArchR was tested. dArkOSRE, dArkOS, ArkOS and Omni36OS are reference systems; full validation of every combination remains pending.
+R36S and R36H have both been physically tested by the maintainer. dArkOSen was tested with controller-mapping differences. Installation on ArchR was tested. dArkOSRE, dArkOS and ArkOS are reference systems; full validation of every combination remains pending.
 
 ## Updates
 

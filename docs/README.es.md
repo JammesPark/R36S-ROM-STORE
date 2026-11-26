@@ -4,7 +4,7 @@
 
 <p align="center">
   <img alt="R36S e R36H" src="https://img.shields.io/badge/Console-R36S%20%7C%20R36H-0891b2?style=for-the-badge">
-  <img alt="Sistemas: dArkOSRE, dArkOS, dArkOSen, ArkOS, ArchR, Omni36OS" src="https://img.shields.io/badge/Sistema-dArkOSRE%20%7C%20dArkOS%20%7C%20dArkOSen%20%7C%20ArkOS%20%7C%20ArchR%20%7C%20Omni36OS-ffdc49?style=for-the-badge">
+  <img alt="Sistemas: dArkOSRE, dArkOS, dArkOSen, ArkOS, ArchR" src="https://img.shields.io/badge/Sistema-dArkOSRE%20%7C%20dArkOS%20%7C%20dArkOSen%20%7C%20ArkOS%20%7C%20ArchR-ffdc49?style=for-the-badge">
 </p>
 
 [🇧🇷 Português](../README.md) · [🇺🇸 English](README.en.md) · [🇪🇸 Español](README.es.md) · [🇷🇺 Русский](README.ru.md)
@@ -39,7 +39,7 @@ Extraiga el ZIP completo 0.7.0-beta en `ports/` de la tarjeta. Abra `R36S ROMS S
 
 ## Compatibilidad y pruebas
 
-El responsable ha probado físicamente R36S y R36H. Se probó dArkOSen con diferencias de controles y la instalación en ArchR. dArkOSRE, dArkOS, ArkOS y Omni36OS son sistemas de referencia; falta validar por completo todas las combinaciones.
+El responsable ha probado físicamente R36S y R36H. Se probó dArkOSen con diferencias de controles y la instalación en ArchR. dArkOSRE, dArkOS y ArkOS son sistemas de referencia; falta validar por completo todas las combinaciones.
 
 ## Actualizaciones
 
