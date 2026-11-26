@@ -7,7 +7,7 @@
 <p align="center"><strong>Sua central de jogos retrô</strong><br>ROMs, BIOS, temas e ferramentas direto no console.</p>
 
 <p align="center">
-  <a href="https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases/latest"><img alt="Versão oficial" src="https://img.shields.io/github/v/release/JammesPark/R36S-ROM-STORE-UPDATES?style=for-the-badge&color=2563eb&label=Vers%C3%A3o"></a>
+  <a href="https://github.com/JammesPark/R36S-ROM-STORE/releases/latest"><img alt="Versão oficial" src="https://img.shields.io/github/v/release/JammesPark/R36S-ROM-STORE-UPDATES?style=for-the-badge&color=2563eb&label=Vers%C3%A3o"></a>
   <img alt="R36S e R36H" src="https://img.shields.io/badge/Console-R36S%20%7C%20R36H-0891b2?style=for-the-badge">
   <img alt="Sistemas: dArkOSRE, dArkOS, dArkOSen, ArkOS, ArchR" src="https://img.shields.io/badge/Sistema-dArkOSRE%20%7C%20dArkOS%20%7C%20dArkOSen%20%7C%20ArkOS%20%7C%20ArchR-ffdc49?style=for-the-badge">
   <a href="LICENSE"><img alt="GPL-3.0" src="https://img.shields.io/badge/Licen%C3%A7a-GPL--3.0-16a34a?style=for-the-badge"></a>
@@ -62,11 +62,11 @@ A compatibilidade varia conforme modelo, firmware e tela. Faça backup dos cart�
 
 | Pacote | Download |
 |---|---|
-| 📦 Instalação completa 0.7.0-beta | [Baixar ZIP](https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta.zip) |
-| 🔄 Atualização 0.7.0-beta (OTA) | [Baixar ZIP de atualização](https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta_OTA.zip) |
+| 📦 Instalação completa 0.7.0-beta | [Baixar ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta.zip) |
+| 🔄 Atualização 0.7.0-beta (OTA) | [Baixar ZIP de atualização](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.0-beta/R36S_ROMS_STORE_0.7.0-beta_OTA.zip) |
 | 📄 Script de inicialização (.sh) | [Ver launcher da versão atual](port/R36S%20ROMS%20STORE.sh) — requer os arquivos do ZIP completo. |
-| 🆕 Versão oficial mais recente | [Página permanente de download](https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases/latest) |
-| 🗂️ Versões anteriores | [Histórico oficial](https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases) |
+| 🆕 Versão oficial mais recente | [Página permanente de download](https://github.com/JammesPark/R36S-ROM-STORE/releases/latest) |
+| 🗂️ Versões anteriores | [Histórico oficial](https://github.com/JammesPark/R36S-ROM-STORE/releases) |
 
 Para uma instalação nova, use o pacote completo, sem o sufixo OTA. Para atualizar uma instalação existente, prefira o menu de atualização online da loja. Os links de ZIP acima são da versão indicada; a página da última versão permanece fixa.
 
@@ -133,7 +133,7 @@ As ferramentas abaixo foram identificadas no código e nas telas da versão atua
 
 ## 🚀 Instalação no R36S
 
-1. Baixe o pacote completo na [página de download oficial](https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases/latest).
+1. Baixe o pacote completo na [página de download oficial](https://github.com/JammesPark/R36S-ROM-STORE/releases/latest).
 2. Extraia os arquivos na pasta `ports` do cartão de destino.
 3. Confira a estrutura:
 
@@ -196,6 +196,7 @@ Use o menu de atualização online da loja. Faça backup antes de instalar qualq
 | Documento | Conteúdo |
 |---|---|
 | [CHANGELOG.md](CHANGELOG.md) | Histórico de versões |
+| [HISTORICO_RELEASES.md](docs/HISTORICO_RELEASES.md) | Histórico das publicações oficiais e downloads preservados |
 | [CONTRIBUTORS.md](CONTRIBUTORS.md) | Registro de contribuições |
 | [PUBLICACAO_OFICIAL.md](docs/PUBLICACAO_OFICIAL.md) | Processo de publicação |
 | [REORGANIZACAO.md](docs/REORGANIZACAO.md) | Organização dos arquivos |
