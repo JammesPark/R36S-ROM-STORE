@@ -84,4 +84,10 @@ jobs:
                   assert (dl/'SHA256SUMS.txt').read_bytes()==(d/'SHA256SUMS.txt').read_bytes()
                   subprocess.run(['gh','release','edit',tag,'--repo',repo,'--draft=false','--latest='+('true' if v=='0.7.0-beta' else 'false')],check=True)
                   print('Publicada e verificada:',tag,flush=True)
+          # Remove only the two temporary official source anchors after successful verification.
+          for branch,sha in [('maintenance/restore-official-068','3fcf979d5f57b9e021077e81d1675fcb7de945a8'),('maintenance/restore-official-070','d2fe9672290b4560f414a3190af3b215b5d402f2')]:
+              out=subprocess.run(['gh','api','repos/'+repo+'/git/ref/heads/'+branch],capture_output=True,text=True)
+              if out.returncode==0:
+                  assert json.loads(out.stdout)['object']['sha']==sha
+                  subprocess.run(['gh','api','--method','DELETE','repos/'+repo+'/git/refs/heads/'+branch],check=True)
           PY
