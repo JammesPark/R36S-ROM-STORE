@@ -6,6 +6,7 @@ Este registro distingue versões distribuídas no canal público de versões de 
 
 | Versão | Release | Publicação original (UTC) |
 |---|---|---|
+| 0.7.2-beta | [Downloads](https://github.com/JammesPark/R36S-ROM-STORE/releases/tag/store-v0.7.2-beta) | 2026-11-26 |
 | 0.7.1-beta | [Downloads](https://github.com/JammesPark/R36S-ROM-STORE/releases/tag/store-v0.7.1-beta) | 2026-11-26 |
 | 0.7.0-beta | [Downloads](https://github.com/JammesPark/R36S-ROM-STORE/releases/tag/store-v0.7.0-beta) | 2026-11-24 |
 | 0.6.8-beta | [Downloads](https://github.com/JammesPark/R36S-ROM-STORE/releases/tag/store-v0.6.8-beta) | 2026-11-24 |

@@ -18,9 +18,8 @@ local lg = love.graphics
 local S = {}
 
 local CHANNEL_NAME = "James Park"
-local CHANNEL_URL = "https://t.me/R36SPORTSBR"
-local CHANNEL_SHORT = "t.me/R36SPORTSBR"
-local QR_ASSET = "assets/qr/telegram_r36sportsbr.png"
+local CHANNEL_URL = "https://t.me/r36sportsromstorebr"
+local CHANNEL_SHORT = CHANNEL_URL:gsub("^https://", "")
 local TELEGRAM_ICON = "assets/icons/telegram_official.png"
 
 -- Apoio ao projeto (START): apenas link do LivePix do James Park, nao Pix copia-e-cola.
@@ -76,13 +75,9 @@ function S:enter()
     pix_img:setFilter("nearest", "nearest")
     self.pix_qr_image = pix_img
   end
-  -- QR estatico embutido, para funcionar sem Wi-Fi e sem depender de navegador.
+  -- O QR do Telegram e gerado offline a partir do proprio link ao abrir.
+  -- Nao carregar a imagem antiga: o texto e o destino devem coincidir.
   self.qr_image = nil
-  local ok, img = pcall(love.graphics.newImage, QR_ASSET)
-  if ok and img then
-    img:setFilter("nearest", "nearest")
-    self.qr_image = img
-  end
   self:layout()
 end
 
@@ -175,11 +170,11 @@ function S:draw_channel()
   G.rect(bx, by, bw, bh, T.c.bg3, 10)
   G.frame(bx, by, bw, bh, T.c.accent, 10, 2)
   telegram_icon(bx + 12, by + 12, 46, 44)
-  G.text_fit(T.f.h3, L("Siga nosso canal no Telegram"), bx + 68, by + 4, bw - 76, T.c.text)
+  G.text_fit(T.f.h3, L("Participe do nosso grupo no Telegram"), bx + 68, by + 4, bw - 76, T.c.text)
   G.text(T.f.bodyb, CHANNEL_NAME, bx + 68, by + 27, T.c.text)
   G.text_fit(T.f.small, CHANNEL_SHORT, bx + 68, by + 47, 142, T.c.accent2)
   G.button_icon("a", bx + 218, by + 45)
-  G.text_fit(T.f.small, L("Abrir canal"), bx + 240, by + 47, bw - 245, T.c.faint)
+  G.text_fit(T.f.small, L("Abrir grupo"), bx + 240, by + 47, bw - 245, T.c.faint)
   -- START volta a ter a funcao de apoio, sem mexer no atalho A do Telegram.
   local sx, sy = bx + 188, by + 27
   local sw = G.button_icon("start", sx, sy, T.c.yellow)
@@ -224,7 +219,7 @@ function S:draw_content()
   end
 
   -- Reserva o canto direito do rodape para a versao, sem sobrepor as dicas.
-  G.hints({ { "a", L("Abrir canal") }, { "start", L("Apoiar") }, { "dpad", L("Rolar") }, { "b", L("Voltar") } }, nil, T.W - 142)
+  G.hints({ { "a", L("Abrir grupo") }, { "start", L("Apoiar") }, { "dpad", L("Rolar") }, { "b", L("Voltar") } }, nil, T.W - 142)
   local version_label = L("VERSÃO ") .. (C.VERSION_NUM or C.VERSION)
   local version_x = T.W - 16 - T.f.pix8:getWidth(version_label)
   G.text(T.f.pix8, version_label, version_x, T.H - 21, T.c.yellow)
@@ -366,7 +361,7 @@ function S:draw_qr()
   G.rect(x, y, w, 6, T.c.accent, 3)
   telegram_icon(x + 20, y + 17, 38, 34)
   -- Titulo maior na janela do QR; ate duas linhas sem atingir o QR.
-  local title=L("SIGA NOSSO CANAL NO TELEGRAM")
+  local title=L("PARTICIPE DO NOSSO GRUPO NO TELEGRAM")
   local tf,lines,lh=G.fit_lines(T.base_font(T.f.h2),title,w-94,42,true)
   local ty=y+15+math.max(0,math.floor((42-#lines*lh)/2))
   for i,line in ipairs(lines) do
@@ -389,7 +384,7 @@ function S:draw_qr()
     local tw = x + w - 24 - tx
     G.text(T.f.bodyb, CHANNEL_NAME, tx, qy, T.c.text)
     G.text_fit(T.f.body, CHANNEL_SHORT, tx, qy + 24, tw, T.c.accent2)
-    G.text(T.f.small, L("Escaneie para seguir nosso canal no Telegram."),
+    G.text(T.f.small, L("Escaneie para entrar no nosso grupo do Telegram."),
       tx, qy + 57, T.c.dim, "left", tw)
   else
     G.text(T.f.body, L("Acesse pelo celular ou computador:\n") .. CHANNEL_URL,
@@ -406,12 +401,12 @@ end
 
 --- O botao A abre sempre a janela com QR Code. Nao tenta abrir navegador.
 function S:open_channel()
-  -- Imagem QR local verificada, com geracao dinamica como fallback.
-  if not self.qr_image and not self.qr then
+  -- A biblioteca retorna sucesso e matriz; pcall acrescenta seu proprio status.
+  if not self.qr then
     local ok, qrlib = pcall(require, "lib.qrencode")
     if ok then
-      local okq, tab = pcall(qrlib.qrcode, CHANNEL_URL)
-      if okq and type(tab) == "table" then self.qr = tab end
+      local called, success, matrix = pcall(qrlib.qrcode, CHANNEL_URL)
+      if called and success == true and type(matrix) == "table" then self.qr = matrix end
     end
   end
   self.show_qr = true

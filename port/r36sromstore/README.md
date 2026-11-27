@@ -1,6 +1,6 @@
 # R36S ROM STORE
 
-**Status:** versão 0.7.1-beta — candidata oficial em revisão privada.
+**Status:** versão 0.7.2-beta — versão oficial BETA.
 
 Loja independente para R36S/R36H. Baseado no R36S PORT HUB, por Lag do Lira (https://youtube.com/@lagdolira), com créditos aos temas originais. Código sob GPL-3.0, conforme LICENSE e NOTICE.md.
 

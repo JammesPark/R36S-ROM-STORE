@@ -49,7 +49,7 @@ assert 640 - 128 + 120 <= 640
 assert 'G.logo_box(28, 57, 140, 82, "splash")' in about
 assert 28 + 252 * min(140 / 252, 82 / 170) < 168
 assert 57 + 82 < 146
-assert 'G.text_fit(T.f.h3, L("Siga nosso canal no Telegram")' in about
+assert 'G.text_fit(T.f.h3, L("Participe do nosso grupo no Telegram")' in about
 assert 'G.fit_lines(T.base_font(T.f.h2),title,w-94,42,true)' in about
 assert 15 + 42 < 66  # fim do titulo antes do QR
 print("HEADERS: OK - Matrix, Pulse, Sobre e titulo Telegram")

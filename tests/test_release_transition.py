@@ -103,7 +103,7 @@ def check(installer):
     feed = json.loads((out/"ota/rom-store/update.json").read_text())
     ota = out / feed["url"].split("/")[-1]
     assert digest(ota) == feed["sha256"] and ota.stat().st_size == feed["size"]
-    assert feed["version"] == feed["min_version"] == "0.7.1-beta"
+    assert feed["version"] == "0.7.2-beta" and feed["min_version"] == "0.7.1-beta"
     with tempfile.TemporaryDirectory() as tmp:
         root=Path(tmp)
         harness=root/"harness"
@@ -160,8 +160,32 @@ def check(installer):
             def feed_test(variant,expected):
                 (serve/"feed.json").write_text(json.dumps(variant))
                 run(harness,fresh,app,"feed",expected,URL=base+"feed.json",HASH=feed["sha256"],CURL_CA_BUNDLE=str(cert))
+            # Use the exact previously published official package to exercise a real upgrade.
+            oldzip=root/"official-071.zip"
+            with urlopen("https://github.com/JammesPark/R36S-ROM-STORE-UPDATES/releases/download/store-v0.7.1-beta/R36S_ROM_STORE_0.7.1-beta.zip",timeout=60) as r, oldzip.open("wb") as f:
+                shutil.copyfileobj(r,f)
+            assert digest(oldzip)=="32bfe860dca339fae9cab29f207f262d8e9873888e38bb34d0eb0786b73e1918"
+            oldports=root/"actual-071"/"ports";oldports.mkdir(parents=True)
+            with ZipFile(oldzip) as z:z.extractall(oldports)
+            oldapp=oldports/"r36sromstore"
+            oldcode=modules(oldapp/"game.love",root/"actual-071-modules")
+            (oldapp/"tmp").mkdir(exist_ok=True)
+            marker=oldapp/"conf/love/r36sromsstore/favorites.json"
+            marker.parent.mkdir(parents=True,exist_ok=True);marker.write_text('{"test":"preserve"}')
+            (serve/"feed.json").write_text(json.dumps(local_feed))
+            run(harness,oldcode,oldapp,"feed","available",URL=base+"feed.json",HASH=feed["sha256"],CURL_CA_BUNDLE=str(cert))
+            upgrade=dict(args,DEST=str(root/"upgrade-071.zip"))
+            run(harness,oldcode,oldapp,"download","done",**upgrade)
+            run(harness,oldcode,oldapp,"install","done",PACKAGE=upgrade["DEST"])
+            with ZipFile(installer) as z:assert (oldapp/"game.love").read_bytes()==z.read("r36sromstore/game.love")
+            assert marker.read_text()=='{"test":"preserve"}'
+            journal=oldapp/"backups/.journal"
+            journal.write_text(journal.read_text().replace("state=pending","state=booting"))
+            run(harness,fresh,oldapp,"boot")
+            assert not journal.exists()
+            print("PASS actual 0.7.1-beta -> 0.7.2-beta OTA and preserved favorites",flush=True)
             feed_test(local_feed,"uptodate")
-            feed_test(dict(local_feed,version="0.7.2-beta"),"available")
+            feed_test(dict(local_feed,version="0.7.3-beta"),"available")
             feed_test(dict(local_feed,sha256=""),"error")
             run(harness,fresh,app,"download","error","download_hash",**dict(args,HASH="0"*64))
             run(harness,fresh,app,"download","error","download_size",**dict(args,SIZE=str(feed["size"]+1)))

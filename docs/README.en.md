@@ -9,7 +9,7 @@
 
 [🇧🇷 Português](../README.md) · [🇺🇸 English](README.en.md) · [🇪🇸 Español](README.es.md) · [🇷🇺 Русский](README.ru.md)
 
-**Status:** 0.7.1-beta — official beta.
+**Status:** 0.7.2-beta — official beta.
 
 ## About
 
@@ -26,8 +26,8 @@ Beta software: back up your cards. Download and use only content you are authori
 | | Download |
 |---|---|
 | Automatic installer (.sh) — active official release with OTA | [SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh) |
-| Full installation with OTA | [ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.1-beta/R36S_ROM_STORE_0.7.1-beta.zip) |
-| Manual update | [UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.1-beta/R36S_ROM_STORE_0.7.1-beta_UPDATE.zip) |
+| Full installation with OTA | [ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.2-beta/R36S_ROM_STORE_0.7.2-beta.zip) |
+| Manual update | [UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.2-beta/R36S_ROM_STORE_0.7.2-beta_UPDATE.zip) |
 | Previous releases | [Releases](https://github.com/JammesPark/R36S-ROM-STORE/releases) |
 
 For migration from 0.7.0-beta or older, use the SH or full ZIP. The manual update requires the new r36sromstore/ layout. Back up first. The legacy OTA remains at 0.7.0-beta. The new-channel SH passed automated tests; separate physical validation has not been confirmed.
@@ -76,7 +76,7 @@ Both R36S and R36H have been physically tested by the maintainer. dArkOSen was t
 
 Internet is required for first sync and new downloads. An active theme must be replaced before removal. If an error occurs, report firmware, version and steps, without passwords or personal information.
 
-[Telegram](https://t.me/R36SPORTSBR) · [Issues](https://github.com/JammesPark/R36S-ROM-STORE/issues) · [Support guide (PT-BR)](SUPORTE.md)
+[Telegram](https://t.me/r36sportsromstorebr) · [Issues](https://github.com/JammesPark/R36S-ROM-STORE/issues) · [Support guide (PT-BR)](SUPORTE.md)
 
 ## Development and credits
 

@@ -10,8 +10,8 @@ local C = {}
 
 C.APP_NAME = "R36S ROM STORE"
 C.EDITION = "Official"
-C.VERSION = L("0.7.1-beta")       -- texto exibido
-C.VERSION_NUM = "0.7.1-beta"        -- numero usado para comparar com a atualizacao
+C.VERSION = L("0.7.2-beta")       -- texto exibido
+C.VERSION_NUM = "0.7.2-beta"        -- numero usado para comparar com a atualizacao
 -- R36 Hub OS: o hub e a interface principal do sistema (supervisor exporta R36HUBOS=1)
 C.OS_MODE = os.getenv("R36HUBOS") == "1"
 C.OS_NAME = "R36 Hub OS"

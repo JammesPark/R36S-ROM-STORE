@@ -1,5 +1,11 @@
 # Histórico de versões
 
+## [0.7.2-beta] - 2026-11-26
+
+- Novo grupo oficial do Telegram na tela Sobre: https://t.me/r36sportsromstorebr.
+- QR Code do grupo gerado offline pela biblioteca interna, com abertura e ampliação corrigidas.
+- Traduções e links da documentação atualizados; LivePix preservado.
+
 ## [0.7.1-beta] - 2026-11-26
 
 - Lançamento oficial: nova identidade R36S ROM STORE, Matrix padrão e Pulse opcional, artes HD e pasta r36sromstore.

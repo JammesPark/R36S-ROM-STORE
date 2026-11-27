@@ -9,7 +9,7 @@
 
 [🇧🇷 Português](../README.md) · [🇺🇸 English](README.en.md) · [🇪🇸 Español](README.es.md) · [🇷🇺 Русский](README.ru.md)
 
-**Статус:** 0.7.1-beta — официальный бета-выпуск.
+**Статус:** 0.7.2-beta — официальный бета-выпуск.
 
 ## О проекте
 
@@ -26,8 +26,8 @@
 | | Download |
 |---|---|
 | Автоматический установщик (.sh) — активная официальная версия с OTA | [SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh) |
-| Полная установка с OTA | [ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.1-beta/R36S_ROM_STORE_0.7.1-beta.zip) |
-| Ручное обновление | [UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.1-beta/R36S_ROM_STORE_0.7.1-beta_UPDATE.zip) |
+| Полная установка с OTA | [ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.2-beta/R36S_ROM_STORE_0.7.2-beta.zip) |
+| Ручное обновление | [UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.2-beta/R36S_ROM_STORE_0.7.2-beta_UPDATE.zip) |
 | Предыдущие выпуски | [Releases](https://github.com/JammesPark/R36S-ROM-STORE/releases) |
 
 Для переноса с 0.7.0-beta или более ранней версии используйте SH или полный ZIP. UPDATE.zip требует новой структуры r36sromstore/. Создайте резервную копию. Старый канал OTA остаётся на 0.7.0-beta. SH нового канала прошёл автоматические тесты; отдельная проверка на консоли ещё не подтверждена.
@@ -76,7 +76,7 @@ R36S и R36H проверены сопровождающим проекта на
 
 Интернет нужен для первой синхронизации и загрузок. Перед удалением активной темы выберите другую. При ошибке укажите версию, прошивку и действия, не публикуйте пароли или личные данные.
 
-[Telegram](https://t.me/R36SPORTSBR) · [Issues](https://github.com/JammesPark/R36S-ROM-STORE/issues) · [Помощь (PT-BR)](SUPORTE.md)
+[Telegram](https://t.me/r36sportsromstorebr) · [Issues](https://github.com/JammesPark/R36S-ROM-STORE/issues) · [Помощь (PT-BR)](SUPORTE.md)
 
 ## Разработка и авторство
 

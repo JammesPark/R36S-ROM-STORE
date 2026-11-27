@@ -36,7 +36,7 @@
 </p>
 
 
-**Status:** versão 0.7.1-beta — versão oficial BETA.
+**Status:** versão 0.7.2-beta — versão oficial BETA.
 
 ---
 
@@ -63,8 +63,8 @@ A compatibilidade varia conforme modelo, firmware e tela. Faça backup dos cart�
 | Pacote | Download |
 |---|---|
 | 📄 Instalador automático (.sh) — última versão oficial com OTA | [Baixar SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh) |
-| 📦 Instalação completa 0.7.1-beta (com OTA) | [Baixar ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.1-beta/R36S_ROM_STORE_0.7.1-beta.zip) |
-| 🔄 Atualização manual 0.7.1-beta | [Baixar UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.1-beta/R36S_ROM_STORE_0.7.1-beta_UPDATE.zip) |
+| 📦 Instalação completa 0.7.2-beta (com OTA) | [Baixar ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.2-beta/R36S_ROM_STORE_0.7.2-beta.zip) |
+| 🔄 Atualização manual 0.7.2-beta | [Baixar UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.2-beta/R36S_ROM_STORE_0.7.2-beta_UPDATE.zip) |
 | 🗂️ Versões anteriores | [Histórico oficial](https://github.com/JammesPark/R36S-ROM-STORE/releases) |
 
 O SH consulta o canal oficial ativo e baixa o ZIP completo com verificação de integridade. Para migrar de 0.7.0-beta ou anterior, use o SH ou ZIP completo: a pasta agora é `r36sromstore/`. O UPDATE.zip contém apenas a pasta da aplicação, para instalações existentes da nova estrutura. Faça backup e mescle as pastas sem apagar os dados. O canal OTA legado permanece na 0.7.0-beta.
@@ -228,7 +228,7 @@ Para gerar o pacote: `sh tools/build.sh`. O GitHub Actions valida LuaJIT, testes
 
 ## 💬 Comunidade
 
-Canal oficial: [Telegram]().
+Grupo oficial: [Telegram]().
 
 Relatos de bugs e sugestões: [GitHub Issues](https://github.com/JammesPark/R36S-ROM-STORE/issues).
 

@@ -9,7 +9,7 @@
 
 [🇧🇷 Português](../README.md) · [🇺🇸 English](README.en.md) · [🇪🇸 Español](README.es.md) · [🇷🇺 Русский](README.ru.md)
 
-**Estado:** 0.7.1-beta — versión oficial BETA.
+**Estado:** 0.7.2-beta — versión oficial BETA.
 
 ## Acerca del proyecto
 
@@ -26,8 +26,8 @@ Software Beta: haga copias de seguridad. Descargue y utilice únicamente conteni
 | | Download |
 |---|---|
 | Instalador automático (.sh) — versión oficial activa con OTA | [SH](https://raw.githubusercontent.com/JammesPark/R36S-ROM-STORE/main/INSTALAR_R36S_ROM_STORE.sh) |
-| Instalación completa con OTA | [ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.1-beta/R36S_ROM_STORE_0.7.1-beta.zip) |
-| Actualización manual | [UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.1-beta/R36S_ROM_STORE_0.7.1-beta_UPDATE.zip) |
+| Instalación completa con OTA | [ZIP](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.2-beta/R36S_ROM_STORE_0.7.2-beta.zip) |
+| Actualización manual | [UPDATE.zip](https://github.com/JammesPark/R36S-ROM-STORE/releases/download/store-v0.7.2-beta/R36S_ROM_STORE_0.7.2-beta_UPDATE.zip) |
 | Versiones anteriores | [Releases](https://github.com/JammesPark/R36S-ROM-STORE/releases) |
 
 Para migrar desde 0.7.0-beta o anterior, use el SH o ZIP completo. UPDATE.zip requiere la nueva estructura r36sromstore/. Haga una copia de seguridad. El canal OTA anterior permanece en 0.7.0-beta. El SH del nuevo canal pasó las pruebas automatizadas; falta confirmar su prueba física independiente.
@@ -76,7 +76,7 @@ El responsable ha probado físicamente R36S y R36H. dArkOSen se probó con difer
 
 Internet es necesario para la primera sincronización y nuevas descargas. Cambie el tema activo antes de eliminarlo. Informe versión, firmware y error sin datos privados.
 
-[Telegram](https://t.me/R36SPORTSBR) · [Issues](https://github.com/JammesPark/R36S-ROM-STORE/issues) · [Guía de ayuda (PT-BR)](SUPORTE.md)
+[Telegram](https://t.me/r36sportsromstorebr) · [Issues](https://github.com/JammesPark/R36S-ROM-STORE/issues) · [Guía de ayuda (PT-BR)](SUPORTE.md)
 
 ## Desarrollo y créditos
 
